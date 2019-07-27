@@ -32,12 +32,6 @@ Python3.6 Flask CRUD
 
 `cd api/ && flask run`
 
-`mongodb+srv://admin:admin@cluster0-wctg2.mongodb.net/test?retryWrites=true&w=majority`
-
-* Plant adding
-* Plant removal
-* Plant UUID generation
-
 ```json
 {
 	"_id": "d8163995-3b9f-4cc5-bbeb-d12522964f16",
@@ -56,8 +50,8 @@ Python3.6 Flask CRUD
 `/plants/`
 
 * __GET__: List all plants (200)
-* __POST__: Create a new plant (201)
-
+* __POST__: Create a new plant `{"name": "my_cool_plant"}` (201)
+	- Returns `{"message":{"_id":"5d3cb7263dd6cd525239e21c"}}`
 
 `/plants/<uuid>`
 
