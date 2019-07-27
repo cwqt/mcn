@@ -15,16 +15,22 @@ Possibly Pi Zero to 2.2" Adafruit TFT over SPI using fbtft framebuffer mirroring
 ### Moisture monitor
 
 UUID for plant hard-coded.  
-Read in ADC value over SPI once an hour, upload to a mongoDB collection. Simple.
+Read in ADC value over SPI once an hour, upload to a mongoDB collection via API.
 
 ### Front-end
 
 React, Redux, styled-components  
 Support for several plants.
 
-* Plant adding
-* Plant removal
-* Plant UUID
+Point graph style representation of moisture as a function of time.
+
 * Plant graph view
 
-Point graph style representation of moisture as a function of time.
+## API
+
+Basic Python Flask CRUD
+
+* Plant adding
+* Plant removal
+* Plant UUID generation
+
