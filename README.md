@@ -28,9 +28,30 @@ Point graph style representation of moisture as a function of time.
 
 ## API
 
-Basic Python Flask CRUD
+Python3.6 Flask CRUD
+
+`cd api/ && flask run`
+
+`mongodb+srv://admin:admin@cluster0-wctg2.mongodb.net/test?retryWrites=true&w=majority`
 
 * Plant adding
 * Plant removal
 * Plant UUID generation
+
+```json
+{
+	"_id": "d8163995-3b9f-4cc5-bbeb-d12522964f16",
+	"name": "desk_plant",
+	"date_added": 1364251214,
+	"updates": {
+		"1364251214": 313,
+		"1364251216": 223,
+		"1364251229": 196,
+	}
+}
+```
+
+dnspython
+python3.6
+flask
 
