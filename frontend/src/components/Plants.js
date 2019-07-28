@@ -1,24 +1,24 @@
 import React from 'react';
+import PropTypes from "prop-types";
+//connects component to redux provider store
+import { connect } from "react-redux";
+import { fetchPlants } from "../actions/PlantActions.js"
 
 class Plants extends React.Component { 
-	constructor(props) {
-		super(props);
-		this.state = {
-			plants: []
-		};
-	}
-
 	componentDidMount() {
-		fetch("/plants/")
-			.then(res => res.json())
-			.then(data => this.setState({plants: data.message}));
+		//call the action
+		//fetch api
+		//dispatch type+payload to reducer
+		this.props.fetchPlants()
+		//reducer returns new state to store
+		//map state to props
 	}
 
   render() {
     return (
     	<div className="plants">
     		<h1> Plants </h1>
-		  	{this.state.plants.map(post => (
+		  	{this.props.plants.map(post => (
 		  		<div key={post._id.$oid}>{post.plant_name}</div>
 		  	))}
     	</div>
@@ -26,4 +26,17 @@ class Plants extends React.Component {
   }
 }
 
-export default Plants;
+Plants.propTypes = {
+	fetchPlants: PropTypes.func.isRequired,
+	plants: PropTypes.array.isRequired
+}
+
+const MapStateToProps = state => ({
+	//root reducer returns plants
+	//PlantReducer has state with items
+	plants: state.plants.items
+	//now have this.props.plants
+})
+
+//map state to props
+export default connect(MapStateToProps, { fetchPlants })(Plants);
