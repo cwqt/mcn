@@ -2,6 +2,8 @@
 
 Plant moisture tracker and visualiser.
 
+![](screenshot.png)
+
 ## Hardware
 
 * https://thepihut.com/products/adafruit-stemma-soil-sensor-i2c-capacitive-moisture-sensor-ada4026
