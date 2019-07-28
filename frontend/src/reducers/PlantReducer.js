@@ -7,7 +7,7 @@ const initialState = {
 	//represents plants from action, where we put he fetch req 
 	items: [],
 	//single plant that we add
-	item: {}
+	item: ""
 };
 
 export default function(state=initialState, action) {
@@ -17,6 +17,11 @@ export default function(state=initialState, action) {
 				...state,
 				items: action.payload
 			}
+		case NEW_PLANT:
+			return {
+				...state,
+				items: [action.payload, ...state.items]
+			}		
 		default:
 			return state;
 	}

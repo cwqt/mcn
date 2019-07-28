@@ -15,3 +15,24 @@ export const fetchPlants = () => dispatch => {
 		})
 	);
 }
+
+export const createPlant = plant_name => dispatch => {
+	//request api to create a new plant
+	fetch("/plants/", {
+		method: "POST",
+		headers: {
+			'content-type': 'application/json'
+		},
+		body: JSON.stringify({ name: plant_name })
+	})
+		.then(res => res.json())
+		.then(data => {
+			//get new plant from the api and insert it into plants
+			fetch("/plants/"+data.message._id)
+				.then(res => res.json())
+				.then(plant => dispatch({
+					type: NEW_PLANT,
+					payload: plant.message
+				}));			
+		})
+}

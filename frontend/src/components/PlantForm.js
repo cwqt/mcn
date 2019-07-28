@@ -1,4 +1,7 @@
 import React from 'react';
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { createPlant } from "../actions/PlantActions";
 
 class PlantForm extends React.Component { 
 	constructor(props) {
@@ -14,20 +17,7 @@ class PlantForm extends React.Component {
 
 	onSubmit = (e) => {
 		e.preventDefault();
-
-		const payload = {
-			name: this.state.plant_name
-		}
-
-		fetch("/plants/", {
-			method: "POST",
-			headers: {
-				'content-type': 'application/json'
-			},
-			body: JSON.stringify(payload)
-		})
-		.then(res => res.json())
-		.then(data => console.log(data))
+		this.props.createPlant(this.state.plant_name)
 	}
 
   render() {
@@ -50,4 +40,12 @@ class PlantForm extends React.Component {
   }
 }
 
-export default PlantForm;
+PlantForm.propTypes = {
+	createPlant: PropTypes.func.isRequired
+}
+
+const MapStateToProps = state => ({
+	 plant_name: state.plants.item
+})
+
+export default connect(MapStateToProps, { createPlant })(PlantForm);

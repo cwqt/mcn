@@ -1,25 +1,23 @@
 # moisture.track
 
-Plant moisture tracker and visualiser
+Plant moisture tracker and visualiser.
 
 ## Hardware
 
-https://thepihut.com/products/soil-moisture-sensor
-https://thepihut.com/products/adafruit-mcp3008-8-channel-10-bit-adc-with-spi-interface
-
-Moisture sensor into MCP3008 ADC into Pi Zero W via SPI.  
-Possibly Pi Zero to 2.2" Adafruit TFT over SPI using fbtft framebuffer mirroring and LOVE.
+* https://thepihut.com/products/adafruit-stemma-soil-sensor-i2c-capacitive-moisture-sensor-ada4026
+* https://thepihut.com/products/adafruit-jst-ph-4-pin-to-female-socket-cable-i2c-stemma-cable-200mm-ada3950?variant=18634586259518
+* RPi Zero W.
 
 ## Software
 
 ### Moisture monitor
 
 UUID for plant hard-coded.  
-Read in ADC value over SPI once an hour, upload to a mongoDB collection via API.
+Moisture sensor returns 200 (very dry) to 2000 (very wet) over i^2c.
 
 ### Front-end
 
-React, Redux, styled-components  
+React, Redux, styled-components, chartjs  
 Support for several plants.
 
 Point graph style representation of moisture as a function of time.
