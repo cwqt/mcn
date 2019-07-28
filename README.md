@@ -2,7 +2,8 @@
 
 Plant moisture tracker and visualiser.
 
-![](screenshot.png)
+![](screenshot2.png)
+
 
 ## Hardware
 
