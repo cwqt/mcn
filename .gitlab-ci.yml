@@ -1,0 +1,6 @@
+production:
+  type: deploy
+  script:
+  - gem install dpl
+  - dpl --provider=heroku --app=moisture-track --api-key=$HEROKU_API_KEY
+
