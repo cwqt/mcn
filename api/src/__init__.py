@@ -5,7 +5,7 @@ import os
 import json
 
 from flask          import Flask, request, jsonify
-from flask_restful  import Resource, Api
+from flask_restful  import Resource, Api, reqparse
 from flask_pymongo  import PyMongo
 from bson           import Binary, Code
 from bson.json_util import dumps
@@ -34,6 +34,10 @@ class PlantList(Resource):
     return {"message": v}, 200
 
   def post(self):
+    parser = reqparse.RequestParser()
+    parser.add_argument('name', required=True)
+    args = parser.parse_args()
+
     collection = mongo.db.plants
     if collection.find_one({"plant_name": request.json["name"]}):
       return {"message": "Plant already exists"}, 200
@@ -55,6 +59,10 @@ class Plant(Resource):
     return {"message": plant}, 200
 
   def post(self, uuid):
+    parser = reqparse.RequestParser()
+    parser.add_argument('moisture_level', required=True)
+    args = parser.parse_args()
+
     collection = mongo.db.plants
     print(request.json)
     plant = collection.find_one({"_id": ObjectId(uuid)})

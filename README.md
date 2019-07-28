@@ -26,7 +26,7 @@ Point graph style representation of moisture as a function of time.
 
 * Plant graph view
 
-## API
+## API ✅
 
 Python3.6 Flask CRUD
 
