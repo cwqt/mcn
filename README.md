@@ -15,6 +15,8 @@ Plant moisture tracker and visualiser.
 UUID for plant hard-coded.  
 Moisture sensor returns 200 (very dry) to 2000 (very wet) over i^2c.
 
+---
+
 ### Front-end
 
 React, Redux, styled-components, chartjs  
@@ -23,6 +25,8 @@ Support for several plants.
 Point graph style representation of moisture as a function of time.
 
 * Plant graph view
+
+---
 
 ## API ✅
 
@@ -43,17 +47,79 @@ Python3.6 Flask CRUD
 }
 ```
 
-### Endpoints
+### Useage
 
-`/plants/`
+All responses will be of the form:
 
-* __GET__: List all plants (200)
-* __POST__: Create a new plant `{"name": "my_cool_plant"}` (201)
-	- Returns `{"message":{"_id":"5d3cb7263dd6cd525239e21c"}}`
+```json
+{
+	"data": "Mixed data type holding the content of the response",
+	"message": "Message describing what just happened"
+}
+```
 
-`/plants/<uuid>`
+#### List all plants
 
-* __GET__: Get document info (200)
-* __POST__: Add a moisture level `{"moisture_level":"314"}` (201)
-* __DELETE__: Delete plant (200)
+`GET /plants` 200 (OK)
 
+```json
+[
+  {
+    "_id": {
+      "$oid": "5d3dc23397873ed681db7e6a"
+    },
+    "plant_name": "desk_plant",
+    "date_added": 1564328499,
+    "image_url": "https://i.imgur.com/JYdAD9Y.jpg",
+    "updates": {
+      "1564317906": "400",
+      "1564321506": "500",
+      "1564325106": "800"
+    }
+  }
+]
+```
+
+#### Create a new plant
+
+`POST /plants` 201 (Created)
+
+* `"name"`: string, **required**
+* `"image_url"`: string
+
+
+```json
+{
+	"name": "desk_plant",
+	"image_url": "https://imgur.com/ahgjasd.png"
+}
+```
+
+Returns:
+
+```json
+{
+  "message": {
+    "_id": "5d3dfaa9a60c48701385be48"
+  }
+}
+```
+
+
+#### Get a specific plant
+
+`GET /plants/<string:uuid>` 200 (OK)
+
+#### Add a moisture level
+
+`POST /plants/<string:uuid>` 201 (Created)
+
+```json
+{
+	"moisture_level": "1280"
+}
+```
+
+#### Delete a plant
+
+`DELETE /plants/<string:uuid>` 200 (OK)

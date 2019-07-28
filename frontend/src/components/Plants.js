@@ -17,10 +17,18 @@ class Plants extends React.Component {
 
   render() {
     return (
-    	<div className="plants">
-    		<h1> Plants </h1>
+    	<div>
 		  	{this.props.plants.map(plant => (
-		  		<Plant _id={plant._id.$oid} plant_name={plant.plant_name} />
+		  		<div>
+			  		<Plant
+			  			key={plant._id.$oid}
+			  			_id={plant._id.$oid}
+			  			plant_name={plant.plant_name}
+			  			moisture_levels={plant.updates}
+			  			image_url={plant.image_url}
+			  		/>
+			  		<hr />
+		  		</div>
 		  	))}
     	</div>
     );

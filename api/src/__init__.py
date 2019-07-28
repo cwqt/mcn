@@ -36,15 +36,21 @@ class PlantList(Resource):
   def post(self):
     parser = reqparse.RequestParser()
     parser.add_argument('name', required=True)
+    parser.add_argument('image_url')
     args = parser.parse_args()
 
     collection = mongo.db.plants
-    if collection.find_one({"plant_name": request.json["name"]}):
+    if collection.find_one({"plant_name": args["name"]}):
       return {"message": "Plant already exists"}, 200
 
+    #supply placeholder image if none supplied
+    if not args["image_url"]:
+      args["image_url"] = "http://placehold.it/300x400"
+
     plant = {
-      "plant_name": request.json["name"],
+      "plant_name": args["name"],
       "date_added": int(time.time()),
+      "image_url": args["image_url"],
       "updates": {}
     }
     plant_id = str(collection.insert(plant))
