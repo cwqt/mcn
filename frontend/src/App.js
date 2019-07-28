@@ -6,7 +6,6 @@ import Footer from "./components/Footer";
 import { Provider } from "react-redux";
 import store from "./store";
 import "./index.css"
-
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -16,6 +15,10 @@ const Container = styled.div`
 `
 
 class App extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+
   render() {
     return (
       <Provider store={store}>

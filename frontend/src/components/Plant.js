@@ -57,9 +57,19 @@ class Plant extends React.Component {
 	}
 
   render() {
+    //1 update every 30 minutes
+    //24*2 = 48
+    //48*3 = 144 data points for 3 days of history
+
+    //convert unix epoch to Date object
+    const converted_time_data = _.takeRight(Object.keys(this.props.moisture_levels), 144)
+    for (var i=0; i < converted_time_data.length; i++) {
+      converted_time_data[i] = new Date(converted_time_data[i]*1000)
+    } 
+
   	//return last 31 days 
   	const chart_data = {
-  		labels: _.takeRight(Object.keys(this.props.moisture_levels), 31),
+  		labels: converted_time_data,
   		datasets: [{
   			label: this.props.plant_name,
         borderColor: "#3cba9f",
@@ -69,13 +79,24 @@ class Plant extends React.Component {
         pointRadius: 6,
         pointHitRadius: 15,
         pointBorderWidth: 3,
-  			data: _.takeRight(Object.values(this.props.moisture_levels), 31),
+  			data: _.takeRight(Object.values(this.props.moisture_levels), 144),
   		}],
   	}
     const chart_options = {
       legend: {
         display: false          
-      }
+      },
+      scales: {
+            xAxes: [{
+              type: 'time',
+            }],
+            yAxes: [{
+                ticks: {
+                    suggestedMin: 0,
+                    suggestedMax: 2000
+                }
+            }]
+        }
     }
 
     console.log(chart_data.labels)

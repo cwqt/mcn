@@ -64,7 +64,7 @@ class Plant(Resource):
     plant = json.loads(dumps(plant))
     return {"message": plant}, 200
 
-  def post(self, uuid):
+  def put(self, uuid):
     parser = reqparse.RequestParser()
     parser.add_argument('moisture_level', required=True)
     args = parser.parse_args()

@@ -114,7 +114,7 @@ Returns:
 
 #### Add a moisture level
 
-`POST /plants/<string:uuid>` 201 (Created)
+`PUT /plants/<string:uuid>` 201 (Created)
 
 ```json
 {
