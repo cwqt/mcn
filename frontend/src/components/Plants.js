@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from "prop-types";
 //connects component to redux provider store
 import { connect } from "react-redux";
-import { fetchPlants } from "../actions/PlantActions.js"
+import { fetchPlants } from "../actions/PlantActions.js";
+import Plant from "./Plant";
 
 class Plants extends React.Component { 
 	componentDidMount() {
@@ -18,8 +19,8 @@ class Plants extends React.Component {
     return (
     	<div className="plants">
     		<h1> Plants </h1>
-		  	{this.props.plants.map(post => (
-		  		<div key={post._id.$oid}>{post.plant_name}</div>
+		  	{this.props.plants.map(plant => (
+		  		<Plant _id={plant._id.$oid} plant_name={plant.plant_name} />
 		  	))}
     	</div>
     );

@@ -1,4 +1,4 @@
-import { FETCH_PLANTS, NEW_PLANT } from "./types";
+import { FETCH_PLANTS, NEW_PLANT, DELETE_PLANT } from "./types";
 
 //actions are functions, exported
 
@@ -35,4 +35,15 @@ export const createPlant = plant_name => dispatch => {
 					payload: plant.message
 				}));			
 		})
+}
+
+export const deletePlant = plant_id => dispatch => {
+	fetch("/plants/"+plant_id, {
+		method: "DELETE"
+	})
+	.then(res => res.json())
+	.then(data => dispatch({
+		type: DELETE_PLANT,
+		payload: {"_id": plant_id}
+	}))
 }
