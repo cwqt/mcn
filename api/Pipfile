@@ -11,6 +11,7 @@ flask-restful = "*"
 python-dotenv = "*"
 flask-pymongo = "*"
 gunicorn = "*"
+markdown = "*"
 
 [requires]
 python_version = "3.7"
