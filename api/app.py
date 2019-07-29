@@ -11,7 +11,7 @@ from bson           import Binary, Code
 from bson.json_util import dumps
 from bson.objectid  import ObjectId
 
-def create_app(conf="src.settings"):
+def create_app(conf="settings"):
   app = Flask(__name__)
   app.config.from_object(conf)
   return app
