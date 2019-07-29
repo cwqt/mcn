@@ -14,8 +14,6 @@ gunicorn = "*"
 markdown = "*"
 dnspython = "*"
 flask-httpauth = "*"
-pip = "*"
-install = "*"
 
 [requires]
 python_version = "3.7"
