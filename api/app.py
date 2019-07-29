@@ -11,12 +11,9 @@ from bson           import Binary, Code
 from bson.json_util import dumps
 from bson.objectid  import ObjectId
 
-def create_app(conf="settings"):
-  app = Flask(__name__)
-  app.config.from_object(conf)
-  return app
+app = Flask(__name__)
+app.config["MONGO_URI"] = os.environ.get("MONGO_URI")
 
-app = create_app()
 mongo = PyMongo(app)
 api = Api(app)
 
