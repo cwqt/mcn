@@ -1,2 +1,2 @@
 FLASK_APP=src
-FLASK_ENV=development
+FLASK_ENV=production
