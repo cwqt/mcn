@@ -3,6 +3,7 @@ import time
 import os
 import json
 import markdown
+import re
 
 from flask          import Flask, request, jsonify, abort
 from flask_restful  import Resource, Api, reqparse
@@ -26,7 +27,9 @@ def requires_auth(f):
   def wrap(*args, **kwargs):
     if not "AUTH_TOKEN" in request.headers:
       return {"message": "Requires AUTH_TOKEN header"}, 401
-    if request.headers["AUTH_TOKEN"] == app.config["AUTH_TOKEN"]:
+
+    token = re.sub(r'\W+', '', request.headers["AUTH_TOKEN"])
+    if token == app.config["AUTH_TOKEN"]:
       return f(*args, **kwargs)
     else:
       return {"message": "Invalid AUTH_TOKEN"}, 401
@@ -39,6 +42,7 @@ def get_docs():
     return markdown.markdown(content)
 
 class PlantList(Resource):
+  @requires_auth
   def get(self):
     plants = mongo.db.plants
     plants_list = list(plants.find())
