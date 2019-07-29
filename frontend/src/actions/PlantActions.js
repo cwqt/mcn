@@ -6,7 +6,7 @@ export const fetchPlants = () => dispatch => {
 	//=> dispatch => returns a func that takes args(dispatch)
 	//dispatch makes async requests
 	//think of as a resolver in promises
-	fetch("/plants/")
+	fetch("/api/plants/")
 		.then(res => res.json())
 		//dispatch data (plants) to reducer
 		.then(data => dispatch({
@@ -18,7 +18,7 @@ export const fetchPlants = () => dispatch => {
 
 export const createPlant = plant_name => dispatch => {
 	//request api to create a new plant
-	fetch("/plants/", {
+	fetch("/api/plants/", {
 		method: "POST",
 		headers: {
 			'content-type': 'application/json'
@@ -28,7 +28,7 @@ export const createPlant = plant_name => dispatch => {
 		.then(res => res.json())
 		.then(data => {
 			//get new plant from the api and insert it into plants
-			fetch("/plants/"+data.message._id)
+			fetch("/api/plants/"+data.message._id)
 				.then(res => res.json())
 				.then(plant => dispatch({
 					type: NEW_PLANT,
@@ -38,7 +38,7 @@ export const createPlant = plant_name => dispatch => {
 }
 
 export const deletePlant = plant_id => dispatch => {
-	fetch("/plants/"+plant_id, {
+	fetch("/api/plants/"+plant_id, {
 		method: "DELETE"
 	})
 	.then(res => res.json())
