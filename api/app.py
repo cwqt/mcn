@@ -42,7 +42,6 @@ def get_docs():
     return markdown.markdown(content)
 
 class PlantList(Resource):
-  @requires_auth
   def get(self):
     plants = mongo.db.plants
     plants_list = list(plants.find())
