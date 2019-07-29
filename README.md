@@ -35,6 +35,8 @@ Point graph style representation of moisture as a function of time.
 
 Python3.6 Flask CRUD
 
+`pipenv run heroku local`
+
 `cd api/ && flask run`
 
 ```json

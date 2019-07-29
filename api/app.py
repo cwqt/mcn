@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 import time
-import markdown
 import os
 import json
+import markdown
 
 from flask          import Flask, request, jsonify
 from flask_restful  import Resource, Api, reqparse
