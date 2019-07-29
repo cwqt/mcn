@@ -43,6 +43,8 @@ class PlantList(Resource):
     plants = mongo.db.plants
     plants_list = list(plants.find())
     v = json.loads(dumps(plants_list))
+    for plant in v: #ObjectId conversion
+      plant["_id"] = plant["_id"]["$oid"]
     return {"data": v}, 200
 
   @requires_auth

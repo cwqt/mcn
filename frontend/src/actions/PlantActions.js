@@ -11,7 +11,7 @@ export const fetchPlants = () => dispatch => {
 		//dispatch data (plants) to reducer
 		.then(data => dispatch({
 			type: FETCH_PLANTS,
-			payload: data.message
+			payload: data.data
 		})
 	);
 }
@@ -23,7 +23,7 @@ export const createPlant = plant_name => dispatch => {
 		headers: {
 			'content-type': 'application/json'
 		},
-		body: JSON.stringify({ name: plant_name })
+		body: JSON.stringify({ plant_name: plant_name })
 	})
 		.then(res => res.json())
 		.then(data => {
@@ -32,7 +32,7 @@ export const createPlant = plant_name => dispatch => {
 				.then(res => res.json())
 				.then(plant => dispatch({
 					type: NEW_PLANT,
-					payload: plant.message
+					payload: plant.data
 				}));			
 		})
 }

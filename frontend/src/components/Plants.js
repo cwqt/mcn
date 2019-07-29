@@ -19,10 +19,9 @@ class Plants extends React.Component {
     return (
     	<div>
 		  	{this.props.plants.map(plant => (
-		  		<div>
+		  		<div key={plant._id}>
 			  		<Plant
-			  			key={plant._id.$oid}
-			  			_id={plant._id.$oid}
+			  			_id={plant._id}
 			  			plant_name={plant.plant_name}
 			  			moisture_levels={plant.updates}
 			  			image_url={plant.image_url}

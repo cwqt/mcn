@@ -18,10 +18,9 @@ export default function(state=initialState, action) {
 				items: action.payload
 			}
 		case DELETE_PLANT:
-			console.log(action.payload._id)
 		  return {
 		  	...state,
-		  	items: state.items.filter(item => item._id.$oid !== action.payload._id)
+		  	items: state.items.filter(item => item._id !== action.payload._id)
 		  }
 		case NEW_PLANT:
 			return {

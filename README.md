@@ -70,9 +70,7 @@ All responses will be of the form:
 ```json
 [
   {
-    "_id": {
-      "$oid": "5d3dc23397873ed681db7e6a"
-    },
+    "_id": "5d3dc23397873ed681db7e6a",
     "plant_name": "desk_plant",
     "date_added": 1564328499,
     "image_url": "https://i.imgur.com/JYdAD9Y.jpg",
@@ -95,7 +93,7 @@ All responses will be of the form:
 
 ```json
 {
-	"name": "desk_plant",
+	"plant_name": "desk_plant",
 	"image_url": "https://imgur.com/ahgjasd.png"
 }
 ```
@@ -104,7 +102,7 @@ Returns:
 
 ```json
 {
-  "message": {
+  "data": {
     "_id": "5d3dfaa9a60c48701385be48"
   }
 }

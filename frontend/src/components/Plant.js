@@ -99,7 +99,7 @@ class Plant extends React.Component {
         }
     }
 
-    console.log(chart_data.labels)
+    // console.log(chart_data.labels)
   	
     return (
     	<PlantContainer>
