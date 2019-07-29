@@ -16,7 +16,6 @@ dnspython = "*"
 flask-httpauth = "*"
 pip = "*"
 install = "*"
-pytest = "*"
 
 [requires]
 python_version = "3.7"
