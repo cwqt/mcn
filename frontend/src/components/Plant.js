@@ -12,19 +12,10 @@ const PlantContainer = styled.div`
   display: flex;
   margin: 10px 0;
   height: 300px;
-  div:nth-child(2) {
+  .chartjs {
     flex: 1;
     h2 {
       margin: 0;
-    }
-  }
-  div:nth-child(1) {
-    width: 300px;
-    margin-right: 20px;
-    overflow: hidden;
-    img {
-      height: 100%;
-      border-radius: 4px;
     }
   }
 `
@@ -51,27 +42,40 @@ const Info = styled.div`
   margin-bottom: 20px;
 `
 
+const PlantImage = styled.div`
+  width: 300px;
+  margin-right: 20px;
+  overflow: hidden;
+  background: ${props => `url(${props.img})`};
+  background-size: cover;
+  background-position: center center;
+  border-radius: 4px;
+`
+
 class Plant extends React.Component { 
 	onClick = () => {
 		this.props.deletePlant(this.props._id)
 	}
 
   render() {
-    //1 update every 30 minutes
-    //24*2 = 48
-    //48*3 = 144 data points for 3 days of history
+    //1 update every 30 minutes, get last 3 days of updates = 144 data points
+    //epoch = {moisture_level, temperature}
 
-    //convert unix epoch to Date object
-    const converted_time_data = _.takeRight(Object.keys(this.props.moisture_levels), 144)
+    const converted_time_data = _.takeRight(Object.keys(this.props.updates), 144)
     for (var i=0; i < converted_time_data.length; i++) {
+      //convert unix epoch to Date object
       converted_time_data[i] = new Date(converted_time_data[i]*1000)
     } 
 
-  	//return last 31 days 
+    const updates = Object.values(this.props.updates)
+    //return list with [n]th value in each sublist, updates[0][1], updates[1][1] etc.
+    const moisture_levels    = _.takeRight(_.map(updates, e => e[0]), 144);
+    const temperature_levels = _.takeRight(_.map(updates, e => e[1]), 144);
+
   	const chart_data = {
   		labels: converted_time_data,
   		datasets: [{
-  			label: this.props.plant_name,
+  			label: "Moisture Level",
         borderColor: "#3cba9f",
         backgroundColor: "#3cba9f2f",
         pointBackgroundColor: "#fff",
@@ -79,22 +83,42 @@ class Plant extends React.Component {
         pointRadius: 6,
         pointHitRadius: 15,
         pointBorderWidth: 3,
-  			data: _.takeRight(Object.values(this.props.moisture_levels), 144),
-  		}],
+  			data: moisture_levels,
+        yAxisID: "A"
+  		},
+      {
+        label: "Temperature",
+        borderColor: "#FFA500",
+        backgroundColor: "#FFA5002f",
+        pointBackgroundColor: "#fff",
+        pointStyle: "circle",
+        pointRadius: 6,
+        pointHitRadius: 15,
+        pointBorderWidth: 3,
+        data: temperature_levels,
+        yAxisID: "B"
+      }],
   	}
     const chart_options = {
-      legend: {
-        display: false          
-      },
       scales: {
             xAxes: [{
               type: 'time',
             }],
             yAxes: [{
-                ticks: {
-                    suggestedMin: 0,
-                    suggestedMax: 2000
+              id: "A",
+              ticks: {
+                    min: 0,
+                    max: 2000
                 }
+            },
+            {
+              id: "B",
+              position: "right",
+              ticks: {
+                    min: 0,
+                    max: 30
+                }
+
             }]
         }
     }
@@ -103,10 +127,8 @@ class Plant extends React.Component {
   	
     return (
     	<PlantContainer>
-        <div>
-          <img src={this.props.image_url}/>
-        </div>
-        <div>
+        <PlantImage img={this.props.image_url}/>
+        <div className="chartjs">
           <Info>
     	  		<h2>{this.props.plant_name}</h2>
     	  		<Button onClick={this.onClick}>Delete</Button>

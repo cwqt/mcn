@@ -23,7 +23,7 @@ class Plants extends React.Component {
 			  		<Plant
 			  			_id={plant._id}
 			  			plant_name={plant.plant_name}
-			  			moisture_levels={plant.updates}
+			  			updates={plant.updates}
 			  			image_url={plant.image_url}
 			  		/>
 			  		<hr />
