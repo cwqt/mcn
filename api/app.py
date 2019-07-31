@@ -87,7 +87,7 @@ class Plant(Resource):
   def put(self, uuid):
     parser = reqparse.RequestParser()
     parser.add_argument('moisture_level', required=True)
-    parsed.add_argument('temperature', required=True)
+    parser.add_argument('temperature', required=True)
     args = parser.parse_args()
 
     collection = mongo.db.plants

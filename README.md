@@ -18,6 +18,15 @@ Plant moisture tracker and visualiser.
 UUID for plant hard-coded.  
 Moisture sensor returns 200 (very dry) to 2000 (very wet) over i^2c.
 
+Has a file named `secrets.json` which contains:
+
+```json
+{
+  "TOKEN": "API token",
+  "UUID": "Plant UUID
+}
+```
+
 ---
 
 ### Front-end

@@ -3,3 +3,4 @@ package-lock*
 __pycache__
 .DS_Store
 .env
+hardware/secrets.json
