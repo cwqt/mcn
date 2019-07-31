@@ -94,7 +94,7 @@ class Plant(Resource):
     print(request.json)
     plant = collection.find_one({"_id": ObjectId(uuid)})
     if plant:
-      plant["updates"][str(int(time.time()))] = {request.json["moisture_level"], request.json["temperature"]}
+      plant["moisture_levels"][str(int(time.time()))] = [request.json["moisture_level"], request.json["temperature"]]
       collection.save(plant)
       return 201
     else:
