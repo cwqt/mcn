@@ -17,11 +17,11 @@ while True:
 
   # send moisture update to the api
   payload = {
-  	"moisture_level": str(touch)
+    "moisture_level": str(touch)
   }
-	requests.put(URL, data=payload)
+  requests.put(URL, data=payload)
 
-	#repeat once every 30 minutes
-	timer.sleep(1800)
+  #repeat once every 30 minutes
+  timer.sleep(1800)
 
 #https://learn.adafruit.com/adafruit-stemma-soil-sensor-i2c-capacitive-moisture-sensor/python-circuitpython-test
