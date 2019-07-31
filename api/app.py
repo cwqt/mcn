@@ -87,13 +87,14 @@ class Plant(Resource):
   def put(self, uuid):
     parser = reqparse.RequestParser()
     parser.add_argument('moisture_level', required=True)
+    parsed.add_argument('temperature', required=True)
     args = parser.parse_args()
 
     collection = mongo.db.plants
     print(request.json)
     plant = collection.find_one({"_id": ObjectId(uuid)})
     if plant:
-      plant["updates"][str(int(time.time()))] = request.json["moisture_level"]
+      plant["updates"][str(int(time.time()))] = {request.json["moisture_level"], request.json["temperature"]}
       collection.save(plant)
       return 201
     else:
