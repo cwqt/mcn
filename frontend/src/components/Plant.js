@@ -112,7 +112,7 @@ class Plant extends React.Component {
               id: "A",
               ticks: {
                     min: 0,
-                    max: 2000
+                    max: 1100
                 }
             },
             {
