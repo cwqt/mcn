@@ -1,6 +1,7 @@
 export const FETCH_PLANTS = "FETCH_PLANTS";
 export const NEW_PLANT = "NEW_PLANT";
 export const DELETE_PLANT = "DELETE_PLANT";
+export const SELECT_PLANT = "SELECT_PLANT";
 
 export const AUTH_USER = "AUTH_USER";
 

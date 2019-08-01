@@ -62,7 +62,6 @@ class ModalWrapper extends React.Component {
   }
 }
 
-
 ModalWrapper.propTypes = {
   setModalVisibility: PropTypes.func.isRequired
 }

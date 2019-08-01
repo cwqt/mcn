@@ -1,12 +1,12 @@
 import React from 'react';
-import PropTypes from "prop-types";
-//connects component to redux provider store
 import { connect } from "react-redux";
-import { deletePlant } from "../actions/PlantActions.js"
 import { Line } from "react-chartjs-2"
 import _ from 'lodash';
 import styled from 'styled-components';
 import { lighten } from "polished";
+import { setCurrentModal, setModalVisibility } from "../actions/ModalActions";
+import { selectPlant } from "../actions/PlantActions"
+import PropTypes from "prop-types";
 
 const PlantContainer = styled.div`
   display: flex;
@@ -54,8 +54,11 @@ const PlantImage = styled.div`
 `
 
 class Plant extends React.Component { 
-	onClick = () => {
-		this.props.deletePlant(this.props._id)
+	onClick = e => {
+    e.preventDefault()
+    this.props.selectPlant(this.props._id);
+    this.props.setCurrentModal("DELETE_PLANT_MODAL");
+    this.props.setModalVisibility(true);
 	}
 
   render() {
@@ -142,12 +145,16 @@ class Plant extends React.Component {
 }
 
 Plant.propTypes = {
-	deletePlant: PropTypes.func.isRequired
+  setCurrentModal: PropTypes.func.isRequired,
+  setModalVisibility: PropTypes.func.isRequired,
+  selectPlant: PropTypes.func.isRequired
 }
 
-
-const MapStateToProps = state => ({
-  isAuthorised: state.auth.isAuthorised
+const MapStateToProps = store => ({
+  isAuthorised: store.auth.isAuthorised,
+  token: store.auth.currentToken
 })
 
-export default connect(MapStateToProps, { deletePlant })(Plant);
+export default connect(MapStateToProps, { setCurrentModal, setModalVisibility, selectPlant })(Plant);
+
+

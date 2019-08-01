@@ -1,4 +1,9 @@
-import { FETCH_PLANTS, NEW_PLANT, DELETE_PLANT } from "./types";
+import {
+	FETCH_PLANTS,
+	NEW_PLANT,
+	DELETE_PLANT,
+	SELECT_PLANT
+} from "./types";
 
 //actions are functions, exported
 
@@ -16,19 +21,21 @@ export const fetchPlants = () => dispatch => {
 	);
 }
 
-export const createPlant = plant_name => dispatch => {
+export const createPlant = (plant_name, token) => dispatch => {
 	//request api to create a new plant
 	fetch("/api/plants/", {
 		method: "POST",
-		headers: {
-			'content-type': 'application/json'
-		},
+		headers: new Headers({
+			'Content-Type': "application/json",
+			'AUTH_TOKEN': token
+		}),
 		body: JSON.stringify({ plant_name: plant_name })
 	})
 		.then(res => res.json())
 		.then(data => {
+			console.log(data)
 			//get new plant from the api and insert it into plants
-			fetch("/api/plants/"+data.message._id)
+			fetch("/api/plants/"+data.data._id)
 				.then(res => res.json())
 				.then(plant => dispatch({
 					type: NEW_PLANT,
@@ -37,13 +44,28 @@ export const createPlant = plant_name => dispatch => {
 		})
 }
 
-export const deletePlant = plant_id => dispatch => {
-	fetch("/api/plants/"+plant_id, {
-		method: "DELETE"
+export const deletePlant = (id, token) => dispatch => {
+	fetch("/api/plants/"+id, {
+		method: "DELETE",
+		headers: new Headers({
+			'Content-Type': "application/json",
+			'AUTH_TOKEN': token
+		})
 	})
 	.then(res => res.json())
 	.then(data => dispatch({
 		type: DELETE_PLANT,
-		payload: {"_id": plant_id}
+		payload: id
 	}))
 }
+
+
+export const selectPlant = (id) => dispatch => {
+	dispatch({
+		type: SELECT_PLANT,
+		payload: id
+	})
+}
+
+
+

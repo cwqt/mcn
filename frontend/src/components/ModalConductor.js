@@ -16,7 +16,7 @@ class ModalConductor extends React.Component {
 	componentWillReceiveProps(nextProps){
     var modal = this.state.currentModal
     switch(nextProps.currentModal) {
-      case "AUTH":
+      case "AUTH_MODAL":
         modal = <AuthModal />
         break 
       case "CREATE_PLANT_MODAL":
@@ -45,9 +45,9 @@ class ModalConductor extends React.Component {
   }
 }
 
-const MapStateToProps = state => ({
-  currentModal: state.modal.currentModal,
-  isVisible: state.modal.isVisible
+const MapStateToProps = store => ({
+  currentModal: store.modal.currentModal,
+  isVisible: store.modal.isVisible
 })
 
 export default connect(MapStateToProps)(ModalConductor);

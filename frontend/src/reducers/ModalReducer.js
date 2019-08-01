@@ -7,12 +7,12 @@ const initialState = {
 
 export default function(state=initialState, action) {
 	switch(action.type) {
-    case 'SET_CURRENT_MODAL':
+    case SET_CURRENT_MODAL:
       return {
       	...state,
       	currentModal: action.payload
       };
-    case "SET_MODAL_VISIBILITY":
+    case SET_MODAL_VISIBILITY:
       return {
         ...state,
         isVisible: action.payload

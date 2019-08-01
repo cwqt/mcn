@@ -18,13 +18,14 @@ class PlantForm extends React.Component {
 
     onSubmit = (e) => {
         e.preventDefault();
-        this.props.createPlant(this.state.plant_name)
+        this.props.createPlant(this.state.plant_name, this.props.token)
     }
 
   render() {
     return (
         <div>
             <h1> Add plant </h1>
+            <br />
             <form onSubmit={this.onSubmit}>
                 <label>plant_name</label>
                 <input
@@ -33,6 +34,7 @@ class PlantForm extends React.Component {
                     onChange={this.onChange}
                     value={this.state.plant_name}
                 />
+                <br />
                 <br />
                 <button type="submit">Submit</button>
             </form>
@@ -45,8 +47,8 @@ PlantForm.propTypes = {
     createPlant: PropTypes.func.isRequired
 }
 
-const MapStateToProps = state => ({
-     plant_name: state.plants.item
-})
+const MapStateToProps = store => ({
+    token: store.auth.currentToken
+});
 
 export default connect(MapStateToProps, { createPlant })(PlantForm);

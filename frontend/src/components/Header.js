@@ -40,7 +40,13 @@ class Header extends React.Component {
 
   tryAuth = e => {
     e.preventDefault()
-    this.props.setCurrentModal("AUTH");
+    this.props.setCurrentModal("AUTH_MODAL");
+    this.props.setModalVisibility(true);
+  }
+
+  openPlantCreateModal = e => {
+    e.preventDefault()
+    this.props.setCurrentModal("CREATE_PLANT_MODAL");
     this.props.setModalVisibility(true);
   }
 
@@ -50,7 +56,7 @@ class Header extends React.Component {
         <Logo src="leaf.png"/>
         <h1>moisture.track</h1>
         {this.props.isAuthorised ? (
-            <Button href="">Add plant</Button>
+            <Button onClick={this.openPlantCreateModal}>Add plant</Button>
           ) : (
             <Button onClick={this.tryAuth}>Log in</Button>
         )}
@@ -64,9 +70,8 @@ Header.propTypes = {
   setModalVisibility: PropTypes.func.isRequired
 }
 
-
-const MapStateToProps = state => ({
-  isAuthorised: state.auth.isAuthorised,
+const MapStateToProps = store => ({
+  isAuthorised: store.auth.isAuthorised,
 })
 
 export default connect(MapStateToProps, { setCurrentModal, setModalVisibility})(Header);

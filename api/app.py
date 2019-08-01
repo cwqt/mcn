@@ -96,7 +96,6 @@ class Plant(Resource):
     args = parser.parse_args()
 
     collection = mongo.db.plants
-    print(request.json)
     plant = collection.find_one({"_id": ObjectId(uuid)})
     if plant:
       plant["updates"][str(int(time.time()))] = [request.json["moisture_level"], request.json["temperature"]]

@@ -4,6 +4,13 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { fetchPlants } from "../actions/PlantActions.js";
 import Plant from "./Plant";
+import styled from 'styled-components';
+
+const Loader = styled.p`
+	color: white;
+	text-align: center;
+	padding: 20px;
+`
 
 class Plants extends React.Component { 
 	componentDidMount() {
@@ -18,6 +25,9 @@ class Plants extends React.Component {
   render() {
     return (
     	<div>
+    		{this.props.plants.length === 0 &&
+    			<Loader>Probably spinning up Heroku API...</Loader>
+    		}
 		  	{this.props.plants.map(plant => (
 		  		<div key={plant._id}>
 			  		<Plant
@@ -39,10 +49,10 @@ Plants.propTypes = {
 	plants: PropTypes.array.isRequired
 }
 
-const MapStateToProps = state => ({
+const MapStateToProps = store => ({
 	//root reducer returns plants
 	//PlantReducer has state with items
-	plants: state.plants.items
+	plants: store.plants.items
 	//now have this.props.plants
 })
 
