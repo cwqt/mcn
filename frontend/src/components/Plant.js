@@ -12,6 +12,7 @@ const PlantContainer = styled.div`
   display: flex;
   margin: 10px 0;
   height: 300px;
+  overflow: hidden;
   .chartjs {
     flex: 1;
     h2 {
@@ -80,20 +81,20 @@ class Plant extends React.Component {
         backgroundColor: "#3cba9f2f",
         pointBackgroundColor: "#fff",
         pointStyle: "circle",
-        pointRadius: 6,
-        pointHitRadius: 15,
+        pointRadius: 2,
+        pointHitRadius: 1,
         pointBorderWidth: 3,
   			data: moisture_levels,
         yAxisID: "A"
   		},
       {
-        label: "Temperature",
+        label: "Temperature (°C)",
         borderColor: "#FFA500",
         backgroundColor: "#FFA5002f",
         pointBackgroundColor: "#fff",
         pointStyle: "circle",
-        pointRadius: 6,
-        pointHitRadius: 15,
+        pointRadius: 2,
+        pointHitRadius: 1,
         pointBorderWidth: 3,
         data: temperature_levels,
         yAxisID: "B"
@@ -113,17 +114,10 @@ class Plant extends React.Component {
             },
             {
               id: "B",
-              position: "right",
-              ticks: {
-                    min: 0,
-                    max: 30
-                }
-
+              position: "right"
             }]
         }
     }
-
-    // console.log(chart_data.labels)
   	
     return (
     	<PlantContainer>
@@ -131,7 +125,9 @@ class Plant extends React.Component {
         <div className="chartjs">
           <Info>
     	  		<h2>{this.props.plant_name}</h2>
-    	  		<Button onClick={this.onClick}>Delete</Button>
+            {this.props.isAuthorised && 
+              <Button onClick={this.onClick}>Delete</Button>
+            }
           </Info>
   	  		<Line
             data={chart_data}
@@ -149,4 +145,9 @@ Plant.propTypes = {
 	deletePlant: PropTypes.func.isRequired
 }
 
-export default connect(null, { deletePlant })(Plant);
+
+const MapStateToProps = state => ({
+  isAuthorised: state.auth.isAuthorised
+})
+
+export default connect(MapStateToProps, { deletePlant })(Plant);

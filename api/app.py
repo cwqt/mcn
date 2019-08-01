@@ -41,6 +41,11 @@ def get_docs():
     content = markdown_file.read()
     return markdown.markdown(content)
 
+@app.route("/auth/")
+@requires_auth
+def return_auth_value():
+  return json.dumps({"data": True}), 200
+
 class PlantList(Resource):
   def get(self):
     plants = mongo.db.plants

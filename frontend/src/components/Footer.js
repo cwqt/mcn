@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { lighten } from "polished";
 
 const FooterContainer = styled.header`
   background-color: rgba(255,255,255,0.1);
@@ -20,8 +19,14 @@ const FooterContainer = styled.header`
     }
   }
   img {
-    margin-left: auto;
     width: 30px;
+  }
+`
+const Link = styled.a`
+  margin-left: auto;
+  transition: 0.2s;
+  &:hover {
+    filter: brightness(0.8)
   }
 `
 
@@ -30,7 +35,9 @@ class Footer extends React.Component {
     return (
     	<FooterContainer>
       <p>Created by &nbsp;<a href="https://gitlab.com/cxss">@cxss</a></p>
-      <img src="git.png" />
+      <Link href="https://gitlab.com/cxss/moisture.track">
+        <img alt="git" src="git.png" />
+      </Link>
     	</FooterContainer>
     );
   }

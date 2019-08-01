@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import { lighten } from "polished";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { setCurrentModal, setModalVisibility } from "../actions/ModalActions";
 
 const HeaderContainer = styled.header`
   background-color: rgba(255,255,255,0.1);
@@ -29,26 +32,41 @@ const Button = styled.a`
   transition: 0.2s;
   &:hover {
     background-color: ${lighten(0.03, '#18181b')};
+    cursor: pointer;
   }
 `
 
-const Title = styled.h1`
-  font-weight: 100;
-  color: #fff;
-`
-
 class Header extends React.Component { 
+
+  tryAuth = e => {
+    e.preventDefault()
+    this.props.setCurrentModal("AUTH");
+    this.props.setModalVisibility(true);
+  }
+
   render() {  	
     return (
     	<HeaderContainer>
         <Logo src="leaf.png"/>
-        <Title>moisture.track</Title>
-        <Button href="">add plant</Button>
+        <h1>moisture.track</h1>
+        {this.props.isAuthorised ? (
+            <Button href="">Add plant</Button>
+          ) : (
+            <Button onClick={this.tryAuth}>Log in</Button>
+        )}
     	</HeaderContainer>
     );
   }
 }
 
-// <PlantForm />
+Header.propTypes = {
+  setCurrentModal: PropTypes.func.isRequired,
+  setModalVisibility: PropTypes.func.isRequired
+}
 
-export default Header;
+
+const MapStateToProps = state => ({
+  isAuthorised: state.auth.isAuthorised,
+})
+
+export default connect(MapStateToProps, { setCurrentModal, setModalVisibility})(Header);

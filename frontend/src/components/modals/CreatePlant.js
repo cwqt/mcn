@@ -1,7 +1,7 @@
 import React from 'react';
-import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { createPlant } from "../actions/PlantActions";
+import { connect } from "react-redux";
+import { createPlant } from "../../actions/PlantActions";
 
 class PlantForm extends React.Component { 
     constructor(props) {
@@ -23,7 +23,7 @@ class PlantForm extends React.Component {
 
   render() {
     return (
-        <div className="plants">
+        <div>
             <h1> Add plant </h1>
             <form onSubmit={this.onSubmit}>
                 <label>plant_name</label>
