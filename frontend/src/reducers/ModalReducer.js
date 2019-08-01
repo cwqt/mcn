@@ -1,7 +1,7 @@
 import { SET_CURRENT_MODAL, SET_MODAL_VISIBILITY } from "../actions/types";
 
 const initialState = {
-	currentModal: null,
+	currentModal: "",
   isVisible: false
 };
 
