@@ -25,6 +25,7 @@ api = Api(app)
 def requires_auth(f):
   @wraps(f)
   def wrap(*args, **kwargs):
+    print(request.headers)
     if not "AUTH_TOKEN" in request.headers:
       return {"message": "Requires AUTH_TOKEN header"}, 401
 

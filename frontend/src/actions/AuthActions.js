@@ -1,6 +1,6 @@
 import { AUTH_USER } from "./types";
 
-export const authUser = (token) => dispatch => {
+export const authUser = token => dispatch => {
 	fetch("/api/auth/", {
 			headers: new Headers({
 				'Content-Type': "application/json",
