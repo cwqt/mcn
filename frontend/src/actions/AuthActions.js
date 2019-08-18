@@ -4,7 +4,7 @@ export const authUser = token => dispatch => {
 	fetch("/api/auth/", {
 			headers: new Headers({
 				'Content-Type': "application/json",
-				'AUTH_TOKEN': token
+				'Auth-Token': token
 			})
 		})
 		.then(res => Promise.all([res.status, res.json()]))

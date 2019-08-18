@@ -65,7 +65,7 @@ class Plant extends React.Component {
     //1 update every 30 minutes, get last 3 days of updates = 144 data points
     //epoch = {moisture_level, temperature}
 
-    const converted_time_data = _.takeRight(Object.keys(this.props.updates), 144)
+    const converted_time_data = _.takeRight(Object.keys(this.props.updates), 288)
     for (var i=0; i < converted_time_data.length; i++) {
       //convert unix epoch to Date object
       converted_time_data[i] = new Date(converted_time_data[i]*1000)
@@ -73,8 +73,8 @@ class Plant extends React.Component {
 
     const updates = Object.values(this.props.updates)
     //return list with [n]th value in each sublist, updates[0][1], updates[1][1] etc.
-    const moisture_levels    = _.takeRight(_.map(updates, e => e[0]), 144);
-    const temperature_levels = _.takeRight(_.map(updates, e => e[1]), 144);
+    const moisture_levels    = _.takeRight(_.map(updates, e => e[0]), 288);
+    const temperature_levels = _.takeRight(_.map(updates, e => e[1]), 288);
 
   	const chart_data = {
   		labels: converted_time_data,

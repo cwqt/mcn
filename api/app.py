@@ -26,14 +26,14 @@ def requires_auth(f):
   @wraps(f)
   def wrap(*args, **kwargs):
     print(request.headers)
-    if not "AUTH_TOKEN" in request.headers:
-      return {"message": "Requires AUTH_TOKEN header"}, 401
+    if not "Auth-Token" in request.headers:
+      return {"message": "Requires Auth-Token header"}, 401
 
-    token = re.sub(r'\W+', '', request.headers["AUTH_TOKEN"])
-    if token == app.config["AUTH_TOKEN"]:
+    token = re.sub(r'\W+', '', request.headers["Auth-Token"])
+    if token == app.config["Auth-Token"]:
       return f(*args, **kwargs)
     else:
-      return {"message": "Invalid AUTH_TOKEN"}, 401
+      return {"message": "Invalid Auth-Token"}, 401
   return wrap
 
 @app.route('/')
