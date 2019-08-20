@@ -88,6 +88,7 @@ class Plant extends React.Component {
         // pointHitRadius: 1,
         // pointBorderWidth: 3,
   			data: moisture_levels,
+        tension: "1",
         yAxisID: "A"
   		},
       {
@@ -96,6 +97,7 @@ class Plant extends React.Component {
         backgroundColor: "#FFA5002f",
         pointBackgroundColor: "#fff",
         pointStyle: "line",
+        tension: "1",
         // pointRadius: 2,
         // pointHitRadius: 1,
         // pointBorderWidth: 3,

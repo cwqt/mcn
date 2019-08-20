@@ -25,10 +25,10 @@ export const createPlant = (plant_name, token) => dispatch => {
 	//request api to create a new plant
 	fetch("/api/plants/", {
 		method: "POST",
-		headers: new Headers({
+		headers: {
 			'Content-Type': "application/json",
-			'AUTH_TOKEN': token
-		}),
+			'Auth-Token': token
+		},
 		body: JSON.stringify({ plant_name: plant_name })
 	})
 		.then(res => res.json())
@@ -47,10 +47,10 @@ export const createPlant = (plant_name, token) => dispatch => {
 export const deletePlant = (id, token) => dispatch => {
 	fetch("/api/plants/"+id, {
 		method: "DELETE",
-		headers: new Headers({
+		headers: {
 			'Content-Type': "application/json",
-			'AUTH_TOKEN': token
-		})
+			'Auth-Token': token
+		}
 	})
 	.then(res => res.json())
 	.then(data => dispatch({

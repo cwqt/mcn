@@ -25,12 +25,14 @@ api = Api(app)
 def requires_auth(f):
   @wraps(f)
   def wrap(*args, **kwargs):
+    print('\n\n\n')
     print(request.headers)
+    print('\n\n\n')
     if not "Auth-Token" in request.headers:
       return {"message": "Requires Auth-Token header"}, 401
 
     token = re.sub(r'\W+', '', request.headers["Auth-Token"])
-    if token == app.config["Auth-Token"]:
+    if token == app.config["AUTH_TOKEN"]:
       return f(*args, **kwargs)
     else:
       return {"message": "Invalid Auth-Token"}, 401

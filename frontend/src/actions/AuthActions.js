@@ -2,10 +2,10 @@ import { AUTH_USER } from "./types";
 
 export const authUser = token => dispatch => {
 	fetch("/api/auth/", {
-			headers: new Headers({
+			headers: {
 				'Content-Type': "application/json",
 				'Auth-Token': token
-			})
+			}
 		})
 		.then(res => Promise.all([res.status, res.json()]))
 		.then(([status, data]) => {
