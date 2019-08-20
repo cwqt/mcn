@@ -83,10 +83,10 @@ class Plant extends React.Component {
         borderColor: "#3cba9f",
         backgroundColor: "#3cba9f2f",
         pointBackgroundColor: "#fff",
-        pointStyle: "circle",
-        pointRadius: 2,
-        pointHitRadius: 1,
-        pointBorderWidth: 3,
+        pointStyle: "line",
+        // pointRadius: 2,
+        // pointHitRadius: 1,
+        // pointBorderWidth: 3,
   			data: moisture_levels,
         yAxisID: "A"
   		},
@@ -95,10 +95,10 @@ class Plant extends React.Component {
         borderColor: "#FFA500",
         backgroundColor: "#FFA5002f",
         pointBackgroundColor: "#fff",
-        pointStyle: "circle",
-        pointRadius: 2,
-        pointHitRadius: 1,
-        pointBorderWidth: 3,
+        pointStyle: "line",
+        // pointRadius: 2,
+        // pointHitRadius: 1,
+        // pointBorderWidth: 3,
         data: temperature_levels,
         yAxisID: "B"
       }],
@@ -111,8 +111,8 @@ class Plant extends React.Component {
             yAxes: [{
               id: "A",
               ticks: {
-                    min: 0,
-                    max: 1100
+                    min: 400,
+                    max: 1000
                 }
             },
             {
