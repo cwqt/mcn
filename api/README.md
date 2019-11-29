@@ -1,13 +1,33 @@
 # api
 
-`/plants/`
+`pipenv run flask run`
 
-* __GET__: List all plants (200)
-* __POST__: Create a new plant `{"name": "my_cool_plant"}` (201)
-	- Returns `{"message":{"_id":"5d3cb7263dd6cd525239e21c"}}`
+---
 
-`/plants/<uuid>`
+Responses returned in JSON, enveloped in `data` and `message` fields.  
+__POST__, __PUT__ & __DELETE__ routes require an auth-token.  
+e.g. `curl --header "x-access-token: 'jwt...'"  -X POST "http://localhost:5000/gardens/`
 
-* __GET__: Get document info (200)
-* __POST__: Add a moisture level `{"moisture_level":"314"}` (201)
+`/auth/`
+
+* __GET__: Generate a JSON Web Token, header `Auth-Token` with plain-text password (200)
+	- Returns `{"data": "eyJ0eXAiOiJKV1QiLCJhbGc..."}`
+
+`/gardens/`
+
+* __GET__: List all garden id's (200)
+* __POST__: Create a new garden `{"name": "my_cool_plant"}` (201)
+	- Returns `{"data":{"_id":"feeff148-116b-11ea-8d3e-acde48001122"}}`
+
+`/gardens/<uuid>`
+
+* __GET__: List garden info & plant object id's (200)
+* __POST__: Add a plant (201)
+	- Returns `{"data":{"_id":"feeff148-116b-11ea-8d3e-acde48001122"}}`
+* __DELETE__: Delete garden (200)
+
+`/gardens/<garden_uuid>/<plant_object_id>`
+
+* __GET__: List plant info (200)
+* __PUT__: Add a moisture level `{"moisture_level":"314"}` (201)
 * __DELETE__: Delete plant (200)
