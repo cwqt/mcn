@@ -1,5 +1,9 @@
-#include "uptime_formatter.h"
-
+#include <ArduinoJson.h>
+#include <DHT.h>
+#include <DHT_U.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <uptime_formatter.h>
 #include <GxFont_GFX.h>
 #include <GxEPD.h>
 #include <GxIO/GxIO_SPI/GxIO_SPI.h>
@@ -8,15 +12,29 @@
 #include <Fonts/Roboto_Bold8pt7b.h>
 #include "board_def.h"
 
-GxIO_Class io(SPI, ELINK_SS, ELINK_DC, ELINK_RESET);
-GxEPD_Class display(io, ELINK_RESET, ELINK_BUSY);
-
-#include <WiFi.h>
-
+#define API_URL "http://esp32_garden.herokuapp.com"
+#define API_USERNAME "cass"
+#define API_PASSWORD "pass"
 #define GARDEN_UUID "3f19e49e-ab7b-42be-b997-7013376bfd88"
 #define SHORT_UUID "3f19e49e"
+
 #define WIFI_SSID "VM3990952"
 #define WIFI_PASSWORD "t7hyDqgPtn6t"
+
+#define DHT22_INPUT 32
+#define ANALOG_INPUT 36
+#define VALVE_SWITCH 0
+#define LIGHT_SWITCH 12
+
+int MUX_PINS[4] = {25, 26, 27, 33};
+int PLANT_POSITIONS[8] = {0,1,2,3,4,5,6,7};
+#define LIGHT_SENSOR 8
+#define WATER_SENSOR 9
+
+GxIO_Class io(SPI, ELINK_SS, ELINK_DC, ELINK_RESET);
+GxEPD_Class display(io, ELINK_RESET, ELINK_BUSY);
+HTTPClient http;
+DHT dht(DHT22_INPUT, DHT22);
 
 typedef enum {
   RIGHT_ALIGNMENT = 0,
@@ -27,27 +45,19 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {}
   delay(100);
-  
+
+  initialiseDisplay();
+  attemptWiFiConnect(3000);
+  drawFooter();
+  drawHeader();  
+  display.update();
+}
+
+void initialiseDisplay() {
   display.init();
-  display.setFont(&Roboto_Medium8pt7b);
   display.setTextColor(GxEPD_BLACK);
   display.setTextSize(0);
   display.setRotation(1);
-
-  Serial.println("Start");
-
-  drawHeader();
-  drawFooter();
-  display.update();
-  
-  attemptWiFiConnect(3000);
-
-  delay(1000);
-  display.eraseDisplay();
-  delay(1000);
-
-  drawHeader();
-  display.update();
 }
 
 void drawHeader() {
@@ -99,12 +109,51 @@ void drawLine(int x0, int y0, int x1, int y1) {
   int err = (dx>dy ? dx : -dy)/2, e2;
  
   for(;;){
-    display.drawPixel(x0,y0,GxEPD_BLACK);
+    display.drawPixel(x0, y0, GxEPD_BLACK);
     if (x0==x1 && y0==y1) break;
     e2 = err;
     if (e2 >-dx) { err -= dy; x0 += sx; }
     if (e2 < dy) { err += dx; y0 += sy; }
   }
+}
+
+float readValueFromMux(int pos) {
+  for(int i=0; i<sizeof(MUX_PINS); i++) {
+    digitalWrite(MUX_PINS[i], bitRead(pos, i)); 
+  }
+}
+
+int *getPlantMoistureLevels() {
+  float r[8];
+  for(int i=0; i<sizeof(PLANT_POSITIONS); i++) {
+    r[i] = readValueFromMux(i);
+  }  
+}
+
+int *getTempAndHumidity() {
+  dht.begin();
+  float hum  = dht.readHumidity();
+  float temp = dht.readTemperature();
+  dht.end();
+  float r[] = {temp, hum};
+  return r;
+}
+
+void sendDataToApi(float moisture_levels[], float light_level, float temperature, float humidity, bool lightIsOn) {
+  http.begin(API_URL);
+  http.addHeader("Content-Type", "application/json");
+  int httpResponseCode = http.POST("POSTING from ESP32");
+
+  if (httpResponseCode > 0) {
+    String response = http.getString();
+    Serial.println(httpResponseCode);   //Print return code
+    Serial.println(response);   
+  } else {
+    Serial.print("Error on sending POST: ");
+    Serial.println(httpResponseCode);
+  }
+  
+  http.end();
 }
 
 void drawText(const String &label, const String &content, int16_t x, int16_t y, uint8_t alignment) {
@@ -118,7 +167,6 @@ void drawText(const String &label, const String &content, int16_t x, int16_t y, 
     uint16_t w2, h2;
     display.setCursor(x, y);
     display.getTextBounds(label, x, y, &x2, &y2, &w2, &h2);
-
     
     switch (alignment) {
     case RIGHT_ALIGNMENT:
@@ -146,6 +194,47 @@ void drawText(const String &label, const String &content, int16_t x, int16_t y, 
 }
 
 void loop() {
-    //Serial.println("up " + uptime_formatter::getUptime());
-    //delay(1000);
+  if (WiFi.status() != WL_CONNECTED) {
+    attemptWiFiConnect(3000);
+  }
+
+  //collect all plant data
+  float moisture_levels[] = &getPlantMoistureLevels();
+
+  //collect temp and humidity from DHT22
+  float DHT22_Result[] = &getTempAndHumidity();
+  float temperature = DHT22_Result[0];
+  float humidity = DHT22_Result[1];
+
+  //collect light level
+  float light_level = readValueFromMux(LIGHT_SENSOR);
+
+  //if connected, send data
+  if (WiFi.status() == WL_CONNECTED) {
+    sendDataToApi(moisture_levels,
+                  temperature,
+                  humidity,
+                  light_level,
+                  digitalRead(VALVE_SWITCH);
+  }
+
+  //check water level
+  if (readValueFromMux(WATER_SENSOR) < 100) {
+    
+    digitalWrite(VALVE_SWITCH, HIGH);
+    do {
+      //nothing
+    } while(readValueFromMux(WATER_SENSOR) < 1000);
+    digitalWrite(VALVE_SWITCH, LOW);
+    
+  } else { digitalWrite(VALVE_SWITCH, LOW); }
+  
+  //check light level
+  if (readValueFromMux(LIGHT_SENSOR) < 1000) {
+    digitalWrite(LIGHT_SWITCH, HIGH);
+  } else { digitalWrite(LIGHT_SWITCH, LOW); }
+
+
+  display.update();
+  delay(300);//5 minutes
 }
