@@ -10,6 +10,9 @@
 #include <GxIO/GxIO.h>
 #include <Fonts/Roboto_Medium8pt7b.h>
 #include <Fonts/Roboto_Bold8pt7b.h>
+#include <Fonts/FreeMonoBold12pt7b.h>
+
+#include "dsbit.h"
 #include "board_def.h"
 
 #define API_URL "http://esp32_garden.herokuapp.com"
@@ -36,20 +39,41 @@ GxEPD_Class display(io, ELINK_RESET, ELINK_BUSY);
 HTTPClient http;
 DHT dht(DHT22_INPUT, DHT22);
 
-typedef enum {
-  RIGHT_ALIGNMENT = 0,
-  LEFT_ALIGNMENT,
-} Text_alignment;
+void drawBoot() {
+  display.fillScreen(GxEPD_BLACK);
+  display.setFont(&FreeMonoBold12pt7b);
+  display.setCursor(70, 45);
+  display.setTextSize(1);
+  display.setTextColor(GxEPD_WHITE);
+  display.println("daughter.");
+  display.setCursor(80, 65);
+  display.println("systems");
+  display.drawBitmap(dsbit, 10, 3, 61, 115, GxEPD_WHITE);
+  display.update();
+  delay(10000);
+  display.eraseDisplay();
+}
 
 void setup() {
   Serial.begin(9600);
   while (!Serial) {}
-  delay(100);
 
   initialiseDisplay();
-  attemptWiFiConnect(3000);
-  drawFooter();
-  drawHeader();  
+  drawBoot();
+
+  
+  
+  drawSkeleton();
+  updateWiFiEpaperValue();
+  updateUptimeEpaperValue();
+  drawPlants();
+  display.update();
+
+  delay(1000);
+  attemptWiFiConnect(5000);
+
+  display.update();
+  showRequiresWatering();
   display.update();
 }
 
@@ -58,12 +82,8 @@ void initialiseDisplay() {
   display.setTextColor(GxEPD_BLACK);
   display.setTextSize(0);
   display.setRotation(1);
-}
-
-void drawHeader() {
-  drawText("IP  ", parseWiFiStatus(), 0, 11, LEFT_ALIGNMENT);
-  drawText("WTR  ", "12%", 0, 11, RIGHT_ALIGNMENT);
-  drawLine(0,16,250,16);
+  delay(1000);
+  Serial.println("Display initialised");
 }
 
 void attemptWiFiConnect(int timeout) {
@@ -71,72 +91,59 @@ void attemptWiFiConnect(int timeout) {
   WiFi.setAutoReconnect(false);
   WiFi.setAutoConnect(false);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  updateWiFiEpaperValue();
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(100);
     Serial.print(".");
+    updateWiFiEpaperValue();
     
     if (millis() - start > timeout) {
       WiFi.disconnect();
       Serial.println("WiFi connect timed out");
+      updateWiFiEpaperValue();
       return;
     }
   }
 
+  updateWiFiEpaperValue();
   Serial.println("Connected: " + WiFi.localIP());
 }
 
 String parseWiFiStatus() {
   switch(WiFi.status()) {
-    case WL_IDLE_STATUS: return "idle";
+    case WL_IDLE_STATUS: return "connecting...";
     case WL_CONNECTED: return WiFi.localIP().toString();
     case WL_CONNECT_FAILED: return "conn failed";
     case WL_CONNECTION_LOST: return "conn lost";
     case WL_DISCONNECTED: return "disconnected";
-    default: return "connecting...";
-  }
-}
-
-void drawFooter() {
-  drawText("ID  ", SHORT_UUID, 0, 120, LEFT_ALIGNMENT);
-  drawText("UP  ", uptime_formatter::getUptime(), 0, 120, RIGHT_ALIGNMENT);
-  drawLine(0,103,250,103);
-}
-
-void drawLine(int x0, int y0, int x1, int y1) {
-  int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
-  int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1; 
-  int err = (dx>dy ? dx : -dy)/2, e2;
- 
-  for(;;){
-    display.drawPixel(x0, y0, GxEPD_BLACK);
-    if (x0==x1 && y0==y1) break;
-    e2 = err;
-    if (e2 >-dx) { err -= dy; x0 += sx; }
-    if (e2 < dy) { err += dx; y0 += sy; }
+    case WL_NO_SSID_AVAIL: return "no ssid found";
+    default: return "uninitialised";
   }
 }
 
 float readValueFromMux(int pos) {
+  float value;
   for(int i=0; i<sizeof(MUX_PINS); i++) {
-    digitalWrite(MUX_PINS[i], bitRead(pos, i)); 
+    digitalWrite(MUX_PINS[i], bitRead(pos, i));
   }
+  delay(100);
+  value = digitalRead(ANALOG_INPUT); 
+  return value;
 }
 
-int *getPlantMoistureLevels() {
-  float r[8];
+void getPlantMoistureLevels(float moisture_levels[]) {
   for(int i=0; i<sizeof(PLANT_POSITIONS); i++) {
-    r[i] = readValueFromMux(i);
+    moisture_levels[i] = readValueFromMux(PLANT_POSITIONS[i]);
   }  
+  return;
 }
 
-int *getTempAndHumidity() {
+void getTempAndHumidity(float dht22_result[]) {
   dht.begin();
-  float hum  = dht.readHumidity();
-  float temp = dht.readTemperature();
-  dht.end();
-  float r[] = {temp, hum};
-  return r;
+  dht22_result[0] = dht.readHumidity();
+  dht22_result[1] = dht.readTemperature();
+  return;
 }
 
 void sendDataToApi(float moisture_levels[], float light_level, float temperature, float humidity, bool lightIsOn) {
@@ -156,85 +163,154 @@ void sendDataToApi(float moisture_levels[], float light_level, float temperature
   http.end();
 }
 
-void drawText(const String &label, const String &content, int16_t x, int16_t y, uint8_t alignment) {
-    //whole string position
-    int16_t x1, y1;
-    uint16_t w1, h1;
-    display.getTextBounds(label + content, x, y, &x1, &y1, &w1, &h1);
-
-    //just the label
-    int16_t x2, y2;
-    uint16_t w2, h2;
-    display.setCursor(x, y);
-    display.getTextBounds(label, x, y, &x2, &y2, &w2, &h2);
-    
-    switch (alignment) {
-    case RIGHT_ALIGNMENT:
-        display.setCursor(display.width() - w1 - x1, y);
-        display.setFont(&Roboto_Bold8pt7b);
-        display.println(label);
-        
-        display.setCursor(display.width() - (w1-w2), y);        
-        display.setFont(&Roboto_Medium8pt7b);
-        display.println(content);
-        break;
-        
-    case LEFT_ALIGNMENT:
-        display.setCursor(0, y);
-        display.setFont(&Roboto_Bold8pt7b);
-        display.println(label);
-
-        display.setCursor(w2, y);
-        display.setFont(&Roboto_Medium8pt7b);
-        display.println(content);
-        break;
-    default:
-        break;
-    }
+void loop() {
+  updateUptimeEpaperValue();
+  delay(5000);
 }
 
-void loop() {
-  if (WiFi.status() != WL_CONNECTED) {
-    attemptWiFiConnect(3000);
-  }
+//void loop() {
+//  if (WiFi.status() != WL_CONNECTED) {
+//    attemptWiFiConnect(3000);
+//  }
+//
+//  //collect all plant data
+//  float moisture_levels[8];
+//  getPlantMoistureLevels(moisture_levels);
+//
+//  //collect temp and humidity from DHT22
+//  float dht22_result[2];
+//  getTempAndHumidity(dht22_result);
+//  float temperature = dht22_result[0];  
+//  float humidity = dht22_result[1];
+//
+//  //collect light level
+//  float light_level = readValueFromMux(LIGHT_SENSOR);
+//
+//  //if connected, send data
+//  if (WiFi.status() == WL_CONNECTED) {
+//    sendDataToApi(moisture_levels,
+//                  temperature,
+//                  humidity,
+//                  light_level,
+//                  digitalRead(VALVE_SWITCH));
+//  }
+//
+//  //check water level
+//  if (readValueFromMux(WATER_SENSOR) < 100) {
+//    
+//    digitalWrite(VALVE_SWITCH, HIGH);
+//    do {
+//      //nothing
+//    } while(readValueFromMux(WATER_SENSOR) < 1000);
+//    digitalWrite(VALVE_SWITCH, LOW);
+//    
+//  } else { digitalWrite(VALVE_SWITCH, LOW); }
+//  
+//  //check light level
+//  if (readValueFromMux(LIGHT_SENSOR) < 1000) {
+//    digitalWrite(LIGHT_SWITCH, HIGH);
+//  } else { digitalWrite(LIGHT_SWITCH, LOW); }
+//
+//
+//  display.update();
+//  delay(300);//5 minutes
+//}
 
-  //collect all plant data
-  float moisture_levels[] = &getPlantMoistureLevels();
 
-  //collect temp and humidity from DHT22
-  float DHT22_Result[] = &getTempAndHumidity();
-  float temperature = DHT22_Result[0];
-  float humidity = DHT22_Result[1];
+// EPAPER ================================================================
 
-  //collect light level
-  float light_level = readValueFromMux(LIGHT_SENSOR);
+void drawSkeleton() {
+  display.setFont(&Roboto_Bold8pt7b);
+  display.setCursor(0, 11);
+  display.println("IP");
 
-  //if connected, send data
-  if (WiFi.status() == WL_CONNECTED) {
-    sendDataToApi(moisture_levels,
-                  temperature,
-                  humidity,
-                  light_level,
-                  digitalRead(VALVE_SWITCH);
-  }
+  display.setCursor(180, 11);
+  display.println("WTR");
 
-  //check water level
-  if (readValueFromMux(WATER_SENSOR) < 100) {
-    
-    digitalWrite(VALVE_SWITCH, HIGH);
-    do {
-      //nothing
-    } while(readValueFromMux(WATER_SENSOR) < 1000);
-    digitalWrite(VALVE_SWITCH, LOW);
-    
-  } else { digitalWrite(VALVE_SWITCH, LOW); }
+  display.setCursor(160, 120);
+  display.println("ID");
   
-  //check light level
-  if (readValueFromMux(LIGHT_SENSOR) < 1000) {
-    digitalWrite(LIGHT_SWITCH, HIGH);
-  } else { digitalWrite(LIGHT_SWITCH, LOW); }
+  display.setCursor(0, 120);
+  display.println("UP");
 
+  drawLine(0,103,250,103);
+  drawLine(0,16,250,16);
 
-  display.update();
-  delay(300);//5 minutes
+  display.setFont(&Roboto_Medium8pt7b);
+  display.setCursor(180, 120);
+  display.println(SHORT_UUID);
+  
+}
+
+void updateWiFiEpaperValue() {
+  display.setFont(&Roboto_Medium8pt7b);
+  display.setCursor(20, 11);
+  String currentStatus = parseWiFiStatus();
+  partialClearRegion(20,0,100,16);
+  display.println(currentStatus);
+  display.updateWindow(20,0,100,16);
+}
+
+void updateWaterEpaperValue() {
+
+}
+
+void showRequiresWatering() {
+  display.setFont(&FreeMonoBold12pt7b);
+  display.fillRect(0, 20, 250, 80, GxEPD_BLACK);
+  display.setCursor(10, 45);
+  display.setTextSize(1);
+  display.setTextColor(GxEPD_WHITE);
+  display.println("Needs watering!");
+  display.setTextColor(GxEPD_BLACK);
+  display.setTextSize(0);
+}
+
+void updateUptimeEpaperValue() {
+  display.setFont(&Roboto_Medium8pt7b);
+  display.setCursor(25, 120);
+  String currentStatus = uptime_formatter::getUptime();
+  partialClearRegion(25,105,130,122);
+  display.println(currentStatus);
+  display.updateWindow(25,105,20,122);
+}
+
+void partialClearRegion(int x, int y, int w, int h) {
+  display.fillRect(x,y,w,h,GxEPD_WHITE);
+}
+
+void drawPlant(int x, int y) {
+  int w = 15;
+  int h = 38;
+  
+  drawLine(x, y, x+w, y);
+  drawLine(x, y, x, y+h);
+  drawLine(x+w, y, x+w, y+h);
+  drawLine(x, y+h, x+w, y+h);
+
+  display.fillRect(x+2, y+2, w-3, h-3, GxEPD_BLACK);
+}
+
+void drawPlants(){ //float moisture_level[]) {
+  int x = 0;
+  int y = 20;
+  for (int i=0; i<8; i++) {
+    drawPlant(x, y);
+    x = x + 18;
+    if (i==3) { y = 61; x = 0; }
+  }
+}
+
+void drawLine(int x0, int y0, int x1, int y1) {
+  int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
+  int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1; 
+  int err = (dx>dy ? dx : -dy)/2, e2;
+ 
+  for(;;){
+    display.drawPixel(x0, y0, GxEPD_BLACK);
+    if (x0==x1 && y0==y1) break;
+    e2 = err;
+    if (e2 >-dx) { err -= dy; x0 += sx; }
+    if (e2 < dy) { err += dx; y0 += sy; }
+  }
 }
