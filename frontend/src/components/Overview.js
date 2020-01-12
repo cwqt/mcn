@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from "prop-types";
+import styled from 'styled-components';
 //connects component to redux provider store
 import { connect } from "react-redux";
 import { fetchPlants } from "../actions/PlantActions.js";
+
+import Garden from "./Garden";
 import Plant from "./Plant";
-import styled from 'styled-components';
 
 const Loader = styled.p`
 	color: white;
@@ -25,6 +27,10 @@ class Plants extends React.Component {
   render() {
     return (
     	<div>
+		  	<h1>Overview</h1>
+		  	<hr />
+    		<Garden />
+    		<Garden />
     		{this.props.plants.length === 0 &&
     			<Loader>Probably spinning up Heroku API...</Loader>
     		}

@@ -23,4 +23,3 @@ def create_app(config_name):
   api.add_resource(Garden, "/gardens/<string:uuid>")
   api.add_resource(Plant, "/gardens/<string:garden_uuid>/<string:uuid>")
   return app
-

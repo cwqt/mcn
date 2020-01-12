@@ -61,69 +61,7 @@ class Plant extends React.Component {
     this.props.setModalVisibility(true);
 	}
 
-  render() {
-    //1 update every 30 minutes, get last 3 days of updates = 144 data points
-    //epoch = {moisture_level, temperature}
-
-    const converted_time_data = _.takeRight(Object.keys(this.props.updates), 288)
-    for (var i=0; i < converted_time_data.length; i++) {
-      //convert unix epoch to Date object
-      converted_time_data[i] = new Date(converted_time_data[i]*1000)
-    } 
-
-    const updates = Object.values(this.props.updates)
-    //return list with [n]th value in each sublist, updates[0][1], updates[1][1] etc.
-    const moisture_levels    = _.takeRight(_.map(updates, e => e[0]), 288);
-    const temperature_levels = _.takeRight(_.map(updates, e => e[1]), 288);
-
-  	const chart_data = {
-  		labels: converted_time_data,
-  		datasets: [{
-  			label: "Moisture Level",
-        borderColor: "#3cba9f",
-        backgroundColor: "#3cba9f2f",
-        pointBackgroundColor: "#fff",
-        pointStyle: "line",
-        // pointRadius: 2,
-        // pointHitRadius: 1,
-        // pointBorderWidth: 3,
-  			data: moisture_levels,
-        tension: "1",
-        yAxisID: "A"
-  		},
-      {
-        label: "Temperature (°C)",
-        borderColor: "#FFA500",
-        backgroundColor: "#FFA5002f",
-        pointBackgroundColor: "#fff",
-        pointStyle: "line",
-        tension: "1",
-        // pointRadius: 2,
-        // pointHitRadius: 1,
-        // pointBorderWidth: 3,
-        data: temperature_levels,
-        yAxisID: "B"
-      }],
-  	}
-    const chart_options = {
-      scales: {
-            xAxes: [{
-              type: 'time',
-            }],
-            yAxes: [{
-              id: "A",
-              ticks: {
-                    min: 400,
-                    max: 1000
-                }
-            },
-            {
-              id: "B",
-              position: "right"
-            }]
-        }
-    }
-  	
+  render() { 
     return (
     	<PlantContainer>
         <PlantImage img={this.props.image_url}/>
@@ -134,12 +72,7 @@ class Plant extends React.Component {
               <Button onClick={this.onClick}>Delete</Button>
             }
           </Info>
-  	  		<Line
-            data={chart_data}
-            options={chart_options}
-            height={120}
-            width={400}
-          />
+
         </div>
     	</PlantContainer>
     );
