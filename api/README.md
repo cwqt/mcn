@@ -37,10 +37,17 @@ e.g. `curl --header "x-access-token: 'jwt...'"  -X POST "http://localhost:5000/g
 * __GET__: List garden info & plant object id's (200)
 * __POST__: Add a plant (201)
 	- Returns `{"data":{"_id":"feeff148-116b-11ea-8d3e-acde48001122"}}`
+* __PUT__: Add measurements
 * __DELETE__: Delete garden (200)
 
-`/gardens/<garden_uuid>/<plant_object_id>`
+`/plants/`
 
-* __GET__: List plant info (200)
-* __PUT__: Add a moisture level `{"moisture_level":"314"}` (201)
-* __DELETE__: Delete plant (200)
+* __GET__: List all plant id's (200)
+* __POST__: Add a new, individual plant (201)
+
+`/plants/<uuid>`
+
+* __GET__: List plant info
+* __PUT__: Add measurement
+* __DELETE__: Delete plant
+* __PATCH__: Add/remove plant to/from garden

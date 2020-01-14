@@ -1,33 +1,29 @@
 import json
 
-from bson.json_util   import dumps
-from flask_restful    import Resource
+from flask_restful      import Resource
+from bson.json_util     import dumps
+from bson.objectid      import ObjectId
 
-from models.plant     import Plant
+from common.db          import db
+from common.auth        import token_required
+from models.recordable  import Recordable as GardenObj
 
-from common.db        import db
-from common.auth      import token_required
-
-from models.garden    import Garden as Garden_Obj
-from models.data      import Data
-
-from bson.objectid  import ObjectId
 
 class Garden(Resource):
   def get(self, uuid):
-    garden = db.find_one("gardens", {"_id": ObjectId(uuid)})    
-    if not garden:
-      return {"message": "No such garden"}, 404      
-    return {"data":garden}, 200
+    data, reason = db.find_one("gardens", {"_id": ObjectId(uuid)})    
+    if not data:
+      return {"message": reason}, 404      
+    return {"data": data}, 200
 
   @token_required
   def put(self, uuid):
-    return "hello"
+    garden = GardenObj(_id=uuid, type="garden")
+    garden.addMeasurements(moisture=300, x="hello")
 
   @token_required
   def delete(self, uuid):
     # use the model to delete object
-    garden = Garden_Obj()
-    setattr(garden, "_id", uuid)
+    garden = GardenObj(_id=uuid, type="garden")
     data, status = garden.delete()
     return data, status

@@ -1,20 +1,19 @@
-from flask_pymongo  import PyMongo
-from bson.json_util import dumps
-from bson.objectid  import ObjectId
 import json
 import time
 
-# from models.plant   import Plant
-# from models.garden  import Garden
+from flask_pymongo  import PyMongo
+from bson.json_util import dumps
+from bson.objectid  import ObjectId
 
 mongo = PyMongo()
+
 
 class db(object):
   def create_collection(uuid):
     mongo.db.create_collection(uuid)
     if not mongo.db[uuid]:
-      return False
-    return True
+      return False, "Error occured whilst creating collection"
+    return True, "Collection created"
 
   def get_all_collections():
     return mongo.db.list_collection_names()
@@ -26,18 +25,18 @@ class db(object):
     data = json.loads(data)
     data["_id"] = ObjectId(data["_id"])
     res = mongo.db[collection].insert_one(data)
-    return res.acknowledged
+    return res.acknowledged, "Inserted data"
 
   def find_one(collection, query):
     result = mongo.db[collection].find_one(query)
     result = json.loads(dumps(result))
 
     if not result:
-      return False
+      return False, "No such document matches query"
 
     if type(result["_id"]) == dict:
       result["_id"] = result["_id"]["$oid"]
-    return json.loads(dumps(result))
+    return json.loads(dumps(result)), "Found document"
 
   def get_all_docs(collection):
     result = []
@@ -48,17 +47,19 @@ class db(object):
 
   def delete_collection(collection):
     if not collection in mongo.db.list_collection_names():
-      return False
+      return False, "Collection does not exist"
 
     res = mongo.db.drop_collection(collection)
     if res["ok"] == 0.0:
-      return False
-    return True
+      return False, "Error occured while dropping collection"
+    return True, "Deleted collection"
 
   def delete_one(collection, uuid):
     collection = mongo.db[collection]
-    res = collection.delete_one({"_id":uuid})
-    return res.acknowledged
+    res = collection.delete_one({"_id": ObjectId(uuid)})
+    if not res.deleted_count > 0:
+      return False, "Document not deleted"
+    return True, "Doucment deleted"
 
     # resp = collection.update(
     #   {"_id": "root"},

@@ -3,7 +3,7 @@ from flask_restful      import Resource
 from common.auth        import token_required
 from common.db          import db
 
-from models.garden 			import Garden
+from models.recordable 	import Recordable as Garden
 
 class Gardens(Resource):
   def get(self):
@@ -11,6 +11,6 @@ class Gardens(Resource):
 
   @token_required
   def post(self):
-    garden = Garden(name="mynameispoopoo", image="https://suckmyfatass.com")
+    garden = Garden(type="garden")
     data, status = garden.insert()
     return data, status

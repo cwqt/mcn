@@ -8,6 +8,7 @@ from functools      import wraps
 
 from flask          import current_app as app
 
+
 def token_required(f):
   @wraps(f)
   def decorator(*args, **kwargs):

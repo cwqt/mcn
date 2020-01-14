@@ -9,7 +9,7 @@ Served on [Heroku](https://www.heroku.com/).
 
 ## frontend
 
-React, Redux with Pi NoIR camera stream.
+React, Redux with Pi NoIR camera stream.  
 Served on [Now](https://zeit.co/home).
 
 ## hardware
