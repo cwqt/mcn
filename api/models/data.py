@@ -8,10 +8,12 @@ class Data(object):
 	def __init__(self):
 		self._id = ObjectId()
 		self.timestamp = int(time.time())
-		self.measurements = []
+		self.measurements = {}
 
 	def addMeasurement(self, key, value):
-		self.measurements.append({key: value})
+		self.measurements[key] = value
 
-	def json():
-		return json.dumps(self.__dict__)
+	def json(self):
+		this = json.loads(dumps(self.__dict__))
+		this["_id"] = this["_id"]["$oid"]
+		return json.dumps(this)

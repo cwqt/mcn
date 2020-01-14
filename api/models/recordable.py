@@ -57,7 +57,7 @@ class Recordable(object):
       return {"message": reason}, 400
 
     # insert self into (type)s list
-    success, reason = db.insert(f"{self.type}s", self.json())
+    success, reason = db.insert_one(f"{self.type}s", self.json())
     if not success:
       return {"message": reason}, 400
 
@@ -68,12 +68,11 @@ class Recordable(object):
 
   def addMeasurements(self, *args, **kwargs):
     measurements = Data()
-    print(kwargs)
-    for measurement in kwargs.items():
-      print(measurement[0], measurement[1])
-      if not measurement in ACCEPTED_MEASUREMENTS:
-        continue
-      print(measurement)
+    for measurement, value in kwargs.items():
+      if measurement in ACCEPTED_MEASUREMENTS:
+        measurements.addMeasurement(measurement, value)
+
+    return db.insert_one(self._id, measurements.json())
 
   def json(self):
     return json.dumps(self.__dict__)

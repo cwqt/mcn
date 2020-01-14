@@ -21,7 +21,7 @@ class db(object):
   def get_collection(collection):
     return mongo.db[collection]
 
-  def insert(collection, data):
+  def insert_one(collection, data):
     data = json.loads(data)
     data["_id"] = ObjectId(data["_id"])
     res = mongo.db[collection].insert_one(data)
