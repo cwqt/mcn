@@ -31,11 +31,13 @@ class db(object):
   def find_one(collection, query):
     result = mongo.db[collection].find_one(query)
     result = json.loads(dumps(result))
+
+    if not result:
+      return False
+
     if type(result["_id"]) == dict:
       result["_id"] = result["_id"]["$oid"]
-    if result["created_at"]:
-      result["created_at"] = result["created_at"]["$date"]
-    return result
+    return json.loads(dumps(result))
 
   def get_all_docs(collection):
     result = []

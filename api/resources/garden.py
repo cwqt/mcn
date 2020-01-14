@@ -9,16 +9,20 @@ from common.db        import db
 from common.auth      import token_required
 
 from models.garden    import Garden as Garden_Obj
+from models.data      import Data
+
+from bson.objectid  import ObjectId
 
 class Garden(Resource):
   def get(self, uuid):
-    garden = db.find_one(uuid, {"_id": "root"})
-    for i in range(len(garden["plants"])):
-      garden["plants"][i] = garden["plants"][i]["$oid"]
-
+    garden = db.find_one("gardens", {"_id": ObjectId(uuid)})    
     if not garden:
-      return {"message": "No such garden"}, 404
-    return {"data": garden}, 200
+      return {"message": "No such garden"}, 404      
+    return {"data":garden}, 200
+
+  @token_required
+  def put(self, uuid):
+    return "hello"
 
   @token_required
   def delete(self, uuid):
