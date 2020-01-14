@@ -1,30 +1,34 @@
-import uuid
-import datetime
+from models.recordable import Recordable
 
 from common.db import db
- 
-class Garden(object):
-  def __init__(self, name=None, description=None):
-    self.name = name or "Place-holder garden"
-    self.description = description or "Place-holder description"
-    self.created_at = datetime.datetime.utcnow()
-    self.plants = []
 
-  def insert(self):
-    identifier = str(uuid.uuid1())
-    gardens = db.get_all_collections()
-    if not identifier in gardens:
-      db.create_collection(identifier)
-      db.insert(identifier, self.json())
-      return identifier, {"message": "Garden created", "code": 200}
+class Garden(Recordable):
+	def __init__(self, *args, **kwargs):
+		super().__init__(self, *args, **kwargs)
+		self.plants = []
 
-    return None, {"message": "Garden already exists", "code": 401}
+	def delete(self):
+		# remove root collection
+		success = super(Garden, self).delete()
+		if not success:
+			return {"messsage": "Not deleted (recordable)"}, 400
 
-  def json(self):
-    return {
-      '_id': "root",
-      'name': self.name,
-      'description': self.description,
-      'created_at': self.created_at,
-      'plants': self.plants
-    }
+		# remove self from gardens list
+		success = db.delete_one("gardens", self._id)
+		if not success:
+			return {"messsage": "Not deleted (garden)"}, 400
+
+		return {"message": "Garden deleted!", "data":True}, 200
+
+	def insert(self):
+		#create a root object in db
+		success = super(Garden, self).insert()
+		if not success:
+			return {"message": "Not added (recordable)"}, 400
+
+		# add self to the list of gardens
+		success = db.insert("gardens", self.json())
+		if not success:
+			return {"message": "Not added (garden)"}, 400
+
+		return {"message": f"{self._id} added", "data": self._id}, 201

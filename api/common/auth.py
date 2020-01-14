@@ -14,7 +14,7 @@ def token_required(f):
     token = request.headers["x-access-token"]
     if not token:
       return {"message": "No token provided"}, 401
-
+      
     try:
       data = jwt.decode(token, app.config["AUTH_SECRET_KEY"], algorithms=['HS512'])
     except:
@@ -32,7 +32,7 @@ class Auth(Resource):
 
     if password == app.config["AUTH_SECRET_KEY"]:
       token = jwt.encode({
-        "exp" : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+        "exp" : datetime.datetime.utcnow() + datetime.timedelta(minutes=120)
       }, app.config["AUTH_SECRET_KEY"], algorithm="HS512")
       return {"data": token.decode('UTF-8')}, 200
 

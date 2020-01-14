@@ -1,6 +1,12 @@
 # api
 
-`pipenv run flask run`
+`pipenv run python3 app.py`
+
+`.env`
+
+* `APP_SETTINGS`: ["development", "testing", "staging, "production"] 
+* `MONGO_URI`: `mongo+srv://<user>:<pass>.../db`
+* `AUTH_SECRET_KEY`: "mysupersecretloginkey"
 
 ---
 
@@ -8,10 +14,17 @@ Responses returned in JSON, enveloped in `data` and `message` fields.
 __POST__, __PUT__ & __DELETE__ routes require an auth-token.  
 e.g. `curl --header "x-access-token: 'jwt...'"  -X POST "http://localhost:5000/gardens/`
 
+## Routes
+
 `/auth/`
 
 * __GET__: Generate a JSON Web Token, header `Auth-Token` with plain-text password (200)
 	- Returns `{"data": "eyJ0eXAiOiJKV1QiLCJhbGc..."}`
+
+`/auth/token`
+
+* __GET__: Verify token works
+	- Returns `{"data":true}`
 
 `/gardens/`
 
