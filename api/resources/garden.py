@@ -19,7 +19,10 @@ class Garden(Resource):
   @token_required
   def put(self, uuid):
     garden = GardenObj(_id=uuid, type="garden")
-    garden.addMeasurements(moisture=300, x="hello")
+    success, amount_added = garden.addMeasurements(moisture=300, x="hello")
+    if not success:
+      return {"message":"Measurements not added"}, 400
+    return {"message": f"{amount_added} measurement(s) added", "data": True}, 200
 
   @token_required
   def delete(self, uuid):

@@ -22,10 +22,11 @@ class db(object):
     return mongo.db[collection]
 
   def insert_one(collection, data):
-    data = json.loads(data)
-    data["_id"] = ObjectId(data["_id"])
-    res = mongo.db[collection].insert_one(data)
-    return res.acknowledged, "Inserted data"
+    bson = db.json_to_bson(data)
+    res = mongo.db[collection].insert_one(bson)
+    if not res.acknowledged:
+      return False, "Did not insert data"
+    return True, "Inserted data"
 
   def find_one(collection, query):
     result = mongo.db[collection].find_one(query)
@@ -50,7 +51,7 @@ class db(object):
       return False, "Collection does not exist"
 
     res = mongo.db.drop_collection(collection)
-    if res["ok"] == 0.0:
+    if not res["ok"] == 1.0:
       return False, "Error occured while dropping collection"
     return True, "Deleted collection"
 
@@ -59,14 +60,41 @@ class db(object):
     res = collection.delete_one({"_id": ObjectId(uuid)})
     if not res.deleted_count > 0:
       return False, "Document not deleted"
-    return True, "Doucment deleted"
+    return True, "Document deleted"
 
-    # resp = collection.update(
-    #   {"_id": "root"},
-    #   {"$pull": {"plants": ObjectId(uuid)}}
-    # )
-    # if resp["nModified"] == 1:
-    #   resp = collection.remove({"_id": ObjectId(uuid)})
-    #   print(resp)
-    #   return True if resp["n"] == 1 else False 
-    # return False
+  def json_to_bson(json_f):
+    json_f = json.loads(json_f)
+    json_f["_id"] = ObjectId(json_f["_id"])
+    return json_f
+ 
+  def bson_to_json(bson_f):
+    this = json.loads(dumps(bson_f))
+    this["_id"] = this["_id"]["$oid"]
+    return json.dumps(this)
+
+  def get_oid_as_str(oid):
+    return json.loads(dumps(oid))["$oid"]
+
+  def add_plant_to_garden(plant_uuid, garden_uuid):
+    resp = mongo.db["gardens"].update(
+      {"_id": ObjectId(garden_uuid)},
+      {"$push": {"plants": ObjectId(plant_uuid)}}
+    )
+    print(resp)
+    if not resp["nModified"] > 0:
+      return False, "Plant not added to garden"
+    return True, "Plant added to garden"
+
+  def get_all_gardens_plants(garden_uuid):
+    garden, _ = db.find_one("gardens", ObjectId(garden_uuid))
+    plants = []
+    for k in range(len(garden["plants"])):
+      plants.append(garden["plants"][k]["$oid"])
+    return plants
+
+
+
+
+
+
+

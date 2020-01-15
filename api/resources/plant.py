@@ -1,29 +1,29 @@
-from flask_restful    import Resource, reqparse
+import json
 
-from common.db        import db
-from common.auth      import token_required
+from flask_restful      import Resource
+from bson.json_util     import dumps
+from bson.objectid      import ObjectId
+
+from common.db          import db
+from common.auth        import token_required
+from models.recordable  import Recordable as PlantObj
+
 
 class Plant(Resource):
-  def get(self):
-    pass
+  def get(self, uuid):
+    data, reason = db.find_one("plants", {"_id": ObjectId(uuid)})    
+    if not data:
+      return {"message": reason}, 404      
+    return {"data": data}, 200
 
-  # def get(self, garden_uuid, uuid): 
-  #   plant = db.get_plant(garden_uuid, uuid)
-  #   return {"data": plant }, 200
-    
-  # @token_required
-  # def put(self, garden_uuid, uuid):
-  #   parser = reqparse.RequestParser()
-  #   parser.add_argument('moisture_level', type=int, required=True)
-  #   args = parser.parse_args()
-  #   success = db.add_moisture_level(garden_uuid, uuid, args["moisture_level"])
-  #   if success:
-  #     return {"message": "Moisture level added"}, 200
-  #   return {"message": "Not added"}, 400
+  @token_required
+  def put(self, uuid):
+    plant = PlantObj(_id=uuid)
+    plant.addMeasurements(moisture=300, x="hello")
 
-  # @token_required
-  # def delete(self, garden_uuid, uuid):
-  #   success = db.delete_plant(garden_uuid, uuid)
-  #   if success:
-  #     return {"message": "Plant removed"}, 200
-  #   return {"message": "Plant not removed"}, 400
+  @token_required
+  def delete(self, uuid):
+    # use the model to delete object
+    plant = PlantObj(_id=uuid)
+    data, status = plant.delete()
+    return data, status

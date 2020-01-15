@@ -22,11 +22,13 @@ def create_app(config_name):
 
   api = Api(app)
   api.add_resource(Index, "/")
-  api.add_resource(Auth, "/auth/")
-  api.add_resource(Token, "/auth/token/")
-  api.add_resource(Gardens, "/gardens/")
+  api.add_resource(Auth, "/auth")
+  api.add_resource(Token, "/auth/token")
+  
+  api.add_resource(Gardens, "/gardens")
   api.add_resource(Garden, "/gardens/<string:uuid>")
-  api.add_resource(Plants, "/plants/")
+
+  api.add_resource(Plants, "/plants")
   api.add_resource(Plant, "/plants/<string:uuid>")
 
   return app

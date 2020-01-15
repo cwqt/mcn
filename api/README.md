@@ -4,7 +4,7 @@
 
 `.env`
 
-* `APP_SETTINGS`: ["development", "testing", "staging, "production"] 
+* `APP_SETTINGS`: [`"development"`, `"testing"`, `"staging"`, `"production"`] 
 * `MONGO_URI`: `mongo+srv://<user>:<pass>.../db`
 * `AUTH_SECRET_KEY`: "mysupersecretloginkey"
 
@@ -15,6 +15,10 @@ __POST__, __PUT__ & __DELETE__ routes require an auth-token.
 e.g. `curl --header "x-access-token: 'jwt...'"  -X POST "http://localhost:5000/gardens/`
 
 ## Routes
+
+`/`
+
+* __GET__: Returns README.md as HTML
 
 `/auth/`
 
@@ -28,22 +32,22 @@ e.g. `curl --header "x-access-token: 'jwt...'"  -X POST "http://localhost:5000/g
 
 `/gardens/`
 
-* __GET__: List all garden id's (200)
-* __POST__: Create a new garden `{"name": "my_cool_plant"}` (201)
-	- Returns `{"data":{"_id":"feeff148-116b-11ea-8d3e-acde48001122"}}`
+* __GET__: List all gardens (200)
+* __POST__: Create a new garden (201)
+	- Body `{"name":"Very big garden", "image":"https://myimage.com"}`
+	- Returns `{"data":"feeff148-116b-11ea-8d3e-acde48001122"}`
 
 `/gardens/<uuid>`
 
 * __GET__: List garden info & plant object id's (200)
-* __POST__: Add a plant (201)
-	- Returns `{"data":{"_id":"feeff148-116b-11ea-8d3e-acde48001122"}}`
 * __PUT__: Add measurements
 * __DELETE__: Delete garden (200)
 
 `/plants/`
 
 * __GET__: List all plant id's (200)
-* __POST__: Add a new, individual plant (201)
+* __POST__: Add a new, individual plant (or to garden) (201)
+	- `/plants?garden=<uuid>`
 
 `/plants/<uuid>`
 
