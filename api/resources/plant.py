@@ -18,8 +18,16 @@ class Plant(Resource):
 
   @token_required
   def put(self, uuid):
+    parser = reqparse.RequestParser()
+    for typedef in ACCEPTED_MEASUREMENTS:
+      parser.add_argument(typedef[0], type=typedef[1])
+    args = parser.parse_args()
+
     plant = PlantObj(_id=uuid)
-    plant.addMeasurements(moisture=300, x="hello")
+    success, amount_added = plant.addMeasurements(args)
+    if not success:
+      return {"message":"Measurements not added"}, 400
+    return {"message": f"{amount_added} measurement(s) added", "data": True}, 200
 
   @token_required
   def delete(self, uuid):

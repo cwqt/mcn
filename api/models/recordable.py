@@ -4,8 +4,10 @@ import json
 from bson.objectid  import ObjectId
 from bson.json_util import dumps
 
-from common.db          import db
-from models.data        import Data
+from common.measurements  import ACCEPTED_MEASUREMENTS
+from common.db            import db
+from models.data          import Data
+
 
 def generateUniqueId(_id=ObjectId()):
   _id = json.loads(dumps(_id))["$oid"]
@@ -14,14 +16,6 @@ def generateUniqueId(_id=ObjectId()):
     generateUniqueId()
   else:
     return _id
-
-ACCEPTED_MEASUREMENTS = [
-  "temperature",
-  "moisture",
-  "humidity",
-  "light",
-  "water_level"
-]
 
 # gardens and plants are essentially the same
 # except gardens contain an array with ObjectIds
@@ -79,10 +73,13 @@ class Recordable(object):
   def addMeasurements(self, *args, **kwargs):
     measurements = Data()
     count = 0
-    for measurement, value in kwargs.items():
-      if measurement in ACCEPTED_MEASUREMENTS:
-        measurements.addMeasurement(measurement, value)
-        count = count + 1
+    args = args[0]
+    for measurement in args.keys():
+      measurements.addMeasurement(measurement, args[measurement])
+      count = count + 1
+
+    if count == 0:
+      return False, count
 
     return db.insert_one(db.get_oid_as_str(self._id), measurements.json()), count
 

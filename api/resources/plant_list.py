@@ -13,10 +13,16 @@ class Plants(Resource):
   def post(self):
     parser = reqparse.RequestParser()
     parser.add_argument('garden')
+    parser.add_argument("name")
+    parser.add_argument("image")
     args = parser.parse_args()
 
-    plant = Plant()
+    plant = Plant(name=args["name"], image=args["image"])
     plant_id = db.get_oid_as_str(plant._id)
+
+    if args["image"]:
+      if not validators.url(args["image"]):
+        return {"message":"Invalid image URL format"}, 400
     
     # add plant to garden plants array
     if args["garden"]:

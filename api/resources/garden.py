@@ -1,12 +1,14 @@
 import json
 
-from flask_restful      import Resource
+from flask_restful      import Resource, reqparse
 from bson.json_util     import dumps
 from bson.objectid      import ObjectId
 
-from common.db          import db
-from common.auth        import token_required
-from models.recordable  import Recordable as GardenObj
+from common.db            import db
+from common.auth          import token_required
+from common.measurements  import ACCEPTED_MEASUREMENTS
+from models.recordable    import Recordable as GardenObj
+
 
 
 class Garden(Resource):
@@ -18,8 +20,13 @@ class Garden(Resource):
 
   @token_required
   def put(self, uuid):
+    parser = reqparse.RequestParser()
+    for typedef in ACCEPTED_MEASUREMENTS:
+      parser.add_argument(typedef[0], type=typedef[1])
+    args = parser.parse_args()
+
     garden = GardenObj(_id=uuid, type="garden")
-    success, amount_added = garden.addMeasurements(moisture=300, x="hello")
+    success, amount_added = garden.addMeasurements(args)
     if not success:
       return {"message":"Measurements not added"}, 400
     return {"message": f"{amount_added} measurement(s) added", "data": True}, 200

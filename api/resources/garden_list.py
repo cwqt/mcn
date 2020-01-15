@@ -1,8 +1,8 @@
-from flask_restful      import Resource
+from flask_restful      import Resource, reqparse
+import validators
 
 from common.auth        import token_required
 from common.db          import db
-
 from models.recordable  import Recordable as Garden
 
 class Gardens(Resource):
@@ -17,6 +17,15 @@ class Gardens(Resource):
 
   @token_required
   def post(self):
-    garden = Garden(type="garden")
+    parser = reqparse.RequestParser()
+    parser.add_argument("name", type=str)
+    parser.add_argument("image", type=str)
+    args = parser.parse_args()
+
+    if args["image"]:
+      if not validators.url(args["image"]):
+        return {"message":"Invalid image URL format"}, 400
+
+    garden = Garden(type="garden", name=args["name"], image=args["image"])
     data, status = garden.insert()
     return data, status
