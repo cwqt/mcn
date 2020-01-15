@@ -1,4 +1,5 @@
 from flask_restful      import Resource, reqparse
+import validators
 
 from common.auth        import token_required
 from common.db          import db

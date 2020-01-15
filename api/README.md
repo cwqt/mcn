@@ -55,3 +55,13 @@ e.g. `curl --header "x-access-token: 'jwt...'"  -X POST "http://localhost:5000/g
 * __PUT__: Add measurement
 * __DELETE__: Delete plant
 * __PATCH__: Add/remove plant to/from garden
+
+`/plants/<uuid>/measurements`
+`/gardens/<uuid>/measurements`
+
+* __GET__: Get measurements
+	- Takes query `?last=<last_n_records>`
+
+
+
+
