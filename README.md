@@ -1,6 +1,6 @@
 # moisture.track
 
-Plant moisture tracker and visualiser.
+Hydroponics management and visualiser.
 
 ## api
 
