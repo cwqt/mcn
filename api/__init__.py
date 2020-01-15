@@ -13,6 +13,7 @@ from resources.garden_list  import Gardens
 from resources.garden       import Garden
 from resources.plant_list   import Plants
 from resources.plant        import Plant
+from resources.measurements import Measurements
 
 
 def create_app(config_name):
@@ -30,5 +31,7 @@ def create_app(config_name):
 
   api.add_resource(Plants, "/plants")
   api.add_resource(Plant, "/plants/<string:uuid>")
+
+  api.add_resource(Measurements, "/<path:obj_type>/<string:uuid>/measurements")
 
   return app

@@ -1,11 +1,12 @@
 import json
 
-from flask_restful      import Resource
+from flask_restful      import Resource, reqparse
 from bson.json_util     import dumps
 from bson.objectid      import ObjectId
 
 from common.db          import db
 from common.auth        import token_required
+from common.measurements import ACCEPTED_MEASUREMENTS
 from models.recordable  import Recordable as PlantObj
 
 

@@ -7,7 +7,6 @@ from bson.objectid  import ObjectId
 
 mongo = PyMongo()
 
-
 class db(object):
   def create_collection(uuid):
     mongo.db.create_collection(uuid)
@@ -27,6 +26,21 @@ class db(object):
     if not res.acknowledged:
       return False, "Did not insert data"
     return True, "Inserted data"
+
+  def get_doc_count(collection):
+    return mongo.db[collection].count()
+
+  def get_measurements(collection, limit=20): # this lib sucks
+    results = mongo.db[collection].find({}).sort([("timestamp",-1)]).limit(limit)
+    results = json.loads(dumps(results))
+
+    if not results:
+      return False, "No such document matches query"
+
+    for result in results: 
+      result["_id"] = result["_id"]["$oid"]
+
+    return results, ""
 
   def find_one(collection, query):
     result = mongo.db[collection].find_one(query)
