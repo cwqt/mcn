@@ -2,12 +2,11 @@ import os
 import jwt
 import datetime
 
-from flask          import request, jsonify
+from flask          import request, redirect
 from flask_restful  import Resource
 from functools      import wraps
 
 from flask          import current_app as app
-
 
 def token_required(f):
   @wraps(f)
@@ -23,6 +22,21 @@ def token_required(f):
 
     return f(*args, **kwargs)
   return decorator
+
+def password_required(f):
+  @wraps(f)
+  def decorator(*args, **kwargs):
+    password = request.headers["Auth-Password"]
+    if not password:
+      return {"message":"No password provided"}, 401
+
+    if not password == app.config["AUTH_SECRET_KEY"]:
+      return {"message":"Invalid password"}, 401
+
+    # password, correct, let request continue
+    return f(*args, **kwargs)
+  return decorator
+
 
 class Auth(Resource):
   def get(self):

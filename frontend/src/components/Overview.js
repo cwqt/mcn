@@ -29,8 +29,9 @@ class Plants extends React.Component {
     	<div>
 		  	<h1>Overview</h1>
 		  	<hr />
-    		<Garden />
-    		<Garden />
+
+
+
     		{this.props.plants.length === 0 &&
     			<Loader>Probably spinning up Heroku API...</Loader>
     		}

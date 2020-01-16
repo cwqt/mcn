@@ -10,7 +10,6 @@ from common.measurements  import ACCEPTED_MEASUREMENTS
 from models.recordable    import Recordable as GardenObj
 
 
-
 class Garden(Resource):
   def get(self, uuid):
     data, reason = db.find_one("gardens", {"_id": ObjectId(uuid)})    

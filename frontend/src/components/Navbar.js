@@ -11,11 +11,13 @@ class Navbar extends React.Component {
 				</div>
 				<hr />
 				<h2>gardens</h2>
-					<a href=""><h3>251fa122-29e8-46c8-bcce-b57c59817ebf</h3></a>
-
+					{/*
+						<a href=""><h3>251fa122-29e8-46c8-bcce-b57c59817ebf</h3></a>
+					*/}
 				<br />
 
 				<h2>plants</h2>
+					{/*
 					<a href="#"><h3>049c0485-ef26-41f3-959c-6b582dbd4b80</h3></a>
 					<a href="#"><h3>4ce1bb92-1151-4416-a263-781dc0fa2917</h3></a>
 					<a href="#"><h3>3443aa37-166c-479d-a2b2-c5aaa46266f6</h3></a>
@@ -23,6 +25,7 @@ class Navbar extends React.Component {
 					<a href="#"><h3>feee2176-9bdc-43a5-a957-0f39ce24aa0a</h3></a>
 					<a href="#"><h3>458d1c98-3215-456e-8c78-fc84e3e5a55e</h3></a>
 					<a href="#"><h3>40949c34-6ef4-4475-8ea8-1ceeb57f9532</h3></a>
+						*/}
 
 					<NavFooter>
 						<img src="/Git.png" />

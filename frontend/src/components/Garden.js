@@ -6,9 +6,9 @@ class Garden extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			_id: "049c0485-ef26-41f3-959c-6b582dbd4b80",
-			start_date: "1578665421754",
-			feed_url: "http://192.168.0.19",
+			_id: "",
+			creation_date: "1578665421754",
+			feed_url: "",
 
 			stats: {
 				"humdity": "12%",
@@ -41,9 +41,9 @@ class Garden extends React.Component {
 					<h1>{this.state._id}</h1>
 					<h4>online since: <b>{this.state.start_date}</b></h4>
 					<hr />
-					{Object.keys(this.state.stats).map((stat, i) => {
+					{/*Object.keys(this.state.stats).map((stat, i) => {
 						return <p>{stat}: <b>{this.state.stats[stat]}</b></p>
-					})}
+					})*/}
 
 					<InspectButton href="#">Inspect garden</InspectButton>
 
