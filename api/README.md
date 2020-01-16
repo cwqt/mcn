@@ -67,8 +67,7 @@ curl --header "Auth-Password: 'supersecretpassword'"  -X DELETE "http://localhos
 * __DELETE__: Delete plant
 * __PATCH__: Add/remove plant to/from garden
 
-`/plants/<uuid>/measurements`
-`/gardens/<uuid>/measurements`
+`/plants/<uuid>/measurements`, `/gardens/<uuid>/measurements`
 
 * __GET__: Get measurements
 	- Takes query `?last=<last_n_records>`

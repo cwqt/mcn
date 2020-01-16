@@ -23,16 +23,15 @@ class Index(Resource):
       for plant_item in garden["plants"]:
         for plant in plants_list:
           if plant_item["_id"] == plant["_id"]:
-            plants_list.remove(plant)   
+            plants_list.remove(plant)
 
-    return gardens_list + plants_list
+    return {"data": gardens_list+plants_list}, 200
 
   # def get(self):
   #   with open("README.md", "r") as markdown_file:
   #     content = markdown_file.read()
   #     resp = Response(markdown.markdown(content) , mimetype='text/html')
   #     return resp
-
 
   @password_required
   def delete(self):
