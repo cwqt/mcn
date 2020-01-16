@@ -8,10 +8,10 @@ from models.recordable  import Recordable as Garden
 class Gardens(Resource):
   def get(self):
     gardens = db.get_all_docs("gardens")
-    for garden in gardens:
-      if len(garden["plants"]) > 0:
-        for k in range(len(garden["plants"])):
-          garden["plants"][k] = garden["plants"][k]["$oid"]
+    # for garden in gardens:
+    #   if len(garden["plants"]) > 0:
+    #     for k in range(len(garden["plants"])):
+    #       garden["plants"][k] = garden["plants"][k]["$oid"]
 
     return {"data": gardens}, 200    
 

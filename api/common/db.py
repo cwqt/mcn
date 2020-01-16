@@ -7,6 +7,9 @@ from bson.objectid  import ObjectId
 
 mongo = PyMongo()
 
+# feeling a bit like it was a bad idea to fight pymongos dumps
+# ObjectId -> str conversion (_id:ObjectId --> _id: { $oid })
+
 class db(object):
   def create_collection(uuid):
     mongo.db.create_collection(uuid)
@@ -49,16 +52,25 @@ class db(object):
     if not result:
       return False, "No such document matches query"
 
-    if type(result["_id"]) == dict:
-      result["_id"] = result["_id"]["$oid"]
-    return json.loads(dumps(result)), "Found document"
+    result["_id"] = result["_id"]["$oid"]
+    if result["type"] == "garden":
+      for plant in result["plants"]:
+        plant["_id"] = plant["$oid"]
+        plant.pop("$oid")
+
+    return result, "Found document"
 
   def get_all_docs(collection):
-    result = []
-    for doc in json.loads(dumps(mongo.db[collection].find({}))):
-      doc["_id"] = doc["_id"]["$oid"]
-      result.append(doc)
-    return result
+    results = json.loads(dumps(mongo.db[collection].find({})))
+
+    for result in results:
+      result["_id"] = result["_id"]["$oid"]
+      if result["type"] == "garden":
+        for plant in result["plants"]:
+          plant["_id"] = plant["$oid"]
+          plant.pop("$oid")
+
+    return results
 
   def delete_collection(collection):
     if not collection in mongo.db.list_collection_names():
@@ -94,7 +106,7 @@ class db(object):
       {"_id": ObjectId(garden_uuid)},
       {"$push": {"plants": ObjectId(plant_uuid)}}
     )
-    print(resp)
+    # print(resp)
     if not resp["nModified"] > 0:
       return False, "Plant not added to garden"
     return True, "Plant added to garden"
@@ -105,10 +117,3 @@ class db(object):
     for k in range(len(garden["plants"])):
       plants.append(garden["plants"][k]["$oid"])
     return plants
-
-
-
-
-
-
-

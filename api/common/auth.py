@@ -33,7 +33,7 @@ def password_required(f):
     if not password == app.config["AUTH_SECRET_KEY"]:
       return {"message":"Invalid password"}, 401
 
-    # password, correct, let request continue
+    # password correct, let request continue
     return f(*args, **kwargs)
   return decorator
 

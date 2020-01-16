@@ -15,8 +15,8 @@ __POST__, __PUT__ & __DELETE__ routes require an `x-access-token` JWT token, `Au
 
 e.g.
 ```shell
-curl --header "x-access-token: 'jwt...'"  -X POST "http://localhost:5000/gardens/
-curl --header "Auth-Password: 'supersecretpassword'"  -X DELETE "http://localhost:5000/
+curl --header "x-access-token: 'jwt...'"  -X POST "http://localhost:5000/gardens/"
+curl --header "Auth-Password: 'supersecretpassword'"  -X DELETE "http://localhost:5000/"
 ```
 
 ## Routes
@@ -79,7 +79,7 @@ View [common/measurements.py](https://gitlab.com/cxss/moisture.track/blob/master
 
 e.g.
 
-```
+```shell
 curl --location --request PUT 'http://localhost:5000/gardens/5e1f51a0588102a1a413f8c4' \
 --header 'Content-Type: application/json' \
 --header 'x-access-token: supersecrettoken' \
