@@ -19,13 +19,13 @@ const Wrapper = styled.div`
 `
 
 const Content = styled.div`
+  min-width: 20vw;
   position: relative;
   margin-top: -30vh;
   height: auto
-  background-color: #303031;
+  background-color: #fff;
   box-shadow: 0 9px 30px 0 rgba(35,39,42,.1);
   padding: 20px;
-  padding-right: 150px;
   border-radius: 4px;
 `
 
@@ -35,10 +35,9 @@ const CloseModal = styled.div`
   align-items: center;
   justify-content: center;
   top: 0; right:0;
-  height: 40px; width: 40px;
+  height: 20px; width: 20px;
   margin: 20px;
-  color: white;
-  font-size: 35px;
+  font-size: 25px;
   font-weight: bold;
   &:hover {
     cursor: pointer

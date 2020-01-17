@@ -1,11 +1,12 @@
 //root reducer
-import { combineReducers } from "redux";
-import PlantReducer from './PlantReducer';
-import AuthReducer from './AuthReducer';
-import ModalReducer from './ModalReducer';
+import { combineReducers } 	from "redux";
+
+import AuthReducer 					from './AuthReducer';
+import ModalReducer 				from './ModalReducer';
+import OverviewReducer	 		from "./OverviewReducer"
 
 export default combineReducers({
-	plants: PlantReducer,
 	auth: AuthReducer,
-	modal: ModalReducer
+	modal: ModalReducer,
+	overview: OverviewReducer,
 })

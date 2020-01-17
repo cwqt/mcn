@@ -3,12 +3,12 @@
 
 html, body {
 	height: 100%;
-	overflow-x: hidden;
 	margin: 0;
 }
 
 body {
 	font-family: 'Helvetica', sans-serif;
+	overflow: hidden;
 }
 
 h1,h2,h3,h4,h5 {
@@ -29,12 +29,14 @@ label {
 
 input {
 	border: 0;
-	border-bottom: 2px solid #18181b;
+	border-bottom: 2px solid rgba(56, 56, 64, 0.8);
 	padding: 5px;
 	font-size: 16px;
 	transition: 0.3s;
+	background-color: #f3f3f3;
 }
 input:focus {
+	background-color: #eceaea;
 	border-bottom-color: #18181b;
   outline: none;
 }
@@ -45,9 +47,14 @@ button {
 	border-radius: 4px;
 	font-size: 16px;
 	transition: 0.3s;
+	text-decoration: none;
+	border-radius: 5px;
+	background-color: #f3f3f3;
 }
 button:hover {
 	cursor: pointer;
+	background-color: #eceaea;
 }
+
 
 

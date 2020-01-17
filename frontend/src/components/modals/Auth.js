@@ -33,8 +33,7 @@ class AuthForm extends React.Component {
   	return (
       <div>
         <h1>Authenticate</h1>
-        <h3>Enter token</h3>
-        <br />
+        <hr />
         <form onSubmit={this.onSubmit}>
           <label>Token</label>
           <input
@@ -59,10 +58,10 @@ AuthForm.propTypes = {
   setModalVisibility: PropTypes.func.isRequired
 }
 
-const MapStateToProps = state => ({
-  isAuthorised: state.auth.isAuthorised,
-  token: state.auth.currentToken,
-  response: state.auth.response
+const MapStateToProps = store => ({
+  isAuthorised: store.auth.isAuthorised,
+  token: store.auth.currentToken,
+  response: store.auth.response
 })
 
 export default connect(MapStateToProps, { authUser, setModalVisibility })(AuthForm);
