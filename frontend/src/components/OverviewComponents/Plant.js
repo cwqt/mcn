@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
 
-import OverviewItem from "./OverviewComponents/Item";
+import OverviewItem from "./Item";
 
 class Plant extends React.Component {
 	constructor(props) {

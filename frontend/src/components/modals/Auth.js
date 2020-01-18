@@ -1,17 +1,14 @@
 import React from 'react';
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { authUser } from "../../actions/AuthActions";
+import { generateAccessToken } from "../../actions/AuthActions";
 import { setModalVisibility } from "../../actions/ModalActions";
 
 
 class AuthForm extends React.Component { 
   constructor(props) {
     super(props);
-    this.state = {
-      token: "",
-      show: false
-    };
+    this.state = { password: "" };
   }
 
   onChange = (e) => {
@@ -20,7 +17,7 @@ class AuthForm extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    this.props.authUser(this.state.token);
+    this.props.generateAccessToken(this.state.password);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -35,18 +32,18 @@ class AuthForm extends React.Component {
         <h1>Authenticate</h1>
         <hr />
         <form onSubmit={this.onSubmit}>
-          <label>Token</label>
+          <label>Password</label>
           <input
             type="password"
-            name="token"
+            name="password"
             onChange={this.onChange}
-            value={this.state.token}
+            value={this.state.password}
             autoComplete="off"
           />
           <br />
           <br />
           <button type="submit">Submit</button>
-          <label>&nbsp;&nbsp; {this.props.response}</label>
+          <label>&nbsp;&nbsp; {this.props.message}</label>
         </form>
       </div>
   	);
@@ -54,14 +51,13 @@ class AuthForm extends React.Component {
 }
 
 AuthForm.propTypes = {
-  authUser: PropTypes.func.isRequired,
+  generateAccessToken: PropTypes.func.isRequired,
   setModalVisibility: PropTypes.func.isRequired
 }
 
 const MapStateToProps = store => ({
   isAuthorised: store.auth.isAuthorised,
-  token: store.auth.currentToken,
-  response: store.auth.response
+  message: store.auth.message
 })
 
-export default connect(MapStateToProps, { authUser, setModalVisibility })(AuthForm);
+export default connect(MapStateToProps, { generateAccessToken, setModalVisibility })(AuthForm);

@@ -27,6 +27,12 @@ const Content = styled.div`
   box-shadow: 0 9px 30px 0 rgba(35,39,42,.1);
   padding: 20px;
   border-radius: 4px;
+  &.failure {
+    input {
+      border-bottom: 2px solid red;      
+    }
+  }
+
 `
 
 const CloseModal = styled.div`
@@ -52,7 +58,7 @@ class ModalWrapper extends React.Component {
   render() {  	
     return (
       <Wrapper>
-        <Content>
+        <Content className={this.props.currentState}>
           <CloseModal onClick={this.closeModal}>&#x2715;</CloseModal>
           { this.props.children }
         </Content>
@@ -62,7 +68,11 @@ class ModalWrapper extends React.Component {
 }
 
 ModalWrapper.propTypes = {
-  setModalVisibility: PropTypes.func.isRequired
+  setModalVisibility: PropTypes.func.isRequired,
 }
 
-export default connect(null, { setModalVisibility })(ModalWrapper);
+const MapStateToProps = store => ({
+  currentState: store.modal.currentState
+})
+
+export default connect(MapStateToProps, { setModalVisibility })(ModalWrapper);

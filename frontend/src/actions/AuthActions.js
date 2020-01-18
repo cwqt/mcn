@@ -1,23 +1,27 @@
-import { AUTH_USER } from "./types";
+import { AuthConsts } from "./types";
+import { setModalWrapperState } from "./ModalActions";
 
-export const authUser = token => dispatch => {
-	fetch("/api/auth/", {
-			headers: {
-				'Content-Type': "application/json",
-				'Auth-Token': token
-			}
-		})
+export const generateAccessToken = password => dispatch => {
+	dispatch({
+		type: AuthConsts.GET_TOKEN,
+		payload: { status: "loading" }
+	})
+
+	fetch("/api/auth", { headers: { 'Auth-Password': password } })
 		.then(res => Promise.all([res.status, res.json()]))
 		.then(([status, data]) => {
 			var payload = {
-				isAuthorised: status !== 200 ? false : true,
-				token: token,
-				response: data.message || "200"
+				status: status !== 200 ? "failure" : "success",
+				token: data.data || "",
+				message: data.message || "200"
 			}
 			dispatch({
-					type: AUTH_USER,
+				type: "SET_MODAL_WRAPPER_STATE",
+				payload: payload.status
+			})
+			dispatch({
+					type: AuthConsts.GET_TOKEN,
 					payload: payload,
 			})	
 	});
 }
-

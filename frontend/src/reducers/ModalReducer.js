@@ -1,21 +1,29 @@
-import { SET_CURRENT_MODAL, SET_MODAL_VISIBILITY } from "../actions/types";
+import { ModalConsts } from "../actions/types";
 
 const initialState = {
 	currentModal: "",
-  isVisible: false
+  isVisible: false,
+  currentState: ""
 };
 
 export default function(state=initialState, action) {
 	switch(action.type) {
-    case SET_CURRENT_MODAL:
+    case ModalConsts.SET_CURRENT_MODAL:
       return {
       	...state,
-      	currentModal: action.payload
+      	currentModal: action.payload,
+        currentState: ""
       };
-    case SET_MODAL_VISIBILITY:
+    case ModalConsts.SET_MODAL_VISIBILITY:
       return {
         ...state,
-        isVisible: action.payload
+        isVisible: action.payload,
+        currentState: ""
+      }
+    case ModalConsts.SET_MODAL_WRAPPER_STATE:
+      return {
+        ...state,
+        currentState: action.payload
       }
     default:
       return state;

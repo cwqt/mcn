@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Link } from "react-router-dom";
 
 import ItemHeader from "./Header";
 
@@ -33,22 +34,32 @@ class Item extends React.Component {
 						{this.props.children}
 				</div>
 
-				<InspectButton href="#">Inspect {this.props.type}</InspectButton>
+				<Inline>
+					<InspectButton href="#">
+						<Link to={this.props.type+"/"+this.props._id}>
+							Inspect {this.props.type}
+						</Link>
+					</InspectButton>
+					</Inline>
 			</ItemContainer>
 		)
 	}
 }
 
-const InspectButton = styled.a`
+const Inline = styled.div `
 	position: absolute;
 	right: 0;
 	bottom: 0;
 	margin: 10px;
-	padding: 10px;
-	color: black;
-	text-decoration: none;
+	display: flex;
+`
+
+const InspectButton = styled.button`
+	a {
+		color: black;
+		text-decoration: none;		
+	}
 	border-radius: 5px;
-	background-color: #eceaea;
 `
 
 const ItemContainer = styled.div`

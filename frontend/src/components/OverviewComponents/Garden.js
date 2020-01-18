@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from "styled-components";
 
-import OverviewItem from "./OverviewComponents/Item";
+import OverviewItem from "./Item";
 
 class Garden extends React.Component {
 	constructor(props) {
@@ -17,8 +17,8 @@ class Garden extends React.Component {
 		return (
 			<OverviewItem {...this.props}>
 				<p>Has <b>{this.props.plants.length}</b> plants</p>
-				{this.props.plants.map(plant => {
-					return <h3>{plant._id}</h3>
+				{this.props.plants.map((plant, idx) => {
+					return <h3 key={idx}>{plant._id}</h3>
 				})}
 			</OverviewItem>
 		)

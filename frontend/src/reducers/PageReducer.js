@@ -1,32 +1,32 @@
-import { AuthConsts } from "../actions/types";
+import { PageConsts } from "../actions/types";
 
 const initialState = {
-	isAuthorised: false,
-	currentToken: "",
+	isFetching: true,
+	self: {},
 	message: ""
 };
 
 export default function(state=initialState, action) {
 	switch(action.type) {
-		case AuthConsts.GET_TOKEN:
+		case PageConsts.GET_SELF:
 			switch(action.payload.status) {
 				case "loading":
 					return {
 						...state,
-						message: "Attempting to authenticate..."
+						isFetching: true,
+						message: "Getting object..."
 					}
 				case "success":
 					return {
 						...state,
-						isAuthorised: true,
-						currentToken: action.payload.token,
+						isFetching: false,
+						self: action.payload.data,
 						message: ""
 					}
 				case "failure":
 					return {
 						...state,
-						isAuthorised: false,
-						currentToken: "",
+						isFetching: false,
 						message: action.payload.message
 					}
 			}

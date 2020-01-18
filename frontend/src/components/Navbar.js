@@ -14,7 +14,6 @@ class Navbar extends React.Component {
     this.props.setModalVisibility(true);
   }
 
-
 	render() {
 		return (
 			<NavContainer>
@@ -24,22 +23,22 @@ class Navbar extends React.Component {
 				</div>
 				<hr />
 				<h2>gardens</h2>
-					{this.props.objects.map(object => {
+					{this.props.objects.map((object, idx) => {
 						if (object.type == "garden") {							
-							return <a href=""><h3><b>{object.name}</b> {object._id}</h3></a>
+							return <a href="" key={idx}><h3><b>{object.name}</b> {object._id}</h3></a>
 						}
 					})}
 				<br />
 
 				<h2>plants</h2>
-					{this.props.objects.map(object => {
+					{this.props.objects.map((object, idx) => {
 						if (object.type == "plant") {
-							return <a href=""><h3><b>{object.name}</b> {object._id}</h3></a>
+							return <a href="" key={idx}><h3><b>{object.name}</b> {object._id}</h3></a>
 						}
 					})}
 
 
-					<button onClick={this.tryAuth}>Authorise</button>
+					<AuthButton onClick={this.tryAuth}>Authorise</AuthButton>
 					<NavFooter>
 						<img alt="" src="/Git.png" />
 						<img alt="" src="/Now.png" />
@@ -122,7 +121,7 @@ const NavFooter = styled.div`
 	flex-flow: row;
 	justify-content: space-around;
 	padding: 0 20%;
-	margin-top: auto;
+	// margin-top: auto;
 	border-top: 2px solid #dddddd;
 	padding-top: 30px;
 	img {
@@ -134,7 +133,12 @@ const NavFooter = styled.div`
 			cursor: pointer;
 		}
 	}
+`
 
+const AuthButton = styled.button`
+	margin-top: auto;
+	margin-bottom: 10px;
+	border: 1px solid #dddddd;
 `
 
 export default connect(MapStateToProps, {setCurrentModal, setModalVisibility})(Navbar);

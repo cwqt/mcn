@@ -5,9 +5,9 @@ import styled from 'styled-components';
 import { connect } from "react-redux";
 import { fetchAllPlantsAndGardens } from "../actions/OverviewActions";
 
-import Garden from "./Garden";
-import Plant from "./Plant";
-import Page from "./Page";
+import Garden from "../components/OverviewComponents/Garden";
+import Plant from "../components/OverviewComponents/Plant";
+import Page from "../components/Page";
 
 const OverviewContainer = styled.div`
 	display: flex;
@@ -19,8 +19,9 @@ class Overview extends React.Component {
 		//call the action
 		//fetch api
 		//dispatch type+payload to reducer
-		this.props.fetchAllPlantsAndGardens()
-		console.table(this.props)
+		if (this.props.objects.length == 0) {
+			this.props.fetchAllPlantsAndGardens()			
+		}
 		//reducer returns new state to store
 		//map state to props
 	}
@@ -28,15 +29,15 @@ class Overview extends React.Component {
   render() {
     return (
     	<Page title="Overview">
-    		{this.props.objects.length === 0 && !this.props.loaded &&
+    		{this.props.isFetching &&
     			<p>Fetching data from API...</p>
     		}
-    		{this.props.objects.length === 0 && this.props.loaded &&
+    		{this.props.objects.length === 0 && !this.props.isFetching &&
     			<p>No gardens or plants found</p>
     		}
-    		{this.props.objects.map(object => {
-    			if (object.type === "garden") { return <Garden  {...object}/> } 
-    			if (object.type === "plant")  { return <Plant {...object}/>  } 
+    		{this.props.objects.map((object, idx) => {
+    			if (object.type === "garden") { return <Garden key={idx} {...object}/> } 
+    			if (object.type === "plant")  { return <Plant key={idx} {...object}/>  } 
     		})}
     	</Page>
     );
@@ -51,7 +52,7 @@ const MapStateToProps = store => ({
 	//root reducer returns objects
 	//PlantReducer has state with items
 	objects: store.overview.objects,
-	loaded: store.overview.loaded
+	isFetching: store.overview.isFetching
 	//now have this.props.objects
 })
 

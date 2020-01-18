@@ -1,42 +1,49 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Provider } from "react-redux";
-import { BrowserRouter as Router, Route} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { PersistGate } from 'redux-persist/integration/react';
 
-import store from "./store";
+import { store, persistor } from "./store";
+
 import "./index.css"
 
 import Navbar from "./components/Navbar"
 import ModalConductor from './components/ModalConductor'
-// import Plant from "./components/Plant";
-// import Garden from "./components/Garden";
-import Overview from "./components/Overview";
+
+import Overview from "./routes/index";
+import Plant from "./routes/plant";
+import Garden from "./routes/garden";
+import NotFound from "./routes/404";
 
 class App extends React.Component {  
-  // constructor(props) {
-  //   super(props);
-  // }
+  constructor(props) {
+    super(props);
+  }
 
-  // componentDidMount() {
+  componentDidMount() {
     
-  // }
+  }
 
   render() {
     return (
       <Provider store={store}>
-        <Router>
-        <Container>
-          <Navbar />
-          <Content className="container">
-            <ModalConductor />
-            <Route exact={true} path="/" component={Overview} />
-            {/*
-            <Route path="/plant/:plant_id" component={Plant} />
-            <Route path="/garden/:garden_id" component={Garden} />
-            */}
-          </Content>
-        </Container>
-      </Router>
+        <PersistGate loading={null} persistor={persistor}>
+          <Router>
+            <Container>
+              <Navbar />
+              <Content className="container">
+                <ModalConductor />
+                <Switch>
+                  <Route exact={true} path="/" component={Overview} />
+                  <Route path="/plant/:plant_id" component={Plant} />
+                  <Route path="/garden/:garden_id" component={Garden} />
+                  <Route component={NotFound} />
+                </Switch>
+              </Content>
+            </Container>
+          </Router>
+        </PersistGate>
       </Provider>
     );    
   }

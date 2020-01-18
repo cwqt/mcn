@@ -1,15 +1,22 @@
-import { SET_CURRENT_MODAL, SET_MODAL_VISIBILITY } from "./types";
+import { ModalConsts } from "./types";
 
 export const setCurrentModal = modal => dispatch => {
 	dispatch({
-			type: SET_CURRENT_MODAL,
+			type: ModalConsts.SET_CURRENT_MODAL,
 			payload: modal,
 	})	
 }
 
+export const setModalWrapperState = state => dispatch => {
+	dispatch({
+		type: ModalConsts.SET_MODAL_WRAPPER_STATE,
+		payload: state
+	})
+} 
+
 export const setModalVisibility = status => dispatch => {
 	dispatch({
-			type: SET_MODAL_VISIBILITY,
+			type: ModalConsts.SET_MODAL_VISIBILITY,
 			payload: status,
 	})	
 }

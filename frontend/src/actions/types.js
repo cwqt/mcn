@@ -1,6 +1,17 @@
-export const AUTH_USER = "AUTH_USER";
+export const AuthConsts = {
+	GET_TOKEN: "GET_TOKEN"
+}
 
-export const SET_CURRENT_MODAL = "SET_CURRENT_MODAL";
-export const SET_MODAL_VISIBILITY = "SET_MODAL_VISIBILITY";
+export const ModalConsts = {
+	SET_CURRENT_MODAL: "SET_CURRENT_MODAL",
+	SET_MODAL_VISIBILITY: "SET_MODAL_VISIBILITY",
+	SET_MODAL_WRAPPER_STATE: "SET_MODAL_WRAPPER_STATE"
+}
 
-export const FETCH_ALL_PLANTS_AND_GARDENS = "FETCH_ALL_PLANTS_AND_GARDENS";
+export const OverviewConsts = {
+	GET_ALL: "OVERVIEW_GET_ALL"
+}
+
+export const PageConsts = {
+	GET_SELF: "PAGE_GET_SELF"
+}
