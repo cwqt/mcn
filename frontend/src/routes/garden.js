@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Page from "../components/Page"
 
 class Garden extends React.Component {
 	constructor(props) {
@@ -10,9 +9,9 @@ class Garden extends React.Component {
 
 	render() {
 		return (
-			<Page title="404">
+			<div>
 				<h2>garden</h2>
-			</Page>
+			</div>
 		)
 	}
 } 

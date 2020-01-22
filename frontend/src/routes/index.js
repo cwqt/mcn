@@ -5,13 +5,13 @@ import styled from 'styled-components';
 import { connect } from "react-redux";
 import { fetchAllPlantsAndGardens } from "../actions/OverviewActions";
 
-import Garden from "../components/OverviewComponents/Garden";
-import Plant from "../components/OverviewComponents/Plant";
-import Page from "../components/Page";
+import OverviewItem from "../components/OverviewComponents/Item"
+import Welcomer from "../components/OverviewComponents/Welcomer"
 
 const OverviewContainer = styled.div`
 	display: flex;
-	flex-wrap: wrap;
+  flex-flow: row wrap;
+  justify-content: start;
 `
 
 class Overview extends React.Component { 
@@ -28,18 +28,18 @@ class Overview extends React.Component {
 
   render() {
     return (
-    	<Page title="Overview">
+    	<OverviewContainer>
     		{this.props.isFetching &&
     			<p>Fetching data from API...</p>
     		}
     		{this.props.objects.length === 0 && !this.props.isFetching &&
     			<p>No gardens or plants found</p>
     		}
+    		<Welcomer />
     		{this.props.objects.map((object, idx) => {
-    			if (object.type === "garden") { return <Garden key={idx} {...object}/> } 
-    			if (object.type === "plant")  { return <Plant key={idx} {...object}/>  } 
+    			return <OverviewItem key={idx} {...object} />
     		})}
-    	</Page>
+    	</OverviewContainer>
     );
   }
 }

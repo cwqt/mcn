@@ -8,6 +8,7 @@ html, body {
 body {
 	font-family: 'Helvetica', sans-serif;
 	overflow: hidden;
+  background-color: #f7f2ed;
 }
 
 h1,h2,h3,h4,h5 {
@@ -55,5 +56,13 @@ button:hover {
 	background-color: #eceaea;
 }
 
+th,
+td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #E1E1E1; }
 
-
+.slick-slide {
+	padding: 0 8px;
+	box-sizing: border-box;
+ }

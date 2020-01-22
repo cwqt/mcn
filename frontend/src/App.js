@@ -9,6 +9,7 @@ import { store, persistor } from "./store";
 import "./index.css"
 
 import Navbar from "./components/Navbar"
+import Header from "./components/Header"
 import ModalConductor from './components/ModalConductor'
 
 import Overview from "./routes/index";
@@ -30,14 +31,19 @@ class App extends React.Component {
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <Router>
+            <Header />
             <Container>
               <Navbar />
               <Content className="container">
                 <ModalConductor />
                 <Switch>
                   <Route exact={true} path="/" component={Overview} />
-                  <Route path="/plant/:plant_id" component={Plant} />
-                  <Route path="/garden/:garden_id" component={Garden} />
+                  <Route path="/plant/:plant_id" render={(props) => (
+                    <Plant key={props.match.params.plant_id} {...props} />
+                  )}/>
+                  <Route path="/garden/:garden_id" render={(props) => (
+                    <Garden key={props.match.params.garden_id} {...props} />
+                  )}/>
                   <Route component={NotFound} />
                 </Switch>
               </Content>
@@ -55,9 +61,9 @@ const Container = styled.div`
 `
 
 const Content = styled.div`
-  padding: 10px 20px;
+  padding: 10px;
   padding-top: 5vh;
-  background-color: #fff;
+  padding-bottom: 15vh;
   width: 100%;
   max-height: 100vh;
   overflow: scroll;

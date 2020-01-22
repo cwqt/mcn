@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Page from "../components/Page"
-
 class NotFound extends React.Component {
 	constructor(props) {
 		super(props)
@@ -10,9 +8,11 @@ class NotFound extends React.Component {
 
 	render() {
 		return (
-			<Page title="404">
-				<h2>Page not found</h2>
-			</Page>
+			<div>
+				<h1>404</h1>
+				<hr />
+				<p>Page not found</p>
+			</div>
 		)
 	}
 } 

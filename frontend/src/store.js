@@ -13,7 +13,7 @@ const middleware = [thunk, logger];
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: "overview",
+  // whitelist: ["overview"],
 	stateReconciler: autoMergeLevel2
 }
 

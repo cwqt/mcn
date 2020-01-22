@@ -26,7 +26,7 @@ const Content = styled.div`
   background-color: #fff;
   box-shadow: 0 9px 30px 0 rgba(35,39,42,.1);
   padding: 20px;
-  border-radius: 4px;
+  border-radius: 20px;
   &.failure {
     input {
       border-bottom: 2px solid red;      

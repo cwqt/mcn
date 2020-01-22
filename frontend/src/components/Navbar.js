@@ -3,8 +3,7 @@ import styled from 'styled-components';
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { setCurrentModal, setModalVisibility } from "../actions/ModalActions";
-
-
+import { Link, NavLink } from "react-router-dom";
 
 class Navbar extends React.Component {
   tryAuth = e => {
@@ -17,28 +16,35 @@ class Navbar extends React.Component {
 	render() {
 		return (
 			<NavContainer>
-				<div className="inline">
-					<img src="/leaf.png" />
-					<h1>moisture.<br/>&nbsp;&nbsp;track</h1>
-				</div>
-				<hr />
-				<h2>gardens</h2>
-					{this.props.objects.map((object, idx) => {
-						if (object.type == "garden") {							
-							return <a href="" key={idx}><h3><b>{object.name}</b> {object._id}</h3></a>
-						}
-					})}
-				<br />
+				<NavList>
+					<h2>gardens</h2>
+						{this.props.objects.map((object, idx) => {
+							if (object.type == "garden") {
+								return <NavLink activeClassName="selected"
+									key={idx}
+									to={"/"+object.type+"/"+object._id}>
+									<h3><b>{object.name}</b> {object._id}</h3>
+									</NavLink>
+							}
+						})}
+					<br />
 
-				<h2>plants</h2>
-					{this.props.objects.map((object, idx) => {
-						if (object.type == "plant") {
-							return <a href="" key={idx}><h3><b>{object.name}</b> {object._id}</h3></a>
-						}
-					})}
+					<h2>plants</h2>
+						{this.props.objects.map((object, idx) => {
+							if (object.type == "plant") {
+								return <NavLink activeClassName="selected"
+									key={idx}
+									to={"/"+object.type+"/"+object._id}>
+									<h3><b>{object.name}</b> {object._id}</h3>
+									</NavLink>
+							}
+						})}
+				</NavList>
 
 
-					<AuthButton onClick={this.tryAuth}>Authorise</AuthButton>
+					{ !this.props.isAuthorised &&
+						<AuthButton onClick={this.tryAuth}><p>Authenticate</p></AuthButton>
+					}
 					<NavFooter>
 						<img alt="" src="/Git.png" />
 						<img alt="" src="/Now.png" />
@@ -57,35 +63,23 @@ Navbar.propTypes = {
 const MapStateToProps = store => ({
 	//root reducer returns objects
 	//PlantReducer has state with items
-	objects: store.overview.objects
+	objects: store.overview.objects,
+	isAuthorised: store.auth.isAuthorised
 	//now have this.props.objects
 })
 
 const NavContainer = styled.div`
+	background-color: rgba(0,0,0,0.05);
 	position: relative;
-	background-color: #eceaea;
-	height: 100vh;
-	padding: 30px;
+	height: 91vh;
+	padding: 15px;
+	padding-top: 5vh;
 	width: 28vw;
 	overflow: hidden;
 	display: flex;
 	flex-flow: column;
 
-	.inline {
-		display: flex;
-		align-items: center;
-		img {
-			height: 50px;
-			margin-right: 20px;
-			filter: brightness(0.2);
-		}
-	}
-	h1 {
-		font-weight: bold;
-		color: #333333;
-		font-size: 50px;
-		line-height: .8
-	}
+
 	h2 {
 		color: #333333;
 		font-weight: 400;
@@ -95,35 +89,51 @@ const NavContainer = styled.div`
 			color: #a3a3a4;
 		}
 	}
+
 	a {
 		color: #000;
+		display: flex;
 		text-decoration: none;
-		transition: 0.4s;
-		&:hover {
-			padding-left: 20px;
+	  &::before {
+	  	content: "→ ";
+	  	opacity: 0;
+	  	padding-right: 10px;
+	  	margin-top: 4px;
+	  	transition: 0.2s;
+	  }
+	  &:hover {
+	  	&::before {
+	  		opacity: 0.5;
+	  	}
+	  }
+		&.selected {
+			&::before {
+				opacity: 1;
+			}
 		}
-	}
-	h3 {
-		line-height: 1.5;
-	  white-space: nowrap;
-	  overflow: hidden;
-	  text-overflow: ellipsis;
-		margin-left: 20px;
-		span {
-			color: #a3a3a4;
-			margin-right: 10px;
+		h3 {
+			line-height: 1.5;
+		  white-space: nowrap;
+		  overflow: hidden;
+		  text-overflow: ellipsis;
 		}
 	}
 `
 
+const NavList = styled.div`
+	background: white;
+	border-radius: 20px;
+	overflow: hidden;
+	padding: 20px;
+`
+
 const NavFooter = styled.div`
+	background: white;
+	border-radius: 20px;
 	display: flex;
 	flex-flow: row;
 	justify-content: space-around;
-	padding: 0 20%;
-	// margin-top: auto;
-	border-top: 2px solid #dddddd;
-	padding-top: 30px;
+	padding: 20px 40px;
 	img {
 		height: 30px;
 		filter: brightness(0.75);
@@ -136,9 +146,30 @@ const NavFooter = styled.div`
 `
 
 const AuthButton = styled.button`
+	border-radius: 20px;
+	overflow: hidden;
+	background-image: url(http://s7.favim.com/orig/150709/aesthetic-aesthetics-bambi-bathroom-Favim.com-2928004.jpg);
+	background-size: cover;
+	background-position: bottom;
+	margin: 20px 0;
 	margin-top: auto;
-	margin-bottom: 10px;
-	border: 1px solid #dddddd;
+	padding: 0;
+	&:hover {
+		box-shadow: 0 9px 30px 0 rgba(35,39,42,.1);		
+	}
+
+	p {
+		letter-spacing: 1px;
+		margin: 0;
+		color: #333;
+		text-align: left;
+		background-color: white;
+		margin-top: 100px;
+		padding: 20px;
+		padding-left: 30px;
+		font-weight: bold;
+		border: 2px solid transparent;
+	}
 `
 
 export default connect(MapStateToProps, {setCurrentModal, setModalVisibility})(Navbar);

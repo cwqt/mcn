@@ -15,3 +15,7 @@ export const OverviewConsts = {
 export const PageConsts = {
 	GET_SELF: "PAGE_GET_SELF"
 }
+
+export const RecordableConsts = {
+	CREATE: "CREATE_RECORDABLE"
+}
