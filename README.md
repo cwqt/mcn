@@ -6,6 +6,7 @@ Hydroponics management and visualiser.
 * Gardens and Plants, manage entire gardens constituted of subplants
 * Remotely trigger events on micro-controllers, e.g. turn on light, open watering valve
 * Monitor all metrics on front-end dashboard with graphs
+* Live camera feed (No IR) to view active photosynthesis
 * Code support for ESP-32, Wemos D1 Mini & Raspberry Pi
 
 ## api
