@@ -61,13 +61,14 @@ const ItemContainer = styled.div`
 	flex: 1 0 calc(33.333% - 10px);
 	max-width: calc(33.333% - 10px);
   margin: 0 5px;
-	
+
 	position: relative;
 	margin-bottom: 10px;
 	background-color: white;
 	border-radius: 20px;
 	overflow: hidden;
 	height: 30vh;
+	background-color: #e9e6e1;
 	background-image: url(${props => props.url});
 	background-size: cover;
 	background-position: center;

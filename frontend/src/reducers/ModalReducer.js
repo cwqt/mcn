@@ -2,8 +2,8 @@ import { ModalConsts } from "../actions/types";
 
 const initialState = {
 	currentModal: "",
+  currentState: "",
   isVisible: false,
-  currentState: ""
 };
 
 export default function(state=initialState, action) {

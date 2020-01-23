@@ -46,8 +46,8 @@ class Header extends React.Component {
           <img src="/leaf.png" />
           <h1>moisture.track</h1>
         </Link>
-        <ModalButton desc="Add plant" icon="eco"/>
-        <ModalButton desc="Add garden" icon="group_work"/>
+        <ModalButton desc="Add plant" icon="eco" openModal="CREATE_RECORDABLE_PLANT"/>
+        <ModalButton desc="Add garden" icon="group_work" openModal="CREATE_RECORDABLE_GARDEN"/>
       </HeaderContainer>
     )
   }

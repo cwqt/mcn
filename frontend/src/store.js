@@ -13,7 +13,7 @@ const middleware = [thunk, logger];
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ["overview"],
+  // blacklist: ["overview", "modal", "recordable", "page"],
 	stateReconciler: autoMergeLevel2
 }
 

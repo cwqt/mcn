@@ -13,8 +13,7 @@ import Header from "./components/Header"
 import ModalConductor from './components/ModalConductor'
 
 import Overview from "./routes/index";
-import Plant from "./routes/plant";
-import Garden from "./routes/garden";
+import Recordable from "./routes/recordable";
 import NotFound from "./routes/404";
 
 class App extends React.Component {  
@@ -38,11 +37,11 @@ class App extends React.Component {
                 <ModalConductor />
                 <Switch>
                   <Route exact={true} path="/" component={Overview} />
-                  <Route path="/plant/:plant_id" render={(props) => (
-                    <Plant key={props.match.params.plant_id} {...props} />
+                  <Route path="/plant/:_id" render={(props) => (
+                    <Recordable plant key={props.match.params._id} {...props} />
                   )}/>
-                  <Route path="/garden/:garden_id" render={(props) => (
-                    <Garden key={props.match.params.garden_id} {...props} />
+                  <Route path="/garden/:_id" render={(props) => (
+                    <Recordable garden key={props.match.params._id} {...props} />
                   )}/>
                   <Route component={NotFound} />
                 </Switch>

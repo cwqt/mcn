@@ -66,3 +66,8 @@ td {
 	padding: 0 8px;
 	box-sizing: border-box;
  }
+
+ label {
+ 	display: inline-block;
+ 	width: 50px;
+ }

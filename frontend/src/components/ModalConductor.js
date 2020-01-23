@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from "react-redux";
 
-import AuthModal from "./modals/Auth"
-import CreatePlantModal from "./modals/CreatePlant"
-import DeletePlantModal from "./modals/DeletePlant"
+import AuthModal              from "./modals/Auth"
+import CreateRecordableModal  from "./modals/CreateRecordable"
+import DeleteRecordableModal  from "./modals/DeleteRecordable"
+import EditRecordableModal    from "./modals/EditRecordableProps"
 
-import ModalWrapper from "./modals/ModalWrapper"
+import ModalWrapper           from "./modals/ModalWrapper"
 
 class ModalConductor extends React.Component { 
 	constructor(props) {
@@ -14,32 +15,24 @@ class ModalConductor extends React.Component {
 	}
 
 	componentWillReceiveProps(nextProps){
-    var modal = this.state.currentModal
-    switch(nextProps.currentModal) {
-      case "AUTH_MODAL":
-        modal = <AuthModal />
-        break 
-      case "CREATE_PLANT_MODAL":
-        modal = <CreatePlantModal />
-        break
-      case "DELETE_PLANT_MODAL":
-        modal = <DeletePlantModal />
-        break
-      default:
-        modal = null
-        break
+    var modalMap = {
+      "AUTH_MODAL": <AuthModal />,
+      "DELETE_RECORDABLE": <DeleteRecordableModal />,
+      //errmm...
+      "CREATE_RECORDABLE_PLANT": <CreateRecordableModal plant/>,
+      "CREATE_RECORDABLE_GARDEN": <CreateRecordableModal garden/>,
     }
+    var modal = modalMap[nextProps.currentModal] || null;
 		this.setState({currentModal:  modal})
 	}
 
   render() {
+    if (!this.props.isVisible) { return null }
     return ( 
     	<div>
-    	{ this.props.isVisible && 
     		<ModalWrapper>
       		{ this.state.currentModal }
     		</ModalWrapper>
-    	}
     	</div>
     );
   }

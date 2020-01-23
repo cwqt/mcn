@@ -15,7 +15,11 @@ export const fetchAllPlantsAndGardens = () => dispatch => {
 			})
 			Promise.all(promises).then(most_recent_measurements => {
 				most_recent_measurements.forEach((measurement, idx) => {
-					data.data[idx].most_recent = measurement.data[0]
+					if (!measurement.data) {
+						data.data[idx].most_recent = {timestamp: 0, measurements:{}}
+					} else {
+						data.data[idx].most_recent = measurement.data[0]
+					}
 				})
 				dispatch({
 					type: OverviewConsts.GET_ALL,

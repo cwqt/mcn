@@ -2,11 +2,14 @@ import React from 'react';
 import styled from 'styled-components';
 import { connect } from "react-redux";
 import { Line } from 'react-chartjs-2';
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { getSelf } from "../actions/PageActions"
 import moment from "moment";
 
 import Image from "../components/OverviewComponents/Image";
+import ModalButton from "../components/modals/ModalButton"
+
 
 const ChartsContainer = styled.div`
 	display: flex;
@@ -44,6 +47,14 @@ const InfoSection = styled.div`
 	& > div:last-child {
 		width: 70%;
 	}
+	.content {
+		position: relative;
+		a:first-child {
+			position: absolute;
+			right: 0;
+			top: 0;
+		}
+	}
 `
 
 class Plant extends React.Component {
@@ -53,11 +64,10 @@ class Plant extends React.Component {
 			measurements: {}
 		}
 		console.log(this)
-
 	}
 
 	componentDidMount() {
-		this.props.getSelf(this.props.match.params.plant_id)
+		this.props.getSelf(this.props.match.params._id)
 		this.getMeasurements()
 	}
 
@@ -67,9 +77,13 @@ class Plant extends React.Component {
 			// measurement_type = {timestamp: value, timestamp:value ...}
 			// "  "
 		// ] for use with chart.js graphs
-		fetch(`/api/plants/${this.props.match.params.plant_id}/measurements?last=100`)
+		fetch(`/api/plants/${this.props.match.params._id}/measurements?last=100`)
 			.then(res => res.json())
 			.then(data => {
+				if(!data.data) {
+					data.data = [{measurements:{}}]
+				}
+
 				var sorted = {};
 				//use first obj to set keys
 				Object.keys(data.data[0].measurements).forEach(key => sorted[key] = {})
@@ -111,6 +125,19 @@ class Plant extends React.Component {
 	}
 
 	render() {
+		console.log(this.props.self)
+		if (Object.keys(this.props.self).length == 0) {
+			return (
+				<InfoSection>
+					<div>
+					<h1>Error</h1>
+					<hr />
+					<p>{this.props.message}</p>
+					</div>
+				</InfoSection>
+			)			
+		}
+
 		return (
 			<div>
 				<InfoSection>
@@ -118,7 +145,9 @@ class Plant extends React.Component {
 						<Image src={this.props.self.image} />
 					</div>
 
-					<div>
+					<div className="content">
+						<ModalButton openModal="DELETE_RECORDABLE" desc={"Delete "+this.props.self.type} icon="delete"/>
+
 						<h1>{this.props.self._id} </h1>
 						<p>
 							<i>{this.props.self.name}</i> &mdash;&nbsp;
@@ -126,31 +155,45 @@ class Plant extends React.Component {
 							<b>&nbsp;Last updated:</b> {moment.unix(this.props.self.most_recent.timestamp).fromNow()}
 						</p>
 						<hr />
-						<p>{this.props.message}</p>
-						<table>
-							<thead>
-								<tr>
-									<th>measurement</th>
-									<th>current value</th>
-									<th>average value</th>
-								</tr>
-							</thead>
-							<tbody>
-								{
-									Object.keys(this.state.measurements).map((type, idx) => {
-										const arr = this.state.measurements[type];
-										const arrLen = Object.values(arr).length;
 
-										const currentValue 	= Object.values(arr)[arrLen - 1];
-										const sum = Object.values(arr).reduce((a, b) => a + b, 0);
-										const avg = Math.round((sum / arrLen)) || 0;
+						<div>
+							<table>
+								<thead>
+									<tr>
+										<th>measurement</th>
+										<th>current value</th>
+										<th>average value</th>
+									</tr>
+								</thead>
+								<tbody>
+									{
+										Object.keys(this.state.measurements).map((type, idx) => {
+											const arr = this.state.measurements[type];
+											const arrLen = Object.values(arr).length;
 
-										return <tr key={idx}><td>{type}</td><td>{currentValue}</td><td>{avg}</td></tr>
+											const currentValue 	= Object.values(arr)[arrLen - 1];
+											const sum = Object.values(arr).reduce((a, b) => a + b, 0);
+											const avg = Math.round((sum / arrLen)) || 0;
+
+											return <tr key={idx}><td>{type}</td><td>{currentValue}</td><td>{avg}</td></tr>
+										})
+									}
+								</tbody>
+							</table>
+						</div>
+						<div>
+							{/*this.props.garden && 
+								<p><i>{this.props.self.name}</i> has <b>{this.props.self.plants.length}</b> plants.</p>
+							*/}
+							<ul>
+								{/*this.props.garden && 
+									this.props.self.plants.map(plant => {
+										return <li><Link to={"/plant/"+plant._id}>{plant._id}</Link></li>
 									})
-								}
-							</tbody>
-						</table>
-					</div>
+								*/}
+							</ul>
+						</div>
+					</div>					
 				</InfoSection>
 
 

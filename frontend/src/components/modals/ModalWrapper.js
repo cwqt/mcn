@@ -19,7 +19,6 @@ const Wrapper = styled.div`
 `
 
 const Content = styled.div`
-  min-width: 20vw;
   position: relative;
   margin-top: -30vh;
   height: auto
@@ -32,7 +31,9 @@ const Content = styled.div`
       border-bottom: 2px solid red;      
     }
   }
-
+  form {
+    min-width: 20vw;
+  }
 `
 
 const CloseModal = styled.div`
