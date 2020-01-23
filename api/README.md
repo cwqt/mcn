@@ -44,7 +44,7 @@ curl --header "Auth-Password: 'supersecretpassword'"  -X DELETE "http://localhos
 
 * __GET__: List all gardens (200)
 * __POST__: Create a new garden (201)
-	- JSON body `{"name":"Very big garden", "image":"https://myimage.com"}`
+	- JSON body `{"name":"Very big garden", "image":"https://myimage.com", "watering_period": 1000}`
 	- Returns `{"data":"feeff148-116b-11ea-8d3e-acde48001122"}`
 
 `/gardens/<uuid>`

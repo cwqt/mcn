@@ -2,6 +2,12 @@
 
 Hydroponics management and visualiser.
 
+* Event based system notifies when an action needs completing e.g. watering, re-seeding
+* Gardens and Plants, manage entire gardens constituted of subplants
+* Remotely trigger events on micro-controllers, e.g. turn on light, open watering valve
+* Monitor all metrics on front-end dashboard with graphs
+* Code support for ESP-32, Wemos D1 Mini & Raspberry Pi
+
 ## api
 
 Flask-RESTful API with MongoDB - JWT authentication.  
