@@ -1,5 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+
+import { setCurrentModal, setModalVisibility } from "../../actions/ModalActions"
 
 const ModalButtonContainer = styled.a`
   display: inline-flex;
@@ -28,7 +32,10 @@ const ModalButtonContainer = styled.a`
 
 class ModalButton extends React.Component { 
   openModal = () => {
-    console.log(this.props.icon)
+    if (!this.props.disabled) {
+      this.props.setCurrentModal(this.props.openModal)
+      this.props.setModalVisibility(true)
+    }
   }
 
   render() {  	
@@ -41,4 +48,13 @@ class ModalButton extends React.Component {
   }
 }
 
-export default ModalButton;
+ModalButton.propTypes = {
+  setCurrentModal: PropTypes.func.isRequired,
+  setModalVisibility: PropTypes.func.isRequired
+}
+
+const MapStateToProps = store => ({
+})
+
+
+export default connect(MapStateToProps, {setCurrentModal, setModalVisibility})(ModalButton);

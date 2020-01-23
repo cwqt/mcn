@@ -2,17 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { setCurrentModal, setModalVisibility } from "../actions/ModalActions";
 import { Link, NavLink } from "react-router-dom";
 
 class Navbar extends React.Component {
-  tryAuth = e => {
-    console.log("test")
-    e.preventDefault()
-    this.props.setCurrentModal("AUTH_MODAL");
-    this.props.setModalVisibility(true);
-  }
-
 	render() {
 		return (
 			<NavContainer>
@@ -42,9 +34,9 @@ class Navbar extends React.Component {
 				</NavList>
 
 
-					{ !this.props.isAuthorised &&
+					{/* !this.props.isAuthorised &&
 						<AuthButton onClick={this.tryAuth}><p>Authenticate</p></AuthButton>
-					}
+					*/}
 					<NavFooter>
 						<img alt="" src="/Git.png" />
 						<img alt="" src="/Now.png" />
@@ -53,11 +45,6 @@ class Navbar extends React.Component {
 			</NavContainer>
 		)	
 	}
-}
-
-Navbar.propTypes = {
-	setCurrentModal: PropTypes.func.isRequired,
-	setModalVisibility: PropTypes.func.isRequired,
 }
 
 const MapStateToProps = store => ({
@@ -128,6 +115,8 @@ const NavList = styled.div`
 `
 
 const NavFooter = styled.div`
+	margin-top: auto;
+	margin-bottom: 20px;
 	background: white;
 	border-radius: 20px;
 	display: flex;
@@ -152,7 +141,6 @@ const AuthButton = styled.button`
 	background-size: cover;
 	background-position: bottom;
 	margin: 20px 0;
-	margin-top: auto;
 	padding: 0;
 	&:hover {
 		box-shadow: 0 9px 30px 0 rgba(35,39,42,.1);		
@@ -172,4 +160,4 @@ const AuthButton = styled.button`
 	}
 `
 
-export default connect(MapStateToProps, {setCurrentModal, setModalVisibility})(Navbar);
+export default connect(MapStateToProps, {})(Navbar);

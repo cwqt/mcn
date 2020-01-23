@@ -29,9 +29,6 @@ class Overview extends React.Component {
   render() {
     return (
     	<OverviewContainer>
-    		{this.props.isFetching &&
-    			<p>Fetching data from API...</p>
-    		}
     		{this.props.objects.length === 0 && !this.props.isFetching &&
     			<p>No gardens or plants found</p>
     		}
