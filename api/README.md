@@ -50,7 +50,7 @@ curl --header "Auth-Password: 'supersecretpassword'"  -X DELETE "http://localhos
 `/gardens/<uuid>`
 
 * __GET__: List garden info & plant object id's (200)
-* __PUT__: Add measurements
+* __PUT__: Add measurements/event
 	- Requires JSON body (see <#Accepted Measurements>)
 * __DELETE__: Delete garden (200)
 
@@ -63,7 +63,7 @@ curl --header "Auth-Password: 'supersecretpassword'"  -X DELETE "http://localhos
 `/plants/<uuid>`
 
 * __GET__: List plant info
-* __PUT__: Add measurement
+* __PUT__: Add measurements/event
 * __DELETE__: Delete plant
 * __PATCH__: Add/remove plant to/from garden
 
@@ -71,6 +71,11 @@ curl --header "Auth-Password: 'supersecretpassword'"  -X DELETE "http://localhos
 
 * __GET__: Get measurements
 	- Takes query `?last=<last_n_records>`
+
+`/plants/<uuid>/events`, `/gardens/<uuid>/events`
+
+* __GET__: Get events
+	- Takes query `?last=<last_n_events>`
 
 ## Accepted measurements
 
@@ -91,4 +96,12 @@ curl --location --request PUT 'http://localhost:5000/gardens/5e1f51a0588102a1a41
 	"light_on": false
 }'
 ```
+
+## Accepted events
+
+* `WATER`, you watered the plant
+
+
+
+
 
