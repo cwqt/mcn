@@ -8,6 +8,7 @@ const HeaderContainer = styled.div`
   background: white;
   top: 0; left: 0;
   width: 100%;
+  position: relative;
   z-index: 9999;
   display: flex;
   padding: 30px;

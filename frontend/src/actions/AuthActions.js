@@ -25,8 +25,8 @@ export const generateAccessToken = password => dispatch => {
 					payload: payload,
 			})
 			if (payload.status == "success") {
-			  toaster.notify("Authorised!", {
-			    duration: 2000,
+			  toaster.notify("Authenticated!", {
+			    duration: 3000,
 			    position: "top-right"
 			  })
 			}

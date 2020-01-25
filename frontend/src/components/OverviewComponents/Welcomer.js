@@ -75,7 +75,10 @@ class Welcomer extends React.Component {
         {this.props.isFetching &&
           <h2>Fetching data from API...</h2>
         }
-        {this.props.isFetching == false &&
+        {this.props.isFetching == false && this.props.length == 0 &&
+          <h2>No items found in databse</h2>
+        }
+        {this.props.isFetching == false && this.props.objects.length > 0 &&
           <h2>This monitor manages <b>{total.gardens}</b> gardens <br/>with <b>{total.sub_plants}</b> sub-plants & <b>{total.plants}</b> individual plants.</h2>
         }
         <img src="https://i.imgur.com/0KI01L1.png" />
@@ -85,7 +88,7 @@ class Welcomer extends React.Component {
           <ModalButton openModal="AUTH_MODAL" desc="Authenticate" icon="lock" />
         }
         {this.props.isAuthorised && 
-          <ModalButton openModal="AUTH_MODAL" desc="You're authenticated" icon="lock_open" disabled/>
+          <ModalButton desc="You're authenticated" icon="lock_open" disabled/>
         }
       </WelcomeContainer>
     );

@@ -6,6 +6,12 @@ import { Link, NavLink } from "react-router-dom";
 
 class Navbar extends React.Component {
 	render() {
+		let links = [
+			["https://gitlab.com/cxss/moisture.track", "/Git.png"],
+			["https://zeit.co/cxss/moisture.track", "/Now.png"],
+			["https://dashboard.heroku.com/apps/hydroponics-api", "/Heroku.png"]
+		]
+
 		return (
 			<NavContainer>
 				<NavList>
@@ -15,7 +21,7 @@ class Navbar extends React.Component {
 								return <NavLink activeClassName="selected"
 									key={idx}
 									to={"/"+object.type+"/"+object._id}>
-									<h3><b>{object.name}</b> {object._id}</h3>
+										<h3><b>{object.name}</b> {object._id}</h3>
 									</NavLink>
 							}
 						})}
@@ -38,9 +44,9 @@ class Navbar extends React.Component {
 						<AuthButton onClick={this.tryAuth}><p>Authenticate</p></AuthButton>
 					*/}
 					<NavFooter>
-						<img alt="" src="/Git.png" />
-						<img alt="" src="/Now.png" />
-						<img alt="" src="/Heroku.png" />
+						{links.map(link => {
+							return <a href={link[0]} target="_blank"><img src={link[1]}/></a>
+						})}
 					</NavFooter>
 			</NavContainer>
 		)	

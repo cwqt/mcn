@@ -1,10 +1,7 @@
 import { OverviewConsts } from "./types";
 
 export const fetchAllPlantsAndGardens = () => dispatch => {
-	dispatch({
-		type: OverviewConsts.GET_ALL,
-		payload: { status:"loading" }
-	})
+	dispatch({ type: OverviewConsts.GET_ALL_LOADING })
 
 	fetch("/api/")
 		.then(res => res.json())
@@ -22,11 +19,8 @@ export const fetchAllPlantsAndGardens = () => dispatch => {
 					}
 				})
 				dispatch({
-					type: OverviewConsts.GET_ALL,
-					payload: {
-						status: "success",
-						data: data.data
-					}
+					type: OverviewConsts.GET_ALL_SUCCESS,
+					payload: { data: data.data }
 				})
 			})
 		})

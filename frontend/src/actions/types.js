@@ -9,7 +9,10 @@ export const ModalConsts = {
 }
 
 export const OverviewConsts = {
-	GET_ALL: "OVERVIEW_GET_ALL"
+	GET_ALL_LOADING: "OVERVIEW_GET_ALL_LOADING",
+	GET_ALL_SUCCESS: "OVERVIEW_GET_ALL_SUCCESS",
+
+	REMOVE_ITEM: "OVERVIEW_REMOVE_ITEM"
 }
 
 export const PageConsts = {

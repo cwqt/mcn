@@ -66,14 +66,13 @@ class Plant extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log("stoppppp ")
-		// this.props.getSelf(this.props.match.params._id)
+		 this.props.getSelf(this.props.match.params._id)
 	}
 
 
-	// componentWillReceiveProps(nextProps) {
-	// 	this.getMeasurements()
-	// }
+	 componentWillReceiveProps(nextProps) {
+	 	this.getMeasurements()
+	 }
 
 	getMeasurements() {
 		//api returns object with object `measurements`
@@ -131,10 +130,6 @@ class Plant extends React.Component {
 	}
 
 	render() {
-		return <ModalButton openModal="DELETE_RECORDABLE" desc={"Delete plant"} icon="delete" requiresAuth/>
-
-
-		console.log(this.props.self)
 		if (Object.keys(this.props.self).length == 0) {
 			return (
 				<InfoSection>
@@ -223,13 +218,12 @@ class Plant extends React.Component {
 } 
 
 Plant.propTypes = {
-  // getSelf: PropTypes.func.isRequired,
+   getSelf: PropTypes.func.isRequired,
 }
 
 const MapStateToProps = store => ({
-	// self: store.page.self,
-	// message: store.page.message
+	 self: store.page.self,
+	 message: store.page.message
 })
 
-export default Plant;
-// export default connect(MapStateToProps, { getSelf })(Plant);
+export default connect(MapStateToProps, { getSelf })(Plant);

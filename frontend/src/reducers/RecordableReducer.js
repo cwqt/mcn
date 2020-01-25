@@ -3,7 +3,6 @@ import { RecordableConsts } from "../actions/types";
 const initialState = {
 	isFetching: true,
 	message: "",
-	garden_child_ids: []
 };
 
 export default function(state=initialState, action) {
@@ -18,8 +17,7 @@ export default function(state=initialState, action) {
 			return {
 				...state,
 				isFetching: false,
-				message: `Created ${action.payload.type}!`,
-				garden_child_ids: action.payload.data || []
+				message: `Created!`,
 			}
 		case RecordableConsts.CREATE_FAILURE:
 			return {

@@ -16,22 +16,14 @@ const OverviewContainer = styled.div`
 
 class Overview extends React.Component { 
 	componentDidMount() {
-		//call the action
-		//fetch api
-		//dispatch type+payload to reducer
 		if (this.props.objects.length == 0) {
 			this.props.fetchAllPlantsAndGardens()			
 		}
-		//reducer returns new state to store
-		//map state to props
 	}
 
   render() {
     return (
     	<OverviewContainer>
-    		{this.props.objects.length === 0 && !this.props.isFetching &&
-    			<p>No gardens or plants found</p>
-    		}
     		<Welcomer />
     		{this.props.objects.map((object, idx) => {
     			return <OverviewItem key={"item-"+idx} {...object} />
@@ -46,12 +38,8 @@ Overview.propTypes = {
 }
 
 const MapStateToProps = store => ({
-	//root reducer returns objects
-	//PlantReducer has state with items
 	objects: store.overview.objects,
 	isFetching: store.overview.isFetching
-	//now have this.props.objects
 })
 
-//map state to props
 export default connect(MapStateToProps, { fetchAllPlantsAndGardens })(Overview);

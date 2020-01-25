@@ -7,24 +7,23 @@ const initialState = {
 
 export default function(state=initialState, action) {
 	switch(action.type) {
-    case OverviewConsts.GET_ALL:
-      switch(action.payload.status) {
-        case "loading":
-          return {
-            ...state,
-            isFetching: true
-          };
-        case "success":
-          return {
-            ...state,
-            objects: action.payload.data,
-            isFetching: false
-          };
-        case "failure":
-          return {
-            ...state,
-            isFetching: false
-          };
+    case OverviewConsts.GET_ALL_LOADING:
+      return {
+        ...state,
+        isFetching: true
+      };
+    case OverviewConsts.GET_ALL_SUCCESS:
+      return {
+        ...state,
+        objects: action.payload.data,
+        isFetching: false
+      };
+
+      
+    case OverviewConsts.REMOVE_ITEM:
+      return {
+        ...state,
+        objects: state.objects.filter(object => object._id !== action.payload)
       }
     default:
       return state;

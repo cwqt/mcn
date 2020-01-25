@@ -6,10 +6,7 @@ import { connect } from "react-redux";
 class DeleteForm extends React.Component {
 	onClick = (e) => {
 		e.preventDefault()
-		console.log("hello")
-		console.log(this)
-		this.props.deleteRecordable();
-		// this.props.deleteRecordable(this.props.page.self);
+		this.props.deleteRecordable(this.props.page.self);
 	} 
 
 	render() {
@@ -21,8 +18,8 @@ class DeleteForm extends React.Component {
 				<br />
 				<form>
 				<button onClick={this.onClick}>Yes</button>&nbsp;&nbsp;
-				</form>
 				<span>{this.props.message}</span>
+				</form>
 			</div>
 		);
 	}

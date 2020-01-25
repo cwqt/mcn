@@ -1,7 +1,8 @@
 import toaster from "toasted-notes";
-import { push } from 'connected-react-router'
+import { push } from 'connected-react-router';
+import { fetchAllPlantsAndGardens } from "./OverviewActions"
 
-import { RecordableConsts, ModalConsts } from "./types";
+import { RecordableConsts, ModalConsts, OverviewConsts } from "./types";
 
 export const createRecordable = recordable => (dispatch, getStore) => {
 	dispatch({ type: RecordableConsts.CREATE_LOADING })
@@ -27,7 +28,8 @@ export const createRecordable = recordable => (dispatch, getStore) => {
 	})
 	.then(res => Promise.all([res.status, res.json()]))
 	.then(([status, json]) => {
-		if (status !== 201) {
+		console.log(status)
+		if (status !== 200) {
 			dispatch({
 				type: RecordableConsts.CREATE_FAILURE,
 				payload: { message: json.message }
@@ -35,45 +37,41 @@ export const createRecordable = recordable => (dispatch, getStore) => {
 			return;
 		}
 
-		dispatch({
-			type: RecordableConsts.CREATE_SUCCESS,
-			payload: {}
-		})
+		dispatch({ type: RecordableConsts.CREATE_SUCCESS })
+		dispatch({ type: ModalConsts.SET_MODAL_VISIBILITY, payload: false})
+		dispatch(fetchAllPlantsAndGardens())
 	})
 }
 
 export const deleteRecordable = recordable => (dispatch, getStore) => {
-	console.log("hellooooo")	
-	dispatch(push("/"))
+ 	dispatch({ type: RecordableConsts.DELETE_LOADING })
+ 
+ 	fetch(`/api/${recordable.type}s/${recordable._id}`, {
+ 		method: "DELETE",
+ 		headers: {
+ 			"x-access-token": getStore().auth.currentToken,
+ 		}
+ 	})
+ 	.then(res => Promise.all([res.status, res.json()]))
+ 	.then(([status, json]) => {
+ 		if (status !== 200) {
+ 			dispatch({
+ 				type: RecordableConsts.DELETE_FAILURE,
+ 				payload: { message: json.message }
+ 			})
+ 			return;
+ 		}
+ 
+ 		dispatch({ type: RecordableConsts.DELETE_SUCCESS })
+ 		dispatch({ type: OverviewConsts.REMOVE_ITEM, payload: recordable._id })
 
-// 	dispatch({ type: RecordableConsts.DELETE_LOADING })
-// 
-// 	fetch(`/api/${recordable.type}s/${recordable._id}`, {
-// 		method: "DELETE",
-// 		headers: {
-// 			"x-access-token": getStore().auth.currentToken,
-// 		}
-// 	})
-// 	.then(res => Promise.all([res.status, res.json()]))
-// 	.then(([status, json]) => {
-// 		if (status !== 200) {
-// 			dispatch({
-// 				type: RecordableConsts.DELETE_FAILURE,
-// 				payload: { message: json.message }
-// 			})
-// 			return;
-// 		}
-// 
-// 		dispatch({
-// 			type: RecordableConsts.DELETE_SUCCESS,
-// 			payload: {}
-// 		})
-// 	  // toaster.notify(getStore().recordable.message, {
-// 	  //   duration: 2000,
-// 	  //   position: "top-right"
-// 	  // })
-// })
-
+		toaster.notify(`Deleted ${recordable.name}!`, {
+		 duration: 3000,
+		 position: "top-right"
+		})
+		dispatch({ type: ModalConsts.SET_MODAL_VISIBILITY, payload: false})
+		dispatch(push("/"))
+ })
 }
 
 
