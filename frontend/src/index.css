@@ -34,6 +34,7 @@ input {
 	font-size: 16px;
 	transition: 0.3s;
 	background-color: #f3f3f3;
+	min-width: 200px;
 }
 input:focus {
 	background-color: #eceaea;
@@ -69,5 +70,15 @@ td {
 
  label {
  	display: inline-block;
- 	width: 50px;
+ 	min-width: 50px;
  }
+
+
+.Toaster__manager-top-right {
+	top: 120px !important;
+	right: 30px !important;
+}
+
+
+
+

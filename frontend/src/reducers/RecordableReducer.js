@@ -27,6 +27,25 @@ export default function(state=initialState, action) {
 				isFetching: false,
 				message: action.payload.message
 			}
+
+		case RecordableConsts.DELETE_LOADING:
+			return {
+				...state,
+				isFetching: true,
+				message: "Deleting..."
+			}
+		case RecordableConsts.DELETE_SUCCESS:
+			return {
+				...state,
+				isFetching: false,
+				message: "Deleted!"
+			}
+		case RecordableConsts.DELETE_FAILURE:
+			return {
+				...state,
+				isFetching: false,
+				message: action.payload.message
+			}
 		default:
 			return state;
 	}

@@ -14,7 +14,7 @@ from resources.garden       import Garden
 from resources.plant_list   import Plants
 from resources.plant        import Plant
 from resources.measurements import Measurements
-
+from resources.events       import Events
 
 def create_app(config_name):
   app = Flask(__name__)
@@ -33,5 +33,6 @@ def create_app(config_name):
   api.add_resource(Plant, "/plants/<string:uuid>")
 
   api.add_resource(Measurements, "/<path:obj_type>/<string:uuid>/measurements")
+  api.add_resource(Events, "/<path:obj_type>/<string:uuid>/events")
 
   return app

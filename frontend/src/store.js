@@ -1,25 +1,29 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
-import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
-import storage from 'redux-persist/lib/storage' // defaults to localStorage for web
-import thunk from "redux-thunk";
-import logger from 'redux-logger';
+import { createBrowserHistory } from 'history'
+import { routerMiddleware } from 'connected-react-router'
+import autoMergeLevel2 		from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
+import storage 						from 'redux-persist/lib/storage' // defaults to localStorage for web
+import thunk 							from "redux-thunk";
+import logger 						from 'redux-logger';
 
-import rootReducer from './reducers';
-
-const initialState = {};
-const middleware = [thunk, logger];
+import createRootReducer 	from './reducers';
 
 const persistConfig = {
   key: 'root',
   storage,
-  // blacklist: ["overview", "modal", "recordable", "page"],
+  whitelist: [],
+     // blacklist: ["overview", "modal", "recordable", "page"],
+  // blacklist: ["recordable", "modal"],
 	stateReconciler: autoMergeLevel2
 }
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+export const history = createBrowserHistory()
+const persistedReducer = persistReducer(persistConfig, createRootReducer(history))
 
-//root reducer, initial state, enhancer
+const middleware = [routerMiddleware(history), thunk, logger];
+const initialState = {};
+
 export const store = createStore(
 	persistedReducer,
 	initialState,

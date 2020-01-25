@@ -34,7 +34,7 @@ class Overview extends React.Component {
     		}
     		<Welcomer />
     		{this.props.objects.map((object, idx) => {
-    			return <OverviewItem key={idx} {...object} />
+    			return <OverviewItem key={"item-"+idx} {...object} />
     		})}
     	</OverviewContainer>
     );

@@ -1,14 +1,14 @@
-import React from 'react';
-import styled from 'styled-components';
-import { connect } from "react-redux";
-import { Line } from 'react-chartjs-2';
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import { getSelf } from "../actions/PageActions"
-import moment from "moment";
+import React 				from 'react';
+import styled 			from 'styled-components';
+import { connect } 	from "react-redux";
+import { Line } 		from 'react-chartjs-2';
+import { Link } 		from "react-router-dom";
+import PropTypes 		from "prop-types";
+import moment 			from "moment";
 
-import Image from "../components/OverviewComponents/Image";
-import ModalButton from "../components/modals/ModalButton"
+import Image 				from "../components/OverviewComponents/Image";
+import ModalButton 	from "../components/modals/ModalButton";
+import { getSelf } 	from "../actions/PageActions"
 
 
 const ChartsContainer = styled.div`
@@ -63,13 +63,17 @@ class Plant extends React.Component {
 		this.state = {
 			measurements: {}
 		}
-		console.log(this)
 	}
 
 	componentDidMount() {
-		this.props.getSelf(this.props.match.params._id)
-		this.getMeasurements()
+		console.log("stoppppp ")
+		// this.props.getSelf(this.props.match.params._id)
 	}
+
+
+	// componentWillReceiveProps(nextProps) {
+	// 	this.getMeasurements()
+	// }
 
 	getMeasurements() {
 		//api returns object with object `measurements`
@@ -77,7 +81,9 @@ class Plant extends React.Component {
 			// measurement_type = {timestamp: value, timestamp:value ...}
 			// "  "
 		// ] for use with chart.js graphs
-		fetch(`/api/plants/${this.props.match.params._id}/measurements?last=100`)
+		console.log(this.props)
+
+		fetch(`/api/${this.props.self.type}s/${this.props.match.params._id}/measurements?last=100`)
 			.then(res => res.json())
 			.then(data => {
 				if(!data.data) {
@@ -125,6 +131,9 @@ class Plant extends React.Component {
 	}
 
 	render() {
+		return <ModalButton openModal="DELETE_RECORDABLE" desc={"Delete plant"} icon="delete" requiresAuth/>
+
+
 		console.log(this.props.self)
 		if (Object.keys(this.props.self).length == 0) {
 			return (
@@ -146,7 +155,7 @@ class Plant extends React.Component {
 					</div>
 
 					<div className="content">
-						<ModalButton openModal="DELETE_RECORDABLE" desc={"Delete "+this.props.self.type} icon="delete"/>
+						<ModalButton openModal="DELETE_RECORDABLE" desc={"Delete "+this.props.self.type} icon="delete" requiresAuth/>
 
 						<h1>{this.props.self._id} </h1>
 						<p>
@@ -181,18 +190,21 @@ class Plant extends React.Component {
 								</tbody>
 							</table>
 						</div>
-						<div>
-							{/*this.props.garden && 
-								<p><i>{this.props.self.name}</i> has <b>{this.props.self.plants.length}</b> plants.</p>
-							*/}
-							<ul>
-								{/*this.props.garden && 
-									this.props.self.plants.map(plant => {
-										return <li><Link to={"/plant/"+plant._id}>{plant._id}</Link></li>
-									})
-								*/}
-							</ul>
-						</div>
+
+						{this.props.garden &&
+							<div>
+								{this.props.garden && 
+									<p><i>{this.props.self.name}</i> has <b>{this.props.self.plants.length}</b> plants.</p>
+								}
+								<ul>
+									{this.props.garden && 
+										this.props.self.plants.map(plant => {
+											return <li>{plant._id}</li>
+										})
+									}
+								</ul>
+							</div>
+						}
 					</div>					
 				</InfoSection>
 
@@ -211,12 +223,13 @@ class Plant extends React.Component {
 } 
 
 Plant.propTypes = {
-  getSelf: PropTypes.func.isRequired,
+  // getSelf: PropTypes.func.isRequired,
 }
 
 const MapStateToProps = store => ({
-	self: store.page.self,
-	message: store.page.message
+	// self: store.page.self,
+	// message: store.page.message
 })
 
-export default connect(MapStateToProps, { getSelf })(Plant);
+export default Plant;
+// export default connect(MapStateToProps, { getSelf })(Plant);

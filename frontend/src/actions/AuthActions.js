@@ -1,5 +1,6 @@
 import { AuthConsts } from "./types";
 import { setModalWrapperState } from "./ModalActions";
+import toaster from "toasted-notes";
 
 export const generateAccessToken = password => dispatch => {
 	dispatch({
@@ -22,6 +23,12 @@ export const generateAccessToken = password => dispatch => {
 			dispatch({
 					type: AuthConsts.GET_TOKEN,
 					payload: payload,
-			})	
+			})
+			if (payload.status == "success") {
+			  toaster.notify("Authorised!", {
+			    duration: 2000,
+			    position: "top-right"
+			  })
+			}
 	});
 }

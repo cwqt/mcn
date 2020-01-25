@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Provider } from "react-redux";
-import { BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { Route, Switch} from "react-router-dom";
+import { ConnectedRouter } from 'connected-react-router'
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { store, persistor } from "./store";
+import { store, persistor, history } from "./store";
 
 import "./index.css"
+import "toasted-notes/src/styles.css"; // optional styles
 
 import Navbar from "./components/Navbar"
 import Header from "./components/Header"
@@ -22,14 +24,13 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    
   }
 
   render() {
     return (
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <Router>
+          <ConnectedRouter history={history}>
             <Header />
             <Container>
               <Navbar />
@@ -47,7 +48,7 @@ class App extends React.Component {
                 </Switch>
               </Content>
             </Container>
-          </Router>
+          </ConnectedRouter>
         </PersistGate>
       </Provider>
     );    

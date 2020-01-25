@@ -33,8 +33,7 @@ const ModalButtonContainer = styled.a`
 class ModalButton extends React.Component { 
   openModal = () => {
     if (!this.props.disabled) {
-      this.props.setCurrentModal(this.props.openModal)
-      this.props.setModalVisibility(true)
+      this.props.setCurrentModal(this.props.openModal, this.props.requiresAuth)
     }
   }
 
