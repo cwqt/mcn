@@ -31,6 +31,9 @@ class Recordable(object):
     if self.type == "garden":
       self.plants = []
 
+    if self.type == "plant":
+      self.watering_period = kwargs.get("watering_period") or 1
+
   def delete(self):
     # delete all child plants
     extra_hack_string = ""

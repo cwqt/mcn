@@ -46,18 +46,28 @@ const InfoSection = styled.div`
 	}
 	& > div:last-child {
 		width: 70%;
+		.flex {
+			display: flex;
+			div:last-child {
+				margin-left: 20px;
+			}
+		}
+
 	}
 	.content {
 		position: relative;
-		a:first-child {
+		.modal_buttons {
 			position: absolute;
 			right: 0;
 			top: 0;
+			a {
+				margin-left: 10px;
+			}
 		}
 	}
 `
 
-class Plant extends React.Component {
+class RecordableRoute extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
@@ -66,23 +76,23 @@ class Plant extends React.Component {
 	}
 
 	componentDidMount() {
-		 this.props.getSelf(this.props.match.params._id)
+		this.props.getSelf(this.props.match.params._id)
+		this.getMeasurements(this.props.self.plant ? "plant" : "garden")
 	}
 
+	componentWillReceiveProps(nextProps) {
+		console.log(nextProps)
+		this.getMeasurements(nextProps.plant ? "plant" : "garden")
+	}
 
-	 componentWillReceiveProps(nextProps) {
-	 	this.getMeasurements()
-	 }
-
-	getMeasurements() {
+	getMeasurements(type) {
 		//api returns object with object `measurements`
 		//convert into sorted list with mapping, sorted = [
 			// measurement_type = {timestamp: value, timestamp:value ...}
 			// "  "
 		// ] for use with chart.js graphs
-		console.log(this.props)
 
-		fetch(`/api/${this.props.self.type}s/${this.props.match.params._id}/measurements?last=100`)
+		fetch(`/api/${type}s/${this.props.match.params._id}/measurements?last=100`)
 			.then(res => res.json())
 			.then(data => {
 				if(!data.data) {
@@ -150,7 +160,10 @@ class Plant extends React.Component {
 					</div>
 
 					<div className="content">
-						<ModalButton openModal="DELETE_RECORDABLE" desc={"Delete "+this.props.self.type} icon="delete" requiresAuth/>
+						<div className="modal_buttons">
+							<ModalButton openModal="EDIT_RECORDABLE" desc="Edit" icon="edit" requiresAuth/>
+							<ModalButton openModal="DELETE_RECORDABLE" desc={"Delete "+this.props.self.type} icon="delete" requiresAuth/>
+						</div>
 
 						<h1>{this.props.self._id} </h1>
 						<p>
@@ -160,47 +173,45 @@ class Plant extends React.Component {
 						</p>
 						<hr />
 
-						<div>
-							<table>
-								<thead>
-									<tr>
-										<th>measurement</th>
-										<th>current value</th>
-										<th>average value</th>
-									</tr>
-								</thead>
-								<tbody>
-									{
-										Object.keys(this.state.measurements).map((type, idx) => {
-											const arr = this.state.measurements[type];
-											const arrLen = Object.values(arr).length;
-
-											const currentValue 	= Object.values(arr)[arrLen - 1];
-											const sum = Object.values(arr).reduce((a, b) => a + b, 0);
-											const avg = Math.round((sum / arrLen)) || 0;
-
-											return <tr key={idx}><td>{type}</td><td>{currentValue}</td><td>{avg}</td></tr>
-										})
-									}
-								</tbody>
-							</table>
-						</div>
-
-						{this.props.garden &&
+						<div className="flex">
 							<div>
-								{this.props.garden && 
-									<p><i>{this.props.self.name}</i> has <b>{this.props.self.plants.length}</b> plants.</p>
-								}
-								<ul>
-									{this.props.garden && 
-										this.props.self.plants.map(plant => {
-											return <li>{plant._id}</li>
-										})
-									}
-								</ul>
+								<table>
+									<thead>
+										<tr>
+											<th>measurement</th>
+											<th>current value</th>
+											<th>average value</th>
+										</tr>
+									</thead>
+									<tbody>
+										{
+											Object.keys(this.state.measurements).map((type, idx) => {
+												const arr = this.state.measurements[type];
+												const arrLen = Object.values(arr).length;
+
+												const currentValue 	= Object.values(arr)[arrLen - 1];
+												const sum = Object.values(arr).reduce((a, b) => a + b, 0);
+												const avg = Math.round((sum / arrLen)) || 0;
+
+												return <tr key={idx}><td>{type}</td><td>{currentValue}</td><td>{avg}</td></tr>
+											})
+										}
+									</tbody>
+								</table>
 							</div>
-						}
-					</div>					
+
+							{this.props.garden &&
+								<div>
+									<p><i>{this.props.self.name}</i> has <b>{(this.props.self.plants || []).length}</b> plants.</p>
+									<ul>
+											{(this.props.self.plants || []).map(plant => {
+												return <li>{plant._id}</li>
+											})}
+									</ul>
+								</div>
+							}
+						</div>					
+					</div>
 				</InfoSection>
 
 
@@ -217,7 +228,7 @@ class Plant extends React.Component {
 	}
 } 
 
-Plant.propTypes = {
+RecordableRoute.propTypes = {
    getSelf: PropTypes.func.isRequired,
 }
 
@@ -226,4 +237,4 @@ const MapStateToProps = store => ({
 	 message: store.page.message
 })
 
-export default connect(MapStateToProps, { getSelf })(Plant);
+export default connect(MapStateToProps, { getSelf })(RecordableRoute);

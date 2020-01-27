@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from "prop-types";
 import styled from 'styled-components';
-//connects component to redux provider store
 import { connect } from "react-redux";
 import { fetchAllPlantsAndGardens } from "../actions/OverviewActions";
+import jwt from "jsonwebtoken";
 
 import OverviewItem from "../components/OverviewComponents/Item"
 import Welcomer from "../components/OverviewComponents/Welcomer"
@@ -16,6 +16,10 @@ const OverviewContainer = styled.div`
 
 class Overview extends React.Component { 
 	componentDidMount() {
+    if (this.props.token) {
+      //verify token
+    }
+
 		if (this.props.objects.length == 0) {
 			this.props.fetchAllPlantsAndGardens()			
 		}
@@ -39,7 +43,8 @@ Overview.propTypes = {
 
 const MapStateToProps = store => ({
 	objects: store.overview.objects,
-	isFetching: store.overview.isFetching
+	isFetching: store.overview.isFetching,
+  token: store.auth.currentToken
 })
 
 export default connect(MapStateToProps, { fetchAllPlantsAndGardens })(Overview);

@@ -19,7 +19,7 @@ class DeleteForm extends React.Component {
 				<form>
 				<button onClick={this.onClick}>Yes</button>&nbsp;&nbsp;
 				<span>{this.props.message}</span>
-				</form>
+ 				</form>
 			</div>
 		);
 	}

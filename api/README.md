@@ -11,7 +11,7 @@
 ---
 
 Responses returned in JSON, enveloped in `data` and `message` fields.  
-__POST__, __PUT__ & __DELETE__ routes require an `x-access-token` JWT token, `Auth-Password` superceedes auth token.  
+__POST__, __PUT__ & __DELETE__ routes require an `x-access-token` OR `x-api-key` JWT token, `Auth-Password` superceedes auth token.  
 
 e.g.
 ```shell
@@ -39,6 +39,14 @@ curl --header "Auth-Password: 'supersecretpassword'"  -X DELETE "http://localhos
 
 * __GET__: Verify token works
 	- Returns `{"data":true}`
+
+`/auth/key`
+
+* __GET__: Generate an API key that never expires, kept in MongoDB collection `keys`.
+	- Requires header `Auth-Password`
+	- Returns {"data":"api_key"}
+* __DELETE__: Delete an API key by value (200)
+	- Takes body {"key":"api_key_to_delete"}
 
 `/gardens/`
 

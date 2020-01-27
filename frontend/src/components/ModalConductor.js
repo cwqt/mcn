@@ -21,6 +21,7 @@ class ModalConductor extends React.Component {
       //errmm...
       "CREATE_RECORDABLE_PLANT": <CreateRecordableModal plant/>,
       "CREATE_RECORDABLE_GARDEN": <CreateRecordableModal garden/>,
+      "EDIT_RECORDABLE": <EditRecordableModal />
     }
     var modal = modalMap[nextProps.currentModal] || null;
 		this.setState({currentModal:  modal})

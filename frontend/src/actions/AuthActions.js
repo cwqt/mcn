@@ -2,6 +2,10 @@ import { AuthConsts } from "./types";
 import { setModalWrapperState } from "./ModalActions";
 import toaster from "toasted-notes";
 
+export const removeAccessToken = () => dispatch => {
+
+}
+
 export const generateAccessToken = password => dispatch => {
 	dispatch({
 		type: AuthConsts.GET_TOKEN,

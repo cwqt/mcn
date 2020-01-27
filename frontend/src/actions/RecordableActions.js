@@ -74,7 +74,9 @@ export const deleteRecordable = recordable => (dispatch, getStore) => {
  })
 }
 
+export const editRecordable = recordable => (dispatch, getStore) => {
 
+}
 
 
 
