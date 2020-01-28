@@ -21,14 +21,6 @@ Served on [Now](https://zeit.co/home).
 
 ## hardware
 
-ESP32 - measures temperature, humdity, light level & water-tank level. 
-
-## 3d_models
-
-3d to allow plants to fit inside IKEA VÄXER cultivation unit in a 4x2 arrangement.
-
-![](https://ftp.cass.si/7~50glk3e.png)
-
-## pi
-
-Pi Zero W with NoIR camera to monitor active photosynthesis and stream to frontend.
+* __ESP32__: for testing gardens, supports 8 plants. 
+* __Wemos D1 Mini__: for single plants
+* __Pi Zero W__: NoIR camera to monitor active photosynthesis and stream to frontend.

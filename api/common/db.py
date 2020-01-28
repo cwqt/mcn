@@ -53,10 +53,13 @@ class db(object):
       return False, "No such document matches query"
 
     result["_id"] = result["_id"]["$oid"]
-    if result["type"] == "garden":
-      for plant in result["plants"]:
-        plant["_id"] = plant["$oid"]
-        plant.pop("$oid")
+    try:
+      if result["type"] == "garden":
+        for plant in result["plants"]:
+          plant["_id"] = plant["$oid"]
+          plant.pop("$oid")
+    except:
+      pass
 
     return result, "Found document"
 

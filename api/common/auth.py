@@ -14,15 +14,17 @@ from common.db      import db
 
 def token_required(f):
   @wraps(f)
-  def decorator(*args, **kwargs):
-    api_key = request.headers["x-api-key"]
-    token = request.headers["x-access-token"]
-    
-    if not token and not api_key:
-      return {"message": "No token or API key provided"}, 401
-      
+  def decorator(*args, **kwargs):    
+    token = request.headers.get("x-access-token")
+    api_key = request.headers.get("x-api-key")
+
+    if token == None and api_key == None:
+      return {"message": "No token or API key provided"}, 401      
+
     if api_key:
-      pass
+      result, reason = db.find_one("keys", {"key":api_key})
+      if not result:
+        return {"message":reason}, 404
 
     if token:
       try:
