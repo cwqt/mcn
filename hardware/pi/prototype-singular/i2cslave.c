@@ -1,6 +1,7 @@
 #include <Wire.h>
 
 #define ANSWERSIZE 3
+#define LDR_PIN 1
 
 String answer = "PAM";
 

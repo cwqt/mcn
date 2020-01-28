@@ -24,7 +24,7 @@ def token_required(f):
     if api_key:
       result, reason = db.find_one("keys", {"key":api_key})
       if not result:
-        return {"message":reason}, 404
+        return {"message": "API key not found"}, 404
 
     if token:
       try:
@@ -38,7 +38,7 @@ def token_required(f):
 def password_required(f):
   @wraps(f)
   def decorator(*args, **kwargs):
-    password = request.headers["Auth-Password"]
+    password = request.headers.get("Auth-Password")
     if not password:
       return {"message":"No password provided"}, 401
 
@@ -52,10 +52,9 @@ def password_required(f):
 
 class Auth(Resource):
   def get(self):
-    if not "Auth-Password" in request.headers:
-      return {"message": "No password provided"}, 401
-
-    password = request.headers["Auth-Password"]
+    password = request.headers.get("Auth-Password")
+    if not password:
+      return {"message":"No password provided"}, 401
 
     if password == app.config["AUTH_SECRET_KEY"]:
       token = jwt.encode({
@@ -68,10 +67,9 @@ class Auth(Resource):
 
 class ApiKey(Resource):
   def get(self):
-    if not "Auth-Password" in request.headers:
-      return {"message": "No password provided"}, 401
-
-    password = request.headers["Auth-Password"]
+    password = request.headers.get("Auth-Password")
+    if not password:
+      return {"message":"No password provided"}, 401
 
     if password == app.config["AUTH_SECRET_KEY"]:
       token = jwt.encode({}, app.config["AUTH_SECRET_KEY"], algorithm="HS512")
