@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "408920fda6824ddd1d409e0c06db01dfb81ee37aba3ba39e6c051f2da836a985"
+            "sha256": "b1b983d165849dcb3ed6db9b5cc4feb9dc9ed80f884181413358f995a449238c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -22,12 +22,25 @@
             ],
             "version": "==3.7.1"
         },
+        "adafruit-circuitpython-busdevice": {
+            "hashes": [
+                "sha256:c4aac498db646801f486b213bfb2697706171bcb9020ddcf35606125b9d0c3dc"
+            ],
+            "version": "==4.1.2"
+        },
         "adafruit-circuitpython-neopixel": {
             "hashes": [
                 "sha256:668b8e79d46a2deb828c4b05727d0723a36af4295478f21e66f06de543718219"
             ],
             "index": "pypi",
             "version": "==5.0.0"
+        },
+        "adafruit-circuitpython-seesaw": {
+            "hashes": [
+                "sha256:3b4495bc03400243ca1045f1c1f29027fcd3cdc2644ad666e717970a43d3396d"
+            ],
+            "index": "pypi",
+            "version": "==1.5.5"
         },
         "adafruit-platformdetect": {
             "hashes": [

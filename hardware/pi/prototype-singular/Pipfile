@@ -9,6 +9,8 @@ verify_ssl = true
 requests = "*"
 rpi-ws281x = "*"
 adafruit-circuitpython-neopixel = "*"
+adafruit-circuitpython-seesaw = "*"
+python3-rpi-gpio = "*"
 
 [requires]
 python_version = "3"
