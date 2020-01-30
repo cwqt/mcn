@@ -3,12 +3,14 @@ stages:
   - production
 
 test:
+  stage: test
   image: postman/newman:alpine
   script:
     - newman --version
     # - newman run api/tests.json
 
 production:
+  stage: production
   type: deploy
   script:
     - gem install dpl
