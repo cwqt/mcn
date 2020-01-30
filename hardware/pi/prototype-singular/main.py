@@ -37,16 +37,15 @@ GPIO.add_event_detect(BUTTON_ADDRESS, GPIO.FALLING, callback=button_callback)
 
 
 pixels = neopixel.NeoPixel(board.D18, 1, brightness=0.5)
-pixels[0] = (255, 0, 0)
+pixels[0] = (100, 100, 100)
 pixels.show()
 time.sleep(2)
 
 def get_light():
-  i2c.writeto(LDR_ADDRESS, bytes([0x05]), stop=False)
+  i2c_bus.writeto(LDR_ADDRESS, bytes([0x05]), stop=False)
   result = bytearray(3)
-  i2c.readfrom_into(LDR_ADDRESS, result)
-  print(result)
-  return 1
+  i2c_bus.readfrom_into(LDR_ADDRESS, result)
+  return int(str(result, "utf-8"))
 
 def post():
   print("Posting...")
@@ -70,8 +69,9 @@ def post_w_led():
   status = post()
 
   if not status == requests.codes.ok:
-    pixels[0] = (255,0,0)   
-  pixels[0] = (0,255,0)
+    pixels[0] = (255,0,0)
+  else:
+    pixels[0] = (0,255,0)
   pixels.show()
 
   time.sleep(15)

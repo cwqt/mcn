@@ -12,7 +12,10 @@ void setup() {
 
 void requestEvent() {
   value = analogRead(ANALOG_PIN);  // read the input pin
-  Wire.write(value);
+  Serial.println(value);
+  String str = String(value, DEC);
+  
+  Wire.write(str.c_str());
   Serial.println("Request event");
 }
 
