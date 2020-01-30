@@ -15,8 +15,8 @@ PLANT_UUID = os.getenv("PLANT_UUID")
 
 UPDATE_PERIOD = 3600
 STEMMA_ADDRESS = 0x36
-LDR_ADDRESS = 0x00
-BUTTON_ADDRESS = board.D13
+LDR_ADDRESS = 0x09
+BUTTON_ADDRESS = 4 #bcm mode so pin 7 (physical) = 4
 
 HEADERS = {
   "x-api-key": API_KEY,
@@ -27,21 +27,25 @@ URL = API_URL+"/plants/"+PLANT_UUID
 i2c_bus = busio.I2C(board.SCL, board.SDA)
 stemma = Seesaw(i2c_bus, addr=STEMMA_ADDRESS)
 
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(BUTTON_ADDRESS, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.add_event_detect(BUTTON_ADDRESS, GPIO.RISING, callback=button_callback)
-
-pixels = neopixel.NeoPixel(board.D12, 1)
-pixels[0] = (255, 0, 0)
-pixels.show()
-time.sleep(2)
 
 def button_callback():
   print("Posting via button...")
   post_w_led()
 
+GPIO.setup(BUTTON_ADDRESS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(BUTTON_ADDRESS, GPIO.FALLING, callback=button_callback)
+
+
+pixels = neopixel.NeoPixel(board.D18, 1, brightness=0.5)
+pixels[0] = (255, 0, 0)
+pixels.show()
+time.sleep(2)
+
 def get_light():
+  i2c.writeto(LDR_ADDRESS, bytes([0x05]), stop=False)
+  result = bytearray(3)
+  i2c.readfrom_into(LDR_ADDRESS, result)
+  print(result)
   return 1
 
 def post():
