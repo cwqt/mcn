@@ -11,10 +11,14 @@ Hydroponics management and visualiser.
 
 ## api
 
+<http://api.hydroponics.cass.si/>
+
 Flask-RESTful API with MongoDB - JWT authentication.  
 Served on [Heroku](https://www.heroku.com/).
 
 ## frontend
+
+<http://hydroponics.cass.si>
 
 React, Redux with Pi NoIR camera stream.  
 Served on [Now](https://zeit.co/home).
