@@ -1,9 +1,19 @@
+stages:
+  - test
+  - production
+
+test:
+  image: postman/newman:alpine
+  script:
+    - newman --version
+    # - newman run api/tests.json
+
 production:
   type: deploy
   script:
-  - gem install dpl
-  - cd api
-  - dpl --provider=heroku --app=hydroponics-api --api-key=$HEROKU_API_KEY
-  # - cd ..
-  # - cd frontend
-  # - dpl --provider=heroku --app=moisture-track-fe --api-key=$HEROKU_API_KEY
+    - gem install dpl
+    - cd api
+    - dpl --provider=heroku --app=hydroponics-api --api-key=$HEROKU_API_KEY
+    - cd ..
+    - cd frontend
+    - dpl --provider=heroku --app=moisture-track-fe --api-key=$HEROKU_API_KEY

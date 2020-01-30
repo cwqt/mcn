@@ -50,8 +50,8 @@ void drawBoot() {
   display.println("systems");
   display.drawBitmap(dsbit, 10, 3, 61, 115, GxEPD_WHITE);
   display.update();
-  delay(10000);
-  display.eraseDisplay();
+  delay(2000);
+  display.fillScreen(GxEPD_WHITE);
 }
 
 void setup() {
