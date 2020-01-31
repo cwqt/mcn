@@ -2,11 +2,8 @@
   "name": "hydroponics",
   "alias": ["hydroponics.cass.si"],
   "builds": [{
-    "src": "./frontend/package.json",
+    "src": "package.json",
     "use": "@now/static-build",
     "config": {"destDir":"build"}
-   }],
-  "routes": [
-    { "src": "/(.*)", "dest": "frontend/$1" }
-  ]
+   }]
 }
