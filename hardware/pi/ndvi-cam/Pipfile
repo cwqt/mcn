@@ -7,6 +7,8 @@ verify_ssl = true
 
 [packages]
 requests = "*"
+matplotlib = "*"
+pillow = "*"
 picamera = "*"
 
 [requires]

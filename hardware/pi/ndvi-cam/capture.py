@@ -4,14 +4,15 @@ import datetime
 import picamera
 import requests
 import matplotlib
-import numpy 							as numpy
-import matplotlib.pyplot 	as plt
-from PIL 									import Image, ImageFont, ImageDraw
-from matplotlib.colors 		import LinearSegmentedColormap
-from colors 							import colors
+import numpy              as numpy
+import matplotlib.pyplot  as plt
+from PIL                  import Image, ImageFont, ImageDraw
+from matplotlib.colors    import LinearSegmentedColormap
+from colors               import colors
 
 matplotlib.use('Agg')
-PATH = "/home/pi/hydroponics/hardware/pi/ndvi-cam"
+PATH = "/home/pi/hydroponics/ hardware/pi/ndvi-cam"
+# PATH = "/Users/cass/Code/Projects/Sites/hydroponics/hardware/pi/ndvi-cam"
 
 def capture_image(t):
   ts = t.strftime('%Y-%m-%d-%H-%M')
@@ -38,7 +39,7 @@ def image_preprocess(filename):
 
 
 def ndvi(filename):
-    img = Image.open(image)
+    img = Image.open(filename)
 
     imgR, imgG, imgB, imgA = img.split()
 
@@ -51,10 +52,10 @@ def ndvi(filename):
 
     arrNDVI = redBlueDiff/redBlueSum
     
-    plt.imsave(PATH+"/processed.jpg",arrNDVI, vmin=-1.0,vmax=1.0)
+    plt.imsave(PATH+"/processed.jpg", arrNDVI, vmin=-1.0,vmax=1.0)
 
-    fastiecm=LinearSegmentedColormap.from_list('mylist', colors) 
-    plt.imsave(PATH+"/out.jpg",arrNDVI,cmap=fastiecm, vmin=-1.0, vmax=1.0)
+    fastiecm = LinearSegmentedColormap.from_list('mylist', colors) 
+    plt.imsave(PATH+"/out.jpg", arrNDVI, cmap=fastiecm, vmin=-1.0, vmax=1.0)
 
 
 def overlay_timestamp(t, filename):
@@ -69,11 +70,11 @@ def overlay_timestamp(t, filename):
 
 
 def upload(filename):
-	pass
+  pass
 
 timestamp = datetime.datetime.now()
 filename = capture_image(timestamp)
 filename = image_preprocess(filename)
-filename = ndvi(filename)
+filename = ndvi("test.png")
 filename = overlay_timestamp(t, filename)
 upload(filename)
