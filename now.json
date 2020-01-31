@@ -1,9 +1,9 @@
 {
-  "name": "moisture.track",
+  "name": "hydroponics",
   "alias": ["hydroponics.cass.si"],
   "builds": [{
     "src": "frontend/package.json",
     "use": "@now/static-build",
-    "config": {"distDir":"frontend/build"}
+    "config": {"distDir":"build"}
    }]
 }
