@@ -9,6 +9,8 @@ IoT Garden & plant management with dashboard.
 * Live camera feed (No IR) to view active photosynthesis
 * Code support for ESP-32, Wemos D1 Mini & Raspberry Pi
 
+![Preview](https://ftp.cass.si/6i5p7qmy3.png)
+
 ## api
 
 <http://api.hydroponics.cass.si/>

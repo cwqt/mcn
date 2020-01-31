@@ -14,11 +14,17 @@ Plant operates via a WEMOS D1 mini with a custom PCB hat, moisture, light level,
 
 Pi NoIR camera to see active photosynthesis via Normalized Difference Vegetation Index (NDVI).
 
+<https://publiclab.org/notes/petter_mansson1/04-09-2019/low-cost-ndvi-analysis-using-raspberrypi-and-pinoir>  
 <https://www.richardmudhar.com/blog/2015/07/using-near-ir-to-look-for-photosynthesis-and-plant-health-with-ndvi/>
 
 ### prototype-singular
 
 Prototype board for testing API & site. Temperature, light level & moisture. 2.2" adafruit TFT display for debugging.
 
-.env
-`API_KEY=my_api_key`
+`.env`
+
+```shell
+API_KEY=my_api_key
+API_URL=https://api.hydroponics.cass.si/
+PLANT_UUID=plant_uuid
+```
