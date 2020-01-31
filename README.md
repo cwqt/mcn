@@ -1,6 +1,6 @@
-# moisture.track
+# hydroponics
 
-Hydroponics management and visualiser.
+IoT Garden & plant management with dashboard.
 
 * Event based system notifies when an action needs completing e.g. watering, re-seeding
 * Gardens and Plants, manage entire gardens constituted of subplants
