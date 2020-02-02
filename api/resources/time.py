@@ -4,4 +4,4 @@ from flask import make_response
 
 class Time(Resource):
 	def get(self):
-		return make_response(str(int(round(time.time()*1000))), {'Content-Type': 'text/html'})
+		return make_response(str(int(round(time.time()))), {'Content-Type': 'text/html'})

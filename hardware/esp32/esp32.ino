@@ -151,7 +151,7 @@ String parseWiFiStatus() {
 
 String getTime() { 
   Serial.println("Getting time...");
-  http.begin("https://currentmillis.com/time/seconds-since-unix-epoch.php");
+  http.begin("http://"API_URL"/time");
   int httpResponseCode = http.GET();
   String response;
   if (httpResponseCode > 0) {
@@ -403,16 +403,10 @@ void loop() {
   for (int i=0; i<4; i++) {
     int t_now = millis();
     time_t t = getTime().toInt();
-    Serial.print(hour(t));
-    Serial.print(minute(t));
-    Serial.print(second(t));
-    Serial.println("");
-
-    Serial.println(t_now);
-    Serial.println(last_post_time);
-    Serial.println(((UPDATE_PERIOD*1000)-((t_now - last_post_time)))/60000);
-    
     String currentTime = String(hour(t)) + ":" + String(minute(t))  + ":" + String(second(t));
+    Serial.print("Current time: ");
+    Serial.print(currentTime);Serial.print(" ");Serial.println(t);
+    Serial.println(year(t));
     
     clearContent();
     setLineString(0, "Last post",   currentTime);
