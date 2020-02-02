@@ -85,6 +85,11 @@ curl --header "Auth-Password: 'supersecretpassword'"  -X DELETE "http://localhos
 * __GET__: Get events
 	- Takes query `?last=<last_n_events>`
 
+`/time`
+
+* __GET__: Get seconds since unix epoch (text/html)
+
+
 ## Accepted measurements
 
 View [common/measurements.py](https://gitlab.com/cxss/moisture.track/blob/master/api/common/measurements.py) for a list of accepted measurements and their types.

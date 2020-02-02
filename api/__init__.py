@@ -16,6 +16,7 @@ from resources.plant        import Plant
 from resources.measurements import Measurements
 from resources.events       import Events
 from resources.letsencrypt  import LetsEncrypt
+from resources.time         import Time
 
 def create_app(config_name):
   app = Flask(__name__)
@@ -38,5 +39,6 @@ def create_app(config_name):
   api.add_resource(Events, "/<path:obj_type>/<string:uuid>/events")
 
   api.add_resource(LetsEncrypt, "/.well-known/acme-challenge/Oa-mvfItbs3V9fXp9fXTyBsj5hGgqoB_05OzmZi215o")
+  api.add_resource(Time, "/time")
 
   return app
