@@ -1,7 +1,7 @@
 import os
 import shutil
 import datetime
-import picamera
+# import picamera
 import requests
 import matplotlib
 import numpy              as numpy
@@ -48,14 +48,14 @@ def ndvi(filename):
     
     redBlueDiff = (arrR - arrB)
     redBlueSum = (arrR + arrB)
-    redBlueSum[redBlueSum ==0] = 0.01
+    redBlueSum[redBlueSum == 0] = 0.01
 
     arrNDVI = redBlueDiff/redBlueSum
     
-    plt.imsave(PATH+"/processed.jpg", arrNDVI, vmin=-1.0,vmax=1.0)
+    plt.imsave(PATH+"/"+filenamep+"-processed.jpg", arrNDVI, vmin=-1.0,vmax=1.0)
 
     fastiecm = LinearSegmentedColormap.from_list('mylist', colors) 
-    plt.imsave(PATH+"/out.jpg", arrNDVI, cmap=fastiecm, vmin=-1.0, vmax=1.0)
+    plt.imsave(PATH+"/"+filename+"-NDVI.jpg", arrNDVI, cmap=fastiecm, vmin=-1.0, vmax=1.0)
 
 
 def overlay_timestamp(t, filename):
@@ -75,6 +75,6 @@ def upload(filename):
 timestamp = datetime.datetime.now()
 filename = capture_image(timestamp)
 filename = image_preprocess(filename)
-filename = ndvi("test.png")
+filename = ndvi(filename)
 filename = overlay_timestamp(t, filename)
 upload(filename)

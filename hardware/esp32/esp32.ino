@@ -15,29 +15,65 @@
 #include "dsbit.h"
 #include "board_def.h"
 
-#define API_URL "http://esp32_garden.herokuapp.com"
-#define API_USERNAME "cass"
-#define API_PASSWORD "pass"
-#define GARDEN_UUID "3f19e49e-ab7b-42be-b997-7013376bfd88"
-#define SHORT_UUID "3f19e49e"
+//WIFI_SSID, WIFI_PASSWORD, API_KEY
+#include "secrets.h"
 
-#define WIFI_SSID "VM3990952"
-#define WIFI_PASSWORD "t7hyDqgPtn6t"
+#define API_URL "http://api.hydroponics.cass.si"
+#define GARDEN_UUID "5e21c99fa7b8674fb3c0bd02"
+char PLANT_UUIDS[2][25] = { "5e21c9a7a7b8674fb3c0bd04", "5e21c9a5a7b8674fb3c0bd03" };
+#define SHORT_UUID "b3c0bd02"
 
+//update once an hr
+#define UPDATE_PERIOD 3600
 #define DHT22_INPUT 32
 #define ANALOG_INPUT 36
-#define VALVE_SWITCH 0
-#define LIGHT_SWITCH 12
-
-int MUX_PINS[4] = {25, 26, 27, 33};
-int PLANT_POSITIONS[8] = {0,1,2,3,4,5,6,7};
 #define LIGHT_SENSOR 8
 #define WATER_SENSOR 9
+
+#define VALVE_SWITCH 0
+#define LIGHT_SWITCH 12
+#define HAS_RESERVOIR 0
+
+int MUX_PINS[4] = {25,26,27,33};
+int PLANT_POSITIONS[8] = {0,1};
 
 GxIO_Class io(SPI, ELINK_SS, ELINK_DC, ELINK_RESET);
 GxEPD_Class display(io, ELINK_RESET, ELINK_BUSY);
 HTTPClient http;
 DHT dht(DHT22_INPUT, DHT22);
+
+void setup() {
+  Serial.begin(9600);
+  while (!Serial) { delay(50); }
+  
+  initialiseDisplay();
+  dht.begin();
+
+  pinMode(DHT22_INPUT, INPUT);
+  pinMode(ANALOG_INPUT, INPUT);
+  pinMode(VALVE_SWITCH, OUTPUT);
+  pinMode(LIGHT_SWITCH, OUTPUT);
+  pinMode(MUX_PINS[0], OUTPUT);
+  pinMode(MUX_PINS[1], OUTPUT);
+  pinMode(MUX_PINS[2], OUTPUT);
+  pinMode(MUX_PINS[3], OUTPUT);
+
+  drawBoot();
+  drawSkeleton();
+  updateWiFiEpaperValue();
+  updateUptimeEpaperValue();
+  updateWaterLevelValue();
+  display.update();
+  delay(2000);
+}
+
+void initialiseDisplay() {
+  display.init();
+  display.setTextColor(GxEPD_BLACK);
+  display.setTextSize(0);
+  display.setRotation(3);
+  Serial.println("Display initialised!");
+}
 
 void drawBoot() {
   display.fillScreen(GxEPD_BLACK);
@@ -48,45 +84,17 @@ void drawBoot() {
   display.println("daughter.");
   display.setCursor(80, 65);
   display.println("systems");
-  display.drawBitmap(dsbit, 10, 3, 61, 115, GxEPD_WHITE);
+  display.drawBitmap(dsbit, 10, 2, 61, 115, GxEPD_WHITE);
   display.update();
   delay(2000);
   display.fillScreen(GxEPD_WHITE);
-}
-
-void setup() {
-  Serial.begin(9600);
-  while (!Serial) {}
-
-  initialiseDisplay();
-  drawBoot();
-
-  
-  
-  drawSkeleton();
-  updateWiFiEpaperValue();
-  updateUptimeEpaperValue();
-  drawPlants();
   display.update();
-
-  delay(1000);
-  attemptWiFiConnect(5000);
-
-  display.update();
-  showRequiresWatering();
-  display.update();
-}
-
-void initialiseDisplay() {
-  display.init();
   display.setTextColor(GxEPD_BLACK);
-  display.setTextSize(0);
-  display.setRotation(1);
-  delay(1000);
-  Serial.println("Display initialised");
 }
 
 void attemptWiFiConnect(int timeout) {
+  Serial.println("Attempting WiFi connect...");
+  Serial.print(WIFI_SSID);Serial.print(" : ");Serial.println(WIFI_PASSWORD);
   uint64_t start = millis();
   WiFi.setAutoReconnect(false);
   WiFi.setAutoConnect(false);
@@ -100,7 +108,7 @@ void attemptWiFiConnect(int timeout) {
     
     if (millis() - start > timeout) {
       WiFi.disconnect();
-      Serial.println("WiFi connect timed out");
+      Serial.println("\nWiFi connect timed out");
       updateWiFiEpaperValue();
       return;
     }
@@ -122,34 +130,65 @@ String parseWiFiStatus() {
   }
 }
 
+
 float readValueFromMux(int pos) {
   float value;
-  for(int i=0; i<sizeof(MUX_PINS); i++) {
-    digitalWrite(MUX_PINS[i], bitRead(pos, i));
-  }
-  delay(100);
-  value = digitalRead(ANALOG_INPUT); 
+  //set all pins to zero
+  for(int i=0; i<sizeof(MUX_PINS); i++) { digitalWrite(MUX_PINS[i], LOW); }
+  //in order of least to most signficant bit
+  digitalWrite(MUX_PINS[0], bitRead(pos, 0)); //s0
+  digitalWrite(MUX_PINS[1], bitRead(pos, 1)); //s1
+  digitalWrite(MUX_PINS[2], bitRead(pos, 2)); //s2
+  digitalWrite(MUX_PINS[3], bitRead(pos, 3)); //s3
+  
+  delay(2000);
+  value = analogRead(ANALOG_INPUT); 
+
+//  Serial.print(pos);
+//  Serial.print(" ");
+//  Serial.print(bitRead(pos, 3));
+//  Serial.print(bitRead(pos, 2));
+//  Serial.print(bitRead(pos, 1));
+//  Serial.print(bitRead(pos, 0));
+//  Serial.print(" ");
+//  Serial.print(value);
+//  Serial.print("\n");
   return value;
 }
 
 void getPlantMoistureLevels(float moisture_levels[]) {
-  for(int i=0; i<sizeof(PLANT_POSITIONS); i++) {
+  Serial.println("moisture_levels: ");
+  for(int i=0; i<sizeof(PLANT_POSITIONS)/sizeof(int); i++) {
     moisture_levels[i] = readValueFromMux(PLANT_POSITIONS[i]);
+    Serial.print(" ");Serial.print(i);Serial.print(": ");Serial.println(moisture_levels[i]);
   }  
   return;
 }
 
-void getTempAndHumidity(float dht22_result[]) {
-  dht.begin();
-  dht22_result[0] = dht.readHumidity();
-  dht22_result[1] = dht.readTemperature();
+void getTempAndHumidity(float *temperature, float *humidity) {  
+  *humidity = dht.readHumidity();
+  delay(2000);
+  *temperature = dht.readTemperature();
   return;
 }
 
-void sendDataToApi(float moisture_levels[], float light_level, float temperature, float humidity, bool lightIsOn) {
-  http.begin(API_URL);
+void sendDataToApi(float moisture_levels[], float *temperature, float *humidity, float *light_level, float *water_level, int *light_status) {
+  StaticJsonDocument<200> doc;
+  doc["temperature"] = *temperature; 
+  doc["humidity"] = *humidity; 
+  doc["light"] = *light_level; 
+  doc["water_level"] = *water_level; 
+  doc["light_on"] = *light_status; 
+  serializeJsonPretty(doc, Serial);
+  Serial.println("");
+
+  char json_body[200];
+  serializeJson(doc, json_body);
+  
+  http.begin(API_URL"/gardens/"GARDEN_UUID);
   http.addHeader("Content-Type", "application/json");
-  int httpResponseCode = http.POST("POSTING from ESP32");
+  http.addHeader("x-api-key", API_KEY);  
+  int httpResponseCode = http.PUT(json_body);
 
   if (httpResponseCode > 0) {
     String response = http.getString();
@@ -161,60 +200,51 @@ void sendDataToApi(float moisture_levels[], float light_level, float temperature
   }
   
   http.end();
+  return;
 }
+
+float moisture_levels[8];
+float temperature, humidity;
+float light_level;
+float water_level;
+int light_state = 0;
+int valve_state = 0;
 
 void loop() {
-  updateUptimeEpaperValue();
-  delay(5000);
-}
+  Serial.println("Capturing data...");
+  getPlantMoistureLevels(moisture_levels);
+  getTempAndHumidity(&temperature, &humidity);
+  light_level = readValueFromMux(LIGHT_SENSOR);
+  water_level = readValueFromMux(WATER_SENSOR);
+  light_state = digitalRead(LIGHT_SWITCH);
+  valve_state = digitalRead(VALVE_SWITCH);
+  
+  Serial.print("temperature: ");  Serial.println(temperature);
+  Serial.print("humidity: ");     Serial.println(humidity);
+  Serial.print("light_level: ");  Serial.println(light_level);
+  Serial.print("water_level: ");  Serial.println(water_level);
+  Serial.print("light_state: ");  Serial.println(light_state);
+  Serial.print("valve_state: ");  Serial.println(valve_state);
 
-//void loop() {
-//  if (WiFi.status() != WL_CONNECTED) {
-//    attemptWiFiConnect(3000);
-//  }
-//
-//  //collect all plant data
-//  float moisture_levels[8];
-//  getPlantMoistureLevels(moisture_levels);
-//
-//  //collect temp and humidity from DHT22
-//  float dht22_result[2];
-//  getTempAndHumidity(dht22_result);
-//  float temperature = dht22_result[0];  
-//  float humidity = dht22_result[1];
-//
-//  //collect light level
-//  float light_level = readValueFromMux(LIGHT_SENSOR);
-//
-//  //if connected, send data
-//  if (WiFi.status() == WL_CONNECTED) {
-//    sendDataToApi(moisture_levels,
-//                  temperature,
-//                  humidity,
-//                  light_level,
-//                  digitalRead(VALVE_SWITCH));
-//  }
-//
-//  //check water level
-//  if (readValueFromMux(WATER_SENSOR) < 100) {
-//    
-//    digitalWrite(VALVE_SWITCH, HIGH);
-//    do {
-//      //nothing
-//    } while(readValueFromMux(WATER_SENSOR) < 1000);
-//    digitalWrite(VALVE_SWITCH, LOW);
-//    
-//  } else { digitalWrite(VALVE_SWITCH, LOW); }
-//  
-//  //check light level
-//  if (readValueFromMux(LIGHT_SENSOR) < 1000) {
-//    digitalWrite(LIGHT_SWITCH, HIGH);
-//  } else { digitalWrite(LIGHT_SWITCH, LOW); }
-//
-//
-//  display.update();
-//  delay(300);//5 minutes
-//}
+  while (WiFi.status() != WL_CONNECTED) {
+    attemptWiFiConnect(10000);
+  }
+  //if connected, send data
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("Attempting to sent to API...");
+    sendDataToApi(moisture_levels,
+                  &temperature,
+                  &humidity,
+                  &light_level,
+                  &water_level,
+                  &light_state);
+  }
+
+  Serial.print("Waiting for: ");Serial.print(UPDATE_PERIOD);
+  Serial.println(" seconds\n");
+  display.update();
+  delay(UPDATE_PERIOD*1000);
+}
 
 
 // EPAPER ================================================================
@@ -251,8 +281,13 @@ void updateWiFiEpaperValue() {
   display.updateWindow(20,0,100,16);
 }
 
-void updateWaterEpaperValue() {
+void updateWaterEpaperValue(int *water_level) {
+  display.setCursor(185, 11);
+  display.println(water_level);
+}
 
+void clearContent() {
+  display.fillRect(0, 20, 250, 80, GxEPD_WHITE);
 }
 
 void showRequiresWatering() {
@@ -277,28 +312,6 @@ void updateUptimeEpaperValue() {
 
 void partialClearRegion(int x, int y, int w, int h) {
   display.fillRect(x,y,w,h,GxEPD_WHITE);
-}
-
-void drawPlant(int x, int y) {
-  int w = 15;
-  int h = 38;
-  
-  drawLine(x, y, x+w, y);
-  drawLine(x, y, x, y+h);
-  drawLine(x+w, y, x+w, y+h);
-  drawLine(x, y+h, x+w, y+h);
-
-  display.fillRect(x+2, y+2, w-3, h-3, GxEPD_BLACK);
-}
-
-void drawPlants(){ //float moisture_level[]) {
-  int x = 0;
-  int y = 20;
-  for (int i=0; i<8; i++) {
-    drawPlant(x, y);
-    x = x + 18;
-    if (i==3) { y = 61; x = 0; }
-  }
 }
 
 void drawLine(int x0, int y0, int x1, int y1) {

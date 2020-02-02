@@ -17,3 +17,11 @@
 * 2x irf630 mosfet
 * 1x mt3608 boost converter
 * 1x 12v water solenoid valve
+
+## secrets.h
+
+```c
+#define WIFI_SSID "my_ssid"
+#define WIFI_PASSWORD "my_password"
+#define API_KEY "api_key"
+```
