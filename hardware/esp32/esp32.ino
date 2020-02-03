@@ -406,7 +406,6 @@ void loop() {
     String currentTime = String(hour(t)) + ":" + String(minute(t))  + ":" + String(second(t));
     Serial.print("Current time: ");
     Serial.print(currentTime);Serial.print(" ");Serial.println(t);
-    Serial.println(year(t));
     
     clearContent();
     setLineString(0, "Last post",   currentTime);
