@@ -21,7 +21,18 @@
 
 #define API_URL "api.hydroponics.cass.si"
 #define GARDEN_UUID "5e21c99fa7b8674fb3c0bd02"
-char PLANT_UUIDS[2][25] = { "5e21c9a7a7b8674fb3c0bd04", "5e21c9a5a7b8674fb3c0bd03" };
+char PLANT_UUIDS[8][25] = {
+  "5e21c9a7a7b8674fb3c0bd04",
+  "5e21c9a5a7b8674fb3c0bd03",
+  "5e3832f22160986bbc8d31ad",
+  "5e3832fc2160986bbc8d31ae",
+  "5e3833042160986bbc8d31af",
+  "5e38330f2160986bbc8d31b0",
+  "5e38331c2160986bbc8d31b1",
+  "5e3833272160986bbc8d31b2",
+};
+int PLANT_POSITIONS[8] = {0,1,2,3,4,5,6,7};
+
 #define SHORT_UUID "b3c0bd02"
 
 //update once an hr
@@ -30,6 +41,7 @@ char PLANT_UUIDS[2][25] = { "5e21c9a7a7b8674fb3c0bd04", "5e21c9a5a7b8674fb3c0bd0
 #define ANALOG_INPUT 36
 #define LIGHT_SENSOR 8
 #define WATER_SENSOR 9
+#define WATER_SENSOR_PWR 19
 
 //water sensor reading when fully immersed in water
 #define EMPIRCAL_WATER_MAX 2215
@@ -39,27 +51,24 @@ char PLANT_UUIDS[2][25] = { "5e21c9a7a7b8674fb3c0bd04", "5e21c9a5a7b8674fb3c0bd0
 #define HAS_RESERVOIR 0
 
 int MUX_PINS[4] = {25,26,27,33};
-int PLANT_POSITIONS[8] = {0,1};
 
 GxIO_Class io(SPI, ELINK_SS, ELINK_DC, ELINK_RESET);
 GxEPD_Class display(io, ELINK_RESET, ELINK_BUSY);
 HTTPClient http;
 DHT dht(DHT22_INPUT, DHT22);
 
+int showValues = 0;
+
+//save function to internal ram, much faster access
+void IRAM_ATTR showCurrentValues() {
+  showValues = 1;
+  return;
+}
+
 void setup() {
   Serial.begin(9600);
   while (!Serial) { delay(50); }
 
-
-//  while (WiFi.status() != WL_CONNECTED) {
-//    attemptWiFiConnect(10000);
-//  }
-//  Serial.println("hello");
-//  time_t t = getTime().toInt();
-//  String currentTime = String(hour(t)) + ":" + String(minute(t))  + ":" + String(second(t));
-//  Serial.println(currentTime);
-//  for(;;){}
-  
   initialiseDisplay();
   dht.begin();
 
@@ -72,11 +81,16 @@ void setup() {
   pinMode(MUX_PINS[2], OUTPUT);
   pinMode(MUX_PINS[3], OUTPUT);
 
+  pinMode(WATER_SENSOR_PWR, OUTPUT);
+  digitalWrite(WATER_SENSOR_PWR, LOW);
+  pinMode(WATER_SENSOR_PWR, INPUT);
+
+  pinMode(BUTTON_3, INPUT);
+  attachInterrupt(digitalPinToInterrupt(BUTTON_3), showCurrentValues, FALLING);
+  
   drawBoot();
   drawSkeleton();
   updateInfo();
-  display.update();
-  delay(2000);
 }
 
 void updateInfo() {
@@ -134,7 +148,8 @@ void attemptWiFiConnect(int timeout) {
   }
 
   updateWiFiEpaperValue();
-  Serial.println("Connected: " + WiFi.localIP());
+  Serial.print("Connected: ");Serial.println(WiFi.localIP());
+  return;
 }
 
 String parseWiFiStatus() {
@@ -178,8 +193,22 @@ float readValueFromMux(int pos) {
   digitalWrite(MUX_PINS[2], bitRead(pos, 2)); //s2
   digitalWrite(MUX_PINS[3], bitRead(pos, 3)); //s3
   
-  delay(2000);
-  value = analogRead(ANALOG_INPUT); 
+  //water sensor very liable to corrosion due to
+  //electroylsis, turning the sensor on while taking a reading
+  //and off after sets I=0 in m=It/Fz -> m=0 during idle use
+  if (pos == WATER_SENSOR) {
+    pinMode(WATER_SENSOR_PWR, OUTPUT);
+    digitalWrite(WATER_SENSOR_PWR, HIGH);
+    delay(100);
+    value = analogRead(ANALOG_INPUT);
+    //put water sensor pin in high impedance state
+    //to prevent leakage current and slow corrosion
+    digitalWrite(WATER_SENSOR_PWR, LOW);
+    pinMode(WATER_SENSOR_PWR, INPUT);
+  } else {
+    delay(1000);
+    value = analogRead(ANALOG_INPUT); 
+  }
 
 //  Serial.print(pos);
 //  Serial.print(" ");
@@ -209,7 +238,22 @@ void getTempAndHumidity(float *temperature, float *humidity) {
   return;
 }
 
-int sendDataToApi(float moisture_levels[], float *temperature, float *humidity, float *light_level, float *water_level, int *light_status) {
+void sendPlantDataToApi(float moisture_level, String plant_UUID) {
+  Serial.print("API: Sending moisture level to: ");Serial.println(plant_UUID);
+  StaticJsonDocument<100> doc;
+  doc["moisture"] = moisture_level;
+  char json_body[100];
+  serializeJson(doc, json_body);
+  
+  http.begin("http://"API_URL"/plants/"+plant_UUID);
+  http.addHeader("Content-Type", "application/json");
+  http.addHeader("x-api-key", API_KEY);  
+  int httpResponseCode = http.PUT(json_body);
+  Serial.print("Plant PUT: ");Serial.println(httpResponseCode);
+  return;
+}
+
+int sendGardenDataToApi(float *temperature, float *humidity, float *light_level, float *water_level, int *light_status) {
   Serial.println("Attempting to sent to API...");
   StaticJsonDocument<200> doc;
   doc["temperature"] = *temperature; 
@@ -228,7 +272,7 @@ int sendDataToApi(float moisture_levels[], float *temperature, float *humidity, 
   http.addHeader("x-api-key", API_KEY);  
   int httpResponseCode = http.PUT(json_body);
   
-  if (httpResponseCode > 0) {
+  if (httpResponseCode == 200) {
     String response = http.getString();
     Serial.println(httpResponseCode);   //Print return code
     Serial.println(response);   
@@ -275,10 +319,15 @@ void updateWiFiEpaperValue() {
   display.updateWindow(37,0,100,16);
 }
 
-void updateWaterEpaperValue() {
+int getWaterLevelAsPercentage() {
   int res;
   float value = readValueFromMux(WATER_SENSOR);
   res = int((value / EMPIRCAL_WATER_MAX)*100);
+  return res;
+}
+
+void updateWaterEpaperValue() {
+  int res = getWaterLevelAsPercentage();
 
   partialClearRegion(220,0,235,16);
   display.setFont(&Roboto_Medium8pt7b);
@@ -313,7 +362,18 @@ void showRequiresWatering() {
   display.setCursor(10, 45);
   display.setTextSize(1);
   display.setTextColor(GxEPD_WHITE);
-  display.println("Needs watering!");
+  display.println("Water tank\n level low!");
+  display.setTextColor(GxEPD_BLACK);
+  display.setTextSize(0);
+}
+
+void showDht22NotConnected() {
+  display.setFont(&FreeMonoBold12pt7b);
+  display.fillRect(0, 20, 250, 80, GxEPD_BLACK);
+  display.setCursor(10, 45);
+  display.setTextSize(1);
+  display.setTextColor(GxEPD_WHITE);
+  display.println("DHT22 reading\n values of nan!");
   display.setTextColor(GxEPD_BLACK);
   display.setTextSize(0);
 }
@@ -344,7 +404,6 @@ void drawLine(int x0, int y0, int x1, int y1) {
   }
 }
 
-
 // LOOP ====================================================
 float moisture_levels[8];
 float temperature, humidity;
@@ -357,19 +416,56 @@ int post_count = 0;
 int last_post_time;
 int post_status;
 
-void loop() {
-  if (post_count == 0) {
-    setLineString(0, "Performing first data capture...", "", 40);
-    setLineString(1, "ID", SHORT_UUID, 40);
-    setLineString(2, "API", "api.hydroponics.cass.si", 40); 
-    display.update();
-  }
+void drawDefaultPage(){
+  int t_now = millis();
+  time_t t = getTime().toInt();
+  String currentTime = String(hour(t)) + ":" + String(minute(t))  + ":" + String(second(t));
+  Serial.print("Current time: ");
+  Serial.print(currentTime);Serial.print(" ");Serial.println(t);
   
+  clearContent();
+  setLineString(0, "Last post",   currentTime);
+  setLineString(2, "Next post",   "in " + String(((UPDATE_PERIOD*1000)-((t_now - last_post_time)))/60000) + " minutes");
+  setLineString(1, "Post status", String(post_status));
+  setLineString(3, "Post count",  String(post_count) + " update(s)");
+//  updateInfo();
+
+  if (water_level <= 25) { showRequiresWatering(); }
+  if (isnan(temperature) || isnan(humidity)) { showDht22NotConnected(); }
+}
+
+void drawCurrentStats() {
+  getTempAndHumidity(&temperature, &humidity);
+  light_level = readValueFromMux(LIGHT_SENSOR);
+  water_level = getWaterLevelAsPercentage();
+
+  float avg_moisture;
+  for (int i=0; i<sizeof(moisture_levels)/sizeof(moisture_levels[0]); i++) {
+    avg_moisture += moisture_levels[i];
+    Serial.println(moisture_levels[i]);
+  }
+  Serial.println(avg_moisture);
+  avg_moisture = avg_moisture/8;
+  
+  clearContent();
+  setLineString(0, "Avg. moisture", String(avg_moisture), 140);
+  setLineString(1, "Temperature", String(temperature), 140);
+  setLineString(2, "Humidity", String(humidity), 140);
+  setLineString(3, "Light", String(light_level), 140);
+  updateInfo();
+}
+
+void loop() {
+  setLineString(0, "Performing data capture...", "", 40);
+  setLineString(2, "ID", SHORT_UUID, 40);
+  setLineString(3, "API", "api.hydroponics.cass.si", 40); 
+  display.update();
+
   Serial.println("Capturing data...");
   getPlantMoistureLevels(moisture_levels);
   getTempAndHumidity(&temperature, &humidity);
   light_level = readValueFromMux(LIGHT_SENSOR);
-  water_level = readValueFromMux(WATER_SENSOR);
+  water_level = getWaterLevelAsPercentage();
   light_state = digitalRead(LIGHT_SWITCH);
   valve_state = digitalRead(VALVE_SWITCH);
   
@@ -383,15 +479,14 @@ void loop() {
   while (WiFi.status() != WL_CONNECTED) {
     attemptWiFiConnect(10000);
   }
+  
   //if connected, send data
   if (WiFi.status() == WL_CONNECTED) {
-    int responseCode = sendDataToApi(moisture_levels,
-                        &temperature,
-                        &humidity,
-                        &light_level,
-                        &water_level,
-                        &light_state);
-    
+    for(int i=0; i<sizeof(moisture_levels)/sizeof(moisture_levels[0]); i++) {
+      sendPlantDataToApi(moisture_levels[i], PLANT_UUIDS[i]);
+    }
+    int responseCode = sendGardenDataToApi(&temperature, &humidity, &light_level, &water_level, &light_state);
+   
     last_post_time = millis();
     post_status = responseCode;
     post_count++;
@@ -399,21 +494,24 @@ void loop() {
 
   Serial.print("Waiting for: ");Serial.print(UPDATE_PERIOD);
   Serial.println(" seconds\n");
-  delay(1000);
-  for (int i=0; i<4; i++) {
-    int t_now = millis();
-    time_t t = getTime().toInt();
-    String currentTime = String(hour(t)) + ":" + String(minute(t))  + ":" + String(second(t));
-    Serial.print("Current time: ");
-    Serial.print(currentTime);Serial.print(" ");Serial.println(t);
-    
-    clearContent();
-    setLineString(0, "Last post",   currentTime);
-    setLineString(2, "Next post",   "in " + String(((UPDATE_PERIOD*1000)-((t_now - last_post_time)))/60000) + " minutes");
-    setLineString(1, "Post status", String(post_status));
-    setLineString(3, "Post count",  String(post_count) + " update(s)");
-    updateInfo();
-    display.update();
-    delay((UPDATE_PERIOD/4)*1000);
+  delay(1000);  
+  drawDefaultPage();
+  display.update();
+
+  // poll every second for UPDATE_PERIOD seconds
+  // if ISR set showValues true, show them, then go back to showing state
+  for (int j=0; j<4; j++) {
+    for (int i=0; i<UPDATE_PERIOD/4; i++) {
+      if (showValues == 1) {
+        showValues = 0;
+        drawCurrentStats();
+        display.update();
+        delay(5000);
+        drawDefaultPage();
+        display.update();
+      }
+      delay(1000);
+    }  
+    drawDefaultPage();
   }
 }
