@@ -1,8 +1,8 @@
 ACCEPTED_MEASUREMENTS = [
-  [ "temperature", int ],
-  [ "moisture", int ],
-  [ "humidity", int ],
-  [ "light", int ],
-  [ "water_level", int ],
+  [ "temperature", float ],
+  [ "moisture", float ],
+  [ "humidity", float ],
+  [ "light", float ],
+  [ "water_level", float ],
   [ "light_on", bool ]
 ]

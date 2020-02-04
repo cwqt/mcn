@@ -10,9 +10,16 @@ from PIL                  import Image, ImageFont, ImageDraw
 from matplotlib.colors    import LinearSegmentedColormap
 from colors               import colors
 
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
+
+g_login = GoogleAuth()
+g_login.LocalWebserverAuth()
+drive = GoogleDrive(g_login)
+
 matplotlib.use('Agg')
-PATH = "/home/pi/hydroponics/ hardware/pi/ndvi-cam"
-# PATH = "/Users/cass/Code/Projects/Sites/hydroponics/hardware/pi/ndvi-cam"
+PATH = "/Users/cass/Code/Projects/Sites/hydroponics/hardware/pi/ndvi-cam"
+# PATH = "/home/pi/hydroponics/hardware/pi/ndvi-cam"
 
 def capture_image(t):
   ts = t.strftime('%Y-%m-%d-%H-%M')
@@ -34,7 +41,7 @@ def capture_image(t):
 
 
 def image_preprocess(filename):
-  img = Image.open(PATH+'/latest.jpg', Image.LANCZOS)
+  img = Image.open(PATH+'/'+filename, Image.LANCZOS)
   img = img.resize((1438, 1080))
 
 
@@ -52,7 +59,7 @@ def ndvi(filename):
 
     arrNDVI = redBlueDiff/redBlueSum
     
-    plt.imsave(PATH+"/"+filenamep+"-processed.jpg", arrNDVI, vmin=-1.0,vmax=1.0)
+    plt.imsave(PATH+"/"+filename+"-processed.jpg", arrNDVI, vmin=-1.0,vmax=1.0)
 
     fastiecm = LinearSegmentedColormap.from_list('mylist', colors) 
     plt.imsave(PATH+"/"+filename+"-NDVI.jpg", arrNDVI, cmap=fastiecm, vmin=-1.0, vmax=1.0)
@@ -60,21 +67,25 @@ def ndvi(filename):
 
 def overlay_timestamp(t, filename):
   ts_read = t.strftime('%H:%M, %a. %d %b %Y')
-  img = Image.open(PATH+'/latest.jpg')
+  img = Image.open(PATH+'/'+filename)
   draw = ImageDraw.Draw(img)
   font = ImageFont.truetype(PATH+'/Roboto-Regular.ttf', 36)  
   draw.text((10, 10), ts_read, (255, 255, 255), font=font)
-  filename = PATH+'/latest_ts.jpg'
-  img.save(filename)
-  return filename
+  f = PATH+'/latest_ts.jpg'
+  img.save(f)
+  return f
 
 
 def upload(filename):
-  pass
+  with open("path_to_your_file","r") as file:
+    file_drive = drive.CreateFile({'title':os.path.basename(file.name) })  
+    file_drive.SetContentString(file.read()) 
+    file1_drive.Upload()
 
-timestamp = datetime.datetime.now()
-filename = capture_image(timestamp)
-filename = image_preprocess(filename)
+t = datetime.datetime.now()
+# filename = capture_image(timestamp)
+filename = "test.png"
+# filename = image_preprocess(filename)
 filename = ndvi(filename)
 filename = overlay_timestamp(t, filename)
 upload(filename)
