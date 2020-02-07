@@ -2,45 +2,25 @@ import React from 'react';
 import styled from 'styled-components';
 
 const EventsListContainer = styled.header`
-  background-color: rgba(255,255,255,0.1);
   display: flex;
-  flex-flow: row;
-  align-items: center;
+  flex-flow: column;
   border-radius: 4px;
   padding: 20px;
-  p {
-    margin: 0;
-    color: #fff;
-    a {
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1.1rem;
-    }
-  }
-  img {
-    width: 30px;
-  }
-`
-const Link = styled.a`
-  margin-left: auto;
-  transition: 0.2s;
-  &:hover {
-    filter: brightness(0.8)
-  }
+  margin-top: auto;
+  background: white;
+  border-radius: 20px;
+  margin-bottom: 10px;
 `
 
 class EventsList extends React.Component { 
   render() {  	
     return (
-    	<FooterContainer>
-      <p>Created by &nbsp;<a href="https://gitlab.com/cxss">@cxss</a></p>
-      <Link href="https://gitlab.com/cxss/moisture.track">
-        <img alt="git" src="git.png" />
-      </Link>
-    	</FooterContainer>
+    	<EventsListContainer>
+      <h2>Recent events</h2>
+      <p>pog</p>
+    	</EventsListContainer>
     );
   }
 }
 
-export default Filterer;
+export default EventsList;

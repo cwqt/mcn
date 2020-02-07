@@ -33,8 +33,8 @@ class db(object):
   def get_doc_count(collection):
     return mongo.db[collection].count()
 
-  def get_measurements(collection, limit=20): # this lib sucks
-    results = mongo.db[collection].find({}).sort([("timestamp",-1)]).limit(limit)
+  def get_measurements(collection, limit=20, offset=0): # this lib sucks
+    results = mongo.db[collection].find({}).skip(offset).sort([("timestamp",-1)]).limit(limit)
     results = json.loads(dumps(results))
 
     if not results:

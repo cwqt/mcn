@@ -1,6 +1,7 @@
 import os
 import jwt
 import datetime
+import time
 import json
 
 from flask          import request, redirect
@@ -24,7 +25,7 @@ def token_required(f):
     if api_key:
       result, reason = db.find_one("keys", {"key":api_key})
       if not result:
-        return {"message": "API key not found"}, 404
+        return {"message": "Invalid API key"}, 404
 
     if token:
       try:
@@ -57,10 +58,15 @@ class Auth(Resource):
       return {"message":"No password provided"}, 401
 
     if password == app.config["AUTH_SECRET_KEY"]:
+      d = datetime.datetime.utcnow()
       token = jwt.encode({
-        "exp" : datetime.datetime.utcnow() + datetime.timedelta(minutes=120)
+        "exp" : d + datetime.timedelta(minutes=120)
       }, app.config["AUTH_SECRET_KEY"], algorithm="HS512")
-      return {"data": token.decode('UTF-8')}, 200
+      
+      return {
+        "data": token.decode('UTF-8'),
+        "created_at": int(time.mktime(d.timetuple()))
+      }, 200
 
     return {"message": "Un-authorized"}, 401
 
@@ -76,7 +82,8 @@ class ApiKey(Resource):
 
       db.insert_one("keys", db.bson_to_json({
         "_id": ObjectId(),
-        "key": token.decode('UTF-8')
+        "key": token.decode('UTF-8'),
+        "created_at": int(time.mktime(datetime.datetime.utcnow().timetuple()))
       }))
 
       return {"data": token.decode('UTF-8')}, 200

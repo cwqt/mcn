@@ -20,15 +20,20 @@ const HeaderContainer = styled.div`
     text-decoration: none;
   }
   img {
-    max-height: 40px;
+    max-height: 50px;
     filter: brightness(0.2);
   }
   h1 {
+    margin-top: -2px;
     margin-left: 20px;
     font-weight: bold;
     color: #333;
-    font-size: 40px;
+    font-size: 30px;
     line-height: .9
+    h2 {
+      margin-top: 10px;
+      font-size: 18px;
+    }
   }
 
   a:nth-last-child(1), a:nth-last-child(1) {
@@ -45,7 +50,7 @@ class Header extends React.Component {
       <HeaderContainer>
         <Link to="/">
           <img src="/leaf.png" />
-          <h1>moisture.track</h1>
+          <h1>hydroponics<h2>IoT garden and plant dashboard</h2></h1>
         </Link>
         <ModalButton desc="Add plant" icon="eco" openModal="CREATE_RECORDABLE_PLANT" requiresAuth/>
         <ModalButton desc="Add garden" icon="group_work" openModal="CREATE_RECORDABLE_GARDEN" requiresAuth/>

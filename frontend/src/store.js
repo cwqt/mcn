@@ -12,7 +12,7 @@ import createRootReducer 	from './reducers';
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ["modal", "recordable"],
+  blacklist: ["modal", "recordable", "overview"],
 	stateReconciler: autoMergeLevel2
 }
 

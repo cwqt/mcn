@@ -4,7 +4,8 @@ import json
 from bson.objectid  import ObjectId
 from bson.json_util import dumps
 
-from common.measurements  import ACCEPTED_MEASUREMENTS
+from common.data_types    import ACCEPTED_MEASUREMENTS
+from common.data_types    import ACCEPTED_EVENTS
 from common.db            import db
 from models.data          import Data
 

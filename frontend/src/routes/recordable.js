@@ -191,7 +191,7 @@ class RecordableRoute extends React.Component {
 
 												const currentValue 	= Object.values(arr)[arrLen - 1];
 												const sum = Object.values(arr).reduce((a, b) => a + b, 0);
-												const avg = Math.round((sum / arrLen)) || 0;
+												const avg = (sum / arrLen).toFixed(1) || 0;
 
 												return <tr key={idx}><td>{type}</td><td>{currentValue}</td><td>{avg}</td></tr>
 											})

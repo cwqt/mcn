@@ -40,14 +40,19 @@ int PLANT_POSITIONS[8] = {0,1,2,3,4,5,6,7};
 #define DHT22_INPUT 32
 #define ANALOG_INPUT 36
 #define LIGHT_SENSOR 8
+#define VALVE_SWITCH 0
 #define WATER_SENSOR 9
 #define WATER_SENSOR_PWR 19
 
 //water sensor reading when fully immersed in water
-#define EMPIRCAL_WATER_MAX 2215
+#define EMPIRICAL_WATER_MAX 2215
 
-#define VALVE_SWITCH 0
 #define LIGHT_SWITCH 12
+#define LIGHT_ON_TIME 6
+#define LIGHT_OFF_TIME 22
+//light level at which grow light should be on
+#define EMPIRICAL_LIGHT_THRESHOLD 1000
+
 #define HAS_RESERVOIR 0
 
 int MUX_PINS[4] = {25,26,27,33};
@@ -57,7 +62,7 @@ GxEPD_Class display(io, ELINK_RESET, ELINK_BUSY);
 HTTPClient http;
 DHT dht(DHT22_INPUT, DHT22);
 
-int showValues = 0;
+int showValues;
 
 //save function to internal ram, much faster access
 void IRAM_ATTR showCurrentValues() {
@@ -71,6 +76,7 @@ void setup() {
 
   initialiseDisplay();
   dht.begin();
+  showValues = 0;
 
   pinMode(DHT22_INPUT, INPUT);
   pinMode(ANALOG_INPUT, INPUT);
@@ -85,9 +91,11 @@ void setup() {
   digitalWrite(WATER_SENSOR_PWR, LOW);
   pinMode(WATER_SENSOR_PWR, INPUT);
 
+  digitalWrite(LIGHT_SWITCH, LOW);
+  
   pinMode(BUTTON_3, INPUT);
   attachInterrupt(digitalPinToInterrupt(BUTTON_3), showCurrentValues, FALLING);
-  
+
   drawBoot();
   drawSkeleton();
   updateInfo();
@@ -253,7 +261,7 @@ void sendPlantDataToApi(float moisture_level, String plant_UUID) {
   return;
 }
 
-int sendGardenDataToApi(float *temperature, float *humidity, float *light_level, float *water_level, int *light_status) {
+int sendGardenDataToApi(float *temperature, float *humidity, float *light_level, float *water_level, int *light_status, float *avg_moisture) {
   Serial.println("Attempting to sent to API...");
   StaticJsonDocument<200> doc;
   doc["temperature"] = *temperature; 
@@ -261,6 +269,7 @@ int sendGardenDataToApi(float *temperature, float *humidity, float *light_level,
   doc["light"] = *light_level; 
   doc["water_level"] = *water_level; 
   doc["light_on"] = *light_status; 
+  doc["avg_moisture"] = *avg_moisture;
   serializeJsonPretty(doc, Serial);
   Serial.println("");
 
@@ -322,7 +331,7 @@ void updateWiFiEpaperValue() {
 int getWaterLevelAsPercentage() {
   int res;
   float value = readValueFromMux(WATER_SENSOR);
-  res = int((value / EMPIRCAL_WATER_MAX)*100);
+  res = int((value / EMPIRICAL_WATER_MAX)*100);
   return res;
 }
 
@@ -404,8 +413,42 @@ void drawLine(int x0, int y0, int x1, int y1) {
   }
 }
 
+void turnOnLightIfParamsMet(int current_hr, int light_isOn, int light_level) {
+  //turn on light between LIGHT_ON_TIME and LIGHT_OFF_TIME if light level
+  //below some empirical threshold
+  if(LIGHT_ON_TIME <= current_hr && current_hr < LIGHT_OFF_TIME) {
+    if(light_isOn == 0 && light_level <= EMPIRICAL_LIGHT_THRESHOLD) {
+    //irf630 cannot be turned on by 3.3v gate-source voltage
+    //use a bc547 bjt transistor as a mosfet driver to interface
+    //with 5v supply and supply power to light-switch relay coil
+    digitalWrite(LIGHT_SWITCH, LOW);
+    return;
+    }
+  }
+  digitalWrite(LIGHT_SWITCH, HIGH);
+  return;
+}
+
+float getAverageMoisture(float moisture_levels[]) {
+  Serial.print("avg_moisture: ");
+  float moisture_sum;
+  float avg;
+  int plant_count = sizeof(PLANT_POSITIONS)/sizeof(int);
+  for(int i=0; i<plant_count; i++) {
+    if (moisture_levels[i] == 0) {
+      plant_count--;
+    } else {
+      moisture_sum += moisture_levels[i];
+    }
+  } 
+  avg = moisture_sum/plant_count;
+  Serial.println(avg);
+  return avg;
+}
+
 // LOOP ====================================================
 float moisture_levels[8];
+float avg_moisture;
 float temperature, humidity;
 float light_level;
 float water_level;
@@ -415,10 +458,11 @@ int valve_state = 0;
 int post_count = 0;
 int last_post_time;
 int post_status;
+time_t t;
 
 void drawDefaultPage(){
   int t_now = millis();
-  time_t t = getTime().toInt();
+  t = getTime().toInt();
   String currentTime = String(hour(t)) + ":" + String(minute(t))  + ":" + String(second(t));
   Serial.print("Current time: ");
   Serial.print(currentTime);Serial.print(" ");Serial.println(t);
@@ -436,16 +480,9 @@ void drawDefaultPage(){
 
 void drawCurrentStats() {
   getTempAndHumidity(&temperature, &humidity);
-  light_level = readValueFromMux(LIGHT_SENSOR);
-  water_level = getWaterLevelAsPercentage();
-
-  float avg_moisture;
-  for (int i=0; i<sizeof(moisture_levels)/sizeof(moisture_levels[0]); i++) {
-    avg_moisture += moisture_levels[i];
-    Serial.println(moisture_levels[i]);
-  }
-  Serial.println(avg_moisture);
-  avg_moisture = avg_moisture/8;
+  light_level   = readValueFromMux(LIGHT_SENSOR);
+  water_level   = getWaterLevelAsPercentage();
+  avg_moisture  = getAverageMoisture(moisture_levels);
   
   clearContent();
   setLineString(0, "Avg. moisture", String(avg_moisture), 140);
@@ -456,6 +493,7 @@ void drawCurrentStats() {
 }
 
 void loop() {
+  clearContent();
   setLineString(0, "Performing data capture...", "", 40);
   setLineString(2, "ID", SHORT_UUID, 40);
   setLineString(3, "API", "api.hydroponics.cass.si", 40); 
@@ -464,10 +502,11 @@ void loop() {
   Serial.println("Capturing data...");
   getPlantMoistureLevels(moisture_levels);
   getTempAndHumidity(&temperature, &humidity);
-  light_level = readValueFromMux(LIGHT_SENSOR);
-  water_level = getWaterLevelAsPercentage();
-  light_state = digitalRead(LIGHT_SWITCH);
-  valve_state = digitalRead(VALVE_SWITCH);
+  avg_moisture  = getAverageMoisture(moisture_levels);
+  light_level   = readValueFromMux(LIGHT_SENSOR);
+  water_level   = getWaterLevelAsPercentage();
+  light_state   = digitalRead(LIGHT_SWITCH);
+  valve_state   = digitalRead(VALVE_SWITCH);
   
   Serial.print("temperature: ");  Serial.println(temperature);
   Serial.print("humidity: ");     Serial.println(humidity);
@@ -485,7 +524,7 @@ void loop() {
     for(int i=0; i<sizeof(moisture_levels)/sizeof(moisture_levels[0]); i++) {
       sendPlantDataToApi(moisture_levels[i], PLANT_UUIDS[i]);
     }
-    int responseCode = sendGardenDataToApi(&temperature, &humidity, &light_level, &water_level, &light_state);
+    int responseCode = sendGardenDataToApi(&temperature, &humidity, &light_level, &water_level, &light_state, &avg_moisture);
    
     last_post_time = millis();
     post_status = responseCode;
@@ -499,9 +538,12 @@ void loop() {
   display.update();
 
   // poll every second for UPDATE_PERIOD seconds
+  // every UPDATE_PERIOD/updateFreq seconds update display & check light status
   // if ISR set showValues true, show them, then go back to showing state
-  for (int j=0; j<4; j++) {
-    for (int i=0; i<UPDATE_PERIOD/4; i++) {
+  int updateFreq = 4;
+  for (int j=0; j<updateFreq; j++) {
+    turnOnLightIfParamsMet(int(hour(t)), light_state, light_level);
+    for (int i=0; i<UPDATE_PERIOD/updateFreq; i++) {
       if (showValues == 1) {
         showValues = 0;
         drawCurrentStats();

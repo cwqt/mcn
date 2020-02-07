@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link, NavLink } from "react-router-dom";
+import EventsList from "./EventsList";
 
 class Navbar extends React.Component {
 	render() {
@@ -15,7 +16,7 @@ class Navbar extends React.Component {
 		return (
 			<NavContainer>
 				<NavList>
-					<h2>gardens</h2>
+					<h2>Gardens</h2>
 						{this.props.objects.map((object, idx) => {
 							if (object.type == "garden") {
 								return <NavLink activeClassName="selected"
@@ -27,7 +28,7 @@ class Navbar extends React.Component {
 						})}
 					<br />
 
-					<h2>plants</h2>
+					<h2>Plants</h2>
 						{this.props.objects.map((object, idx) => {
 							if (object.type == "plant") {
 								return <NavLink activeClassName="selected"
@@ -43,6 +44,7 @@ class Navbar extends React.Component {
 					{/* !this.props.isAuthorised &&
 						<AuthButton onClick={this.tryAuth}><p>Authenticate</p></AuthButton>
 					*/}
+					<EventsList />
 					<NavFooter>
 						{links.map(link => {
 							return <a href={link[0]} target="_blank"><img src={link[1]}/></a>
@@ -121,7 +123,6 @@ const NavList = styled.div`
 `
 
 const NavFooter = styled.div`
-	margin-top: auto;
 	margin-bottom: 20px;
 	background: white;
 	border-radius: 20px;

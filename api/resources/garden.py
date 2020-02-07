@@ -6,7 +6,7 @@ from bson.objectid      import ObjectId
 
 from common.db            import db
 from common.auth          import token_required
-from common.measurements  import ACCEPTED_MEASUREMENTS
+from common.data_types    import ACCEPTED_MEASUREMENTS
 from models.recordable    import Recordable as GardenObj
 
 
