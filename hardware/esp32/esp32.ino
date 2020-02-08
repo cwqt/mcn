@@ -19,8 +19,10 @@
 //WIFI_SSID, WIFI_PASSWORD, API_KEY
 #include "secrets.h"
 
+#define DEBUG 1
 #define API_URL "api.hydroponics.cass.si"
 #define GARDEN_UUID "5e21c99fa7b8674fb3c0bd02"
+#define SHORT_UUID "b3c0bd02"
 char PLANT_UUIDS[8][25] = {
   "5e21c9a7a7b8674fb3c0bd04",
   "5e21c9a5a7b8674fb3c0bd03",
@@ -33,27 +35,22 @@ char PLANT_UUIDS[8][25] = {
 };
 int PLANT_POSITIONS[8] = {0,1,2,3,4,5,6,7};
 
-#define SHORT_UUID "b3c0bd02"
-
 //update once an hr
 #define UPDATE_PERIOD 3600
 #define DHT22_INPUT 32
 #define ANALOG_INPUT 36
 #define LIGHT_SENSOR 8
-#define VALVE_SWITCH 0
 #define WATER_SENSOR 9
 #define WATER_SENSOR_PWR 19
 
-//water sensor reading when fully immersed in water
-#define EMPIRICAL_WATER_MAX 2215
-
 #define LIGHT_SWITCH 12
 #define LIGHT_ON_TIME 6
-#define LIGHT_OFF_TIME 22
+#define LIGHT_OFF_TIME 23
+
 //light level at which grow light should be on
 #define EMPIRICAL_LIGHT_THRESHOLD 1000
-
-#define HAS_RESERVOIR 0
+//water sensor reading when fully immersed in water
+#define EMPIRICAL_WATER_MAX 2215
 
 int MUX_PINS[4] = {25,26,27,33};
 
@@ -80,7 +77,6 @@ void setup() {
 
   pinMode(DHT22_INPUT, INPUT);
   pinMode(ANALOG_INPUT, INPUT);
-  pinMode(VALVE_SWITCH, OUTPUT);
   pinMode(LIGHT_SWITCH, OUTPUT);
   pinMode(MUX_PINS[0], OUTPUT);
   pinMode(MUX_PINS[1], OUTPUT);
@@ -91,7 +87,8 @@ void setup() {
   digitalWrite(WATER_SENSOR_PWR, LOW);
   pinMode(WATER_SENSOR_PWR, INPUT);
 
-  digitalWrite(LIGHT_SWITCH, LOW);
+  //high == off, see turnOnLightIfParamsMet
+  digitalWrite(LIGHT_SWITCH, HIGH);
   
   pinMode(BUTTON_3, INPUT);
   attachInterrupt(digitalPinToInterrupt(BUTTON_3), showCurrentValues, FALLING);
@@ -173,14 +170,13 @@ String parseWiFiStatus() {
 }
 
 String getTime() { 
-  Serial.println("Getting time...");
+  Serial.print("Getting time... ");
   http.begin("http://"API_URL"/time");
   int httpResponseCode = http.GET();
   String response;
   if (httpResponseCode > 0) {
     response = http.getString();
     Serial.println(httpResponseCode);
-    Serial.println(response);   
   } else {
     Serial.print("Error on sending POST: ");
     Serial.println(httpResponseCode);
@@ -247,7 +243,7 @@ void getTempAndHumidity(float *temperature, float *humidity) {
 }
 
 void sendPlantDataToApi(float moisture_level, String plant_UUID) {
-  Serial.print("API: Sending moisture level to: ");Serial.println(plant_UUID);
+  Serial.print("API: Sending moisture level to: ");Serial.print(plant_UUID);Serial.print(" ");
   StaticJsonDocument<100> doc;
   doc["moisture"] = moisture_level;
   char json_body[100];
@@ -257,7 +253,7 @@ void sendPlantDataToApi(float moisture_level, String plant_UUID) {
   http.addHeader("Content-Type", "application/json");
   http.addHeader("x-api-key", API_KEY);  
   int httpResponseCode = http.PUT(json_body);
-  Serial.print("Plant PUT: ");Serial.println(httpResponseCode);
+  Serial.print(httpResponseCode);Serial.println("");
   return;
 }
 
@@ -283,7 +279,7 @@ int sendGardenDataToApi(float *temperature, float *humidity, float *light_level,
   
   if (httpResponseCode == 200) {
     String response = http.getString();
-    Serial.println(httpResponseCode);   //Print return code
+    Serial.print(httpResponseCode);Serial.print(" ");
     Serial.println(response);   
   } else {
     Serial.print("Error on sending POST: ");
@@ -413,20 +409,28 @@ void drawLine(int x0, int y0, int x1, int y1) {
   }
 }
 
-void turnOnLightIfParamsMet(int current_hr, int light_isOn, int light_level) {
+int turnOnLightIfParamsMet(int current_hr, int light_state, int light_level) {
+  Serial.println("Light");
+  Serial.print(current_hr);Serial.print(", ");
+  Serial.print(light_state);Serial.print(", ");
+  Serial.print(light_level);Serial.print(", ");
+  Serial.println("");
   //turn on light between LIGHT_ON_TIME and LIGHT_OFF_TIME if light level
   //below some empirical threshold
   if(LIGHT_ON_TIME <= current_hr && current_hr < LIGHT_OFF_TIME) {
-    if(light_isOn == 0 && light_level <= EMPIRICAL_LIGHT_THRESHOLD) {
+    //bjt inverts logic, 1 = off, 0 = on
+    if(light_state == 1 && light_level <= EMPIRICAL_LIGHT_THRESHOLD) {
     //irf630 cannot be turned on by 3.3v gate-source voltage
     //use a bc547 bjt transistor as a mosfet driver to interface
     //with 5v supply and supply power to light-switch relay coil
+    Serial.println("Light on");
     digitalWrite(LIGHT_SWITCH, LOW);
-    return;
+    return 0;
     }
   }
+  Serial.println("Light off");
   digitalWrite(LIGHT_SWITCH, HIGH);
-  return;
+  return 1;
 }
 
 float getAverageMoisture(float moisture_levels[]) {
@@ -452,8 +456,7 @@ float avg_moisture;
 float temperature, humidity;
 float light_level;
 float water_level;
-int light_state = 0;
-int valve_state = 0;
+int light_state;
 
 int post_count = 0;
 int last_post_time;
@@ -494,9 +497,18 @@ void drawCurrentStats() {
 
 void loop() {
   clearContent();
-  setLineString(0, "Performing data capture...", "", 40);
-  setLineString(2, "ID", SHORT_UUID, 40);
-  setLineString(3, "API", "api.hydroponics.cass.si", 40); 
+  setLineString(0, "Trying to connect to WiFi", "", 40);
+  setLineString(2, "SSID", WIFI_SSID, 50);
+  setLineString(3, "Pass", WIFI_PASSWORD, 50);
+  display.update();
+  while (WiFi.status() != WL_CONNECTED) {
+    attemptWiFiConnect(10000);
+  }
+  
+  clearContent();
+  setLineString(0, "Performing data capture", "", 40);
+  setLineString(2, "ID", SHORT_UUID, 50);
+  setLineString(3, "API", "api.hydroponics.cass.si", 50); 
   display.update();
 
   Serial.println("Capturing data...");
@@ -506,21 +518,18 @@ void loop() {
   light_level   = readValueFromMux(LIGHT_SENSOR);
   water_level   = getWaterLevelAsPercentage();
   light_state   = digitalRead(LIGHT_SWITCH);
-  valve_state   = digitalRead(VALVE_SWITCH);
+
+  t = getTime().toInt();
+  light_state   = turnOnLightIfParamsMet(hour(t), light_state, light_level);
   
   Serial.print("temperature: ");  Serial.println(temperature);
   Serial.print("humidity: ");     Serial.println(humidity);
   Serial.print("light_level: ");  Serial.println(light_level);
   Serial.print("water_level: ");  Serial.println(water_level);
   Serial.print("light_state: ");  Serial.println(light_state);
-  Serial.print("valve_state: ");  Serial.println(valve_state);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    attemptWiFiConnect(10000);
-  }
   
   //if connected, send data
-  if (WiFi.status() == WL_CONNECTED) {
+  if (WiFi.status() == WL_CONNECTED && DEBUG != 1) {
     for(int i=0; i<sizeof(moisture_levels)/sizeof(moisture_levels[0]); i++) {
       sendPlantDataToApi(moisture_levels[i], PLANT_UUIDS[i]);
     }
@@ -533,7 +542,8 @@ void loop() {
 
   Serial.print("Waiting for: ");Serial.print(UPDATE_PERIOD);
   Serial.println(" seconds\n");
-  delay(1000);  
+  delay(1000);
+  showValues = 0;
   drawDefaultPage();
   display.update();
 
@@ -542,7 +552,6 @@ void loop() {
   // if ISR set showValues true, show them, then go back to showing state
   int updateFreq = 4;
   for (int j=0; j<updateFreq; j++) {
-    turnOnLightIfParamsMet(int(hour(t)), light_state, light_level);
     for (int i=0; i<UPDATE_PERIOD/updateFreq; i++) {
       if (showValues == 1) {
         showValues = 0;
@@ -555,5 +564,7 @@ void loop() {
       delay(1000);
     }  
     drawDefaultPage();
+    light_state = turnOnLightIfParamsMet(hour(t), light_state, light_level);
+    display.update();
   }
 }
