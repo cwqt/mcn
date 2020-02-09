@@ -1,6 +1,6 @@
 from flask_restful      import Resource, reqparse
 from bson.objectid      import ObjectId
-from pydrive            import pydrive
+# from pydrive            import pydrive
 
 from common.db          import db
 
@@ -12,4 +12,5 @@ class Feed(Resource):
     success, reason = db.find_one(obj_type, {"_id":ObjectId(uuid)})
     if not success:
       return {"message":reason}, 404
+    return {}
 

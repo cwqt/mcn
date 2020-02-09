@@ -17,6 +17,7 @@ flask-httpauth = "*"
 pyjwt = "*"
 mockupdb = "*"
 validators = "*"
+pydrive = "*"
 
 [requires]
 python_version = "3.7"
