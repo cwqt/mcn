@@ -7,3 +7,4 @@ __pycache__
 hardware/secrets.json
 hardware/esp32/secrets.h
 hardware/pi/ndvi-cam/client_secrets.json
+mycreds.txt
