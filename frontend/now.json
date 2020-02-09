@@ -1,8 +1,0 @@
-{
-  "name": "hydroponics",
-  "alias": ["hydroponics.cass.si"],
-  "builds": [{
-    "src": "package.json",
-    "use": "@now/static-build"
-   }]
-}
