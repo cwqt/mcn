@@ -18,6 +18,7 @@ from resources.measurements import MeasurementsCount
 from resources.events       import Events
 from resources.letsencrypt  import LetsEncrypt
 from resources.time         import Time
+from resources.feed         import Feed
 
 def create_app(config_name):
   app = Flask(__name__)
@@ -39,6 +40,7 @@ def create_app(config_name):
   api.add_resource(Measurements, "/<path:obj_type>/<string:uuid>/measurements")
   api.add_resource(MeasurementsCount, "/<path:obj_type>/<string:uuid>/measurements/count")
   api.add_resource(Events, "/<path:obj_type>/<string:uuid>/events")
+  api.add_resource(Feed, "/<path:obj_type>/<string:uuid>/feed")
 
   api.add_resource(LetsEncrypt, "/.well-known/acme-challenge/Oa-mvfItbs3V9fXp9fXTyBsj5hGgqoB_05OzmZi215o")
   api.add_resource(Time, "/time")

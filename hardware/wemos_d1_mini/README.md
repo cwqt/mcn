@@ -1,10 +1,4 @@
-# wemos d1 mini
-
-For monitoring single plants.
-
-![](https://ftp.cass.si/pfh8re3Av.png)
-
-## bom
+# bom
 
 * 1x wemos d1 mini
 * 1x 0.49" STM32 SD1306 i2c OLED (raw display) <https://www.aliexpress.com/item/32779893498.html?algo_pvid=8168a814-7420-4236-bb7c-71a57dab6d1e&algo_expid=8168a814-7420-4236-bb7c-71a57dab6d1e-7&btsid=f2e1e2d3-4d06-4f26-bddc-231815821770&ws_ab_test=searchweb0_0%2Csearchweb201602_9%2Csearchweb201603_53>
