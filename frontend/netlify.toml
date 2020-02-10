@@ -1,7 +1,7 @@
 ## This rule redirects to an external API, signing requests with a secret
 [[rewrites]]
   from = "/api/*"
-  to = "http://api.hydroponics.cass.si"
+  to = "http://api.hydroponics.cass.si/:splat"
   status = 200
   force = true # COMMENT: ensure that we always redirect
   headers = {X-From = "Netlify"}
