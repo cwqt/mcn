@@ -10,6 +10,15 @@ const EventsListContainer = styled.header`
   background: white;
   border-radius: 20px;
   margin-bottom: 10px;
+  p {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 18.72px;
+    margin-left: 26px;
+  }
+  h2 {
+    margin-bottom: 10px !important;
+  }
 `
 
 class EventsList extends React.Component { 
@@ -17,7 +26,9 @@ class EventsList extends React.Component {
     return (
     	<EventsListContainer>
       <h2>Recent events</h2>
-      <p>pog</p>
+      <p>Watered <b>VÄXER</b> <span>8 minutes ago</span></p>
+      <p>Refilled tank <b>VÄXER</b> <span>3 hours ago</span></p>
+      <p>Watered <b>Singular plant</b> <span>1 day ago</span></p>
     	</EventsListContainer>
     );
   }

@@ -10,8 +10,8 @@ class Measurements(Resource):
     if not obj_type in ["plants", "gardens"]:
       return {"message":"Invalid object type"}, 404
 
-    success, reason = db.find_one(obj_type, {"_id":ObjectId(uuid)})
-    if not success:
+    data, reason = db.find_one(obj_type, {"_id":ObjectId(uuid)})
+    if not data:
       return {"message":reason}, 404
 
     parser = reqparse.RequestParser()

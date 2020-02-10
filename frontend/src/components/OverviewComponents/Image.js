@@ -8,7 +8,7 @@ const ImageContainer = styled.div`
   flex: 1;
   max-height: 500px;
   img {
-    max-width: 100%;
+    height: 100%;
   }
 `
 

@@ -8,7 +8,7 @@ import moment 			from "moment";
 
 import Image 				from "../components/OverviewComponents/Image";
 import ModalButton 	from "../components/modals/ModalButton";
-import { getSelf } 	from "../actions/PageActions"
+import { getSelf, getMeasurements } 	from "../actions/PageActions"
 
 
 const ChartsContainer = styled.div`
@@ -56,6 +56,28 @@ const InfoSection = styled.div`
 	}
 	.content {
 		position: relative;
+		.plant_list {
+			ul {
+				list-style: none;
+				padding-left: 0;
+				a {
+					text-decoration: none;
+					padding: 15px;
+					border-radius: 20px;
+					color: #333;
+					background: #f3f3f3;
+					&:hover {
+						background: 
+					}
+					margin-bottom: 5px;
+					display: inline-block;
+					margin-left: 10px;
+					li {
+						display: inline;
+					}
+				}
+			}
+		}
 		.modal_buttons {
 			position: absolute;
 			right: 0;
@@ -86,32 +108,12 @@ class RecordableRoute extends React.Component {
 	}
 
 	getMeasurements(type) {
+		return;
 		//api returns object with object `measurements`
 		//convert into sorted list with mapping, sorted = [
 			// measurement_type = {timestamp: value, timestamp:value ...}
 			// "  "
 		// ] for use with chart.js graphs
-
-		fetch(`/api/${type}s/${this.props.match.params._id}/measurements?last=100`)
-			.then(res => res.json())
-			.then(data => {
-				if(!data.data) {
-					data.data = [{measurements:{}}]
-				}
-
-				var sorted = {};
-				//use first obj to set keys
-				Object.keys(data.data[0].measurements).forEach(key => sorted[key] = {})
-
-				// map onto sorted
-				data.data.forEach(doc => {
-					for(const [type, value] of Object.entries(doc.measurements)) {
-						sorted[type][doc.timestamp] = value;
-					}
-				})
-
-				this.setState({measurements: sorted})
-			})
 	}
 
 	generateChart(data_type, idx) {
@@ -155,9 +157,7 @@ class RecordableRoute extends React.Component {
 		return (
 			<div>
 				<InfoSection>
-					<div>
-						<Image src={this.props.self.image} />
-					</div>
+					<Image src={this.props.self.image} />
 
 					<div className="content">
 						<div className="modal_buttons">
@@ -201,16 +201,17 @@ class RecordableRoute extends React.Component {
 							</div>
 
 							{this.props.garden &&
-								<div>
+								<div class="plant_list">
 									<p><i>{this.props.self.name}</i> has <b>{(this.props.self.plants || []).length}</b> plants.</p>
 									<ul>
 											{(this.props.self.plants || []).map(plant => {
-												return <li>{plant._id}</li>
+												return <Link to={"/plant/"+plant._id}><li>{plant._id}</li></Link>
 											})}
 									</ul>
 								</div>
 							}
-						</div>					
+						</div>	
+
 					</div>
 				</InfoSection>
 
@@ -230,11 +231,13 @@ class RecordableRoute extends React.Component {
 
 RecordableRoute.propTypes = {
    getSelf: PropTypes.func.isRequired,
+   getMeasurements: PropTypes.func.isRequired
 }
 
 const MapStateToProps = store => ({
 	 self: store.page.self,
+	 measurements: store.page.measurements,
 	 message: store.page.message
 })
 
-export default connect(MapStateToProps, { getSelf })(RecordableRoute);
+export default connect(MapStateToProps, { getSelf, getMeasurements })(RecordableRoute);
