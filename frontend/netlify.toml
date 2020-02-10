@@ -1,5 +1,5 @@
 ## This rule redirects to an external API, signing requests with a secret
-[[redirects]]
+[[rewrites]]
   from = "/api/*"
   to = "http://api.hydroponics.cass.si"
   status = 200
