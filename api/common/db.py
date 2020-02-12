@@ -68,10 +68,11 @@ class db(object):
 
     for result in results:
       result["_id"] = result["_id"]["$oid"]
-      if result["type"] == "garden":
-        for plant in result["plants"]:
-          plant["_id"] = plant["$oid"]
-          plant.pop("$oid")
+      if "type" in result:
+        if result["type"] == "garden":
+          for plant in result["plants"]:
+            plant["_id"] = plant["$oid"]
+            plant.pop("$oid")
 
     return results
 

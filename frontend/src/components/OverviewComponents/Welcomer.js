@@ -71,15 +71,20 @@ class Welcomer extends React.Component {
 
     return (
     	<WelcomeContainer>
-        <h1>Hello!</h1>
         {this.props.isFetching &&
           <h2>Fetching data from API...</h2>
         }
-        {this.props.isFetching == false && this.props.length == 0 &&
-          <h2>No items found in databse</h2>
+        {this.props.isFetching == false && this.props.objects.length == 0 &&
+          <div>
+          <h1>Uh oh!</h1>
+          <h2>Couldn't get any items :(</h2>
+          </div>
         }
         {this.props.isFetching == false && this.props.objects.length > 0 &&
+          <div>
+          <h1>Hello!</h1>
           <h2>This monitor manages <b>{total.gardens}</b> gardens <br/>with <b>{total.sub_plants}</b> sub-plants & <b>{total.plants}</b> individual plants.</h2>
+          </div>
         }
         <img src="https://i.imgur.com/0KI01L1.png" />
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="#EFE5DB" fillOpacity="1" d="M0,160L48,149.3C96,139,192,117,288,101.3C384,85,480,75,576,58.7C672,43,768,21,864,53.3C960,85,1056,171,1152,208C1248,245,1344,235,1392,229.3L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>

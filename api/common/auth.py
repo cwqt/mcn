@@ -3,9 +3,8 @@ import jwt
 import datetime
 import time
 import json
-
 from flask          import request, redirect
-from flask_restful  import Resource
+from flask_restful  import Resource, reqparse
 from functools      import wraps
 from bson.objectid  import ObjectId
 
@@ -72,22 +71,29 @@ class Auth(Resource):
 
 
 class ApiKey(Resource):
+  @token_required
   def get(self):
-    password = request.headers.get("Auth-Password")
-    if not password:
-      return {"message":"No password provided"}, 401
+    data = db.get_all_docs("keys")
+    for key in data:
+      del key["key"]
+    return {"data":data}, 200
 
-    if password == app.config["AUTH_SECRET_KEY"]:
-      token = jwt.encode({}, app.config["AUTH_SECRET_KEY"], algorithm="HS512")
+  @password_required
+  def post(self):
+    parser = reqparse.RequestParser()
+    parser.add_argument("for", type=str, required=True)
+    args = parser.parse_args()
 
-      db.insert_one("keys", db.bson_to_json({
-        "_id": ObjectId(),
-        "key": token.decode('UTF-8'),
-        "created_at": int(time.mktime(datetime.datetime.utcnow().timetuple()))
-      }))
+    token = jwt.encode({}, app.config["AUTH_SECRET_KEY"], algorithm="HS512")
 
-      return {"data": token.decode('UTF-8')}, 200
-    return {"message": "Un-authorized"}, 401
+    db.insert_one("keys", db.bson_to_json({
+      "_id": ObjectId(),
+      "key": token.decode('UTF-8'),
+      "for": args["for"],
+      "created_at": int(time.mktime(datetime.datetime.utcnow().timetuple()))
+    }))
+
+    return {"data": token.decode('UTF-8')}, 200
 
   # @token_required
   # def delete(self):

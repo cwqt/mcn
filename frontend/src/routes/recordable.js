@@ -47,6 +47,7 @@ const InfoSection = styled.div`
 	& > div:last-child {
 		width: 70%;
 		.flex {
+			width: 100%;
 			display: flex;
 			div:last-child {
 				margin-left: 20px;
@@ -99,28 +100,20 @@ class RecordableRoute extends React.Component {
 
 	componentDidMount() {
 		this.props.getSelf(this.props.match.params._id)
-		this.getMeasurements(this.props.self.plant ? "plant" : "garden")
+		 
+		// this.getMeasurements(this.props.self.plant ? "plant" : "garden")
 	}
 
 	componentWillReceiveProps(nextProps) {
 		console.log(nextProps)
-		this.getMeasurements(nextProps.plant ? "plant" : "garden")
-	}
-
-	getMeasurements(type) {
-		return;
-		//api returns object with object `measurements`
-		//convert into sorted list with mapping, sorted = [
-			// measurement_type = {timestamp: value, timestamp:value ...}
-			// "  "
-		// ] for use with chart.js graphs
+		// this.getMeasurements(nextProps.plant ? "plant" : "garden")
 	}
 
 	generateChart(data_type, idx) {
 		const data = {
-			labels: Object.keys(this.state.measurements[data_type]).map(x => new Date(x * 1000)),
+			labels: Object.keys(this.props.measurements[data_type]).map(x => new Date(x * 1000)),
 			datasets: [{
-				data: Object.values(this.state.measurements[data_type]),
+				data: Object.values(this.props.measurements[data_type]),
 				label: data_type,
 			}]
 		}
@@ -173,44 +166,49 @@ class RecordableRoute extends React.Component {
 						</p>
 						<hr />
 
-						<div className="flex">
-							<div>
-								<table>
-									<thead>
-										<tr>
-											<th>measurement</th>
-											<th>current value</th>
-											<th>average value</th>
-										</tr>
-									</thead>
-									<tbody>
-										{
-											Object.keys(this.state.measurements).map((type, idx) => {
-												const arr = this.state.measurements[type];
-												const arrLen = Object.values(arr).length;
+						{this.props.page.isFetching &&
+							<p>Getting data...</p>
+						}
+						{(this.props.page.isFetching == false && Object.keys(this.props.measurements).length > 0) &&
+							<div className="flex">
+								<div>
+									<table>
+										<thead>
+											<tr>
+												<th>measurement</th>
+												<th>current value</th>
+												<th>average value</th>
+											</tr>
+										</thead>
+										<tbody>
+											{
+												Object.keys(this.props.measurements).map((type, idx) => {
+													const arr = this.props.measurements[type];
+													const arrLen = Object.values(arr).length;
 
-												const currentValue 	= Object.values(arr)[arrLen - 1];
-												const sum = Object.values(arr).reduce((a, b) => a + b, 0);
-												const avg = (sum / arrLen).toFixed(1) || 0;
+													const currentValue 	= Object.values(arr)[arrLen - 1];
+													const sum = Object.values(arr).reduce((a, b) => a + b, 0);
+													const avg = (sum / arrLen).toFixed(1) || 0;
 
-												return <tr key={idx}><td>{type}</td><td>{currentValue}</td><td>{avg}</td></tr>
-											})
-										}
-									</tbody>
-								</table>
-							</div>
-
-							{this.props.garden &&
-								<div class="plant_list">
-									<p><i>{this.props.self.name}</i> has <b>{(this.props.self.plants || []).length}</b> plants.</p>
-									<ul>
-											{(this.props.self.plants || []).map(plant => {
-												return <Link to={"/plant/"+plant._id}><li>{plant._id}</li></Link>
-											})}
-									</ul>
+													return <tr key={idx}><td>{type}</td><td>{currentValue}</td><td>{avg}</td></tr>
+												})
+											}
+										</tbody>
+									</table>
 								</div>
-							}
-						</div>	
+
+								{this.props.garden &&
+									<div class="plant_list">
+										<p><i>{this.props.self.name}</i> has <b>{(this.props.self.plants || []).length}</b> plants.</p>
+										<ul>
+												{(this.props.self.plants || []).map(plant => {
+													return <Link to={"/plant/"+plant._id}><li>{plant._id}</li></Link>
+												})}
+										</ul>
+									</div>
+								}
+							</div>	
+						}
 
 					</div>
 				</InfoSection>
@@ -218,8 +216,8 @@ class RecordableRoute extends React.Component {
 
 				<br />
 				<ChartsContainer>
-					{Object.keys(this.state.measurements) !== 0 &&
-						Object.keys(this.state.measurements).map((data_type, idx) => {
+					{Object.keys(this.props.measurements) !== 0 &&
+						Object.keys(this.props.measurements).map((data_type, idx) => {
 							return <ChartItem key={idx}>{this.generateChart(data_type, idx)}</ChartItem>;
 						})
 					}
@@ -235,9 +233,10 @@ RecordableRoute.propTypes = {
 }
 
 const MapStateToProps = store => ({
-	 self: store.page.self,
-	 measurements: store.page.measurements,
-	 message: store.page.message
+	page: store.page,
+	self: store.page.self,
+	measurements: store.page.measurements,
+	message: store.page.message
 })
 
 export default connect(MapStateToProps, { getSelf, getMeasurements })(RecordableRoute);

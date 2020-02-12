@@ -416,8 +416,9 @@ void drawLine(int x0, int y0, int x1, int y1) {
 int turnOnLightIfParamsMet(int current_hr, int light_state) {
   //turn off light to get ambient reading
   digitalWrite(LIGHT_SWITCH, HIGH);
-  delay(500);
+  delay(1000);
   float light_level = readValueFromMux(LIGHT_SENSOR);
+  delay(1000);
   digitalWrite(LIGHT_SWITCH, light_state);
   
   //turn on light between LIGHT_ON_TIME and LIGHT_OFF_TIME if light level

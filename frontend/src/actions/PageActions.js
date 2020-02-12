@@ -1,6 +1,6 @@
 import { PageConsts } from "./types";
 
-export const getSelf = _id => (dispatch, getState) => {
+export const getSelf = (_id, isSubPlant=false) => (dispatch, getState) => {
 	dispatch({
 		type: PageConsts.GET_SELF_LOADING,
 	})
@@ -26,12 +26,15 @@ export const getSelf = _id => (dispatch, getState) => {
 	}
 
 	if(foundObject) {
+		foundObject.isSubPlant = isSubPlant;
 		dispatch({
 			type: PageConsts.GET_SELF_SUCCESS,
 			payload: {
 				data: foundObject,
 			}
 		})
+
+		console.log(foundObject)
 		dispatch(getMeasurements(_id, foundObject.type))
 	}
 }
@@ -48,8 +51,14 @@ export const getMeasurements = (_id, type) => (dispatch, getState) => {
 				dispatch({
 					type: PageConsts.GET_MEASUREMENTS_FAILURE
 				})
+				return;
 			}
 
+			//api returns object with object `measurements`
+			//convert into sorted list with mapping, sorted = [
+				// measurement_type = {timestamp: value, timestamp:value ...}
+				// "  "
+			// ] for use with chart.js graphs
 			var sorted = {};
 			//use most recent measurement to show what graphs we should show
 			Object.keys(data.data[0].measurements).forEach(key => sorted[key] = {})
@@ -57,9 +66,7 @@ export const getMeasurements = (_id, type) => (dispatch, getState) => {
 			// map onto sorted
 			data.data.forEach(doc => {
 				for(const [m_type, value] of Object.entries(doc.measurements)) {
-					if(m_type in Object.keys(sorted) == true) {
-						sorted[m_type][doc.timestamp] = value;
-					}
+					sorted[m_type][doc.timestamp] = value;
 				}
 			})
 

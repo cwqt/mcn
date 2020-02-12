@@ -5,6 +5,7 @@ import AuthModal              from "./modals/Auth"
 import CreateRecordableModal  from "./modals/CreateRecordable"
 import DeleteRecordableModal  from "./modals/DeleteRecordable"
 import EditRecordableModal    from "./modals/EditRecordableProps"
+import ApiKeyListModal        from "./modals/ApiKeyList"
 
 import ModalWrapper           from "./modals/ModalWrapper"
 
@@ -21,7 +22,8 @@ class ModalConductor extends React.Component {
       //errmm...
       "CREATE_RECORDABLE_PLANT": <CreateRecordableModal plant/>,
       "CREATE_RECORDABLE_GARDEN": <CreateRecordableModal garden/>,
-      "EDIT_RECORDABLE": <EditRecordableModal />
+      "EDIT_RECORDABLE": <EditRecordableModal />,
+      "API_KEY_LIST": <ApiKeyListModal />
     }
     var modal = modalMap[nextProps.currentModal] || null;
 		this.setState({currentModal:  modal})

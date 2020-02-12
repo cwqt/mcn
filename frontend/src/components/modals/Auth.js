@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import { generateAccessToken } from "../../actions/AuthActions";
 import { setModalVisibility } from "../../actions/ModalActions";
 
-
 class AuthForm extends React.Component { 
   constructor(props) {
     super(props);

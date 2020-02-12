@@ -6,6 +6,25 @@ export const removeAccessToken = () => dispatch => {
 
 }
 
+export const getApiKeys = () => (dispatch, getStore) => {
+	dispatch({
+		type: AuthConsts.GET_API_KEYS_LOADING
+	})
+
+	fetch("/api/auth/key", { headers: { "x-access-token": getStore().auth.currentToken }})
+		.then(res => res.json())
+		.then(data => {
+			dispatch({
+				type: AuthConsts.GET_API_KEYS_SUCCESS,
+				payload: data.data,
+			})
+		})
+}
+
+export const revokeApiKey = () => dispatch => {
+
+}
+
 export const generateAccessToken = password => dispatch => {
 	dispatch({
 		type: AuthConsts.GET_TOKEN,

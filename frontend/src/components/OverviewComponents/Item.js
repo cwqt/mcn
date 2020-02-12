@@ -34,10 +34,15 @@ class Item extends React.Component {
 							Inspect {this.props.type}<p>→</p>
 						</StyledLink>
 		
-					<i className="material-icons" onClick={this.showInfo}>info</i>
+					<i className="material-icons nx" onClick={this.showInfo}>info</i>
+					<IconList>
 					{this.props.type == "garden" &&
-						<GardenCounter>{this.props.plants.length}</GardenCounter>
+						<IconListItem>{this.props.plants.length}</IconListItem>
 					}
+					{this.props.feed &&
+						<IconListItem><i className="material-icons" onClick={this.showInfo}>camera_alt</i></IconListItem>
+					}
+					</IconList>
 				</ItemFooter>
 
 				<Slider ref={slider => (this.slider = slider)} {...settings}>
@@ -94,14 +99,15 @@ const ItemFooter = styled.div`
 		color: #333;
 	}
 
-	i {
+	i.nx {
 		position: absolute;
 		right: 10px;
-		top: -10px;
+		top: -20px;
 		background: #f3f3f3;
 		border-radius: 50%;
 		color: #333;
 		transition: 0.2s;
+		padding: 10px;
 		&:hover {
 			cursor: pointer;
 			transform: scale(1.2)
@@ -146,17 +152,23 @@ const ItemContent = styled.div`
 	}
 `
 
-const GardenCounter = styled.div`
-	position: absolute;
+const IconListItem = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	font-weight: bold;
-	top: -15px;
 	background-color: #fff;
 	border-radius: 50%;
 	width: 40px;
 	height: 40px;
+	margin-right: 10px;
+`
+
+const IconList = styled.div`
+	position: absolute;
+	top: -15px;	
+	display: flex;
+
 `
 
 export default Item;

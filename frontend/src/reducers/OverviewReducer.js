@@ -15,7 +15,13 @@ export default function(state=initialState, action) {
     case OverviewConsts.GET_ALL_SUCCESS:
       return {
         ...state,
-        objects: action.payload.data,
+        objects: action.payload.data.filter(object => object.subplant != false),
+        isFetching: false
+      };
+    case OverviewConsts.GET_ALL_FAILURE:
+      return {
+        ...state,
+        objects: [],
         isFetching: false
       };
 

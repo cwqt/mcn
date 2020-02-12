@@ -1,13 +1,33 @@
 import { AuthConsts } from "../actions/types";
 
 const initialState = {
+	isFetching: false,
 	isAuthorised: false,
 	currentToken: "",
-	message: ""
+	message: "",
+	keys: {}
 };
 
 export default function(state=initialState, action) {
 	switch(action.type) {
+		case AuthConsts.GET_API_KEYS_LOADING:
+			return {
+				...state,
+				isFetching: true
+			}
+		case AuthConsts.GET_API_KEYS_SUCCESS:
+			return {
+				...state,
+				isFetching: false,
+				keys: action.payload
+			}
+		case AuthConsts.GET_API_KEYS_FAILURE:
+			return {
+				...state,
+				isFetching: false,
+				keys: {}
+			}
+
 		case AuthConsts.GET_TOKEN:
 			switch(action.payload.status) {
 				case "loading":

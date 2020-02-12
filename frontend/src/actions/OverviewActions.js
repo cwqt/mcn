@@ -4,6 +4,14 @@ export const fetchAllPlantsAndGardens = () => dispatch => {
 	dispatch({ type: OverviewConsts.GET_ALL_LOADING })
 
 	fetch("/api/")
+		.then(res => {
+			if (!res.ok) {
+				dispatch({
+					type: OverviewConsts.GET_ALL_FAILURE
+				})
+			}
+			return res;
+		})
 		.then(res => res.json())
 		.then(data => {
 			let promises = [];

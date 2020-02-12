@@ -36,12 +36,19 @@ const HeaderContainer = styled.div`
     }
   }
 
-  a:nth-last-child(1), a:nth-last-child(1) {
-    margin-left: 10px;
-  }
-  a:nth-last-child(2) {
+  .header_modals {
+    display: flex;
     margin-left: auto;
+    a {
+      margin-left: 10px;
+      &:last-child {
+        i {
+          margin-right: 0;
+        }
+      }
+    }
   }
+
 `
 
 class Header extends React.Component {
@@ -52,8 +59,11 @@ class Header extends React.Component {
           <img src="/leaf.png" />
           <h1>hydroponics<h2>IoT garden and plant dashboard</h2></h1>
         </Link>
-        <ModalButton desc="Add plant" icon="eco" openModal="CREATE_RECORDABLE_PLANT" requiresAuth/>
-        <ModalButton desc="Add garden" icon="group_work" openModal="CREATE_RECORDABLE_GARDEN" requiresAuth/>
+        <div className="header_modals">
+          <ModalButton desc="Add plant" icon="eco" openModal="CREATE_RECORDABLE_PLANT" requiresAuth/>
+          <ModalButton desc="Add garden" icon="group_work" openModal="CREATE_RECORDABLE_GARDEN" requiresAuth/>
+          <ModalButton desc="" icon="vpn_key" openModal="API_KEY_LIST" requiresAuth/>
+        </div>
       </HeaderContainer>
     )
   }

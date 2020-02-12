@@ -48,7 +48,6 @@ export default function(state=initialState, action) {
 				...state,
 				isFetching: false,
 				measurements: {},
-				message: action.payload.message
 			}
 		default:
 			return state;
