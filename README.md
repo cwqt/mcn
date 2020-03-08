@@ -18,12 +18,18 @@ IoT Garden & plant management with dashboard.
 Flask-RESTful API with MongoDB - JWT authentication.  
 Served on [Heroku](https://www.heroku.com/).
 
+### backend
+
+Port of `api` to TypeScript & Express.js
+
 ## frontend
 
 <http://hydroponics.cass.si>
 
 React, Redux with Pi NoIR camera stream.  
 Served on [Now](https://zeit.co/home).
+
+At some point will be ported to Angular
 
 ## hardware
 
