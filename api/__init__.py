@@ -5,7 +5,7 @@ from flask_restful  import Api
 
 from settings               import app_config
 from common.db              import mongo
-from common.auth            import Auth, ApiKey
+from common.auth            import Auth, ApiKeyList, ApiKey
 
 from resources.token        import Token
 from resources.index        import Index
@@ -29,7 +29,8 @@ def create_app(config_name):
   api.add_resource(Index, "/")
   api.add_resource(Auth, "/auth")
   api.add_resource(Token, "/auth/token")
-  api.add_resource(ApiKey, "/auth/key")
+  api.add_resource(ApiKeyList, "/auth/key")
+  api.add_resource(ApiKey, "/auth/key/<string:uuid>")
   
   api.add_resource(Gardens, "/gardens")
   api.add_resource(Garden, "/gardens/<string:uuid>")

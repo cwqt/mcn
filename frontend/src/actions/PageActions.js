@@ -1,4 +1,5 @@
 import { PageConsts } from "./types";
+import { fetchAllPlantsAndGardens } from "./OverviewActions"
 
 export const getSelf = (_id, isSubPlant=false) => (dispatch, getState) => {
 	dispatch({
@@ -7,6 +8,10 @@ export const getSelf = (_id, isSubPlant=false) => (dispatch, getState) => {
 
 	let currentState = getState()
 	let objects = currentState.overview.objects
+
+	if (objects.length == 0) {
+		dispatch(fetchAllPlantsAndGardens())
+	}
 
 	let foundObject = false;
 	objects.forEach(object => {
@@ -69,6 +74,15 @@ export const getMeasurements = (_id, type) => (dispatch, getState) => {
 					sorted[m_type][doc.timestamp] = value;
 				}
 			})
+
+			//only show data for what we're recording by removing
+			//keys in sorted that arent in self.recording
+			sorted = Object.keys(sorted)
+				.filter(key => getState().page.self.recording.includes(key))
+			  .reduce((obj, key) => {
+			    obj[key] = sorted[key];
+			    return obj;
+			  }, {});
 
 			dispatch({
 				type: PageConsts.GET_MEASUREMENTS_SUCCESS,

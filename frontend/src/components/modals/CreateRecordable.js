@@ -34,41 +34,44 @@ class CreateRecordableForm extends React.Component {
       <hr />
 
       <form onSubmit={this.onSubmit}>
-        <label>name</label>
-        <input
-          type="text"
-          name="name"
-          placeholder={this.state.type + "s cool name"}
-          onChange={this.onChange}
-          value={this.state.plant_name}
-        />
-        <br />
-        <br />
-        <label>image</label>
-        <input
-          type="text"
-          name="image"
-          placeholder="https://url.com/image.jpg"
-          onChange={this.onChange}
-          value={this.state.image}
-        />
-
-        {this.props.garden &&
-          <div>
-            <br />
-            <label>plants</label>
+        <fieldset>
+          <p>
+            <label>name</label>
             <input
-              type="number"
-              name="plant_count"
+              type="text"
+              name="name"
+              placeholder={this.state.type + "s cool name"}
               onChange={this.onChange}
-              min="0"
-              value={this.state.plant_count}
+              value={this.state.plant_name}
             />
-          </div>
-        }
+          </p>
 
-        <br />
-        <br />
+
+          <p>
+            <label>image</label>
+            <input
+              type="text"
+              name="image"
+              placeholder="https://url.com/image.jpg"
+              onChange={this.onChange}
+              value={this.state.image}
+            />
+          </p>
+
+          {this.props.garden &&
+            <p>
+              <label>plants</label>
+              <input
+                type="number"
+                name="plant_count"
+                onChange={this.onChange}
+                min="0"
+                value={this.state.plant_count}
+              />
+            </p>
+          }
+        </fieldset>
+        
         <button type="submit">Submit</button>
         <span>&nbsp;&nbsp;{this.props.message}</span>
       </form>

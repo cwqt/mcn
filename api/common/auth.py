@@ -70,7 +70,7 @@ class Auth(Resource):
     return {"message": "Un-authorized"}, 401
 
 
-class ApiKey(Resource):
+class ApiKeyList(Resource):
   @token_required
   def get(self):
     data = db.get_all_docs("keys")
@@ -85,19 +85,24 @@ class ApiKey(Resource):
     args = parser.parse_args()
 
     token = jwt.encode({}, app.config["AUTH_SECRET_KEY"], algorithm="HS512")
-
-    db.insert_one("keys", db.bson_to_json({
+    document = db.bson_to_json({
       "_id": ObjectId(),
       "key": token.decode('UTF-8'),
       "for": args["for"],
       "created_at": int(time.mktime(datetime.datetime.utcnow().timetuple()))
-    }))
+    })
 
-    return {"data": token.decode('UTF-8')}, 200
+    db.insert_one("keys", document)
+    return {"data": json.loads(document)}, 200
 
-  # @token_required
-  # def delete(self):
+class ApiKey(Resource):
+  @token_required
+  def delete(self, uuid):
+    success, reason = db.delete_one("keys", uuid)
+    if not success:
+      return {"message":reason}, 400
 
+    return {"data":True}, 200
 
 
 

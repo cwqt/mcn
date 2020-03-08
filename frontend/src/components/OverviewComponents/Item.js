@@ -9,7 +9,8 @@ import "slick-carousel/slick/slick-theme.css";
 
 class Item extends React.Component {
 	constructor(props) {
-		super(props)
+		super(props);
+		console.log(props)
 	}
 
 	showInfo = () => {
@@ -50,7 +51,7 @@ class Item extends React.Component {
 					<ItemContent>
 						<p><b>_id: </b>{this.props._id}</p>
 						<p><b>last updated: </b>{moment.unix(this.props.most_recent.timestamp).fromNow()}</p>
-						<p><b>metrics: </b>{Object.keys(this.props.most_recent.measurements).map(type => type+", ")}</p>
+						<p><b>metrics: </b>{(this.props.recording || []).map(type => type+", ")}</p>
 						{ this.props.type == "garden" &&
 							<p><b>plants: </b>{this.props.plants.length}</p>
 						}
@@ -102,15 +103,16 @@ const ItemFooter = styled.div`
 	i.nx {
 		position: absolute;
 		right: 10px;
-		top: -20px;
-		background: #f3f3f3;
+		top: -10px;
+		background: white;
 		border-radius: 50%;
 		color: #333;
 		transition: 0.2s;
-		padding: 10px;
+		padding: 5px;
 		&:hover {
 			cursor: pointer;
-			transform: scale(1.2)
+			transform: scale(1.2);
+			box-shadow: 0 9px 30px 0 rgba(35,39,42,.1);
 		}
 	}
 `

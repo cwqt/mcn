@@ -17,8 +17,8 @@ class DeleteForm extends React.Component {
 				<p>Are you sure you want to delete <b>{this.props.page.self.name}</b>?</p>
 				<br />
 				<form>
-				<button onClick={this.onClick}>Yes</button>&nbsp;&nbsp;
-				<span>{this.props.message}</span>
+					<button onClick={this.onClick}>Yes</button>&nbsp;&nbsp;
+					<span>{this.props.message}</span>
  				</form>
 			</div>
 		);

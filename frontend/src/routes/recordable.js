@@ -162,7 +162,13 @@ class RecordableRoute extends React.Component {
 						<p>
 							<i>{this.props.self.name}</i> &mdash;&nbsp;
 							<b>Created:</b> {moment.unix(this.props.self.created_at).fromNow()},
-							<b>&nbsp;Last updated:</b> {moment.unix(this.props.self.most_recent.timestamp).fromNow()}
+							<b>&nbsp;Last updated:&nbsp;</b>
+							{this.props.self.most_recent.timestamp == 0 ? (
+									<span>Never</span>
+								) : (
+									moment.unix(this.props.self.most_recent.timestamp).fromNow()
+								)
+							}
 						</p>
 						<hr />
 

@@ -19,11 +19,18 @@ class Navbar extends React.Component {
 					<h2>Gardens</h2>
 						{this.props.objects.map((object, idx) => {
 							if (object.type == "garden") {
-								return <NavLink activeClassName="selected"
-									key={idx}
-									to={"/"+object.type+"/"+object._id}>
-										<h3><b>{object.name}</b> {object._id}</h3>
-									</NavLink>
+								return (
+									<div>
+										<NavLink activeClassName="selected"
+										key={idx}
+										to={"/garden/"+object._id}>
+											<h3><b>{object.name}</b> {object._id}</h3>
+										</NavLink>
+										<div className="subplants">
+											{ object.plants.map(plant => <NavLink to={"/plant/"+plant._id}>{plant._id}</NavLink>) }
+										</div>
+									</div>
+								)
 							}
 						})}
 					<br />
@@ -75,11 +82,26 @@ const NavContainer = styled.div`
 	flex-flow: column;
 
 
+	.subplants {
+		display: none;
+	}
+	.selected + .subplants {
+		display: block;
+		opacity: 0.8;
+		margin-bottom: 5px;
+		margin-left: 20px;
+	}
+
 	h2 {
 		color: #333333;
 		font-weight: 400;
 		margin-bottom: 10px;
-		&:before {
+		position: relative;
+		padding-left: 20px;
+		&::before {
+			position: absolute;
+			top: -2px;
+			left: 0px;
 			content: "§ ";
 			color: #a3a3a4;
 		}

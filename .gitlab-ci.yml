@@ -7,7 +7,7 @@ test:
   image: postman/newman:alpine
   script:
     - newman --version
-    # - newman run api/tests.json
+    - newman run api/tests.json
 
 production:
   stage: production

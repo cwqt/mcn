@@ -17,12 +17,14 @@ class EditForm extends React.Component {
 				<h1>Edit {this.props.page.self.type}</h1>
 				<hr />
 				<form>
-				{Object.keys(this.props.page.self).map(p => {
-					return <div><label>{p}</label><input placeholder={this.props.page.self[p]}/></div>	
-				})}
-				<br />
-				<button onClick={this.onClick}>Update fields</button>&nbsp;&nbsp;
-				<span>{this.props.message}</span>
+					<fieldset>
+					{Object.keys(this.props.page.self).map(p => {
+						return <p><label>{p}</label><input placeholder={this.props.page.self[p]}/></p>	
+					})}
+					</fieldset>
+
+					<button onClick={this.onClick}>Update fields</button>&nbsp;&nbsp;
+					<span>{this.props.message}</span>
  				</form>
 			</div>
 		);

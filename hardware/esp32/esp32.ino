@@ -261,7 +261,14 @@ void sendPlantDataToApi(float moisture_level, String plant_UUID) {
   return;
 }
 
-int sendGardenDataToApi(float *temperature, float *humidity, float *light_level, float *water_level, int *light_status, float *avg_moisture) {
+int sendGardenDataToApi(
+    float *temperature,
+    float *humidity,
+    float *light_level,
+    float *water_level,
+    int *light_status,
+    float *avg_moisture)
+  {
   Serial.println("Attempting to sent to API...");
   StaticJsonDocument<200> doc;
   doc["temperature"] = *temperature; 
@@ -418,8 +425,9 @@ int turnOnLightIfParamsMet(int current_hr, int light_state) {
   digitalWrite(LIGHT_SWITCH, HIGH);
   delay(1000);
   float light_level = readValueFromMux(LIGHT_SENSOR);
-  delay(1000);
+  delay(500);
   digitalWrite(LIGHT_SWITCH, light_state);
+  delay(500);
   
   //turn on light between LIGHT_ON_TIME and LIGHT_OFF_TIME if light level
   //below some empirical threshold

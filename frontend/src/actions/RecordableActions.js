@@ -29,7 +29,7 @@ export const createRecordable = recordable => (dispatch, getStore) => {
 	.then(res => Promise.all([res.status, res.json()]))
 	.then(([status, json]) => {
 		console.log(status)
-		if (status !== 200) {
+		if (status !== 201) {
 			dispatch({
 				type: RecordableConsts.CREATE_FAILURE,
 				payload: { message: json.message }

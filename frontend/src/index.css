@@ -70,9 +70,23 @@ td {
 	box-sizing: border-box;
  }
 
+ fieldset {
+ 	margin: 0;
+ 	padding: 0;
+ 	min-width: 100px;
+ 	border: none;
+ 	input {
+ 		float: right;
+ 	}
+ }
+ form p {
+ 	margin: 0;
+ 	margin-bottom: 8px;
+ }
+
  label {
  	display: inline-block;
- 	min-width: 50px;
+ 	min-width: 80px;
  }
 
 
