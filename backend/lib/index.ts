@@ -2,13 +2,15 @@ import 'dotenv/config';
 import express          from "express"
 import morgan           from "morgan"
 import mongoose         from 'mongoose'
+import bodyParser       from 'body-parser'
 
 import routes           from './routes'
 
 var server:any;
 const app = express();
 app.set('trust proxy', 1);
-app.use(morgan("tiny"))
+app.use(bodyParser.json());
+app.use(morgan("tiny"));
 
 mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true })
 const connection = mongoose.connection;
@@ -17,7 +19,7 @@ mongoose.Promise = Promise;
 connection.once('open', () => {
     console.log("Connected to MongoDB.")
     try {
-        app.use("/auth",    routes.auth)
+        app.use("/users",      routes.users)
         // app.use("/users",   routes.users)
         // app.use("/login",   routes.login)
         // app.use("/logout",  routes.logout)  
