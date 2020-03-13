@@ -3,6 +3,17 @@ import { Document, Schema, Model, model} from "mongoose";
 
 import { IUser } from "./User.model"
 
+interface IParameter {
+  upper:  number,
+  avg:    number,
+  lower:  number, 
+}
+
+export enum RecordableTypes {
+  Garden,
+  Plant
+}
+
 export interface IRecordable extends Document {
     name:       string,
     belongs_to: IUser,
@@ -12,8 +23,7 @@ export interface IRecordable extends Document {
     feed_url?:  string,
     host_url?:  string,
     recording:  string[],
-    parameters: Array<number[]>,
-    events:     string[]
+    parameters: IParameter[],
 }
 
 export var RecordableSchema:Schema = new Schema({
@@ -26,7 +36,6 @@ export var RecordableSchema:Schema = new Schema({
     host_url:       String,
     recording:      [String],
     parameters:     Object,
-    events:         [String]
 }).pre<IRecordable>('save', function (next) {
     if (this.isNew) {
       this.created_at = new Date();

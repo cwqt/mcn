@@ -4,8 +4,12 @@ let extendSchema = require('mongoose-extend-schema')//no @types
 
 import { IRecordable, RecordableSchema } from "./Recordable.model"
 
-export interface IPlant extends IRecordable {}
+export interface IPlant extends IRecordable {
+    type: 'plant'
+}
 
-export var PlantSchema:Schema = new extendSchema(RecordableSchema, {})
+export var PlantSchema:Schema = new extendSchema(RecordableSchema, {
+    type: String
+})
 
-export const Plant:Model<IPlant> = model<IPlant>("Garden", PlantSchema);
+export const Plant:Model<IPlant> = model<IPlant>("Plant", PlantSchema);

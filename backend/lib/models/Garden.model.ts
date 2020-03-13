@@ -7,10 +7,12 @@ import { IPlant } from "./Plant.model"
 
 export interface IGarden extends IRecordable {
     plants: IPlant[],
+    type: 'garden'
 }
 
 export var GardenSchema:Schema = extendSchema(RecordableSchema, {
-    plants: Array
+    plants: Array,
+    type: String
 })
 
 export const Garden:Model<IGarden> = model<IGarden>("Garden", GardenSchema);
