@@ -20,13 +20,11 @@ connection.once('open', () => {
     console.log("Connected to MongoDB.")
     try {
         app.use("/users",                   routes.users)
-        app.use("/r/",                      routes.recordables)
+        app.use("/plants",                  routes.plants)
+        app.use("/gardens",                 routes.gardens)
         app.use('/events',                  routes.events)
         app.use('/measurements',            routes.measurements )
         
-        // app.use("/login",   routes.login)
-        // app.use("/logout",  routes.logout)  
-
         process.on('SIGTERM', graceful_exit);
         process.on('SIGINT', graceful_exit);
         server = app.listen(3000, () => {

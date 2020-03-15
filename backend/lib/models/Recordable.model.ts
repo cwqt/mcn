@@ -17,21 +17,21 @@ export enum RecordableTypes {
 export interface IRecordable extends Document {
     name:       string,
     belongs_to: IUser,
-    image?:     string,
     created_at: Date,
     modified_at:Date,
+    recording:  string[],
+    image?:     string,
     feed_url?:  string,
     host_url?:  string,
-    recording:  string[],
-    parameters: IParameter[],
+    parameters?: IParameter[],
 }
 
 export var RecordableSchema:Schema = new Schema({
     name:           String,
-    belongs_to:     mongoose.Types.ObjectId(),
-    image:          String,
+    belongs_to:     Schema.Types.ObjectId,
     created_at:     Date,
     modified_at:    Date,
+    image:          String,
     feed_url:       String,
     host_url:       String,
     recording:      [String],

@@ -1,0 +1,1 @@
+{"version":3,"file":"Garden.model.js","sourceRoot":"","sources":["../../lib/models/Garden.model.ts"],"names":[],"mappings":";;AACA,uCAAyD;AACzD,IAAI,YAAY,GAAG,OAAO,CAAC,wBAAwB,CAAC,CAAA,CAAA,WAAW;AAE/D,yDAAkE;AAQvD,QAAA,YAAY,GAAU,YAAY,CAAC,mCAAgB,EAAE;IAC5D,MAAM,EAAE,KAAK;IACb,IAAI,EAAE,MAAM;CACf,CAAC,CAAA;AAEW,QAAA,MAAM,GAAkB,gBAAK,CAAU,QAAQ,EAAE,oBAAY,CAAC,CAAC"}
