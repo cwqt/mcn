@@ -7,6 +7,10 @@ import {
     createPlant,
     updatePlant,
     deletePlant,
+    readMeasurements,
+    createMeasurement,
+    readEvents,
+    createEvent    
 } from '../controllers/Plants.controller';
 
 const plants = Router();
@@ -25,5 +29,11 @@ plants.post('/', [
 
 plants.put('/:plant_id',        updatePlant)
 plants.delete('/:plant_id',     deletePlant)
+
+plants.get('/:plant_id/measurements',   readMeasurements)
+plants.post('/:plant_id/measurements',  createMeasurement)
+
+plants.get('/:plant_id/measurements',   readEvents)
+plants.post('/:plant_id/events',        createEvent)
 
 export default plants;

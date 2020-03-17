@@ -12,7 +12,7 @@ app.set('trust proxy', 1);
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
 
-mongoose.connect(process.env.MONGO_URL, {useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
 const connection = mongoose.connection;
 mongoose.Promise = Promise;
 

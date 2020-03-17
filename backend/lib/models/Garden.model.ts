@@ -13,6 +13,6 @@ export interface IGarden extends IRecordable {
 export var GardenSchema:Schema = extendSchema(RecordableSchema, {
     plants: Array,
     type: String
-})
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
 export const Garden:Model<IGarden> = model<IGarden>("Garden", GardenSchema);

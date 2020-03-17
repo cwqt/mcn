@@ -18,16 +18,7 @@ export var UserSchema:Schema = new Schema({
     salt:       { type:String, required:true },
     pw_hash:    { type:String, required:true },
     admin:      { type:Boolean, default:false },
-    created_at: Date,
-    modified_at:Date,
     avatar:     String,
-}).pre<IUser>('save', function (next) {
-    if (this.isNew) {
-      this.created_at = new Date();
-    } else {
-      this.modified_at = new Date();
-    }
-    next();
-  });
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
 export const User:Model<IUser> = model<IUser>("User", UserSchema);

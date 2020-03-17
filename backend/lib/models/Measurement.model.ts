@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import { Document, Schema, Model, model} from "mongoose";
-import { IRecordable } from '../models/Recordable.model';
+import { IRecordable } from './Recordable.model';
 
 export interface IMeasurement {
     [type:string]: number
@@ -13,9 +13,8 @@ export interface IMeasurements extends Document {
 }
 
 export var MeasurementSchema:Schema = new Schema({
-    belongs_to: mongoose.Types.ObjectId(),
-    timestamp:  Number,
+    belongs_to: Schema.Types.ObjectId,
     event_type: String
-})
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
-export const Meaurements:Model<IMeasurements> = model<IMeasurements>("Measurement", MeasurementSchema);
+export const Measurement:Model<IMeasurements> = model<IMeasurements>("Measurement", MeasurementSchema);

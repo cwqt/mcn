@@ -1,5 +1,7 @@
 import { Request, Response }    from "express"
 import { Plant, IPlant }        from '../models/Plant.model'
+import { Measurement }          from '../models/Measurement.model'
+import ACCEPTED_MEASUREMENTS    from '../common/ACCEPTED_MEASUREMENTS';
 const { validationResult }      = require('express-validator');
 
 export const createPlant  = (req:Request, res:Response) => {
@@ -31,6 +33,7 @@ export const updatePlant  = (req:Request, res:Response) => {
     if(req.body.feed_url)   newData.feed_url    = req.body.feed_url;
     if(req.body.host_url)   newData.host_url    = req.body.host_url;
     if(req.body.parameters) newData.parameters  = req.body.parameters;
+    if(req.body.in_garden)  newData.in_garden   = req.body.in_garden;
 
     Plant.findByIdAndUpdate(req.params.plant_id, newData, {new: true}, (error, plant) => {
         if (error) { res.status(400).json({message: error["message"]}); return }
@@ -44,3 +47,29 @@ export const deletePlant  = (req:Request, res:Response) => {
         return res.json(response)
     })
 }
+
+export const readMeasurements = (req:Request, res:Response) => {
+    Measurement.find({}, (error:any, response:any) => {
+        if (error) { res.status(400).json({message: error["message"]}); return }
+        return res.json(response)
+    })
+}
+
+export const createMeasurement = (req:Request, res:Response) => {
+    Object.keys(req.body).forEach(type => {
+        if(!Object.keys(ACCEPTED_MEASUREMENTS).includes(type)) {
+            return res.status(400).json({'message':`${type} not an accepted measurement`})
+        }
+    })
+
+    let newData = req.body
+    newData.belongs_to = req.params.plant_id
+
+    Measurement.create(newData, (error:any, response:any) => {
+        if (error) { res.status(400).json({message: error["message"]}); return }
+        return res.json(response)
+    })
+}
+
+export const readEvents = (req:Request, res:Response) => {}
+export const createEvent = (req:Request, res:Response) => {}

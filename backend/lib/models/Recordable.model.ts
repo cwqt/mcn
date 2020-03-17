@@ -36,13 +36,6 @@ export var RecordableSchema:Schema = new Schema({
     host_url:       String,
     recording:      [String],
     parameters:     Object,
-}).pre<IRecordable>('save', function (next) {
-    if (this.isNew) {
-      this.created_at = new Date();
-    } else {
-      this.modified_at = new Date();
-    }
-    next();
-  });
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
 export const Recordable:Model<IRecordable> = model<IRecordable>("Recordable", RecordableSchema);

@@ -14,6 +14,6 @@ export var PlantSchema:Schema = new extendSchema(RecordableSchema, {
     type: String,
     species: String,
     in_garden: Schema.Types.ObjectId,
-})
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
 export const Plant:Model<IPlant> = model<IPlant>("Plant", PlantSchema);
