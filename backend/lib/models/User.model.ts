@@ -22,7 +22,7 @@ export var UserSchema:Schema = new Schema({
     email:          { type:String, required:true },
     salt:           { type:String, required:true },
     pw_hash:        { type:String, required:true },
-    verified:       { type:Boolean, required: true }
+    verified:       { type:Boolean, required: true },
     admin:          Boolean
     name:           String,
     bio:            String,
