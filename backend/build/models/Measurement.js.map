@@ -1,1 +1,0 @@
-{"version":3,"file":"Measurement.js","sourceRoot":"","sources":["../../lib/models/Measurement.ts"],"names":[],"mappings":";;;;;;;;;AAAA,mDAAqC;AACrC,uCAAyD;AAa9C,QAAA,iBAAiB,GAAU,IAAI,iBAAM,CAAC;IAC7C,UAAU,EAAE,QAAQ,CAAC,KAAK,CAAC,QAAQ,EAAE;IACrC,SAAS,EAAG,MAAM;IAClB,UAAU,EAAE,MAAM;CACrB,CAAC,CAAA;AAEW,QAAA,WAAW,GAAwB,gBAAK,CAAgB,aAAa,EAAE,yBAAiB,CAAC,CAAC"}

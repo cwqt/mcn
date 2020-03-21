@@ -17,13 +17,13 @@ export enum RecordableTypes {
 export interface IRecordable extends Document {
     name:       string,
     belongs_to: IUser,
-    created_at: Date,
-    modified_at:Date,
     recording:  string[],
     image?:     string,
     feed_url?:  string,
     host_url?:  string,
     parameters?: IParameter[],
+    created_at?:    Date,
+    modified_at?:   Date,
 }
 
 export var RecordableSchema:Schema = new Schema({

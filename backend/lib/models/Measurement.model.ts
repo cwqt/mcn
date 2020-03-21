@@ -9,7 +9,9 @@ export interface IMeasurement {
 export interface IMeasurements extends Document {
     belongs_to: IRecordable,
     timestamp: number,
-    measurements: IMeasurement[]
+    measurements: IMeasurement[],
+    created_at?:    Date,
+    modified_at?:   Date,
 }
 
 export var MeasurementSchema:Schema = new Schema({

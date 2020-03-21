@@ -1,1 +1,0 @@
-{"version":3,"file":"Event.model.js","sourceRoot":"","sources":["../../lib/models/Event.model.ts"],"names":[],"mappings":";;;;;;;;;AAAA,mDAAqC;AACrC,uCAAyD;AAU9C,QAAA,WAAW,GAAU,IAAI,iBAAM,CAAC;IACvC,UAAU,EAAE,QAAQ,CAAC,KAAK,CAAC,QAAQ,EAAE;IACrC,SAAS,EAAG,MAAM;IAClB,UAAU,EAAE,MAAM;CACrB,CAAC,CAAA;AAEW,QAAA,KAAK,GAAiB,gBAAK,CAAS,OAAO,EAAE,mBAAW,CAAC,CAAC"}

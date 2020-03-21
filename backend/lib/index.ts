@@ -24,6 +24,8 @@ connection.once('open', () => {
         app.use("/gardens",                 routes.gardens)
         app.use('/events',                  routes.events)
         app.use('/measurements',            routes.measurements )
+        app.use('/time',                    routes.time)
+        app.use('/auth',                    routes.auth)
         
         process.on('SIGTERM', graceful_exit);
         process.on('SIGINT', graceful_exit);

@@ -7,6 +7,8 @@ export interface IEvent extends Document {
     belongs_to: IRecordable,
     timestamp: number,
     event_type: string,
+    created_at?:    Date,
+    modified_at?:   Date,
 }
 
 export var EventSchema:Schema = new Schema({

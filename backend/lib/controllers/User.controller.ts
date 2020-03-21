@@ -28,7 +28,7 @@ export const createUser = (req:Request, res:Response) => {
 }
 
 export const readUser = (req:Request, res:Response) => {
-    User.find({_id: req.params.id}, (error:any, response:any) => {
+    User.findById(req.params.id).select('-salt -pw_hash').exec((error:any, response:any) => {
         if (error) { res.status(400).json({message: error}); return }
         return res.json(response)
     })
