@@ -4,6 +4,7 @@ import gardens      from './gardens.routes'
 import events       from './events.routes';
 import measurements from './measurements.routes';
 import time         from './time.routes';
+import auth         from './auth.routes';
 
 export default {
   users,
@@ -11,5 +12,6 @@ export default {
   gardens,
   events,
   measurements,
-  time
+  time,
+  auth
 }

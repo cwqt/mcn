@@ -16,9 +16,8 @@ export const validateMessageWithKey = (req:Request, res:Response) => {
         res.status(400).json({message:'Must be correct type'});
     }
 
-    let model;
-    if(type == 'plant') model = Plant
-    if(type == 'garden') model = Garden
-
+    let recordable;
+    if(type == 'plant') recordable = Plant;
+    if(type == 'garden') recordable = Garden;
 
 }

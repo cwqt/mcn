@@ -3,23 +3,29 @@ import { Document, Schema, Model, model} from "mongoose";
 
 export interface IUser extends Document {
     name:           string,
+    username:       string,
     email:          string,
     salt:           string,
     pw_hash:        string,
-    admin:          boolean
+    admin:          boolean,
+    verified:       boolean,
+    bio?:           string,
     created_at?:    Date,
     modified_at?:   Date,
     avatar?:        string,
     cover_image?:   string,
-    location?:       string,
+    location?:      string,
 }
 
 export var UserSchema:Schema = new Schema({
-    name:           { type:String, required:true },
+    username:       { type:String, required:true },
     email:          { type:String, required:true },
     salt:           { type:String, required:true },
     pw_hash:        { type:String, required:true },
-    admin:          { type:Boolean, default:false },
+    verified:       { type:Boolean, required: true }
+    admin:          Boolean
+    name:           String,
+    bio:            String,
     location:       String,
     avatar:         String,
     cover_image:    String,
