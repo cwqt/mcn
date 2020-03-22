@@ -4,3 +4,10 @@ h1 {
 form {
     padding-left: 15px;
 }
+
+.loader {
+    .mat-spinner {
+        display: inline-block;
+        margin-right: 5px;
+    }
+}

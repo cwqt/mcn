@@ -3,6 +3,7 @@ import express          from "express"
 import morgan           from "morgan"
 import mongoose         from 'mongoose'
 import bodyParser       from 'body-parser'
+import cors             from 'cors'
 
 import routes           from './routes'
 
@@ -11,6 +12,7 @@ const app = express();
 app.set('trust proxy', 1);
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
+app.use(cors());
 
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
 const connection = mongoose.connection;

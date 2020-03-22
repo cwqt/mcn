@@ -7,9 +7,9 @@ const router = Router();
 
 router.get('/', readAllUsers);
 router.post('/', [
-    body('name').not().isEmpty().trim(),
-    body('email').isEmail().normalizeEmail(),
-    body('password').not().isEmpty().isLength({ min: 6 })
+    body('username').not().isEmpty().trim().withMessage('username cannot be empty'),
+    body('email').isEmail().normalizeEmail().withMessage('not a valid email address'),
+    body('password').not().isEmpty().isLength({ min: 6 }).withMessage('password length must be > 6 characters')
 ], createUser);
 router.get('/:id', readUser);
 router.put('/:id', updateUser);

@@ -15,10 +15,18 @@ html, body {
 label {
     font-size: 18px;
 }
-input {
-    padding: 200px;
-}
 
 .app-input-no-underline .mat-form-field-underline {
     display: none;
+}
+
+mat-form-field.ng-invalid.ng-touched {
+    animation: example;
+    animation-duration: 0.3s;
+    margin-bottom: 24px;
+}
+  
+@keyframes example {
+    from { margin-bottom: 0; }
+    to { margin-bottom: 24px; }
 }

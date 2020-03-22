@@ -7,14 +7,15 @@ export interface IUser extends Document {
     email:          string,
     salt:           string,
     pw_hash:        string,
-    admin:          boolean,
     verified:       boolean,
+    admin?:          boolean,
     bio?:           string,
-    created_at?:    Date,
-    modified_at?:   Date,
     avatar?:        string,
     cover_image?:   string,
     location?:      string,
+    created_at?:    Date,
+    modified_at?:   Date,
+    blocked_users?: IUser[]
 }
 
 export var UserSchema:Schema = new Schema({
@@ -23,12 +24,13 @@ export var UserSchema:Schema = new Schema({
     salt:           { type:String, required:true },
     pw_hash:        { type:String, required:true },
     verified:       { type:Boolean, required: true },
-    admin:          Boolean
+    admin:          Boolean,
     name:           String,
     bio:            String,
     location:       String,
     avatar:         String,
     cover_image:    String,
+    blocked_users: [Schema.Types.ObjectId]
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
 export const User:Model<IUser> = model<IUser>("User", UserSchema);

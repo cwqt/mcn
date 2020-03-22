@@ -13,7 +13,7 @@ export const readAllUsers = (req:Request, res:Response) => {
 export const createUser = (req:Request, res:Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(422).json(errors.array());
     }
 
     //generate password hash
@@ -21,10 +21,23 @@ export const createUser = (req:Request, res:Response) => {
     req.body["pw_hash"] = bcrypt.hashSync(req.body["password"], req.body["salt"])
     delete req.body["password"]
 
-    User.create(req.body, (error: any, response: any) => {
-        if (error) { res.status(400).json({message: error["message"]}); return }
-        res.json(response);
-    });
+    //Username musn't be taken, nor 
+    User.find({$or: [{email: req.body.email}, {username: req.body.username}]}, (error:any, response:any) => {
+        if(error) { res.status(400).json({message: error["message"]}); return }
+        if(response.length > 0) {
+            let errors = []
+            if(response[0].username == req.body.username) errors.push({param:"username", msg:"username is taken"})
+            if(response[0].email == req.body.email) errors.push({param:"email", msg:"email already in use"})
+            return res.status(400).json(errors);
+        } else {
+            req.body["verified"] = false;
+    
+            User.create(req.body, (error: any, response: any) => {
+                if (error) { res.status(400).json({message: error["message"]}); return }
+                res.json(response);
+            });        
+        }
+    })
 }
 
 export const readUser = (req:Request, res:Response) => {
