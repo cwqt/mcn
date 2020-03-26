@@ -10,11 +10,10 @@
                 formControlName="username"
                 minLength="4"
                 maxlength="{{field_max_len}}"
-                (input)="onUsernameInput()"
                 autocomplete="off" />
             <mat-hint align="end">{{username.value?.length || 0}}/{{field_max_len}}</mat-hint>
             <mat-error *ngIf="!errors.username && !username.value">username is required</mat-error>
-            <mat-error *ngIf="!errors.username && username.value && username.errors?.forbiddenUsername">username must only contain letters and numbers</mat-error>
+            <mat-error *ngIf="!errors.username && username.errors?.usernameForbidden">username must only contain letters and numbers</mat-error>
             <mat-error *ngIf="errors.username">{{errors.username}}</mat-error>
         </mat-form-field>
 

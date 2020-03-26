@@ -1,7 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormGroup, Validators, FormControl, FormGroupDirective, NgForm } from "@angular/forms";
+import  {ErrorStateMatcher } from '@angular/material/core';
+
 
 import { UserService } from '../../services/user.service';
+
+class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
+}
 
 @Component({
   selector: 'app-register',
@@ -28,12 +37,14 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
-      username: ["", this.usernameValidator],
+      username: ["", {validators:[this.usernameValidator], updateOn: 'change'}],
       email: ["", [ Validators.required ]],
       password: ["", [ Validators.required, Validators.minLength(this.pw_min_len), Validators.maxLength(this.field_max_len)]],
       confirmation: ["", [Validators.required]]
-    }, {validator: this.passwordMatchValidator.bind(this)});
+    }, {validator: this.passwordMatchValidator.bind(this), matcher: new MyErrorStateMatcher()});
   }
+
+  
   
   get username() { return this.registerForm.get("username") }
   get email() { return this.registerForm.get("email") }
@@ -49,13 +60,6 @@ export class RegisterComponent implements OnInit {
       this.confirmation.setErrors(null);
   }
 
-  onUsernameInput() {
-    if (this.username.hasError('usernameForbidden'))
-      this.username.setErrors({'usernameForbidden': true});
-    else
-      this.username.setErrors(null);
-  }
-
   private passwordMatchValidator(formGroup: FormGroup) {
     if(!formGroup.get('password').dirty) return
     if (formGroup.get('password').value !== formGroup.get('confirmation').value)
@@ -65,10 +69,11 @@ export class RegisterComponent implements OnInit {
 
   private usernameValidator (control):{[key: string]: boolean} | null {
     let username_regex = new RegExp(/^[a-zA-Z0-9]+$/)
+    console.log(control)
     if(control.value !== null && username_regex.test(control.value) == false){
       return {'usernameForbidden': true}
     }
-    return null;
+    return null
   };
 
 

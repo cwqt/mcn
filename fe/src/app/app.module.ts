@@ -16,6 +16,8 @@ import { MatInputModule } from '@angular/material/input';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import { HomeComponent } from './routes/home/home.component';
+import { ProfileComponent } from './routes/profile/profile.component';
 
 
 @NgModule({
@@ -24,6 +26,8 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     IndexComponent,
     LoginComponent,
     RegisterComponent,
+    HomeComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,

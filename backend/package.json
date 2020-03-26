@@ -18,6 +18,7 @@
     "express": "^4.17.1",
     "express-jwt": "^5.3.1",
     "express-validator": "^6.4.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.3",
     "mongoose-extend-schema": "^1.0.0",
     "morgan": "^1.9.1"
@@ -27,6 +28,7 @@
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.3",
     "@types/express-validator": "^3.0.0",
+    "@types/jsonwebtoken": "^8.3.8",
     "@types/mongoose": "^5.7.3",
     "@types/morgan": "^1.9.0",
     "@types/node": "^13.9.0",

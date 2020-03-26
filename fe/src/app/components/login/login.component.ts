@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
 
   submitHandler() {
     this.loading = true;
-    this.userService.logIn(this.loginForm.value).subscribe(
+    this.userService.login(this.loginForm.value).subscribe(
       res => {
         this.success = true;
       },
