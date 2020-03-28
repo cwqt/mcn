@@ -1,6 +1,7 @@
 import bcrypt                   from "bcrypt"
 import { Request, Response }    from "express"
 import { User }                 from "../models/User.model"
+import { sendVerificationEmail } from "./Email.controller";
 import { ErrorHandler } from '../common/errorHandler';
 
 export const readAllUsers = (req:Request, res:Response) => {
@@ -26,9 +27,11 @@ export const createUser = (req:Request, res:Response) => {
             throw new ErrorHandler(400, errors)
         } else {
             req.body["verified"] = false;
-    
+
+            let emailSent = sendVerificationEmail(req.body.email)
+            if(!emailSent) { res.status(400).end(); return }
             User.create(req.body, (error: any, response: any) => {
-                if (error)  throw new ErrorHandler(400, error.message);
+                if (error) throw new ErrorHandler(400, error.message);
                 res.json(response);
             });        
         }

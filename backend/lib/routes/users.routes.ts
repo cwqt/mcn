@@ -18,8 +18,12 @@ router.get('/:id', [
     param('id').isMongoId().trim().withMessage('not a valid oid')
 ], validate, readUser);
 
-router.put('/:id', updateUser);
+router.put('/:id', [
+    param('id').isMongoId().trim().withMessage('not a valid oid')
+], validate, updateUser);
 
-router.delete('/:id', deleteUser);
+router.delete('/:id', [
+    param('id').isMongoId().trim().withMessage('not a valid oid')
+], validate, deleteUser);
 
 export default router;
