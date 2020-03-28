@@ -5,6 +5,7 @@ import mongoose         from 'mongoose'
 import bodyParser       from 'body-parser'
 import cors             from 'cors'
 
+import { handleError } from './common/errorHandler';
 import routes           from './routes'
 
 var server:any;
@@ -20,7 +21,7 @@ mongoose.Promise = Promise;
 
 connection.once('open', () => {
     console.log("Connected to MongoDB.")
-    try {
+    try {        
         app.use("/users",                   routes.users)
         app.use("/plants",                  routes.plants)
         app.use("/gardens",                 routes.gardens)
@@ -29,6 +30,8 @@ connection.once('open', () => {
         app.use('/time',                    routes.time)
         app.use('/auth',                    routes.auth)
         
+        app.use((err:any, req:express.Request, res:express.Response, next:any) => handleError(err, res));
+
         process.on('SIGTERM', graceful_exit);
         process.on('SIGINT', graceful_exit);
         server = app.listen(3000, () => {

@@ -44,13 +44,10 @@ export class RegisterComponent implements OnInit {
     }, {validator: this.passwordMatchValidator.bind(this), matcher: new MyErrorStateMatcher()});
   }
 
-  
-  
   get username() { return this.registerForm.get("username") }
   get email() { return this.registerForm.get("email") }
   get password() { return this.registerForm.get("password") }
   get confirmation() { return this.registerForm.get("confirmation")}
-
 
   /* Called on each input in either password field */
   onPasswordInput() {
@@ -69,7 +66,6 @@ export class RegisterComponent implements OnInit {
 
   private usernameValidator (control):{[key: string]: boolean} | null {
     let username_regex = new RegExp(/^[a-zA-Z0-9]+$/)
-    console.log(control)
     if(control.value !== null && username_regex.test(control.value) == false){
       return {'usernameForbidden': true}
     }
