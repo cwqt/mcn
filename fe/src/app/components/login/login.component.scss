@@ -4,3 +4,12 @@ h1 {
 form {
     padding-left: 15px;
 }
+.help {
+    margin-left: 20px;
+    color: grey;
+    text-decoration: none;
+    transition: 0.2s;
+    &:hover {
+        color: darken(grey, 20%)
+    }
+}

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
-import { UserService } from '../../services/user.service';
+import { AuthenticationService } from '../../services/authentication.service'
 
 @Component({
   selector: 'app-login',
@@ -14,7 +14,7 @@ export class LoginComponent implements OnInit {
   success:boolean = false;
 
   constructor(
-    private userService:UserService,
+    private authService:AuthenticationService,
     private fb:FormBuilder) { }
 
   ngOnInit(): void {
@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
 
   submitHandler() {
     this.loading = true;
-    this.userService.login(this.loginForm.value).subscribe(
+    this.authService.login(this.loginForm.value).subscribe(
       res => {
         this.success = true;
       },

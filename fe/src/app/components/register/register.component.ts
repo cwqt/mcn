@@ -72,12 +72,9 @@ export class RegisterComponent implements OnInit {
     return null
   };
 
-
   submitHandler() {
     this.loading = true;
     this.register_button_text = 'registering...'
-    setTimeout(() => {
-
     this.userService.register(this.registerForm.value).subscribe(
       res => {
         this.success = true;
@@ -85,18 +82,15 @@ export class RegisterComponent implements OnInit {
       err => {
         this.success = false;
         this.register_button_text = 'try again?'
-        let errors = err.error;
+        let errors = err.error.message;
         Object.keys(this.errors).forEach(e => {
           let i = errors.findIndex(x => x.param == e) 
           if(errors[i]) {
             this.errors[e] = errors[i].msg;
-            console.log(this.registerForm)
             this.registerForm.controls[e].setErrors({'incorrect': true});
           }
         })
       },
-    ).add(() => { this.loading = false;})
-      
-    }, 1000);
+    ).add(() => { this.loading = false;})      
   }
 }

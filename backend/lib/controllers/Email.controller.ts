@@ -1,5 +1,5 @@
 const { generateVerificationHash, verifyHash } = require('dbless-email-verification');
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import nodemailer from 'nodemailer';
 
 import { ErrorHandler } from '../common/errorHandler';
@@ -17,6 +17,8 @@ const verifyEmail = (email:string, hash:string) => {
 
 export const sendVerificationEmail = (email:string):Promise<boolean> => {
     return new Promise((resolve, reject) => {
+        if(process.env.NODE_ENV == 'development') resolve(true);
+
         let hash = generateEmailHash(email);
         let verificationUrl = `https://localhost:3000/auth/verify?email=${email}&hash=${hash}`
         
@@ -45,7 +47,7 @@ export const sendVerificationEmail = (email:string):Promise<boolean> => {
     })
 }
 
-export const verify = (req:Request, res:Response) => {
+export const verify = (req:Request, res:Response, next:NextFunction) => {
     let hash = req.query.hash;
     let email = req.query.email;
 
@@ -53,8 +55,7 @@ export const verify = (req:Request, res:Response) => {
     if(!isVerified) throw new ErrorHandler(400, 'Not a valid hash')
 
     User.findOneAndUpdate({email:email}, {verified:true}, (err, user) => {
-        if(err) throw new ErrorHandler(400, err.message);
-        console.log(user)
+        if(err) next(new ErrorHandler(400, err.message));
         res.json(user)
     })
 }

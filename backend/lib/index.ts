@@ -5,7 +5,7 @@ import mongoose         from 'mongoose'
 import bodyParser       from 'body-parser'
 import cors             from 'cors'
 
-import { handleError } from './common/errorHandler';
+import { handleError, ErrorHandler } from './common/errorHandler';
 import routes           from './routes'
 
 var server:any;
@@ -30,10 +30,11 @@ connection.once('open', () => {
         app.use('/time',                    routes.time)
         app.use('/auth',                    routes.auth)
         
-        app.use((err:any, req:express.Request, res:express.Response, next:any) => handleError(err, res));
+        app.all('*', (req:any, res:any, next:any) => { throw new ErrorHandler(404, 'No such route exists')})
+        app.use((err:any, req:any, res:any, next:any) => handleError(err, res));
 
         process.on('SIGTERM', graceful_exit);
-        process.on('SIGINT', graceful_exit);
+        process.on('SIGINT', graceful_exit);          
         server = app.listen(3000, () => {
             console.log('Listening on 3000')
           })        
