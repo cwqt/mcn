@@ -29,11 +29,13 @@ export const createUser = (req:Request, res:Response) => {
             req.body["verified"] = false;
 
             let emailSent = sendVerificationEmail(req.body.email)
-            if(!emailSent) { res.status(400).end(); return }
-            User.create(req.body, (error: any, response: any) => {
-                if (error) throw new ErrorHandler(400, error.message);
-                res.json(response);
-            });        
+            emailSent.then(success => {
+                if(!success) throw new ErrorHandler(400, 'Verification email could not be sent')
+                User.create(req.body, (error: any, response: any) => {
+                    if (error) throw new ErrorHandler(400, error.message);
+                    res.json(response);
+                });            
+            })
         }
     })
 }
