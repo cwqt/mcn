@@ -6,7 +6,7 @@ import { ErrorHandler } from '../common/errorHandler';
 
 export const readAllUsers = (req:Request, res:Response, next:NextFunction) => {
     User.find({}, (error:any, response:any) => {
-        if (error) next(new ErrorHandler(400, error))
+        if (error) return next(new ErrorHandler(400, error))
         return res.json(response)
     })
 }
@@ -19,20 +19,20 @@ export const createUser = (req:Request, res:Response, next:NextFunction) => {
 
     //Username musn't be taken, nor the email
     User.find({$or: [{email: req.body.email}, {username: req.body.username}]}, (error:any, response:any) => {
-        if(error) next(new ErrorHandler(400, error['message']));
+        if(error) return next(new ErrorHandler(400, error['message']));
         if(response.length > 0) {
             let errors = []
             if(response[0].username == req.body.username) errors.push({param:"username", msg:"username is taken"})
             if(response[0].email == req.body.email) errors.push({param:"email", msg:"email already in use"})
-            next(new ErrorHandler(400, errors))
+            return next(new ErrorHandler(400, errors))
         } else {
             req.body["verified"] = false;
 
             let emailSent = sendVerificationEmail(req.body.email)
             emailSent.then(success => {
-                if(!success) next(new ErrorHandler(400, 'Verification email could not be sent'))
+                if(!success) return next(new ErrorHandler(400, 'Verification email could not be sent'))
                 User.create(req.body, (error: any, response: any) => {
-                    if (error) next(new ErrorHandler(400, error.message));
+                    if (error) return next(new ErrorHandler(400, error.message));
                     res.json(response);
                 });            
             })
@@ -42,7 +42,7 @@ export const createUser = (req:Request, res:Response, next:NextFunction) => {
 
 export const readUser = (req:Request, res:Response, next:NextFunction) => {
     User.findById(req.params.id).select('-salt -pw_hash').exec((error:any, response:any) => {
-        if (error) next(new ErrorHandler(422, error.message));
+        if (error) return next(new ErrorHandler(422, error.message));
         return res.json(response)
     })
 }
@@ -54,14 +54,14 @@ export const updateUser = (req:Request, res:Response, next:NextFunction) => {
     if(req.body.email)  { newData.email = req.body.email }
 
     User.findByIdAndUpdate({_id: req.params.id}, newData, (error:any, response:any) => {
-        if (error) next(new ErrorHandler(400, error))
+        if (error) return next(new ErrorHandler(400, error))
         return res.json(response)
     })
 }
 
 export const deleteUser = (req:Request, res:Response, next:NextFunction) => {
     User.findOneAndDelete({ _id: req.params.id }, (error:any) => {
-        if (error) next(new ErrorHandler(400, error))
+        if (error) return next(new ErrorHandler(400, error))
         return res.status(200).end()
     })
 }
@@ -72,12 +72,13 @@ export const loginUser = (req:Request, res:Response, next:NextFunction) => {
   
     //see if user exists
     User.findOne({email: email}, (err, user) => {
-        if(err) next(new ErrorHandler(400))
-        if(!user) next(new ErrorHandler(404))
+        if(err) return next(new ErrorHandler(500))
+        if(!user) return next(new ErrorHandler(404, [{param:'email', msg:'No such user for this email'}]))
+        if(!user.verified) return next(new ErrorHandler(403, [{param:'form', msg:'Your account has not been verified'}]))
 
         bcrypt.compare(password, user.pw_hash, (err, result) => {
-            if(err) next(new ErrorHandler(401))
-            if(!result) next(new ErrorHandler(401, 'Incorrect password'))
+            if(err) return next(new ErrorHandler(500))
+            if(!result) return next(new ErrorHandler(401, [{param:'password', msg:'Incorrect password'}]))
             
             // All checks passed, create session
             req.session.user = {
@@ -92,7 +93,7 @@ export const loginUser = (req:Request, res:Response, next:NextFunction) => {
 export const logoutUser = (req:Request, res:Response, next:NextFunction) => {
     if(req.session) {
         req.session.destroy(err => {
-            if(err) next(new ErrorHandler(400, 'Logout failed'))
+            if(err) return next(new ErrorHandler(400, 'Logging out failed'))
             res.status(200).end()
         })
     }

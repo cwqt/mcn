@@ -12,6 +12,12 @@ export class LoginComponent implements OnInit {
   loginForm:FormGroup;
   loading:boolean = false;
   success:boolean = false;
+  errors = {
+    'email': "",
+    'password': "",
+    'form': ""
+  }
+
 
   constructor(
     private authService:AuthenticationService,
@@ -30,14 +36,26 @@ export class LoginComponent implements OnInit {
 
   submitHandler() {
     this.loading = true;
+    setTimeout(() => {
+
+
     this.authService.login(this.loginForm.value).subscribe(
       res => {
         this.success = true;
       },
       err => {
         this.success = false;
+        let errors = err.error.message;
+        Object.keys(this.errors).forEach(e => {
+          let i = errors.findIndex(x => x.param == e) 
+          if(errors[i]) {
+            this.errors[e] = errors[i].msg;
+            if(errors[i].param != 'form') this.loginForm.controls[e].setErrors({'incorrect': true});
+          }
+        })
       },
-      () => { this.loading = false; }
-    )
+    ).add(() => { this.loading = false;})      
+  }, 1000)
+
   }
 }

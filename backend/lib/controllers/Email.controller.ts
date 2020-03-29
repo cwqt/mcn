@@ -4,14 +4,15 @@ import nodemailer from 'nodemailer';
 
 import { ErrorHandler } from '../common/errorHandler';
 import { User } from '../models/User.model';
+import config from '../config';
 
 const generateEmailHash  = (email:string) => {
-    const hash = generateVerificationHash(email, process.env.PRIVATE_KEY, 60)
+    const hash = generateVerificationHash(email, config.PRIVATE_KEY, 60)
     return hash;
 }
 
 const verifyEmail = (email:string, hash:string) => {
-    const isEmailVerified = verifyHash(hash, email, process.env.PRIVATE_KEY)
+    const isEmailVerified = verifyHash(hash, email, config.PRIVATE_KEY)
     return isEmailVerified;
 }
 
@@ -20,20 +21,20 @@ export const sendVerificationEmail = (email:string):Promise<boolean> => {
         if(process.env.NODE_ENV == 'development') resolve(true);
 
         let hash = generateEmailHash(email);
-        let verificationUrl = `${process.env.SITE_URL}/auth/verify?email=${email}&hash=${hash}`
+        let verificationUrl = `${config.API_URL}/auth/verify?email=${email}&hash=${hash}`
         
         let transporter = nodemailer.createTransport({
             service: 'SendGrid',
             auth: {
-                user: process.env.SENDGRID_USERNAME,
-                pass: process.env.SENDGRID_API_KEY
+                user: config.SENDGRID_USERNAME,
+                pass: config.SENDGRID_API_KEY
             }
         });
     
         let mailOptions = {
-            from: process.env.EMAIL_ADDRESS,
+            from: config.EMAIL_ADDRESS,
             to: email,
-            subject: `Verify your ${process.env.SITE_TITLE} account 🌱`,
+            subject: `Verify your ${config.SITE_TITLE} account 🌱`,
             html: `<p>Click the link to verify: <a href="${verificationUrl}">${verificationUrl}</a></p>`
         };
     
@@ -56,6 +57,6 @@ export const verify = (req:Request, res:Response, next:NextFunction) => {
 
     User.findOneAndUpdate({email:email}, {verified:true}, (err, user) => {
         if(err) next(new ErrorHandler(400, err.message));
-        res.json(user)
+        res.redirect(301, `${config.FE_URL}/verified`)
     })
 }

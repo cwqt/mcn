@@ -5,21 +5,17 @@ interface ErrorResponse {
 }
 
 export const handleError = (err:ErrorHandler, res:Response) => {
+    console.log('@@@@@' , err.name)
     const { statusCode, message } = err;
     let response:ErrorResponse = {
         status: `${statusCode}`.startsWith('4') ? 'fail' : 'error',
         statusCode,
     }
 
-    console.log('@@@@@' , err.name)
-
     if(message) response['message'] = message;
-    if(err.isOperational) {
-        response['stack'] = err.stack
-    }
+    if(process.env.NODE_ENV == 'development') response['stack'] = err.stack
 
-    res.status(statusCode).json(response);
-    return;
+    return res.status(statusCode).json(response);
 };
 
 class IError extends Error {
@@ -35,7 +31,6 @@ export class ErrorHandler extends IError {
         super(message);
         this.statusCode = statusCode;
         this.message = message;
-        this.isOperational = true;
 
         IError.captureStackTrace(this, this.constructor)
     }

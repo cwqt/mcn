@@ -19,6 +19,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { HomeComponent } from './routes/home/home.component';
 import { ProfileComponent } from './routes/profile/profile.component';
+import { VerifiedComponent } from './components/verified/verified.component';
 
 
 @NgModule({
@@ -29,6 +30,7 @@ import { ProfileComponent } from './routes/profile/profile.component';
     RegisterComponent,
     HomeComponent,
     ProfileComponent,
+    VerifiedComponent,
   ],
   imports: [
     BrowserModule,

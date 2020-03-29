@@ -4,12 +4,25 @@ h1 {
 form {
     padding-left: 15px;
 }
-.help {
+
+mat-error.form {
+    display: inline-block !important;
     margin-left: 20px;
+}
+
+.help {
+    margin-left: 15px;
     color: grey;
     text-decoration: none;
     transition: 0.2s;
     &:hover {
         color: darken(grey, 20%)
+    }
+}
+
+.loader {
+    .mat-spinner {
+        display: inline-block;
+        margin-right: 5px;
     }
 }

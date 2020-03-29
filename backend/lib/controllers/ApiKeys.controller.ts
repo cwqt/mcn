@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from 'express';
 
+import config from '../config';
 import { Plant } from "../models/Plant.model";
 import { Garden } from "../models/Garden.model";
 import { ApiKey } from "../models/ApiKey.model"
@@ -32,7 +33,7 @@ export const generateJwt = (req:Request, res:Response) => {
     var token = jwt.sign({
         data: user_id,
         exp: Math.floor(Date.now() / 1000) + (3600*24), //1 day
-    }, process.env.PRIVATE_KEY);
+    }, config.PRIVATE_KEY);
 
     return res.json({"data": token})
 }
@@ -53,7 +54,7 @@ export const validateJwt = async (req:Request, res:Response, next:NextFunction) 
     //check if token is even valid
     let decoded:any;
     try {
-      decoded = jwt.verify(token, process.env.PRIVATE_KEY);
+      decoded = jwt.verify(token, config.PRIVATE_KEY);
     } catch(err) { throw new ErrorHandler(400, err.message) }
 
     if(!decoded) throw new ErrorHandler(400, "Invalid token");

@@ -1,13 +1,13 @@
-import 'dotenv/config';
-import express          from "express"
-import morgan           from "morgan"
-import mongoose         from 'mongoose'
-import bodyParser       from 'body-parser'
-import cors             from 'cors'
-import session          from 'express-session'
+import express          from "express";
+import morgan           from "morgan";
+import mongoose         from 'mongoose';
+import bodyParser       from 'body-parser';
+import cors             from 'cors';
+import session          from 'express-session';
 
+import config           from './config';
+import routes           from './routes';
 import { handleError, ErrorHandler } from './common/errorHandler';
-import routes           from './routes'
 
 var server:any;
 const app = express();
@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(session({
-    secret: process.env.PRIVATE_KEY,
+    secret: config.PRIVATE_KEY,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -25,7 +25,7 @@ app.use(session({
     }
 }))
 
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(config.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
 const connection = mongoose.connection;
 mongoose.Promise = Promise;
 
