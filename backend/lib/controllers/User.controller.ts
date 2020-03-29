@@ -65,3 +65,35 @@ export const deleteUser = (req:Request, res:Response, next:NextFunction) => {
         return res.status(200).end()
     })
 }
+
+export const loginUser = (req:Request, res:Response, next:NextFunction) => {
+    let email = req.body.email
+    let password = req.body.password
+  
+    //see if user exists
+    User.findOne({email: email}, (err, user) => {
+        if(err) next(new ErrorHandler(400))
+        if(!user) next(new ErrorHandler(404))
+
+        bcrypt.compare(password, user.pw_hash, (err, result) => {
+            if(err) next(new ErrorHandler(401))
+            if(!result) next(new ErrorHandler(401, 'Incorrect password'))
+            
+            // All checks passed, create session
+            req.session.user = {
+                id: user.id,
+                admin: user.admin || false
+            }
+            res.status(200).end()
+        })
+    })
+}
+
+export const logoutUser = (req:Request, res:Response, next:NextFunction) => {
+    if(req.session) {
+        req.session.destroy(err => {
+            if(err) next(new ErrorHandler(400, 'Logout failed'))
+            res.status(200).end()
+        })
+    }
+}

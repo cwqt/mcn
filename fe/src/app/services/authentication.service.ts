@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import { map, tap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  url:string = 'http://localhost:3000';
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private cookieService:CookieService) {
     this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
   }
@@ -20,19 +20,21 @@ export class AuthenticationService {
     return this.currentUserSubject.value;
   }
 
-  login(res) {
-    return this.http.post<any>(`${this.url}/users/authenticate`, res)
-      .pipe(map(user => {
-          // store user details and jwt token in local storage to keep user logged in between page refreshes
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
-          return user;
+  login(formData) {
+    return this.http.post<any>('/api/users/login', formData, {withCredentials:true})
+      .pipe(
+        map(response => {
+          // this.cookieService.set('SESSION_ID', response.headers.get('Set-Cookie'))
+          this.currentUserSubject.next(response);
       }));
-    }
+}
 
   logout() {
-    // remove user from local storage and set current user to null
-    localStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null);
+    return this.http.post<any>('/api/users/logout', {})
+      .pipe(map(user => {
+          this.cookieService.set('SESSION_ID', null)
+          this.currentUserSubject.next(null);
+          return user;
+      }));
   }
 }

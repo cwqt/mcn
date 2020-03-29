@@ -20,7 +20,7 @@ export const sendVerificationEmail = (email:string):Promise<boolean> => {
         if(process.env.NODE_ENV == 'development') resolve(true);
 
         let hash = generateEmailHash(email);
-        let verificationUrl = `https://localhost:3000/auth/verify?email=${email}&hash=${hash}`
+        let verificationUrl = `${process.env.SITE_URL}/auth/verify?email=${email}&hash=${hash}`
         
         let transporter = nodemailer.createTransport({
             service: 'SendGrid',
@@ -37,7 +37,7 @@ export const sendVerificationEmail = (email:string):Promise<boolean> => {
             html: `<p>Click the link to verify: <a href="${verificationUrl}">${verificationUrl}</a></p>`
         };
     
-        transporter.sendMail(mailOptions, (error:any, info:any) => {
+        transporter.sendMail(mailOptions, (error:any) => {
             if(error) {
                 console.log(error);
                 resolve(false);

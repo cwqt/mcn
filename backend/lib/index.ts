@@ -4,6 +4,7 @@ import morgan           from "morgan"
 import mongoose         from 'mongoose'
 import bodyParser       from 'body-parser'
 import cors             from 'cors'
+import session          from 'express-session'
 
 import { handleError, ErrorHandler } from './common/errorHandler';
 import routes           from './routes'
@@ -14,6 +15,15 @@ app.set('trust proxy', 1);
 app.use(bodyParser.json());
 app.use(morgan("tiny"));
 app.use(cors());
+app.use(session({
+    secret: process.env.PRIVATE_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: process.env.NODE_ENV == 'development' ? false : true,
+        secure: process.env.NODE_ENV == 'development' ? false : true
+    }
+}))
 
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
 const connection = mongoose.connection;

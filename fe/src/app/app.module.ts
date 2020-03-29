@@ -1,3 +1,4 @@
+import { CookieService } from 'ngx-cookie-service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -45,7 +46,9 @@ import { ProfileComponent } from './routes/profile/profile.component';
     MatProgressSpinnerModule
 
   ],
-  providers: [],
+  providers: [
+    CookieService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
