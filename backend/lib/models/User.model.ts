@@ -8,7 +8,7 @@ export interface IUser extends Document {
     salt:           string,
     pw_hash:        string,
     verified:       boolean,
-    admin?:          boolean,
+    admin?:         boolean,
     bio?:           string,
     avatar?:        string,
     cover_image?:   string,
@@ -32,5 +32,13 @@ export var UserSchema:Schema = new Schema({
     cover_image:    String,
     blocked_users: [Schema.Types.ObjectId]
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
+
+UserSchema.methods.toJSON = function() {
+    var obj = this.toObject();
+    delete obj.salt;
+    delete obj.pw_hash;
+    delete obj.blocked_users;
+    return obj;
+}
 
 export const User:Model<IUser> = model<IUser>("User", UserSchema);

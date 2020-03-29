@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Router, ActivatedRoute } from '@angular/router';
+import { first } from 'rxjs/operators';
 
 import { AuthenticationService } from '../../services/authentication.service'
 
@@ -9,6 +11,7 @@ import { AuthenticationService } from '../../services/authentication.service'
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  returnUrl: string;
   loginForm:FormGroup;
   loading:boolean = false;
   success:boolean = false;
@@ -18,8 +21,9 @@ export class LoginComponent implements OnInit {
     'form': ""
   }
 
-
   constructor(
+    private route: ActivatedRoute,
+    private router: Router,
     private authService:AuthenticationService,
     private fb:FormBuilder) { }
 
@@ -29,6 +33,8 @@ export class LoginComponent implements OnInit {
       password: ["", [ Validators.required, ]],
       rememberMe: [false],
     });
+
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
   get email() { return this.loginForm.get("email") }
@@ -39,9 +45,12 @@ export class LoginComponent implements OnInit {
     setTimeout(() => {
 
 
-    this.authService.login(this.loginForm.value).subscribe(
+    this.authService.login(this.loginForm.value)
+    .pipe(first())
+    .subscribe(
       res => {
         this.success = true;
+        this.router.navigate(['/home']);
       },
       err => {
         this.success = false;

@@ -20,7 +20,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { HomeComponent } from './routes/home/home.component';
 import { ProfileComponent } from './routes/profile/profile.component';
 import { VerifiedComponent } from './components/verified/verified.component';
-
+import { LoginHelpComponent } from './components/login-help/login-help.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +31,7 @@ import { VerifiedComponent } from './components/verified/verified.component';
     HomeComponent,
     ProfileComponent,
     VerifiedComponent,
+    LoginHelpComponent,
   ],
   imports: [
     BrowserModule,

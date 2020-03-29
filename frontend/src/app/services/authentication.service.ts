@@ -21,20 +21,18 @@ export class AuthenticationService {
   }
 
   login(formData) {
-    return this.http.post<any>('/api/users/login', formData, {withCredentials:true})
-      .pipe(
-        map(response => {
-          // this.cookieService.set('SESSION_ID', response.headers.get('Set-Cookie'))
-          this.currentUserSubject.next(response);
+    return this.http.post<any>('/api/users/login', formData, { withCredentials:true })
+      .pipe(map(user => {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+          return user;
       }));
 }
 
   logout() {
+    localStorage.removeItem('currentUser');
+    this.cookieService.set('connect.sid', null)
+    this.currentUserSubject.next(null);
     return this.http.post<any>('/api/users/logout', {})
-      .pipe(map(user => {
-          this.cookieService.set('SESSION_ID', null)
-          this.currentUserSubject.next(null);
-          return user;
-      }));
   }
 }

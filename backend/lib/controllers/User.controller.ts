@@ -41,8 +41,9 @@ export const createUser = (req:Request, res:Response, next:NextFunction) => {
 }
 
 export const readUser = (req:Request, res:Response, next:NextFunction) => {
-    User.findById(req.params.id).select('-salt -pw_hash').exec((error:any, response:any) => {
-        if (error) return next(new ErrorHandler(422, error.message));
+    User.findById(req.params.id, (error:any, response:any) => {
+        if(error) return next(new ErrorHandler(422, error.message));
+        if(!response) return next(new ErrorHandler(404, "No such user exists"))
         return res.json(response)
     })
 }
@@ -67,8 +68,8 @@ export const deleteUser = (req:Request, res:Response, next:NextFunction) => {
 }
 
 export const loginUser = (req:Request, res:Response, next:NextFunction) => {
-    let email = req.body.email
-    let password = req.body.password
+    let email = req.body.email;
+    let password = req.body.password;
   
     //see if user exists
     User.findOne({email: email}, (err, user) => {
@@ -85,7 +86,7 @@ export const loginUser = (req:Request, res:Response, next:NextFunction) => {
                 id: user.id,
                 admin: user.admin || false
             }
-            res.status(200).end()
+            res.status(200).json(user)
         })
     })
 }
