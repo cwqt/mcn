@@ -11,17 +11,17 @@ const generateEmailHash  = (email:string) => {
     return hash;
 }
 
-const verifyEmail = (email:string, hash:string) => {
+export const verifyEmail = (email:string, hash:string) => {
     const isEmailVerified = verifyHash(hash, email, config.PRIVATE_KEY)
     return isEmailVerified;
 }
 
 export const sendVerificationEmail = (email:string):Promise<boolean> => {
     return new Promise((resolve, reject) => {
-        if(process.env.NODE_ENV == 'development') resolve(true);
+        // if(process.env.NODE_ENV == 'development') resolve(true);
 
         let hash = generateEmailHash(email);
-        let verificationUrl = `${config.API_URL}/auth/verify?email=${email}&hash=${hash}`
+        let verificationUrl = `${config.API_URL}/users/verify?email=${email}&hash=${hash}`
         
         let transporter = nodemailer.createTransport({
             service: 'SendGrid',
@@ -45,18 +45,5 @@ export const sendVerificationEmail = (email:string):Promise<boolean> => {
             }
             resolve(true);
         });
-    })
-}
-
-export const verify = (req:Request, res:Response, next:NextFunction) => {
-    let hash = req.query.hash;
-    let email = req.query.email;
-
-    let isVerified = verifyEmail(email, hash);
-    if(!isVerified) throw new ErrorHandler(400, 'Not a valid hash')
-
-    User.findOneAndUpdate({email:email}, {verified:true}, (err, user) => {
-        if(err) next(new ErrorHandler(400, err.message));
-        res.redirect(301, `${config.FE_URL}/verified`)
     })
 }

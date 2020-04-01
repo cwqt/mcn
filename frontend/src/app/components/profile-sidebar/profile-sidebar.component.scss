@@ -1,0 +1,60 @@
+.profile {
+    margin: 50px;
+    width: 300px;
+    font-size: 19px;
+    .avatar_container {
+        height: 300px;
+        width: 100%;
+        margin-bottom: 30px;
+        img {
+            box-shadow: 0 10px 20px rgba(32,34,37,.3);
+            border-radius: 10px;
+            object-fit: cover;
+            object-position: center;
+            width: 100%;
+            height: 100%;
+        }    
+    }
+    display: flex;
+    flex-flow: column;
+    #username {
+        font-family: monospace;
+        font-size: 22px;
+        b::before {
+            content: "@";
+            opacity: 0.5;
+        }
+    }
+    #bio {
+        line-height: 1.4;
+    }
+    #url, #location, #real_name {
+        &::before {
+            opacity: 0.5;
+            font-family: monospace;
+        }
+    }
+
+    #url::before{ content: 'url: ';}
+    #location::before{ content: 'location: ';}
+    #real_name::before {content : 'name: '; }
+    a {
+        text-decoration: none;
+    }
+}
+
+.sides {
+    margin-top: 30px;
+    display: flex;
+    flex-flow: row;
+    .side {
+        width: 50%;
+        font-family: monospace;
+        p {
+            font-size: 40px;
+        }
+        span {
+            opacity: 0.5;
+        }
+    }
+}

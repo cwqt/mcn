@@ -7,12 +7,12 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  user:any = {};
+  currentUser:any = {};
 
   constructor(private authService:AuthenticationService) { }
 
   ngOnInit(): void {
-    this.authService.currentUser.subscribe(user => this.user = user)
+    this.authService.currentUser.subscribe(user => this.currentUser = user)
   }
 
 

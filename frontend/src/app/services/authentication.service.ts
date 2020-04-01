@@ -20,11 +20,21 @@ export class AuthenticationService {
     return this.currentUserSubject.value;
   }
 
+  updateCurrentUser() {
+    return this.http.get(`/api/users/${this.currentUserValue._id}`)
+      .pipe(map(user => { this.setUser(user)})).toPromise()
+  }
+
+  setUser(user) {
+    console.log(user)
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    this.currentUserSubject.next(user);
+  }
+
   login(formData) {
     return this.http.post<any>('/api/users/login', formData, { withCredentials:true })
       .pipe(map(user => {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
+          this.setUser(user);
           return user;
       }));
 }

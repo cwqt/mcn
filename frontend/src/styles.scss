@@ -30,3 +30,16 @@ mat-form-field.ng-invalid.ng-touched {
     from { margin-bottom: 0; }
     to { margin-bottom: 24px; }
 }
+
+button,
+a {
+    &.mat-button,
+    &.mat-raised-button,
+    &.mat-flat-button,
+    &.mat-stroked-button {
+        .mat-icon {
+            vertical-align: top;
+            font-size: 1.25em;
+        }
+    }
+}

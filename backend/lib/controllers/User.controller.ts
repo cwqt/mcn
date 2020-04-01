@@ -3,6 +3,9 @@ import { Request, Response, NextFunction }    from "express"
 import { User }                 from "../models/User.model"
 import { sendVerificationEmail } from "./Email.controller";
 import { ErrorHandler } from '../common/errorHandler';
+import { verifyEmail } from './Email.controller';
+import config from '../config';
+
 
 export const readAllUsers = (req:Request, res:Response, next:NextFunction) => {
     User.find({}, (error:any, response:any) => {
@@ -27,6 +30,7 @@ export const createUser = (req:Request, res:Response, next:NextFunction) => {
             return next(new ErrorHandler(400, errors))
         } else {
             req.body["verified"] = false;
+            req.body["new_user"] = true;
 
             let emailSent = sendVerificationEmail(req.body.email)
             emailSent.then(success => {
@@ -53,8 +57,12 @@ export const updateUser = (req:Request, res:Response, next:NextFunction) => {
     if(req.body.name)   { newData.name = req.body.name }
     if(req.body.avatar) { newData.avatar = req.body.avatar }
     if(req.body.email)  { newData.email = req.body.email }
+    if(req.body.location) { newData.location = req.body.location }
+    if(req.body.avatar) { newData.avatar = req.body.avatar }
+    if(req.body.cover_image) { newData.cover_image = req.body.cover_image }
+    if(req.body.bio) { newData.bio = req.body.bio }
 
-    User.findByIdAndUpdate({_id: req.params.id}, newData, (error:any, response:any) => {
+    User.findOneAndUpdate({_id: req.params.id}, newData, (error:any, response:any) => {
         if (error) return next(new ErrorHandler(400, error))
         return res.json(response)
     })
@@ -99,3 +107,17 @@ export const logoutUser = (req:Request, res:Response, next:NextFunction) => {
         })
     }
 }
+
+export const verifyUser = (req:Request, res:Response, next:NextFunction) => {
+    let hash = req.query.hash;
+    let email = req.query.email;
+
+    let isVerified = verifyEmail(email, hash);
+    if(!isVerified) throw new ErrorHandler(400, 'Not a valid hash')
+
+    User.findOneAndUpdate({email:email}, {verified:true}, (err, user) => {
+        if(err) next(new ErrorHandler(400, err.message));
+        res.redirect(301, `${config.FE_URL}/verified`)
+    })
+}
+

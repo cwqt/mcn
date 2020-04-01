@@ -48,9 +48,9 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.loginForm.value)
     .pipe(first())
     .subscribe(
-      res => {
+      user => {
         this.success = true;
-        this.router.navigate(['/home']);
+        if(!user.new_user) this.router.navigate(['/home']);
       },
       err => {
         this.success = false;

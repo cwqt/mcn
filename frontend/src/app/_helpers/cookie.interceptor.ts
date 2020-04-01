@@ -11,7 +11,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         // add authorization header with jwt token if available
-        let currentSession = this.cookieService.get('SESSION_ID');
+        let currentSession = this.cookieService.get('connect.sid');
         if (currentSession) {
             request = request.clone({
                 setHeaders: { 

@@ -11,11 +11,12 @@ import { AuthenticationService } from './services/authentication.service'
 })
 export class AppComponent {
   title = 'fe';
-  currentUser:any;
 
-  constructor( private router: Router, private authService: AuthenticationService) {
-      this.authService.currentUser.subscribe(x => this.currentUser = x);
+  constructor(private router: Router, private authService: AuthenticationService) {
       console.log(`Running in: ${environment.production ? 'production' : 'development'}`)
+      if(this.authService.currentUserValue) {
+        this.authService.updateCurrentUser()
+      }
     }
 
   logout() {
