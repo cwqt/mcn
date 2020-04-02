@@ -25,6 +25,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatStepperModule} from '@angular/material/stepper';
 import {MatIconModule, MatIcon} from '@angular/material/icon';
 import { ProfileSidebarComponent } from './components/profile-sidebar/profile-sidebar.component';
+import { HeaderBarComponent } from './components/header-bar/header-bar.component';
 
 
 
@@ -40,6 +41,7 @@ import { ProfileSidebarComponent } from './components/profile-sidebar/profile-si
     LoginHelpComponent,
     FirstTimeSetupComponent,
     ProfileSidebarComponent,
+    HeaderBarComponent,
   ],
   imports: [
     BrowserModule,
