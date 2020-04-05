@@ -8,6 +8,28 @@ import { ApiKey } from "../models/ApiKey.model"
 import { User } from "../models/User.model";
 import { ErrorHandler } from "../common/errorHandler";
 
+
+export const generateApiKey = (user_id:string, recordable_id:string, recordable_type:string):Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    let token = jwt.sign({
+      uid: recordable_id,
+      type: recordable_type
+    }, config.PRIVATE_KEY);
+  
+    let key = {
+      user: user_id,
+      key: token,
+      type: recordable_type,
+      for: recordable_id
+    }
+  
+    ApiKey.create(key, (err:any, response:any) => {
+      if(err) resolve(false)
+      resolve(true)
+    })  
+  })
+}
+
 export const generateRecordableSymmetricKey = (req:Request, res:Response) => {}
 
 export const validateMessageWithKey = (req:Request, res:Response) => {
@@ -25,6 +47,7 @@ export const validateMessageWithKey = (req:Request, res:Response) => {
     if(type == 'garden') recordable = Garden;
 
 }
+
 
 export const generateJwt = (req:Request, res:Response) => {
     let user_id = req.body._id

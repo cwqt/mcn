@@ -21,7 +21,9 @@ export interface IRecordable extends Document {
     image?:     string,
     feed_url?:  string,
     host_url?:  string,
-    parameters?: IParameter[],
+    verified:       boolean,
+    parameters?:    Map<string, IParameter[]>,
+    last_ping:      Date,
     created_at?:    Date,
     modified_at?:   Date,
 }
@@ -31,10 +33,15 @@ export var RecordableSchema:Schema = new Schema({
     belongs_to:     Schema.Types.ObjectId,
     created_at:     Date,
     modified_at:    Date,
+    last_ping:      Date,
     image:          String,
     feed_url:       String,
     host_url:       String,
-    recording:      [String],
+    verified:       Boolean,
+    recording:      {
+      type: Map,
+      of: Object
+    },
     parameters:     Object,
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 

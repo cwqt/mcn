@@ -4,14 +4,16 @@ import { Measurement }          from '../models/Measurement.model'
 import ACCEPTED_MEASUREMENTS    from '../common/ACCEPTED_MEASUREMENTS';
 const { validationResult }      = require('express-validator');
 
+import { generateApiKey }      from '../controllers/ApiKeys.controller';
+
 export const createPlant  = (req:Request, res:Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
-
     Plant.create(req.body, (error: any, response: any) => {
         if (error) { res.status(400).json({message: error["message"]}); return }
+        generateApiKey(req.body.belongs_to, response.id, 'plant')
         res.json(response);
     });
 }
@@ -73,3 +75,11 @@ export const createMeasurement = (req:Request, res:Response) => {
 
 export const readEvents = (req:Request, res:Response) => {}
 export const createEvent = (req:Request, res:Response) => {}
+
+
+export const pingPlantActive = (req:Request, res:Response) => {
+    Plant.findByIdAndUpdate(req.params.plant_id, {"last_ping": new Date()}, {new: true}, (error, plant) => {
+        if (error) {res.status(400).end(); return }
+        res.status(200).end();
+    });
+}

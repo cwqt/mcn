@@ -10,7 +10,8 @@ import {
     readMeasurements,
     createMeasurement,
     readEvents,
-    createEvent    
+    createEvent,
+    pingPlantActive
 } from '../controllers/Plants.controller';
 
 const plants = Router();
@@ -35,5 +36,10 @@ plants.post('/:plant_id/measurements',  createMeasurement)
 
 plants.get('/:plant_id/measurements',   readEvents)
 plants.post('/:plant_id/events',        createEvent)
+
+
+
+plants.get('/:plant_id/ping',  pingPlantActive)
+
 
 export default plants;
