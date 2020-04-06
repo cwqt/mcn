@@ -3,42 +3,30 @@
 #include <ESP8266mDNS.h>
 #include <EEPROM.h>
 #include <ArduinoJson.h>
-#include <base64.h>
+//#include <base64.h>
 #include <ArduinoJWT.h>
-#include "TinyUPnP.h"
+#include <TinyUPnP.h>
+//#include <AES.h>
 
 const char* AP_NamePrefix = "mcn-";
 const char* WiFiAPPSK = "iloveplants";
-const char* DomainName = "mcn-wd1m";  // set domain name domain.local
 bool httpServerUp = false;
 bool ApMode = false;
 
-#define LISTEN_PORT 17997
+#define LISTEN_PORT 80
 #define LEASE_DURATION 0
-#define FRIENDLY_NAME "mcn-wd1m"
 
-//setters 1 byte, 1 or 0
-//key can be up to 304 bytes
-#define WIFI_SET 0
-#define API_SET 1
+#include "address.h"
 
-//32 byte ssid with null terminator
-//32 byte pass with null terminator
-#define SSID_ADDR 2
-#define PASS_ADDR 34
-
-//32 byte API URL with null terminator
-#define API_ADDR 67 
-#define KEY_ADDR 100
-
-TinyUPnP *tinyUPnP = new TinyUPnP(20000);  // -1 for blocking (preferably, use a timeout value in [ms])
+TinyUPnP *tinyUPnP = new TinyUPnP(30000);  // -1 for blocking (preferably, use a timeout value in [ms])
 ESP8266WebServer server(LISTEN_PORT);
 ArduinoJWT jwt;
+//AES aes;
 
 const char* UID;
 const char* TYPE;
 const char* API_URL;
-const char* TOKEN;
+char* TOKEN;
 
 bool WiFiSet;
 bool ApiSet;
@@ -58,8 +46,9 @@ void setup() {
     if(ApiSet) decodeApiKey();
     if(WiFiSet) {
       initWiFiConnect();
-//      initUPnP();
-      PingApi();
+//      encryptBody();      
+      initUPnP();
+//      PingApi();
     }
   }
 }
@@ -117,10 +106,11 @@ void initAccessPoint() {
 
   startMDNS(WiFi.softAPIP());
   startHttpServer();
+  Serial.println(WiFi.softAPIP());
 }
 
 void startMDNS(const IPAddress &addr) {
-  if (!MDNS.begin(DomainName, addr)) {
+  if (!MDNS.begin(getAPName(), addr)) {
     Serial.println("[ERROR] MDNS responder did not setup");
     while (1) {
       delay(1000);
@@ -143,12 +133,13 @@ String getAPName() {
 void startHttpServer() {
   httpServerUp = true;
   if (ApMode) {
-    server.on("/", HTTP_GET, handleRootAp);
-    server.on("/WIFI", HTTP_POST, handleWiFiAp);
-    server.on("/CLEAR", HTTP_POST, handleClearEEPROMAp);
+    server.on("/",          HTTP_GET, handleRootAp);
+    server.on("/WIFI",      HTTP_POST, handleWiFiAp);
+    server.on("/CLEAR",     HTTP_POST, handleClearEEPROMAp);
   } else {
-    server.on("/", HTTP_GET, handleRootStation);
-    server.on("/REGISTER", HTTP_POST, handleRegisterStation);
+    server.on("/",          HTTP_GET, handleRootStation);
+    server.on("/REGISTER",  HTTP_POST, handleRegisterStation);
+    server.on("/PING",      HTTP_GET, handlePingStation);
   }
   server.begin();
   Serial.println("[INFO] Http " + String(ApMode ? "Ap" : "Station") + " server started");
@@ -177,6 +168,11 @@ void handleRegisterStation() {
   EEPROM.commit();
 
   server.send(200, "text/html", "<h1>Key saved</h1><p>Please reboot your device for first-time registration.</p>");
+}
+
+void handlePingStation() {
+  server.send(200, "text/plain", "pong!");
+  Serial.println("got pinged!");
 }
 
 void handleRootAp() {
@@ -230,6 +226,9 @@ char* readStringFromEEPROM(int addrOffset) {
 
 void decodeApiKey() {  
   char* tokenBuffer = readStringFromEEPROM(KEY_ADDR);
+  //copy from EEPROM into global
+  TOKEN = strdup(tokenBuffer);
+ 
   char payload[52];
   jwt.decodeJWT(tokenBuffer, payload, 52);
   free(tokenBuffer);
@@ -286,20 +285,19 @@ void PingApi() {
 //  return response;
 //}
 
+//void encryptBody() {
+//  byte *key = (unsigned char*)TOKEN;
+//  aes.set_key(key, sizeof(key));  // Get the globally defined key
+////  aes.do_aes_encrypt((byte *)b64data, b64len , cipher, key, 128, my_iv);
+//
+//}
+
+
 void initUPnP() {
   boolean portMappingAdded = false;
-  tinyUPnP->addPortMappingConfig(WiFi.localIP(), LISTEN_PORT, RULE_PROTOCOL_TCP, LEASE_DURATION, FRIENDLY_NAME);
+  tinyUPnP->addPortMappingConfig(WiFi.localIP(), LISTEN_PORT, RULE_PROTOCOL_TCP, LEASE_DURATION, getAPName());
   tinyUPnP->commitPortMappings();
-  while (!portMappingAdded) {
-    Serial.println("");
-  
-    if (!portMappingAdded) {
-      // for debugging, you can see this in your router too under forwarding or UPnP
-      tinyUPnP->printAllPortMappings();
-      Serial.println(F("This was printed because adding the required port mapping failed"));
-      delay(30000);  // 30 seconds before trying again
-    }
-  }
+  tinyUPnP->printAllPortMappings();
 }
 
 void setFlagsFromEEPROM() {
