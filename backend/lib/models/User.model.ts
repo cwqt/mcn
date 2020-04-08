@@ -15,7 +15,7 @@ export interface IUser extends Document {
     cover_image?:   string,
     location?:      string,
     created_at?:    Date,
-    modified_at?:   Date,
+    updated_at?:   Date,
     blocked_users?: IUser[]
 }
 

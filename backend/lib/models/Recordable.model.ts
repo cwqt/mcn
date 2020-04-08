@@ -16,24 +16,20 @@ export enum RecordableTypes {
 
 export interface IRecordable extends Document {
     name:       string,
-    belongs_to: IUser,
+    user_id:    string,
     recording:  string[],
     image?:     string,
     feed_url?:  string,
     host_url?:  string,
     verified:       boolean,
     parameters?:    Map<string, IParameter[]>,
-    last_ping:      Date,
     created_at?:    Date,
-    modified_at?:   Date,
+    updated_at?:   Date,
 }
 
 export var RecordableSchema:Schema = new Schema({
     name:           String,
-    belongs_to:     Schema.Types.ObjectId,
-    created_at:     Date,
-    modified_at:    Date,
-    last_ping:      Date,
+    user_id:        Schema.Types.ObjectId,
     image:          String,
     feed_url:       String,
     host_url:       String,

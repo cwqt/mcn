@@ -7,16 +7,16 @@ export interface IMeasurement {
 }
 
 export interface IMeasurements extends Document {
-    belongs_to: IRecordable,
-    timestamp: number,
-    measurements: IMeasurement[],
+    recordable_id:  string,
+    timestamp:      Date,
+    measurements:   IMeasurement[],
     created_at?:    Date,
-    modified_at?:   Date,
+    updated_at?:    Date,
 }
 
 export var MeasurementSchema:Schema = new Schema({
-    belongs_to: Schema.Types.ObjectId,
-    event_type: String
+    recordable_id:  Schema.Types.ObjectId,
+    timestamp:      Date
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
 export const Measurement:Model<IMeasurements> = model<IMeasurements>("Measurement", MeasurementSchema);
