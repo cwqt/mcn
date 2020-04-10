@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Document, Schema, Model, model} from "mongoose";
 
-import { IUser } from "./User.model"
+import { IUserModel } from "./User.model"
 
 interface IParameter {
   upper:  number,
@@ -10,22 +10,24 @@ interface IParameter {
 }
 
 export enum RecordableTypes {
-  Garden,
-  Plant
+  Garden = 'garden',
+  Plant = 'plant'
 }
 
-export interface IRecordable extends Document {
-    name:       string,
-    user_id:    string,
-    recording:  string[],
-    image?:     string,
-    feed_url?:  string,
-    host_url?:  string,
+export interface IRecordable {
+    name:           string,
+    user_id:        IUserModel["_id"],
+    recording:      string[],
+    image?:         string,
+    feed_url?:      string,
+    host_url?:      string,
     verified:       boolean,
     parameters?:    Map<string, IParameter[]>,
     created_at?:    Date,
-    updated_at?:   Date,
+    updated_at?:    Date,
 }
+
+export interface IRecordableModel extends IRecordable, Document {}
 
 export var RecordableSchema:Schema = new Schema({
     name:           String,
@@ -41,4 +43,4 @@ export var RecordableSchema:Schema = new Schema({
     parameters:     Object,
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
-export const Recordable:Model<IRecordable> = model<IRecordable>("Recordable", RecordableSchema);
+export const Recordable:Model<IRecordableModel> = model<IRecordableModel>("Recordable", RecordableSchema);

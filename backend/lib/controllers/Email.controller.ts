@@ -16,12 +16,12 @@ export const verifyEmail = (email:string, hash:string) => {
     return isEmailVerified;
 }
 
-export const sendVerificationEmail = (email:string):Promise<boolean> => {
+export const sendVerificationEmail = (email:string, user_id:string):Promise<boolean> => {
     return new Promise((resolve, reject) => {
         // if(process.env.NODE_ENV == 'development') resolve(true);
 
         let hash = generateEmailHash(email);
-        let verificationUrl = `${config.API_URL}/users/verify?email=${email}&hash=${hash}`
+        let verificationUrl = `${config.API_URL}/users/${user_id}/verify&hash=${hash}`
         
         let transporter = nodemailer.createTransport({
             service: 'SendGrid',

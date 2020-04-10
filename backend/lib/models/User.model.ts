@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Document, Schema, Model, model} from "mongoose";
 
-export interface IUser extends Document {
+export interface IUser {
     name:           string,
     username:       string,
     email:          string,
@@ -15,9 +15,11 @@ export interface IUser extends Document {
     cover_image?:   string,
     location?:      string,
     created_at?:    Date,
-    updated_at?:   Date,
-    blocked_users?: IUser[]
+    updated_at?:    Date,
+    blocked_users?: Array<IUserModel["_id"]>
 }
+
+export interface IUserModel extends IUser, Document {}
 
 export var UserSchema:Schema = new Schema({
     username:       { type:String, required:true },
@@ -43,4 +45,5 @@ UserSchema.methods.toJSON = function() {
     return obj;
 }
 
-export const User:Model<IUser> = model<IUser>("User", UserSchema);
+export const User:Model<IUserModel> = model<IUserModel>("User", UserSchema);
+

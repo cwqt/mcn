@@ -21,18 +21,18 @@ export const createUser = (req:Request, res:Response, next:NextFunction) => {
     delete req.body["password"]
 
     //Username musn't be taken, nor the email
-    User.find({$or: [{email: req.body.email}, {username: req.body.username}]}, (error:any, response:any) => {
+    User.find({$or: [{email: req.body.email}, {username: req.body.username}]}, (error:any, user:any) => {
         if(error) return next(new ErrorHandler(400, error['message']));
-        if(response.length > 0) {
+        if(user.length > 0) {
             let errors = []
-            if(response[0].username == req.body.username) errors.push({param:"username", msg:"username is taken"})
-            if(response[0].email == req.body.email) errors.push({param:"email", msg:"email already in use"})
+            if(user[0].username == req.body.username) errors.push({param:"username", msg:"username is taken"})
+            if(user[0].email == req.body.email) errors.push({param:"email", msg:"email already in use"})
             return next(new ErrorHandler(400, errors))
         } else {
             req.body["verified"] = false;
             req.body["new_user"] = true;
 
-            let emailSent = sendVerificationEmail(req.body.email)
+            let emailSent = sendVerificationEmail(req.body.email, user._id)
             emailSent.then(success => {
                 if(!success) return next(new ErrorHandler(400, 'Verification email could not be sent'))
                 User.create(req.body, (error: any, response: any) => {
@@ -58,7 +58,6 @@ export const updateUser = (req:Request, res:Response, next:NextFunction) => {
     if(req.body.avatar) { newData.avatar = req.body.avatar }
     if(req.body.email)  { newData.email = req.body.email }
     if(req.body.location) { newData.location = req.body.location }
-    if(req.body.avatar) { newData.avatar = req.body.avatar }
     if(req.body.cover_image) { newData.cover_image = req.body.cover_image }
     if(req.body.bio) { newData.bio = req.body.bio }
 
@@ -115,7 +114,7 @@ export const verifyUser = (req:Request, res:Response, next:NextFunction) => {
     let isVerified = verifyEmail(email, hash);
     if(!isVerified) throw new ErrorHandler(400, 'Not a valid hash')
 
-    User.findOneAndUpdate({email:email}, {verified:true}, (err, user) => {
+    User.findOneAndUpdate({_id:req.params.uid}, {verified:true}, (err, user) => {
         if(err) next(new ErrorHandler(400, err.message));
         res.redirect(301, `${config.FE_URL}/verified`)
     })

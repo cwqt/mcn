@@ -1,18 +1,17 @@
-import * as mongoose from 'mongoose';
 import { Document, Schema, Model, model} from "mongoose";
-import { IRecordable } from './Recordable.model';
-import { IUser } from './User.model';
-import { IPlant } from './Plant.model';
-import { IGarden } from './Garden.model';
+import { IUserModel } from './User.model';
+import { IDeviceModel } from './Device';
 
-export interface IApiKey extends Document {
-    user_id:        string;
-    device_id:      string;
+export interface IApiKey {
+    user_id:        IUserModel["_id"];
+    device_id:      IDeviceModel["_id"];
     key:            string;
     type:           'plant' | 'garden';
     created_at?:    Date;
-    updated_at?:   Date;
+    updated_at?:    Date;
 }
+
+export interface IApiKeyModel extends IApiKey, Document {}
 
 export var ApiKeySchema:Schema = new Schema({
     user_id:    Schema.Types.ObjectId,
@@ -21,4 +20,4 @@ export var ApiKeySchema:Schema = new Schema({
     type:       String
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
-export const ApiKey:Model<IApiKey> = model<IApiKey>("ApiKey", ApiKeySchema);
+export const ApiKey:Model<IApiKeyModel> = model<IApiKeyModel>("ApiKey", ApiKeySchema);
