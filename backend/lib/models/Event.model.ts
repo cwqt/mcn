@@ -11,7 +11,9 @@ export interface IEvent {
     updated_at?:    Date,
 }
 
-export interface IEventModel extends IEvent, Document {}
+export interface IEventModel extends IEvent, Document {
+    _id: string,
+}
 
 export var EventSchema:Schema = new Schema({
     recordable_id:  mongoose.Types.ObjectId(),

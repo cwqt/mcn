@@ -25,20 +25,17 @@ app.use(session({
     }
 }))
 
-mongoose.connect(config.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(config.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
 const connection = mongoose.connection;
 mongoose.Promise = Promise;
 
 connection.once('open', () => {
     console.log("Connected to MongoDB.")
     try {        
-        app.use("/users",                   routes.users)
-        app.use("/plants",                  routes.plants)
-        app.use("/gardens",                 routes.gardens)
-        app.use('/events',                  routes.events)
-        app.use('/measurements',            routes.measurements )
-        app.use('/time',                    routes.time)
-        app.use('/auth',                    routes.auth)
+        app.use("/users",       routes.users)
+        app.use('/auth',        routes.auth)
+        app.use('/files',       routes.files)
+        app.use('/time',        routes.time)
         
         app.all('*', (req:any, res:any, next:any) => { throw new ErrorHandler(404, 'No such route exists')})
         app.use((err:any, req:any, res:any, next:any) => handleError(err, res));

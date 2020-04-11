@@ -1,4 +1,11 @@
 {
     "customizeUI.activityBar": "bottom",
-    "customizeUI.titleBar": "frameless"
+    "customizeUI.titleBar": "frameless",
+    "spellright.language": [
+        "en"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex"
+    ]
 }

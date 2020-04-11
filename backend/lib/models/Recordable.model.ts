@@ -27,7 +27,9 @@ export interface IRecordable {
     updated_at?:    Date,
 }
 
-export interface IRecordableModel extends IRecordable, Document {}
+export interface IRecordableModel extends IRecordable, Document {
+  _id: string,
+}
 
 export var RecordableSchema:Schema = new Schema({
     name:           String,

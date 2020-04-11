@@ -14,7 +14,9 @@ export interface IMeasurement {
     updated_at?:    Date,
 }
 
-export interface IMeasurementModel extends IMeasurement, Document {}
+export interface IMeasurementModel extends IMeasurement, Document {
+    _id: string,
+}
 
 export var MeasurementSchema:Schema = new Schema({
     recordable_id:  Schema.Types.ObjectId,

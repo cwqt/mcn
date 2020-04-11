@@ -1,4 +1,3 @@
-import * as mongoose from 'mongoose';
 import { Document, Schema, Model, model} from "mongoose";
 
 export interface IUser {
@@ -19,15 +18,17 @@ export interface IUser {
     blocked_users?: Array<IUserModel["_id"]>
 }
 
-export interface IUserModel extends IUser, Document {}
+export interface IUserModel extends IUser, Document {
+    _id: string,
+}
 
 export var UserSchema:Schema = new Schema({
-    username:       { type:String, required:true },
-    email:          { type:String, required:true },
-    salt:           { type:String, required:true },
-    pw_hash:        { type:String, required:true },
+    username:       { type:String, required: true },
+    email:          { type:String, required: true },
+    salt:           { type:String, required: true },
+    pw_hash:        { type:String, required: true },
     verified:       { type:Boolean, required: true },
-    new_user:       { type: Boolean, required:true },
+    new_user:       { type:Boolean, required: true },
     admin:          Boolean,
     name:           String,
     bio:            String,

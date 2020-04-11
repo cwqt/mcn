@@ -11,7 +11,9 @@ export interface IApiKey {
     updated_at?:    Date;
 }
 
-export interface IApiKeyModel extends IApiKey, Document {}
+export interface IApiKeyModel extends IApiKey, Document {
+    _id: string,
+}
 
 export var ApiKeySchema:Schema = new Schema({
     user_id:    Schema.Types.ObjectId,

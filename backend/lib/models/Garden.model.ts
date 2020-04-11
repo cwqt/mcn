@@ -12,7 +12,9 @@ export interface IGarden extends IRecordable {
     updated_at?:    Date;
 }
 
-export interface IGardenModel extends IGarden, Document {}
+export interface IGardenModel extends IGarden, Document {
+    _id: string,
+}
 
 export var GardenSchema:Schema = extendSchema(RecordableSchema, {
     plants: [mongoose.Schema.Types.ObjectId],

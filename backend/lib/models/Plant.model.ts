@@ -13,7 +13,9 @@ export interface IPlant extends IRecordable {
     updated_at?:    Date
 }
 
-export interface IPlantModel extends IPlant, Document {}
+export interface IPlantModel extends IPlant, Document {
+    _id: string,
+}
 
 export var PlantSchema:Schema = new extendSchema(RecordableSchema, {
     type: {

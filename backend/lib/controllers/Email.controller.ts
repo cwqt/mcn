@@ -5,6 +5,7 @@ import nodemailer from 'nodemailer';
 import { ErrorHandler } from '../common/errorHandler';
 import { User } from '../models/User.model';
 import config from '../config';
+import { HTTP } from '../common/http';
 
 const generateEmailHash  = (email:string) => {
     const hash = generateVerificationHash(email, config.PRIVATE_KEY, 60)
@@ -12,16 +13,16 @@ const generateEmailHash  = (email:string) => {
 }
 
 export const verifyEmail = (email:string, hash:string) => {
-    const isEmailVerified = verifyHash(hash, email, config.PRIVATE_KEY)
+    const isEmailVerified = verifyHash(hash, email, config.PRIVATE_KEY);
     return isEmailVerified;
 }
 
-export const sendVerificationEmail = (email:string, user_id:string):Promise<boolean> => {
+export const sendVerificationEmail = (email:string):Promise<boolean> => {
     return new Promise((resolve, reject) => {
         // if(process.env.NODE_ENV == 'development') resolve(true);
 
         let hash = generateEmailHash(email);
-        let verificationUrl = `${config.API_URL}/users/${user_id}/verify&hash=${hash}`
+        let verificationUrl = `${config.API_URL}/auth/verify?email=${email}&hash=${hash}`
         
         let transporter = nodemailer.createTransport({
             service: 'SendGrid',
@@ -45,5 +46,18 @@ export const sendVerificationEmail = (email:string, user_id:string):Promise<bool
             }
             resolve(true);
         });
+    })
+}
+
+export const verifyUserEmail = (req:Request, res:Response, next:NextFunction) => {
+    let hash = req.query.hash;
+    let email = req.query.email;
+
+    let isVerified = verifyEmail(email, hash);
+    if(!isVerified) throw new ErrorHandler(HTTP.BadRequest, 'Not a valid hash')
+
+    User.findOneAndUpdate({email: email}, {verified:true}, {new:true}, (err, user) => {
+        if(err) next(new ErrorHandler(HTTP.ServerError, err.message));
+        res.redirect(HTTP.Moved, `${config.FE_URL}/verified`)
     })
 }

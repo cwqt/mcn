@@ -11,7 +11,9 @@ export interface IPost {
     updated_at?:    Date,
 }
 
-export interface IPostModel extends IPost, Document {}
+export interface IPostModel extends IPost, Document {
+    _id: string,
+}
 
 export var PostSchema:Schema = new Schema({
     content:        String,

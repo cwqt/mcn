@@ -9,3 +9,4 @@ hardware/esp32/secrets.h
 hardware/pi/ndvi-cam/client_secrets.json
 mycreds.txt
 build
+mcn-images-key.json

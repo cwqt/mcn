@@ -2,6 +2,10 @@
 
 my.corrhizal.net api documentation, v2 - previously written in python flask.
 
+* __body__: meaning a json body
+* __params__: url fields, `/api/:MY_PARAM/something`
+* __query__: `/api/something?MY_KEY=VALUE`
+
 ## errors
 
 upon error, return will match the following interface, `IError`:
@@ -21,6 +25,8 @@ upon error, return will match the following interface, `IError`:
 }
 ```
 
+or instead of an array for `message`, a string.
+
 # routes
 
 ## users
@@ -39,6 +45,7 @@ upon error, return will match the following interface, `IError`:
         - `password`: account password, min 6 chars
     * returns
         - __201__: `IUserModel`
+        - __409__: email/username in use
         - __422__: invalid data provided
 
 ---
@@ -62,21 +69,17 @@ upon error, return will match the following interface, `IError`:
         - __200__: updated `IUserModel`
 * __DELETE__: delete user accounts & all recordables/devices/events
 
-`/users/:uid/verify`
-* __GET__: verify user email
-    * params
-        - `hash`
-    * returns 
-        - __301__: redirect to `FE_URL/verified`
-        - __400__: `IError`
-
-`/users/:uid/login`
+`/users/login`
 * __POST__: logs in user, sets user session in Redis store
-    - `email` user email address
-    - `password` user password
+    * body
+        - `email` user email address
+        - `password` user password
 
-`/users/:uid/logout`
-* __POST__: log out user, removes session
+`/users/logout`
+* __POST__: logs out current user, removes session
+    * returns
+        - __200__: logged out
+        - __500__: error logging out
 
 ---
 
@@ -109,3 +112,17 @@ upon error, return will match the following interface, `IError`:
 `/users/:uid/posts/:pid`
 `/users/:uid/posts/comments`
 `/users/:uid/posts/comments/:cid`
+
+---
+
+## auth
+
+`/auth/verify`
+* __GET__: verify user email
+    * params
+        - `hash`
+        - `email`
+    * returns 
+        - __301__: redirect to `FE_URL/verified`
+        - __304__: already verified
+        - __500__: mongoose err

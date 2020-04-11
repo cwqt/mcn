@@ -21,7 +21,9 @@ export interface IDevice {
     updated_at?:        Date;
 }
 
-export interface IDeviceModel extends IDevice, Document {}
+export interface IDeviceModel extends IDevice, Document {
+    _id: string,
+}
 
 export var DeviceSchema:Schema = new Schema({
     user_id:            Schema.Types.ObjectId,

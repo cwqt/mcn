@@ -13,7 +13,9 @@ export interface IComment {
     updated_at?:    Date;
 }
 
-export interface ICommentModel extends IComment, Document {}
+export interface ICommentModel extends IComment, Document {
+    _id: string,
+}
 
 export var CommentSchema:Schema = new Schema({
     user_id:        Schema.Types.ObjectId,
