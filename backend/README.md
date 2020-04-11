@@ -31,7 +31,7 @@ or instead of an array for `message`, a string.
 
 ## users
 
-`/users/`
+### `/users/`
 
 `IUserModel`'s have the following fields removed when returned: `salt`, `pw_hash`.
 
@@ -52,7 +52,7 @@ or instead of an array for `message`, a string.
 
 ## specific user
 
-`/users/:uid`
+### `/users/:uid`
 * __GET__: get specific user details
     * returns
         - __200__: `IUserModel`
@@ -69,19 +69,19 @@ or instead of an array for `message`, a string.
         - __200__: updated `IUserModel`
 * __DELETE__: delete user accounts & all recordables/devices/events
 
-`/users/login`
+### `/users/login`
 * __POST__: logs in user, sets user session in Redis store
     * body
         - `email` user email address
         - `password` user password
 
-`/users/logout`
+### `/users/logout`
 * __POST__: logs out current user, removes session
     * returns
         - __200__: logged out
         - __500__: error logging out
 
-`users/:uid/avatar`
+### `users/:uid/avatar`
 * __PUT__: set user avatar image
     * form-data
         - `avatar`: blob
@@ -91,7 +91,7 @@ or instead of an array for `message`, a string.
         - __500__: mongoose/aws error 
         - __520__: multer error
 
-`users/:uid/cover_image`
+### `users/:uid/cover_image`
 * __PUT__: set user cover image
     * form-data
         - `cover_image`: blob
@@ -106,39 +106,39 @@ or instead of an array for `message`, a string.
 
 ## recordables
 
-`/users/:uid/recordables?type=garden/plant`
-`/users/:uid/recordables/:rid`
-`/users/:uid/recordables/:rid/events`
-`/users/:uid/recordables/:rid/measurements`
+### `/users/:uid/recordables?type=garden/plant`
+### `/users/:uid/recordables/:rid`
+### `/users/:uid/recordables/:rid/events`
+### `/users/:uid/recordables/:rid/measurements`
 
 ---
 
 ## devices
 
-`/users/:uid/devices`
-`/users/:uid/devices/:did`
+### `/users/:uid/devices`
+### `/users/:uid/devices/:did`
 
 ---
 
 ## api keys
 
-`/users/:uid/api_keys`
-`/users/:uid/api_keys/:kid`
+### `/users/:uid/api_keys`
+### `/users/:uid/api_keys/:kid`
 
 ---
 
 ## posts
 
-`/users/:uid/posts`
-`/users/:uid/posts/:pid`
-`/users/:uid/posts/comments`
-`/users/:uid/posts/comments/:cid`
+### `/users/:uid/posts`
+### `/users/:uid/posts/:pid`
+### `/users/:uid/posts/comments`
+### `/users/:uid/posts/comments/:cid`
 
 ---
 
 ## auth
 
-`/auth/verify`
+### `/auth/verify`
 * __GET__: verify user email
     * params
         - `hash`
