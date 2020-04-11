@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { validate } from '../common/validate'; 
 const { body, param, query } = require('express-validator');
+var multer = require('multer');
 
 import {
     readAllUsers,
@@ -12,6 +13,14 @@ import {
     logoutUser } from "../controllers/User.controller";
 
 const router = Router();
+
+const storage = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 2*1024*1024 //no files larger than 2mb
+    }
+});
+
 
 router.get('/', readAllUsers);
 
@@ -34,7 +43,10 @@ router.get('/:uid', [
 
 router.put('/:uid', [
     param('uid').isMongoId().trim().withMessage('not a valid oid')
-], validate, updateUser);
+], validate, storage.fields([
+    {name: 'avatar', maxCount: 1},
+    {name: 'cover_image', maxCount: 1},
+]), updateUser);
 
 router.delete('/:uid', [
     param('uid').isMongoId().trim().withMessage('not a valid oid')

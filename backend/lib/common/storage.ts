@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 import config from '../config';
 
 AWS.config.update({
@@ -9,7 +9,20 @@ AWS.config.update({
 
 var s3 = new AWS.S3();
 
-const uploadImageToS3 = (user_id:string, file:Express.Multer.File):Promise<string | object> => {
+interface S3Return {
+    Location:string //— the URL of the uploaded object
+    ETag:    string //— the ETag of the uploaded object
+    Bucket:  string //— the bucket to which the object was uploaded
+    Key:     string // — the key to which the object was uploaded
+    key?:    string
+}
+
+export interface S3Image {
+    data:       S3Return;
+    fieldname?: string;
+}
+
+export const uploadImageToS3 = (user_id:string, file:Express.Multer.File, fieldname:string):Promise<string | S3Image> => {
     return new Promise((resolve, reject) => {
         if(!file) reject('No image provided');
 
@@ -25,7 +38,10 @@ const uploadImageToS3 = (user_id:string, file:Express.Multer.File):Promise<strin
 
         s3.upload(params, function (err:any, data:any) {
             if(err) reject(err);
-            if(data) resolve(data);
+            if(data) resolve({
+                fieldname: fieldname,
+                data: data
+            } as S3Image);
         });    
     })
 }

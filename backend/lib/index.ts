@@ -34,7 +34,6 @@ connection.once('open', () => {
     try {        
         app.use("/users",       routes.users)
         app.use('/auth',        routes.auth)
-        app.use('/files',       routes.files)
         app.use('/time',        routes.time)
         
         app.all('*', (req:any, res:any, next:any) => { throw new ErrorHandler(404, 'No such route exists')})

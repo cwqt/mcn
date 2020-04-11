@@ -6,6 +6,8 @@ import { sendVerificationEmail }        from "./Email.controller";
 import { ErrorHandler }                 from '../common/errorHandler';
 import { HTTP }                         from '../common/http';
 import config                           from '../config';
+import { uploadImageToS3, S3Image }     from '../common/storage';
+
 
 export const readAllUsers = (req:Request, res:Response, next:NextFunction) => {
     User.find({}, (error:any, response:any) => {
@@ -61,9 +63,21 @@ export const updateUser = (req:Request, res:Response, next:NextFunction) => {
     if(req.body.cover_image)  { newData.cover_image = req.body.cover_image }
     if(req.body.bio)          { newData.bio = req.body.bio }
 
-    User.findByIdAndUpdate(req.params.uid, newData, {new:true}, (error:any, response:any) => {
-        if (error) return next(new ErrorHandler(HTTP.ServerError, error))
-        return res.json(response)
+    let promises:Promise<any>[] = [];
+    req.files = req.files as { [fieldname: string]: Express.Multer.File[]; };
+
+    if(req.files['avatar'][0]) promises.push(uploadImageToS3(req.params.uid, req.files['avatar'][0], 'avatar')); 
+    if(req.files['cover_image'][0]) promises.push(uploadImageToS3(req.params.uid, req.files['cover_image'][0], 'cover_image')); 
+
+    Promise.all(promises).then((uploadedImages:S3Image[]) => {
+        uploadedImages.forEach((image:S3Image) => {
+            newData[image.fieldname] = image.data.Location;
+        })
+
+        User.findByIdAndUpdate(req.params.uid, newData, {new:true}, (error:any, response:any) => {
+            if (error) return next(new ErrorHandler(HTTP.ServerError, error))
+            return res.json(response)
+        })    
     })
 }
 
