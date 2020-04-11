@@ -81,6 +81,27 @@ or instead of an array for `message`, a string.
         - __200__: logged out
         - __500__: error logging out
 
+`users/:uid/avatar`
+* __PUT__: set user avatar image
+    * form-data
+        - `avatar`: blob
+    * returns
+        - __200__: image set
+        - __422__: no image supplied 
+        - __500__: mongoose/aws error 
+        - __520__: multer error
+
+`users/:uid/cover_image`
+* __PUT__: set user cover image
+    * form-data
+        - `cover_image`: blob
+    * returns
+        - __200__: image set
+        - __422__: no image supplied 
+        - __500__: mongoose/aws error 
+        - __520__: multer error
+
+
 ---
 
 ## recordables

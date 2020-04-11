@@ -10,7 +10,9 @@ import {
     updateUser,
     deleteUser,
     loginUser,
-    logoutUser } from "../controllers/User.controller";
+    logoutUser, 
+    updateUserAvatar,
+    updateUserCoverImage} from "../controllers/User.controller";
 
 const router = Router();
 
@@ -37,16 +39,16 @@ router.post('/login', [
 
 router.post('/logout', logoutUser)
 
+router.put('/:uid/avatar', storage.single('avatar'), updateUserAvatar)
+router.put('/:uid/cover_image', storage.single('cover_image'), updateUserCoverImage)
+
 router.get('/:uid', [
     param('uid').isMongoId().trim().withMessage('not a valid oid')
 ], validate, readUser);
 
 router.put('/:uid', [
     param('uid').isMongoId().trim().withMessage('not a valid oid')
-], validate, storage.fields([
-    {name: 'avatar', maxCount: 1},
-    {name: 'cover_image', maxCount: 1},
-]), updateUser);
+], validate,  updateUser);
 
 router.delete('/:uid', [
     param('uid').isMongoId().trim().withMessage('not a valid oid')

@@ -22,7 +22,7 @@ export interface S3Image {
     fieldname?: string;
 }
 
-export const uploadImageToS3 = (user_id:string, file:Express.Multer.File, fieldname:string):Promise<string | S3Image> => {
+export const uploadImageToS3 = (user_id:string, file:Express.Multer.File, filename?:string):Promise<string | S3Image> => {
     return new Promise((resolve, reject) => {
         if(!file) reject('No image provided');
 
@@ -30,16 +30,17 @@ export const uploadImageToS3 = (user_id:string, file:Express.Multer.File, fieldn
         let allowed_extensions = ["jpg", "jpeg", "png"];
         if(!allowed_extensions.includes(extension)) reject('File type not allowed');      
 
+        let fn = filename || new mongoose.Types.ObjectId();
         let params = {
             Bucket: config.AWS_BUCKET_NAME,
             Body: file.buffer,
-            Key: `${user_id}/${new mongoose.Types.ObjectId()}.${extension}`
+            Key: `${user_id}/${fn}.${extension}`
         }
 
         s3.upload(params, function (err:any, data:any) {
             if(err) reject(err);
             if(data) resolve({
-                fieldname: fieldname,
+                fieldname: fn,
                 data: data
             } as S3Image);
         });    

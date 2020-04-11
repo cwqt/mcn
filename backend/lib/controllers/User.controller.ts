@@ -7,6 +7,7 @@ import { ErrorHandler }                 from '../common/errorHandler';
 import { HTTP }                         from '../common/http';
 import config                           from '../config';
 import { uploadImageToS3, S3Image }     from '../common/storage';
+import { resolveSoa } from "dns";
 
 
 export const readAllUsers = (req:Request, res:Response, next:NextFunction) => {
@@ -61,24 +62,35 @@ export const updateUser = (req:Request, res:Response, next:NextFunction) => {
     if(req.body.email)        { newData.email = req.body.email }
     if(req.body.location)     { newData.location = req.body.location }
     if(req.body.cover_image)  { newData.cover_image = req.body.cover_image }
-    if(req.body.bio)          { newData.bio = req.body.bio }
+    if(req.body.bio)          { newData.bio = req.body.bio }    
 
-    let promises:Promise<any>[] = [];
-    req.files = req.files as { [fieldname: string]: Express.Multer.File[]; };
+    User.findByIdAndUpdate(req.params.uid, newData, {new:true}, (error:any, response:any) => {
+        if (error) return next(new ErrorHandler(HTTP.ServerError, error))
+        return res.json(response)
+    })    
+}
 
-    if(req.files['avatar'][0]) promises.push(uploadImageToS3(req.params.uid, req.files['avatar'][0], 'avatar')); 
-    if(req.files['cover_image'][0]) promises.push(uploadImageToS3(req.params.uid, req.files['cover_image'][0], 'cover_image')); 
-
-    Promise.all(promises).then((uploadedImages:S3Image[]) => {
-        uploadedImages.forEach((image:S3Image) => {
-            newData[image.fieldname] = image.data.Location;
-        })
-
-        User.findByIdAndUpdate(req.params.uid, newData, {new:true}, (error:any, response:any) => {
-            if (error) return next(new ErrorHandler(HTTP.ServerError, error))
-            return res.json(response)
-        })    
+const updateImage = (user_id:string, file:Express.Multer.File, field:string) => {
+    return new Promise((resolve, reject) => {
+        uploadImageToS3(user_id, file, field).then((image:S3Image) => {
+            User.findByIdAndUpdate(user_id, {[field]: image.data.Location}, {new:true}, (error:any, response:any) => {
+                if (error) reject(error)
+                return resolve(response)
+            })                
+        }).catch(err => reject(err))
     })
+}
+
+export const updateUserAvatar = (req:Request, res:Response, next:NextFunction) => {
+    updateImage(req.params.uid, req.file, 'avatar').then(response => {
+        res.json(response)
+    }).catch(err => next(new ErrorHandler(HTTP.ServerError, err)))
+}
+
+export const updateUserCoverImage = (req:Request, res:Response, next:NextFunction) => {
+    updateImage(req.params.uid, req.file, 'cover_image').then(response => {
+        res.json(response)
+    }).catch(err => next(new ErrorHandler(HTTP.ServerError, err)))
 }
 
 export const deleteUser = (req:Request, res:Response, next:NextFunction) => {
