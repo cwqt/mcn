@@ -153,6 +153,13 @@ or instead of an array for `message`, a string.
     * returns
         __200__: deleted
 
+### `/users/:uid/devices/:did/ping`
+
+* __GET__: used by device to verify existence and update `last_ping`
+    - returns
+        __200__: received pong
+        __500__: mongoose error
+
 ---
 
 ## api keys

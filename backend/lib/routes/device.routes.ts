@@ -7,26 +7,29 @@ import {
     createDevice,
     readDevice,
     updateDevice,
-    deleteDevice
+    deleteDevice,
+    pingDevice
 } from "../controllers/Device.controller";
 
 const router = Router({mergeParams: true});
 
 router.get('/', readAllDevices);
-router.post('/', [
+router.post('/', validate([
     body('friendly_name').not().isEmpty().trim().withMessage('device must have friendly name'),
-], validate, createDevice);
+]), createDevice);
 
-router.get('/:did', [
+router.get('/:did', validate([
     param('did').isMongoId().trim().withMessage('invalid device id')
-], validate, readDevice);
+]), readDevice);
 
-router.put('/:did', [
+router.put('/:did', validate([
     param('did').isMongoId().trim().withMessage('invalid device id')
-], validate, updateDevice);
+]), updateDevice);
 
-router.delete('/:did', [
+router.delete('/:did', validate([
     param('did').isMongoId().trim().withMessage('invalid device id')
-], validate, deleteDevice);
+]), deleteDevice);
+
+router.get('/:did/ping',  pingDevice)
 
 export default router;

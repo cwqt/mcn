@@ -14,7 +14,8 @@ import {
     updateUserAvatar,
     updateUserCoverImage} from "../controllers/User.controller";
 
-import devices from './device.routes';
+import devices  from './device.routes';
+import plants   from './plants.routes'
 
 const router = Router();
 
@@ -27,34 +28,35 @@ const storage = multer({
 
 router.get('/', readAllUsers);
 
-router.post('/', [
+router.post('/', validate([
     body('username').not().isEmpty().trim().withMessage('username cannot be empty'),
     body('email').isEmail().normalizeEmail().withMessage('not a valid email address'),
     body('password').not().isEmpty().isLength({ min: 6 }).withMessage('password length must be > 6 characters')
-], validate, createUser);
+]), createUser);
 
-router.post('/login', [
+router.post('/login', validate([
     body('email').isEmail().normalizeEmail().withMessage('not a valid email address'),
     body('password').not().isEmpty().isLength({ min: 6 }).withMessage('password length must be > 6 characters')
-], validate, loginUser)
+]), loginUser)
 
 router.post('/logout', logoutUser)
 
 router.put('/:uid/avatar', storage.single('avatar'), updateUserAvatar)
 router.put('/:uid/cover_image', storage.single('cover_image'), updateUserCoverImage)
 
-router.get('/:uid', [
+router.get('/:uid', validate([
     param('uid').isMongoId().trim().withMessage('invalid user id')
-], validate, readUser);
+]), readUser);
 
-router.put('/:uid', [
+router.put('/:uid', validate([
     param('uid').isMongoId().trim().withMessage('invalid user id')
-], validate,  updateUser);
+]),  updateUser);
 
-router.delete('/:uid', [
+router.delete('/:uid', validate([
     param('uid').isMongoId().trim().withMessage('invalid user id')
-], validate, deleteUser);
+]), deleteUser);
 
 router.use('/:uid/devices', devices)
+router.use('/:uid/plants',  plants)
 
 export default router;

@@ -12,10 +12,10 @@ router.post("/keys/", generateRecordableSymmetricKey)
 router.post("/keys/jwt", generateJwt)
 router.get("/keys/jwt/validate", validateJwt, (req:Request, res:Response) => res.status(200).end())
 
-router.get("/verify", [
+router.get("/verify", validate([
     query('email').isEmail().normalizeEmail().withMessage('not a valid email address'),
     query('hash').not().isEmpty().trim().withMessage('must have a verification hash'),
-], validate, verifyUserEmail)
+]), verifyUserEmail)
 
 //session
 router.get("/session")

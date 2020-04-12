@@ -17,6 +17,7 @@ export interface IDevice {
     friendly_name:      string;
     hardware_model?:    string;
     software_version?:  string;
+    device_ip?:         string;
     created_at?:        Date;
     updated_at?:        Date;
     recording?:         Array<ACCEPTED_MEASUREMENTS>;
@@ -31,6 +32,7 @@ export var DeviceSchema:Schema = new Schema({
     recordable_id:      Schema.Types.ObjectId,
     api_key_id:         Schema.Types.ObjectId,
     friendly_name:      String,
+    device_ip:          String,
     hardware_model: {
         type: String,
         enum: Object.values(IHardwareModels)

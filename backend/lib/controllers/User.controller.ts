@@ -9,9 +9,9 @@ import config                           from '../config';
 import { uploadImageToS3, S3Image }     from '../common/storage';
 
 export const readAllUsers = (req:Request, res:Response, next:NextFunction) => {
-    User.find({}, (error:any, response:any) => {
+    User.find({}, (error:any, users:IUserModel[]) => {
         if (error) return next(new ErrorHandler(HTTP.ServerError, error))
-        return res.json(response)
+        return res.json(users)
     })
 }
 
@@ -22,20 +22,20 @@ export const createUser = (req:Request, res:Response, next:NextFunction) => {
     delete req.body["password"]
 
     //Username musn't be taken, nor the email
-    User.find({$or: [{email: req.body.email}, {username: req.body.username}]}, (error:any, user:IUserModel[]) => {
+    User.findOne({$or: [{email: req.body.email}, {username: req.body.username}]}, (error:any, user:IUserModel) => {
         if(error) return next(new ErrorHandler(HTTP.ServerError, error['message']));
-        if(user.length > 0) {
+        if(user) {
             let errors = []
-            if(user[0].username == req.body.username) errors.push({param:"username", msg:"username is taken"})
-            if(user[0].email == req.body.email) errors.push({param:"email", msg:"email already in use"})
+            if(user.username == req.body.username) errors.push({param:"username", msg:"username is taken"})
+            if(user.email == req.body.email) errors.push({param:"email", msg:"email already in use"})
             return next(new ErrorHandler(HTTP.Conflict, errors))
         } else {
             let emailSent = sendVerificationEmail(req.body.email)
             emailSent.then(success => {
                 if(!success) return next(new ErrorHandler(HTTP.ServerError, 'Verification email could not be sent'))
-                User.create(req.body, (error: any, response: any) => {
+                User.create(req.body, (error: any, created_user:IUserModel) => {
                     if (error) return next(new ErrorHandler(HTTP.ServerError, error.message));
-                    res.status(HTTP.Created).json(response);
+                    res.status(HTTP.Created).json(created_user);
                 });            
             })
         }
@@ -43,10 +43,10 @@ export const createUser = (req:Request, res:Response, next:NextFunction) => {
 }
 
 export const readUser = (req:Request, res:Response, next:NextFunction) => {
-    User.findById(req.params.uid, (error:any, response:any) => {
+    User.findById(req.params.uid, (error:any, user:IUserModel | undefined) => {
         if(error) return next(new ErrorHandler(HTTP.ServerError, error.message));
-        if(!response) return next(new ErrorHandler(HTTP.NotFound, "No such user exists"))
-        return res.json(response)
+        if(!user) return next(new ErrorHandler(HTTP.NotFound, "No such user exists"))
+        return res.json(user)
     })
 }
 
@@ -59,32 +59,32 @@ export const updateUser = (req:Request, res:Response, next:NextFunction) => {
         newData[reqKeys[i]] = req.body[reqKeys[i]];
     }
 
-    User.findByIdAndUpdate(req.params.uid, newData, {new:true, runValidators:true}, (error:any, response:any) => {
+    User.findByIdAndUpdate(req.params.uid, newData, {new:true, runValidators:true}, (error:any, user:IUserModel) => {
         if (error) return next(new ErrorHandler(HTTP.ServerError, error))
-        return res.json(response)
+        return res.json(user)
     })    
 }
 
 const updateImage = (user_id:string, file:Express.Multer.File, field:string) => {
     return new Promise((resolve, reject) => {
         uploadImageToS3(user_id, file, field).then((image:S3Image) => {
-            User.findByIdAndUpdate(user_id, {[field]: image.data.Location}, {new:true}, (error:any, response:any) => {
+            User.findByIdAndUpdate(user_id, {[field]: image.data.Location}, {new:true}, (error:any, user:IUserModel) => {
                 if (error) reject(error)
-                return resolve(response)
+                return resolve(user)
             })                
         }).catch(err => reject(err))
     })
 }
 
 export const updateUserAvatar = (req:Request, res:Response, next:NextFunction) => {
-    updateImage(req.params.uid, req.file, 'avatar').then(response => {
-        res.json(response)
+    updateImage(req.params.uid, req.file, 'avatar').then((user:IUserModel) => {
+        res.json(user)
     }).catch(err => next(new ErrorHandler(HTTP.ServerError, err)))
 }
 
 export const updateUserCoverImage = (req:Request, res:Response, next:NextFunction) => {
-    updateImage(req.params.uid, req.file, 'cover_image').then(response => {
-        res.json(response)
+    updateImage(req.params.uid, req.file, 'cover_image').then((user:IUserModel) => {
+        res.json(user)
     }).catch(err => next(new ErrorHandler(HTTP.ServerError, err)))
 }
 
@@ -100,12 +100,12 @@ export const loginUser = (req:Request, res:Response, next:NextFunction) => {
     let password = req.body.password;
   
     //see if user exists
-    User.findOne({email: email}, (err, user) => {
+    User.findOne({email: email}, (err, user:IUserModel | undefined) => {
         if(err) return next(new ErrorHandler(HTTP.ServerError))
         if(!user) return next(new ErrorHandler(HTTP.NotFound, [{param:'email', msg:'No such user for this email'}]))
         if(!user.verified) return next(new ErrorHandler(HTTP.Unauthorised, [{param:'form', msg:'Your account has not been verified'}]))
 
-        bcrypt.compare(password, user.pw_hash, (err, result) => {
+        bcrypt.compare(password, user.pw_hash, (err, result:boolean) => {
             if(err) return next(new ErrorHandler(HTTP.ServerError))
             if(!result) return next(new ErrorHandler(HTTP.Unauthorised, [{param:'password', msg:'Incorrect password'}]))
             

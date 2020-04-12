@@ -20,11 +20,11 @@ export interface IRecordable {
     recording?:     string[],
     image?:         string,
     feed_url?:      string,
-    host_url?:      string,
     verified:       boolean,
     parameters?:    Map<string, IParameter[]>,
     created_at?:    Date,
     updated_at?:    Date,
+    test:string,
 }
 
 export interface IRecordableModel extends IRecordable, Document {
@@ -36,8 +36,12 @@ export var RecordableSchema:Schema = new Schema({
     user_id:        Schema.Types.ObjectId,
     image:          String,
     feed_url:       String,
-    host_url:       String,
-    verified:       Boolean,
+    test:String,
+    verified: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
     parmeterd:      {
       type: Map,
       of: Object

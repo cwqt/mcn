@@ -53,3 +53,10 @@ export const deleteDevice = (req:Request, res:Response, next:NextFunction) => {
         res.status(200).end();
     })
 }
+
+export const pingDevice = (req:Request, res:Response, next:NextFunction) => {
+    Device.findByIdAndUpdate(req.params.did, {"last_ping": new Date(), "verified": true}, {new: true}, (error, device:IDeviceModel) => {
+        if (error) return next(new ErrorHandler(HTTP.ServerError));
+        res.status(HTTP.OK).end();
+    });
+}
