@@ -57,12 +57,12 @@ export const readUser = (req:Request, res:Response, next:NextFunction) => {
 
 export const updateUser = (req:Request, res:Response, next:NextFunction) => {
     var newData:any = {}
-    if(req.body.name)         { newData.name = req.body.name }
-    if(req.body.avatar)       { newData.avatar = req.body.avatar }
-    if(req.body.email)        { newData.email = req.body.email }
-    if(req.body.location)     { newData.location = req.body.location }
-    if(req.body.cover_image)  { newData.cover_image = req.body.cover_image }
-    if(req.body.bio)          { newData.bio = req.body.bio }    
+    let allowedFields = ["name", "email", "location", "bio", "new_user"];
+    let reqKeys = Object.keys(req.body);
+    for(let i=0; i<reqKeys.length; i++) {
+        if(!allowedFields.includes(reqKeys[i])) continue;
+        newData[reqKeys[i]] = req.body[reqKeys[i]];
+    }
 
     User.findByIdAndUpdate(req.params.uid, newData, {new:true}, (error:any, response:any) => {
         if (error) return next(new ErrorHandler(HTTP.ServerError, error))

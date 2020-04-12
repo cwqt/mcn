@@ -3,6 +3,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class AuthenticationService {
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
 
-  constructor(private http: HttpClient, private cookieService:CookieService) {
+  constructor(private http: HttpClient, private cookieService:CookieService, private router:Router) {
     this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
   }
@@ -37,12 +38,13 @@ export class AuthenticationService {
           this.setUser(user);
           return user;
       }));
-}
+  }
 
   logout() {
     localStorage.removeItem('currentUser');
     this.cookieService.set('connect.sid', null)
     this.currentUserSubject.next(null);
+    this.router.navigate(['/']);
     return this.http.post<any>('/api/users/logout', {})
   }
 }

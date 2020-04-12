@@ -5,6 +5,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { MatStepper } from '@angular/material/stepper';
 import { ThrowStmt } from '@angular/compiler';
 import { timingSafeEqual } from 'crypto';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-first-time-setup',
@@ -31,12 +32,16 @@ export class FirstTimeSetupComponent implements OnInit {
   fileTypeError:boolean;
   allowedFileTypes = ['jpg', 'jpeg', 'png'];
 
-  constructor(private _formBuilder: FormBuilder, private userService:UserService, private authService:AuthenticationService) {}
+  constructor(
+    private router:Router,
+    private formBuilder:FormBuilder,
+    private userService:UserService,
+    private authService:AuthenticationService) {}
 
   ngOnInit() {
     this.currentUser = this.authService.currentUserValue;
-    this.avatarImageFormGroup = this._formBuilder.group({ avatar: [''] });
-    this.userNameFormGroup = this._formBuilder.group({ name: ['', Validators.required] });
+    this.avatarImageFormGroup = this.formBuilder.group({ avatar: [''] });
+    this.userNameFormGroup = this.formBuilder.group({ name: ['', Validators.required] });
     this.clearAvatar();
   }
 
@@ -108,21 +113,26 @@ export class FirstTimeSetupComponent implements OnInit {
 
   handleSubmitName() {
     this.loading = true;
-    setTimeout(() => {
-      this.userService.updateUser({"name": this.userNameFormGroup.get('name').value}).subscribe(
-        res => {
-          this.success = true;
-          this.stepper.next();
-        },
-        err => {
-          this.errorMessage = err;
-          this.success = false;
-        }
-      ).add(() => { this.loading = false;})  
-  
-    }, 1000)
+   
+    let update = {
+      "name": this.userNameFormGroup.get('name').value,
+      "new_user": false
+    }
+   
+    this.userService.updateUser(update).subscribe(
+      res => {
+        this.success = true;
+        this.stepper.next();
+      },
+      err => {
+        this.errorMessage = err;
+        this.success = false;
+      }
+    ).add(() => { this.loading = false;})  
   }
 
   finishFirstTimeSetup() {
+    this.authService.updateCurrentUser();
+    this.router.navigate(['/home']);
   }
 }

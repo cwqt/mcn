@@ -1,19 +1,17 @@
-
-
 <div class="profile">
     <div class="avatar_container">
         <img src="https://i.pinimg.com/originals/8f/36/2c/8f362c6188edc6913de80b99f37582b3.jpg" />
     </div>
     <p id="username"><b>{{user.username}}</b></p>
-    <p id="bio">{{user.bio}} - plants are really cute and i love them 🌱🌱🌱🌱</p>
+    <p id="bio">{{user.bio}}</p>
     <mat-divider></mat-divider>
     <br />
+    <p id="real_name">{{user.name}}</p>
     <p id="location">{{user.location}}</p>
-    <p id="real_name">cass w.</p>
-    <a id="url" href="">https://cass.si</a>
+    <a id="url" href="">{{user.url || ''}}</a>
     <!-- <img src="{{user.cover_image}}" /> -->
 
-    <div class="sides">
+    <!-- <div class="sides">
         <div class="side">
             <p>12</p>
             <span>entries</span>
@@ -23,5 +21,5 @@
             <p>4</p>
             <span>followers</span>
         </div>
-    </div>
+    </div> -->
 </div>
