@@ -32,4 +32,9 @@ router.delete('/:did', validate([
 
 router.get('/:did/ping',  pingDevice)
 
+// router.get('/:plant_id/measurements',   readMeasurements)
+// router.post('/:plant_id/measurements',  createMeasurement)
+
+// router.get('/:plant_id/measurements',   readEvents)
+
 export default router;

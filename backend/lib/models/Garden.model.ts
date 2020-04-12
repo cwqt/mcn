@@ -6,7 +6,6 @@ import { IRecordable, RecordableSchema, RecordableTypes } from "./Recordable.mod
 import { IPlantModel } from "./Plant.model"
 
 export interface IGarden extends IRecordable {
-    plants:         Array<IPlantModel["_id"]>;
     type:           RecordableTypes.Garden;
     created_at?:    Date;
     updated_at?:    Date;
@@ -17,9 +16,9 @@ export interface IGardenModel extends IGarden, Document {
 }
 
 export var GardenSchema:Schema = extendSchema(RecordableSchema, {
-    plants: [mongoose.Schema.Types.ObjectId],
     type: {
         type: String,
+        default: RecordableTypes.Garden,
         enum: [RecordableTypes.Garden]
     }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})

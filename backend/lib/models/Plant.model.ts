@@ -20,6 +20,7 @@ export interface IPlantModel extends IPlant, Document {
 export var PlantSchema:Schema = new extendSchema(RecordableSchema, {
     type: {
         type: String,
+        default: RecordableTypes.Plant,
         enum: [RecordableTypes.Plant]
     },
     species:    String,

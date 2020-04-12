@@ -2,33 +2,43 @@ import { Router, NextFunction }               from 'express';
 import { Request, Response }    from "express"
 const { body } = require('express-validator');
 
+import { validate } from '../common/validate';
+
 import { 
-    readGarden,
     createGarden,
     updateGarden,
-    deleteGarden,
-    readGardenPlants,
-    getAvgPlantMeasurements,
-    readEvents
 } from '../controllers/Gardens.controller';
 
-const gardens = Router();
-gardens.use((req:Request, res:Response, next:NextFunction) => {
-    res.locals.type = 'garden'
+import {
+    createRecordable,
+    readRecordable,
+    deleteRecordable,
+    updateRecordable,
+    readAllRecordables
+} from '../controllers/Recordable.controller';
+
+import { RecordableTypes } from '../models/Recordable.model';
+
+const router = Router({mergeParams: true});
+router.use((req:Request, res:Response, next:NextFunction) => {
+    res.locals.type = RecordableTypes.Garden
     next();
 })
 
-// gardens.get('/:garden_id',       readGarden)
-// gardens.post('/', [
-//     body('name').not().isEmpty().trim(),
-//     body('belongs_to').not().isEmpty().trim(),
-// ], createGarden)
-// gardens.put('/:garden_id',        updateGarden)
-// gardens.delete('/:garden_id',     deleteGarden)
+router.post('/', createRecordable, validate([]), createGarden);
 
-// gardens.get('/:garden_id/plants', readGardenPlants)
+router.get('/', readAllRecordables);
 
-// gardens.get('/:garden_id/measurements', getAvgPlantMeasurements)
-// gardens.get('/:garden_id/events',       readEvents)
+router.get('/:rid/plants', (req, res, next) => {
+    res.locals["query"] = {"garden_id": req.params.rid};
+    res.locals.type = RecordableTypes.Plant;
+    next();
+}, readAllRecordables);
 
-export default gardens;
+router.get('/:rid', readRecordable);
+router.put('/:rid', updateRecordable, updateGarden);
+
+router.delete('/:rid', deleteRecordable);
+
+
+export default router;

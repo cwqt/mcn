@@ -1,17 +1,22 @@
-import { Router }               from 'express';
-import { Request, Response }    from "express"
+import { Router, Request, Response }    from "express"
 const { body } = require('express-validator');
+
+import { validate } from '../common/validate';
 
 import { 
     createPlant,
+    updatePlant
 } from '../controllers/Plants.controller';
 
 import {
     createRecordable,
+    readRecordable,
+    deleteRecordable,
+    updateRecordable,
+    readAllRecordables
 } from '../controllers/Recordable.controller';
 
 import { RecordableTypes } from '../models/Recordable.model';
-import { create } from 'domain';
 
 const router = Router({mergeParams: true});
 router.use((req:Request, res:Response, next:any) => {
@@ -19,22 +24,20 @@ router.use((req:Request, res:Response, next:any) => {
     next();
 })
 
-// router.get('/:rid',       readRecordable)
-router.post('/',              createRecordable, createPlant);
+router.post('/', createRecordable, validate([
+    body('species').not().isEmpty().trim(),
+]), createPlant);
 
-// router.post('/', [
-//     body('name').not().isEmpty().trim(),
-//     body('belongs_to').not().isEmpty().trim(),
-//     body('species').not().isEmpty().trim(),
-// ], createPlant)
+router.get('/', (req, res, next) => {
+    res.locals["query"] = {"garden_id": undefined};
+    next();
+}, readAllRecordables);
 
-// router.put('/:plant_id',        updatePlant)
-// router.delete('/:plant_id',     deletePlant)
+router.get('/:rid', readRecordable);
+router.put('/:rid', updateRecordable, updatePlant);
 
-// router.get('/:plant_id/measurements',   readMeasurements)
-// router.post('/:plant_id/measurements',  createMeasurement)
+router.delete('/:rid', deleteRecordable);
 
-// router.get('/:plant_id/measurements',   readEvents)
 // router.post('/:plant_id/events',        createEvent)
 
 export default router;

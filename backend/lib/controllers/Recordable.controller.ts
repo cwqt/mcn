@@ -7,31 +7,55 @@ import { Plant, IPlantModel }           from "../models/Plant.model";
 import { Garden, IGardenModel }         from "../models/Garden.model";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
+import { Model } from "mongoose";
 
-// export const readAllRecordables = (req:Request, res:Response) => {}
-// export const readRecordable     = (req:Request, res:Response) => {}
-// export const createRecordable   = (req:Request, res:Response) => {}
-// export const updateRecordable   = (req:Request, res:Response) => {}
-// export const deleteRecordable   = (req:Request, res:Response) => {}
-
-// // Garden specific
-// export const addPlantToGarden       = (req:Request, res:Response) => {}
-// export const deletePlantFromGarden  = (req:Request, res:Response) => {}
-
-
-const getSchema = (recordable_type:string) => {
+const getSchema = (recordable_type:string):Model<any> => {
     switch(recordable_type) {
         case RecordableTypes.Plant:     return Plant;
         case RecordableTypes.Garden:    return Garden;
     }
 }
 
+export const readAllRecordables = (req:Request, res:Response, next:NextFunction) => {
+    getSchema(res.locals.type).find(res.locals.query || {}, (error:any, recordables:IPlantModel[] | IGardenModel[]) => {
+        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+        res.json(recordables);
+    })
+}
+
+export const readRecordable = (req:Request, res:Response, next:NextFunction) => {
+    getSchema(res.locals.type).findById(req.params.rid, (error:any, recordable:IPlantModel | IGardenModel) => {
+        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+        if(!recordable) return next(new ErrorHandler(HTTP.NotFound, `no such ${res.locals.type} exists`));
+        res.json(recordable);
+    })
+}
+
 export const createRecordable = (req:Request, res:Response, next:NextFunction) => {
     validate([body('name').not().isEmpty().trim()])(req, res, () => {
         ((req:Request, res:Response, next:NextFunction) => {
             req.body["user_id"] = req.params.uid;
+            req.body["type"]    = res.locals.type;
             next();
-        })(req,res,next);
+        })(req, res, next);
     });
 }
 
+export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
+    let newData:{[index:string]:any } = {};
+
+    let reqKeys = Object.keys(req.body);
+    for(let i=0; i<reqKeys.length; i++) {
+        newData[reqKeys[i]] = req.body[reqKeys[i]];
+    }
+
+    res.locals["newData"] = newData;
+    next();
+}
+
+export const deleteRecordable = (req:Request, res:Response, next:NextFunction) => {
+    getSchema(res.locals.type).findByIdAndDelete(req.params.rid, (error:any) => {
+        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+        res.status(HTTP.OK).end();
+    })
+}

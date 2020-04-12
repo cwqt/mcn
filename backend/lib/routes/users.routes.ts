@@ -15,7 +15,8 @@ import {
     updateUserCoverImage} from "../controllers/User.controller";
 
 import devices  from './device.routes';
-import plants   from './plants.routes'
+import plants   from './plants.routes';
+import gardens  from './gardens.routes';
 
 const router = Router();
 
@@ -58,5 +59,6 @@ router.delete('/:uid', validate([
 
 router.use('/:uid/devices', devices)
 router.use('/:uid/plants',  plants)
+router.use('/:uid/gardens', gardens)
 
 export default router;

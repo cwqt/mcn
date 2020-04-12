@@ -17,7 +17,7 @@ export const handleError = (err:ErrorHandler, res:Response) => {
         response['stack'] = err.stack
         console.log(err.stack)    
     } else {
-        //log somewhere
+        //log somewhere online
     }
 
     return res.status(response.statusCode).json(response);
