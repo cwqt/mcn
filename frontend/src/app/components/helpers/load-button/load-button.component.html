@@ -1,0 +1,4 @@
+<button [disabled]="disabled" type="submit" mat-raised-button color={{color}} class="loader" (click)="click()">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <ng-content></ng-content>
+</button>

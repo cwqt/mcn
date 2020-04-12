@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import AWS from 'aws-sdk';
 import config from '../config';
+import ft from 'file-type'
 
 AWS.config.update({
     accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -26,23 +27,39 @@ export const uploadImageToS3 = (user_id:string, file:Express.Multer.File, filena
     return new Promise((resolve, reject) => {
         if(!file) reject('No image provided');
 
-        let extension = file.originalname.substr(file.originalname.lastIndexOf('.') + 1);
-        let allowed_extensions = ["jpg", "jpeg", "png"];
-        if(!allowed_extensions.includes(extension)) reject('File type not allowed');      
+        // check magic bytes to ensure incorrect extensions aren't uploaded
+        let check = new Promise(function(resolve, reject) {
+            require('file-type').fromBuffer(file.buffer).then((ft:any) => {
+                if(!ft) {
+                    reject('Could not validate the file by magic bytes');
+                } else {
+                    let allowedMimes = ['image/jpg', 'image/jpeg', 'image/png'];
+                    if(allowedMimes.indexOf(ft.mime) > -1) {
+                        resolve();
+                    } else {
+                        reject('file type not allowed')//ft.mime
+                    }
+                }    
+            });
+        });
 
-        let fn = filename || new mongoose.Types.ObjectId();
-        let params = {
-            Bucket: config.AWS_BUCKET_NAME,
-            Body: file.buffer,
-            Key: `${user_id}/${fn}.${extension}`
-        }
-
-        s3.upload(params, function (err:any, data:any) {
-            if(err) reject(err);
-            if(data) resolve({
-                fieldname: fn,
-                data: data
-            } as S3Image);
-        });    
+        check.then(() => {
+            let extension = file.originalname.substr(file.originalname.lastIndexOf('.') + 1);
+    
+            let fn = filename || new mongoose.Types.ObjectId();
+            let params = {
+                Bucket: config.AWS_BUCKET_NAME,
+                Body: file.buffer,
+                Key: `${user_id}/${fn}.${extension}`
+            }
+    
+            s3.upload(params, function (err:any, data:any) {
+                if(err) reject(err);
+                if(data) resolve({
+                    fieldname: fn,
+                    data: data
+                } as S3Image);
+            });        
+        }).catch(e => reject(e));
     })
 }

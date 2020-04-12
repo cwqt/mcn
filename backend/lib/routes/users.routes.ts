@@ -23,7 +23,6 @@ const storage = multer({
     }
 });
 
-
 router.get('/', readAllUsers);
 
 router.post('/', [
@@ -53,6 +52,8 @@ router.put('/:uid', [
 router.delete('/:uid', [
     param('uid').isMongoId().trim().withMessage('not a valid oid')
 ], validate, deleteUser);
+
+// router.use('/:uid/posts', )
 
 
 export default router;

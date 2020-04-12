@@ -47,9 +47,7 @@
         <br />
         <br />
 
-        <button [disabled]="registerForm.invalid || loading" type="submit" mat-raised-button color="primary" class="loader">
-            <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
-            {{register_button_text}}</button>
+        <app-load-button [disabled]="registerForm.invalid || loading" [loading]="loading">{{register_button_text}}</app-load-button>
     </form>
 </div>
 

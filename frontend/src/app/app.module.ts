@@ -26,6 +26,7 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {MatIconModule, MatIcon} from '@angular/material/icon';
 import { ProfileSidebarComponent } from './components/profile-sidebar/profile-sidebar.component';
 import { HeaderBarComponent } from './components/header-bar/header-bar.component';
+import { LoadButtonComponent } from './components/helpers/load-button/load-button.component';
 
 
 
@@ -42,6 +43,7 @@ import { HeaderBarComponent } from './components/header-bar/header-bar.component
     FirstTimeSetupComponent,
     ProfileSidebarComponent,
     HeaderBarComponent,
+    LoadButtonComponent,
   ],
   imports: [
     BrowserModule,

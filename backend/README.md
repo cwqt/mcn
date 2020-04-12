@@ -5,6 +5,7 @@ my.corrhizal.net api documentation, v2 - previously written in python flask.
 * __body__: meaning a json body
 * __params__: url fields, `/api/:MY_PARAM/something`
 * __query__: `/api/something?MY_KEY=VALUE`
+* __form-data__: for sending images; ` enctype="multipart/form-data"`
 
 ## errors
 
@@ -100,7 +101,6 @@ or instead of an array for `message`, a string.
         - __422__: no image supplied 
         - __500__: mongoose/aws error 
         - __520__: multer error
-
 
 ---
 
