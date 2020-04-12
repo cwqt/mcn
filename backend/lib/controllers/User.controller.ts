@@ -7,8 +7,6 @@ import { ErrorHandler }                 from '../common/errorHandler';
 import { HTTP }                         from '../common/http';
 import config                           from '../config';
 import { uploadImageToS3, S3Image }     from '../common/storage';
-import { resolveSoa } from "dns";
-
 
 export const readAllUsers = (req:Request, res:Response, next:NextFunction) => {
     User.find({}, (error:any, response:any) => {
@@ -32,9 +30,6 @@ export const createUser = (req:Request, res:Response, next:NextFunction) => {
             if(user[0].email == req.body.email) errors.push({param:"email", msg:"email already in use"})
             return next(new ErrorHandler(HTTP.Conflict, errors))
         } else {
-            req.body["verified"] = false;
-            req.body["new_user"] = true;
-
             let emailSent = sendVerificationEmail(req.body.email)
             emailSent.then(success => {
                 if(!success) return next(new ErrorHandler(HTTP.ServerError, 'Verification email could not be sent'))
@@ -64,7 +59,7 @@ export const updateUser = (req:Request, res:Response, next:NextFunction) => {
         newData[reqKeys[i]] = req.body[reqKeys[i]];
     }
 
-    User.findByIdAndUpdate(req.params.uid, newData, {new:true}, (error:any, response:any) => {
+    User.findByIdAndUpdate(req.params.uid, newData, {new:true, runValidators:true}, (error:any, response:any) => {
         if (error) return next(new ErrorHandler(HTTP.ServerError, error))
         return res.json(response)
     })    

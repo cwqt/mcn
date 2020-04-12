@@ -1,6 +1,6 @@
 import { Document, Schema, Model, model} from "mongoose";
 import { IUserModel } from './User.model';
-import { IDeviceModel } from './Device';
+import { IDeviceModel } from './Device.model';
 
 export interface IApiKey {
     user_id:        IUserModel["_id"];

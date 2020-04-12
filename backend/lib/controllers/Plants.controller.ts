@@ -1,7 +1,7 @@
 import { Request, Response }    from "express"
 import { Plant, IPlant }        from '../models/Plant.model'
 import { Measurement }          from '../models/Measurement.model'
-import ACCEPTED_MEASUREMENTS    from '../common/ACCEPTED_MEASUREMENTS';
+import { ACCEPTED_MEASUREMENTS }    from '../common/ACCEPTED_MEASUREMENTS';
 const { validationResult }      = require('express-validator');
 
 import { generateApiKey }      from '../controllers/ApiKeys.controller';

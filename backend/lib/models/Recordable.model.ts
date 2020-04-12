@@ -3,21 +3,21 @@ import { Document, Schema, Model, model} from "mongoose";
 
 import { IUserModel } from "./User.model"
 
+export enum RecordableTypes {
+  Garden = 'garden',
+  Plant = 'plant'
+}
+
 interface IParameter {
   upper:  number,
   avg:    number,
   lower:  number, 
 }
 
-export enum RecordableTypes {
-  Garden = 'garden',
-  Plant = 'plant'
-}
-
 export interface IRecordable {
     name:           string,
     user_id:        IUserModel["_id"],
-    recording:      string[],
+    recording?:     string[],
     image?:         string,
     feed_url?:      string,
     host_url?:      string,
@@ -38,11 +38,10 @@ export var RecordableSchema:Schema = new Schema({
     feed_url:       String,
     host_url:       String,
     verified:       Boolean,
-    recording:      {
+    parmeterd:      {
       type: Map,
       of: Object
     },
-    parameters:     Object,
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
 export const Recordable:Model<IRecordableModel> = model<IRecordableModel>("Recordable", RecordableSchema);

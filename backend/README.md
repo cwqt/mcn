@@ -61,11 +61,10 @@ or instead of an array for `message`, a string.
 * __PUT__: update user details
     * body
         - `name` users full name
-        - `avatar`
-        - `cover_image`
         - `email` users email address
         - `location` lat/long user location
         - `bio` user description
+        - `new_user` 
     * returns
         - __200__: updated `IUserModel`
 * __DELETE__: delete user accounts & all recordables/devices/events
@@ -107,6 +106,11 @@ or instead of an array for `message`, a string.
 ## recordables
 
 ### `/users/:uid/recordables?type=garden/plant`
+* __POST__: create a new recordable of type `type`
+    * body
+        - 
+
+
 ### `/users/:uid/recordables/:rid`
 ### `/users/:uid/recordables/:rid/events`
 ### `/users/:uid/recordables/:rid/measurements`
@@ -116,7 +120,38 @@ or instead of an array for `message`, a string.
 ## devices
 
 ### `/users/:uid/devices`
+
+* __GET__: read all user devices
+    * returns
+        - __200__: all user devices, `IDeviceModel[]`
+        - __500__: mongoose error
+* __POST__:
+    * body
+        - `friendly_name`: frontend name for device
+    * returns
+        __201__: created device, `IDeviceModel`
+        __422__: invalid data provided
+        __500__: mongoose err
+
 ### `/users/:uid/devices/:did`
+
+* __GET__: read device
+    * returns
+        - __200__: device, `IDeviceModel`
+        - __500__: mongoose error
+* __PUT__: update device
+    * body:
+        - `user_id`: id of user who this device belongs to
+        - `api_key_id`: id of api key for this device
+        - `recordable_id`: id of recordable which this device is monitoring
+        - `verified`: server has received a response from device
+        - `hardware_model`:
+        - `software_version`:
+        - `friendly_title`: frontend name for device
+        - `recording`: types of measurements, `ACCEPTED_MEASUREMENTS`
+* __DELETE__: delete device
+    * returns
+        __200__: deleted
 
 ---
 

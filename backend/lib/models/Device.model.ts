@@ -1,24 +1,25 @@
-import * as mongoose from 'mongoose';
 import { Document, Schema, Model, model} from "mongoose";
 import { IUserModel } from "./User.model";
 import { IPlantModel } from './Plant.model';
 import { IGardenModel } from './Garden.model';
 import { IApiKeyModel } from './ApiKey.model';
+import { ACCEPTED_MEASUREMENTS } from '../common/ACCEPTED_MEASUREMENTS';
 
 export enum IHardwareModels {
-    mcnWemosD1Mini,
+    mcnWemosD1Mini = "Wemos D1 Mini",
 }
 
 export interface IDevice {
     user_id:            IUserModel["_id"];
-    friendly_title:     string;
-    hardware_model:     string;
-    software_version:   string;
-    recordable_id:      IPlantModel["_id"] | IGardenModel["_id"];
-    api_key_id:         IApiKeyModel["_id"];
+    api_key_id?:        IApiKeyModel["_id"];
+    recordable_id?:     IPlantModel["_id"] | IGardenModel["_id"];
     verified:           string;
+    friendly_name:      string;
+    hardware_model?:    string;
+    software_version?:  string;
     created_at?:        Date;
     updated_at?:        Date;
+    recording?:         Array<ACCEPTED_MEASUREMENTS>;
 }
 
 export interface IDeviceModel extends IDevice, Document {
@@ -27,15 +28,16 @@ export interface IDeviceModel extends IDevice, Document {
 
 export var DeviceSchema:Schema = new Schema({
     user_id:            Schema.Types.ObjectId,
-    friendly_title:     String,
-    hardware_model: {
-        type:Number,
-        enum: IHardwareModels
-    },
-    software_version:   String,
     recordable_id:      Schema.Types.ObjectId,
     api_key_id:         Schema.Types.ObjectId,
-    verified:           Boolean,
+    friendly_name:      String,
+    hardware_model: {
+        type: String,
+        enum: Object.values(IHardwareModels)
+    },
+    recording: [{type:String, enum:Object.values(ACCEPTED_MEASUREMENTS)}],
+    software_version:   String,
+    verified:           { type: Boolean, default: false }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 
 export const Device:Model<IDeviceModel> = model<IDeviceModel>("Device", DeviceSchema);

@@ -14,6 +14,8 @@ import {
     updateUserAvatar,
     updateUserCoverImage} from "../controllers/User.controller";
 
+import devices from './device.routes';
+
 const router = Router();
 
 const storage = multer({
@@ -42,18 +44,17 @@ router.put('/:uid/avatar', storage.single('avatar'), updateUserAvatar)
 router.put('/:uid/cover_image', storage.single('cover_image'), updateUserCoverImage)
 
 router.get('/:uid', [
-    param('uid').isMongoId().trim().withMessage('not a valid oid')
+    param('uid').isMongoId().trim().withMessage('invalid user id')
 ], validate, readUser);
 
 router.put('/:uid', [
-    param('uid').isMongoId().trim().withMessage('not a valid oid')
+    param('uid').isMongoId().trim().withMessage('invalid user id')
 ], validate,  updateUser);
 
 router.delete('/:uid', [
-    param('uid').isMongoId().trim().withMessage('not a valid oid')
+    param('uid').isMongoId().trim().withMessage('invalid user id')
 ], validate, deleteUser);
 
-// router.use('/:uid/posts', )
-
+router.use('/:uid/devices', devices)
 
 export default router;

@@ -13,7 +13,12 @@ export const handleError = (err:ErrorHandler, res:Response) => {
     }
 
     if(message) response['message'] = message;
-    if(process.env.NODE_ENV == 'development') response['stack'] = err.stack
+    if(process.env.NODE_ENV == 'development') {
+        response['stack'] = err.stack
+        console.log(err.stack)    
+    } else {
+        //log somewhere
+    }
 
     return res.status(response.statusCode).json(response);
 };
