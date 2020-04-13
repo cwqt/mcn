@@ -14,20 +14,23 @@ import { RegisterComponent }        from './components/index/register/register.c
 import { LoginHelpComponent }       from './components/index/login-help/login-help.component';
 import { FirstTimeSetupComponent }  from './components/index/first-time-setup/first-time-setup.component';
 
-import { ProfileSidebarComponent }  from './components/profile/profile-sidebar/profile-sidebar.component';
-
-import { PlantItemComponent }       from './components/recordables/plant-item/plant-item.component';
-import { GardenItemComponent }      from './components/recordables/garden-item/garden-item.component';
-import { RecordablesListComponent } from './components/recordables/recordables-list/recordables-list.component';
-
 import { VerifiedComponent }        from './components/pages/verified/verified.component';
+import { NotFoundComponent }        from './components/pages/not-found/not-found.component';
 
+import { WrapperComponent }         from './components/app/wrapper/wrapper.component';
 import { HeaderBarComponent }       from './components/app/header-bar/header-bar.component';
 
 import { LoadButtonComponent }      from './components/_helpers/load-button/load-button.component';
 
 import { HomeComponent }            from './routes/home/home.component';
+
 import { ProfileComponent }         from './routes/profile/profile.component';
+import { ProfileSidebarComponent }  from './components/profile/profile-sidebar/profile-sidebar.component';
+import { RecordableCountComponent } from './components/profile/recordable-count/recordable-count.component';
+import { UserPostsListComponent }   from './components/profile/tabs/user-posts-list/user-posts-list.component';
+import { UserPlantsListComponent }  from './components/profile/tabs/user-plants-list/user-plants-list.component';
+import { UserGardensListComponent } from './components/profile/tabs/user-gardens-list/user-gardens-list.component';
+import { UserDevicesListComponent } from './components/profile/tabs/user-devices-list/user-devices-list.component';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -38,7 +41,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule, MatIcon } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
-import { WrapperComponent } from './components/app/wrapper/wrapper.component';
 
 @NgModule({
   declarations: [
@@ -54,10 +56,13 @@ import { WrapperComponent } from './components/app/wrapper/wrapper.component';
     ProfileSidebarComponent,
     HeaderBarComponent,
     LoadButtonComponent,
-    PlantItemComponent,
-    GardenItemComponent,
-    RecordablesListComponent,
     WrapperComponent,
+    RecordableCountComponent,
+    NotFoundComponent,
+    UserPostsListComponent,
+    UserPlantsListComponent,
+    UserGardensListComponent,
+    UserDevicesListComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,6 +85,12 @@ import { WrapperComponent } from './components/app/wrapper/wrapper.component';
   ],
   providers: [
     CookieService
+  ],
+  entryComponents: [
+    UserPostsListComponent,
+    UserPlantsListComponent,
+    UserGardensListComponent,
+    UserDevicesListComponent,
   ],
   bootstrap: [AppComponent]
 })

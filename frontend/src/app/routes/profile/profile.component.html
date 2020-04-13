@@ -1,4 +1,14 @@
 <app-wrapper>
-    <app-profile-sidebar [user]="user"></app-profile-sidebar>
-    <app-recordables-list></app-recordables-list>
-</app-wrapper>>
+    <div class="profile-wrapper">
+        <app-profile-sidebar [user]="user"></app-profile-sidebar>
+
+        <mat-tab-group class="lists">
+            <mat-tab
+                *ngFor="let tab of tabs; let index = index"
+                [label]="tab.label">
+                <h1>{{tab.label}}</h1>
+                <ng-container *ngComponentOutlet="tab.component"></ng-container>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</app-wrapper>

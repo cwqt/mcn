@@ -1,18 +1,50 @@
-
 <div class="profile" *ngIf="user">
-    <div class="avatar_container">
+    <h1 *ngIf="user.username == currentUser.username" id="edit-profile-button">
+
+    </h1>
+
+    <div class="avatar-container">
         <img src="https://i.pinimg.com/originals/8f/36/2c/8f362c6188edc6913de80b99f37582b3.jpg" />
     </div>
     <p id="username"><b>{{user.username}}</b></p>
     <p id="bio">{{user.bio}}</p>
     <mat-divider></mat-divider>
     <br />
-    <p id="real_name">{{user.name}}</p>
+    <p id="real-name">{{user.name}}</p>
     <p id="location">{{user.location}}</p>
-    <a id="url" href="">{{user.url || ''}}</a>
+    <!-- <a id="url" href="">{{user.url || ''}}</a> -->
     <!-- <img src="{{user.cover_image}}" /> -->
 
-    <!-- <div class="sides">
+    <div class="recordable-container">
+        <app-recordable-count
+            (changeRecordableTab)="navigateRecordable($event)"
+            [user]="user.username"
+            [icon]="'eco'"
+            [title]="'plants'"
+            [count]="user.plant_count">
+        </app-recordable-count>
+
+        <app-recordable-count
+            (changeRecordableTab)="navigateRecordable($event)"
+            [user]="user.username"
+            [icon]="'group_work'"
+            [title]="'gardens'"
+            [count]="user.garden_count">
+        </app-recordable-count>
+
+        <app-recordable-count
+            (changeRecordableTab)="navigateRecordable($event)"
+            [user]="user.username"
+            [icon]="'device_hub'"
+            [title]="'devices'"
+            [count]="user.device_count">
+        </app-recordable-count>
+    </div>
+
+    <br />
+    <mat-divider></mat-divider>
+
+    <div class="sides">
         <div class="side">
             <p>12</p>
             <span>entries</span>
@@ -22,5 +54,5 @@
             <p>4</p>
             <span>followers</span>
         </div>
-    </div> -->
+    </div>
 </div>

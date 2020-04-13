@@ -1,0 +1,11 @@
+.profile-wrapper {
+    display: flex;
+    height: 100%;
+    app-profile-sidebar {
+        width: 25%;
+    }
+    .lists {
+        width: 75%;
+        margin-left: 20px;
+    }
+}

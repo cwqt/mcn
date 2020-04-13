@@ -13,6 +13,9 @@ export interface IUser {
     avatar?:        string,
     cover_image?:   string,
     location?:      string,
+    plant_count:    Number,
+    garden_count:   Number,
+    device_count:   Number,
     created_at?:    Date,
     updated_at?:    Date,
     blocked_users?: Array<IUserModel["_id"]>
@@ -35,6 +38,9 @@ export var UserSchema:Schema = new Schema({
     location:       String,
     avatar:         String,
     cover_image:    String,
+    plant_count:    { type: Number, default: 0},
+    garden_count:   { type: Number, default: 0},
+    device_count:   { type: Number, default: 0},
     blocked_users: [Schema.Types.ObjectId]
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
 

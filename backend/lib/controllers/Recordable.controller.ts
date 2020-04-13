@@ -8,12 +8,16 @@ import { Garden, IGardenModel }         from "../models/Garden.model";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 import { Model } from "mongoose";
+import { User } from "../models/User.model";
 
 const getSchema = (recordable_type:string):Model<any> => {
     switch(recordable_type) {
         case RecordableTypes.Plant:     return Plant;
         case RecordableTypes.Garden:    return Garden;
     }
+}
+const getCounterKey = (recordable_type:string):string => {
+    return recordable_type == RecordableTypes.Garden ? 'garden_count' : 'plant_count';
 }
 
 export const readAllRecordables = (req:Request, res:Response, next:NextFunction) => {
@@ -37,16 +41,19 @@ export const readRecordable = (req:Request, res:Response, next:NextFunction) => 
 export const createRecordable = (req:Request, res:Response, next:NextFunction) => {
     validate([body('name').not().isEmpty().trim()])(req, res, () => {
         ((req:Request, res:Response, next:NextFunction) => {
-            req.body["user_id"] = req.params.uid;
-            req.body["type"]    = res.locals.type;
-            next();
+            //should really use transactions
+            User.updateOne({_id: req.params.uid}, {$inc: {[getCounterKey(res.locals.type)]:1}}, (error, _) => {
+                if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+                req.body["user_id"] = req.params.uid;
+                req.body["type"]    = res.locals.type;
+                next();    
+            });
         })(req, res, next);
     });
 }
 
 export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
     let newData:{[index:string]:any} = {};
-
     let reqKeys = Object.keys(req.body);
     for(let i=0; i<reqKeys.length; i++) {
         newData[reqKeys[i]] = req.body[reqKeys[i]];
@@ -57,8 +64,11 @@ export const updateRecordable = (req:Request, res:Response, next:NextFunction) =
 }
 
 export const deleteRecordable = (req:Request, res:Response, next:NextFunction) => {
-    getSchema(res.locals.type).findByIdAndDelete(req.params.rid, (error:any) => {
+    User.updateOne({_id: req.params.uid}, {$inc: {[getCounterKey(res.locals.type)]:-1}}, (error, _) => {
         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        res.status(HTTP.OK).end();
-    })
+        getSchema(res.locals.type).findByIdAndDelete(req.params.rid, (error:any) => {
+            if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+            res.status(HTTP.OK).end();
+        })
+    });
 }
