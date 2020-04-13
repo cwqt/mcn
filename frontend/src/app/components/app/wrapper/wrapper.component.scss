@@ -1,0 +1,6 @@
+.app-content {
+    margin-top: 60px;//height of app-header
+    height: calc(100vh - 60px);
+    overflow: scroll;
+    padding: 20px;
+}

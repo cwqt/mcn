@@ -1,0 +1,15 @@
+<div class="container" *ngIf="plants">
+    <h1>plants ({{plants.length}})</h1>
+    <div *ngFor="let plant of plants">
+        {{plant.name}}
+    </div>
+    
+    <br />
+    <mat-divider></mat-divider>
+    <br />
+    
+    <h1>gardens ({{gardens.length}})</h1>
+    <div *ngFor="let garden of gardens">
+        {{garden.name}}
+    </div>
+</div>

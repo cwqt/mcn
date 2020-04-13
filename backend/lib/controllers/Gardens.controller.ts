@@ -19,14 +19,6 @@ export const updateGarden = (req:Request, res:Response, next:NextFunction) => {
     })
 }
 
-
-export const readGardenPlants = (req:Request, res:Response, next:NextFunction) => {
-    Plant.find({"in_garden": req.params.rid}, (error:any, plants:IPlantModel[]) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        return res.json(plants)
-    })
-}
-
 export const getAvgPlantMeasurements = (req:Request, res:Response) => {
     //types: measurement type
     //timeframe: date range in days

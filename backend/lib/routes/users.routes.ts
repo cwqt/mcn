@@ -5,7 +5,8 @@ var multer = require('multer');
 
 import {
     readAllUsers,
-    readUser,
+    readUserById,
+    readUserByUsername,
     createUser,
     updateUser,
     deleteUser,
@@ -45,9 +46,13 @@ router.post('/logout', logoutUser)
 router.put('/:uid/avatar', storage.single('avatar'), updateUserAvatar)
 router.put('/:uid/cover_image', storage.single('cover_image'), updateUserCoverImage)
 
+router.get('/u/:username', validate([
+    param('username').not().isEmpty().trim()
+]), readUserByUsername)
+
 router.get('/:uid', validate([
     param('uid').isMongoId().trim().withMessage('invalid user id')
-]), readUser);
+]), readUserById);
 
 router.put('/:uid', validate([
     param('uid').isMongoId().trim().withMessage('invalid user id')

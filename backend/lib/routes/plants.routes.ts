@@ -38,6 +38,4 @@ router.put('/:rid', updateRecordable, updatePlant);
 
 router.delete('/:rid', deleteRecordable);
 
-// router.post('/:plant_id/events',        createEvent)
-
 export default router;

@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { IndexComponent } from './routes/index/index.component';
-import { VerifiedComponent } from './components/verified/verified.component';
-
 import { AuthGuard } from './_helpers';
-import { HomeComponent } from './routes/home/home.component';
+
+import { IndexComponent }     from './routes/index/index.component';
+import { HomeComponent }      from './routes/home/home.component';
+import { ProfileComponent }   from './routes/profile/profile.component';
+import { VerifiedComponent }  from './components/pages/verified/verified.component';
 
 const routes: Routes = [
   { path: '', component: IndexComponent},
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
-  { path: 'verified', component: VerifiedComponent}
+  { path: 'verified', component: VerifiedComponent},
+  { path: 'u/:username', component: ProfileComponent}
 ];
 
 @NgModule({

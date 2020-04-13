@@ -17,7 +17,10 @@ const getSchema = (recordable_type:string):Model<any> => {
 }
 
 export const readAllRecordables = (req:Request, res:Response, next:NextFunction) => {
-    getSchema(res.locals.type).find(res.locals.query || {}, (error:any, recordables:IPlantModel[] | IGardenModel[]) => {
+    let query = res.locals.query || {}
+    query["user_id"]  = req.params.uid;
+
+    getSchema(res.locals.type).find(query, (error:any, recordables:IPlantModel[] | IGardenModel[]) => {
         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
         res.json(recordables);
     })
@@ -42,7 +45,7 @@ export const createRecordable = (req:Request, res:Response, next:NextFunction) =
 }
 
 export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
-    let newData:{[index:string]:any } = {};
+    let newData:{[index:string]:any} = {};
 
     let reqKeys = Object.keys(req.body);
     for(let i=0; i<reqKeys.length; i++) {

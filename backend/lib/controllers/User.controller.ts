@@ -42,8 +42,16 @@ export const createUser = (req:Request, res:Response, next:NextFunction) => {
     }).catch(next)
 }
 
-export const readUser = (req:Request, res:Response, next:NextFunction) => {
+export const readUserById = (req:Request, res:Response, next:NextFunction) => {
     User.findById(req.params.uid, (error:any, user:IUserModel | undefined) => {
+        if(error) return next(new ErrorHandler(HTTP.ServerError, error.message));
+        if(!user) return next(new ErrorHandler(HTTP.NotFound, "No such user exists"))
+        return res.json(user)
+    })
+}
+
+export const readUserByUsername = (req:Request, res:Response, next:NextFunction) => {
+    User.findOne({username: req.params.username}, (error:any, user:IUserModel | undefined) => {
         if(error) return next(new ErrorHandler(HTTP.ServerError, error.message));
         if(!user) return next(new ErrorHandler(HTTP.NotFound, "No such user exists"))
         return res.json(user)
