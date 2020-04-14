@@ -1,1 +1,7 @@
-<p>user-plants-list works!</p>
+<div *ngIf="plants && !loading">
+    <div *ngFor="let plant of plants">
+        <app-plant-item [plant]="plant"></app-plant-item>
+    </div>
+</div>
+
+<mat-spinner *ngIf="loading"></mat-spinner>

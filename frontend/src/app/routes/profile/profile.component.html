@@ -2,12 +2,13 @@
     <div class="profile-wrapper">
         <app-profile-sidebar [user]="user"></app-profile-sidebar>
 
-        <mat-tab-group class="lists">
+        <mat-tab-group class="tab-group" (selectedTabChange)="setActiveTab($event)" [selectedIndex]="tabIndex">
             <mat-tab
                 *ngFor="let tab of tabs; let index = index"
-                [label]="tab.label">
-                <h1>{{tab.label}}</h1>
-                <ng-container *ngComponentOutlet="tab.component"></ng-container>
+                [label]="tab.label"> 
+                <div class="tab-content">
+                    <ng-container *ngComponentOutlet="tab.component"></ng-container>
+                </div>
             </mat-tab>
         </mat-tab-group>
     </div>

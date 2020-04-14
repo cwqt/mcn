@@ -4,38 +4,23 @@ import { map, tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import { IUserModel } from '../../../../backend/lib/models/User.model';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private currentUserSubject: BehaviorSubject<any>;
-  public currentUser: Observable<any>;
-
-  constructor(private http: HttpClient, private cookieService:CookieService, private router:Router) {
-    this.currentUserSubject = new BehaviorSubject<any>(JSON.parse(localStorage.getItem('currentUser')));
-    this.currentUser = this.currentUserSubject.asObservable();
-  }
-
-  public get currentUserValue() {
-    return this.currentUserSubject.value;
-  }
-
-  updateCurrentUser() {
-    return this.http.get(`/api/users/${this.currentUserValue._id}`)
-      .pipe(map(user => { this.setUser(user)})).toPromise()
-  }
-
-  setUser(user) {
-    console.log(user)
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    this.currentUserSubject.next(user);
+  constructor(private http: HttpClient,
+    private userService:UserService,
+    private cookieService:CookieService,
+    private router:Router) {
   }
 
   login(formData) {
     return this.http.post<any>('/api/users/login', formData, { withCredentials:true })
       .pipe(map(user => {
-          this.setUser(user);
+          this.userService.setUser(user);
           return user;
       }));
   }
@@ -43,7 +28,7 @@ export class AuthenticationService {
   logout() {
     localStorage.removeItem('currentUser');
     this.cookieService.set('connect.sid', null)
-    this.currentUserSubject.next(null);
+    this.userService.setUser(null);
     this.router.navigate(['/']);
     return this.http.post<any>('/api/users/logout', {})
   }

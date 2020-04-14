@@ -41,6 +41,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule, MatIcon } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
+import { PlantItemComponent } from './components/profile/tabs/user-plants-list/plant-item/plant-item.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     UserPlantsListComponent,
     UserGardensListComponent,
     UserDevicesListComponent,
+    PlantItemComponent,
   ],
   imports: [
     BrowserModule,

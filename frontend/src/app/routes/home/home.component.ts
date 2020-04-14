@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from 'src/app/services/authentication.service';
 
-import { IUserModel } from "../../../../../backend/lib/models/User.model";
+import { IUserModel, User } from "../../../../../backend/lib/models/User.model";
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -11,12 +11,9 @@ import { IUserModel } from "../../../../../backend/lib/models/User.model";
 export class HomeComponent implements OnInit {
   currentUser:IUserModel;
 
-  constructor(private authService:AuthenticationService) { }
+  constructor(private userService:UserService) { }
 
   ngOnInit(): void {
-    this.authService.currentUser.subscribe(user => this.currentUser = user)
+    this.userService.currentUser.subscribe(user => this.currentUser = user)
   }
-
-
-
 }

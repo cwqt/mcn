@@ -3,11 +3,9 @@ import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/c
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 
-import { AuthenticationService } from '../services/authentication.service';
-
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-    constructor(private authService: AuthenticationService, private cookieService:CookieService) {}
+    constructor(private cookieService:CookieService) {}
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         // add authorization header with jwt token if available

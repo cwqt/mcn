@@ -39,7 +39,7 @@ export class FirstTimeSetupComponent implements OnInit {
     private authService:AuthenticationService) {}
 
   ngOnInit() {
-    this.currentUser = this.authService.currentUserValue;
+    this.currentUser = this.userService.currentUserValue;
     this.avatarImageFormGroup = this.formBuilder.group({ avatar: [''] });
     this.userNameFormGroup = this.formBuilder.group({ name: ['', Validators.required] });
     this.clearAvatar();
@@ -95,7 +95,7 @@ export class FirstTimeSetupComponent implements OnInit {
         this.userService.changeAvatar(formData).subscribe(
           res => {
             this.success = true;
-            this.authService.setUser(res);
+            this.userService.setUser(res);
             //advance stepper
             this.stepper.next();
 
@@ -132,7 +132,7 @@ export class FirstTimeSetupComponent implements OnInit {
   }
 
   finishFirstTimeSetup() {
-    this.authService.updateCurrentUser();
+    this.userService.updateCurrentUser();
     this.router.navigate(['/home']);
   }
 }

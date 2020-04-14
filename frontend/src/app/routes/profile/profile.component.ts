@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren, Injector } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { IUserModel } from '../../../../../backend/lib/models/User.model';
 import { UserService } from 'src/app/services/user.service';
@@ -12,6 +12,9 @@ import { UserPostsListComponent } from '../../components/profile/tabs/user-posts
 import { UserPlantsListComponent } from '../../components/profile/tabs/user-plants-list/user-plants-list.component';
 import { UserGardensListComponent } from '../../components/profile/tabs/user-gardens-list/user-gardens-list.component';
 import { UserDevicesListComponent } from '../../components/profile/tabs/user-devices-list/user-devices-list.component';
+import { stringify } from 'querystring';
+import { ProfileService } from 'src/app/services/profile.service';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-profile',
@@ -20,7 +23,6 @@ import { UserDevicesListComponent } from '../../components/profile/tabs/user-dev
 })
 export class ProfileComponent implements OnInit {
   user:IUserModel;
-
 
   plants:IPlantModel[] | undefined;
   gardens:IGardenModel[] | undefined;
@@ -33,16 +35,24 @@ export class ProfileComponent implements OnInit {
     {label: "devices",  component: UserDevicesListComponent}
   ];
 
-  constructor(private userService:UserService, private route:ActivatedRoute) { }
+  tabIndex:number = 0;
+
+  constructor(private userService:UserService,
+    private route:ActivatedRoute,
+    private profileService:ProfileService) { }
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.route.data.subscribe(data => {
-        if(data.no_reload) return;
-        this.userService.getUserByUsername(params.username).subscribe(user => {
-          this.user = user;
-        })  
-      })
+    this.profileService.selectedTab.subscribe(key => {
+      this.tabIndex = this.tabs.findIndex(tab => tab.label == key);
     })
+
+    //route param change request different user
+    this.route.params.subscribe(params => this.profileService.getUserByUsername(params.username));
+    //subscribe to the new user being gotten
+    this.profileService.currentProfileSubject.subscribe(user => this.user = user );
+  }
+
+  setActiveTab(tab:MatTabChangeEvent) {
+    this.profileService.selectedTab.next(this.tabs[tab.index].label);
   }
 }

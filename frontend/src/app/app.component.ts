@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { environment } from '../environments/environment';
 
 import { AuthenticationService } from './services/authentication.service'
+import { UserService } from './services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -12,15 +13,12 @@ import { AuthenticationService } from './services/authentication.service'
 export class AppComponent {
   title = 'fe';
 
-  constructor(private router: Router, private authService: AuthenticationService) {
+  constructor(private userService:UserService) {
       console.log(`Running in: ${environment.production ? 'production' : 'development'}`)
-      if(this.authService.currentUserValue) {
-        this.authService.updateCurrentUser()
+
+      //upon start up, immediately get the new user
+      if(this.userService.currentUserValue) {
+        this.userService.updateCurrentUser()
       }
     }
-
-  logout() {
-      this.authService.logout();
-      this.router.navigate(['/']);
-  }
 }

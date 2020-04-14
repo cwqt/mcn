@@ -4,8 +4,11 @@
     app-profile-sidebar {
         width: 25%;
     }
-    .lists {
+    .tab-group {
         width: 75%;
         margin-left: 20px;
+        .tab-content {
+            margin: 20px;
+        }
     }
 }
