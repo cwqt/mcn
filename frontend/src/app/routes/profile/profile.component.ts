@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild, ViewChildren, Injector } from '@angular/core';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { Component, OnInit } from '@angular/core';
 import { IUserModel } from '../../../../../backend/lib/models/User.model';
 import { UserService } from 'src/app/services/user.service';
-import { Router, ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { IPlantModel } from '../../../../../backend/lib/models/Plant.model';
 import { IGardenModel } from '../../../../../backend/lib/models/Garden.model';
@@ -12,7 +11,6 @@ import { UserPostsListComponent } from '../../components/profile/tabs/user-posts
 import { UserPlantsListComponent } from '../../components/profile/tabs/user-plants-list/user-plants-list.component';
 import { UserGardensListComponent } from '../../components/profile/tabs/user-gardens-list/user-gardens-list.component';
 import { UserDevicesListComponent } from '../../components/profile/tabs/user-devices-list/user-devices-list.component';
-import { stringify } from 'querystring';
 import { ProfileService } from 'src/app/services/profile.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 
@@ -42,14 +40,16 @@ export class ProfileComponent implements OnInit {
     private profileService:ProfileService) { }
 
   ngOnInit(): void {
-    this.profileService.selectedTab.subscribe(key => {
-      this.tabIndex = this.tabs.findIndex(tab => tab.label == key);
-    })
-
     //route param change request different user
     this.route.params.subscribe(params => this.profileService.getUserByUsername(params.username));
     //subscribe to the new user being gotten
-    this.profileService.currentProfileSubject.subscribe(user => this.user = user );
+    this.profileService.currentProfile.subscribe(user => {
+      this.user = user;
+    });
+
+    this.profileService.selectedTab.subscribe(key => {
+      this.tabIndex = this.tabs.findIndex(tab => tab.label == key);
+    })
   }
 
   setActiveTab(tab:MatTabChangeEvent) {

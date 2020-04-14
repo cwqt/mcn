@@ -31,6 +31,7 @@ import { UserPostsListComponent }   from './components/profile/tabs/user-posts-l
 import { UserPlantsListComponent }  from './components/profile/tabs/user-plants-list/user-plants-list.component';
 import { UserGardensListComponent } from './components/profile/tabs/user-gardens-list/user-gardens-list.component';
 import { UserDevicesListComponent } from './components/profile/tabs/user-devices-list/user-devices-list.component';
+import { PlantItemComponent }       from './components/profile/tabs/user-plants-list/plant-item/plant-item.component';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -41,7 +42,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatIconModule, MatIcon } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
-import { PlantItemComponent } from './components/profile/tabs/user-plants-list/plant-item/plant-item.component';
+import {MatCardModule} from '@angular/material/card';
+
 
 @NgModule({
   declarations: [
@@ -82,7 +84,8 @@ import { PlantItemComponent } from './components/profile/tabs/user-plants-list/p
     MatProgressSpinnerModule,
     MatStepperModule,
     MatIconModule,
-    MatTabsModule
+    MatTabsModule,
+    MatCardModule
 
   ],
   providers: [

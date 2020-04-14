@@ -1,3 +1,11 @@
+<div class="header">
+    <h1>plants</h1>
+    <button mat-raised-button color="primary">add plant</button>
+</div>
+
+<mat-divider></mat-divider>
+<br />
+
 <div *ngIf="plants && !loading">
     <div *ngFor="let plant of plants">
         <app-plant-item [plant]="plant"></app-plant-item>

@@ -1,12 +1,17 @@
 .profile-wrapper {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: 100%;
+    grid-column-gap: 10px;
     height: 100%;
-    app-profile-sidebar {
-        width: 25%;
+
+    .profile-sidebar {
+        grid-column: 1 / span 3;
+        display: flex;
+        justify-content: flex-end;
     }
-    .tab-group {
-        width: 75%;
-        margin-left: 20px;
+    .profile-body {
+        grid-column: span 6;
         .tab-content {
             margin: 20px;
         }

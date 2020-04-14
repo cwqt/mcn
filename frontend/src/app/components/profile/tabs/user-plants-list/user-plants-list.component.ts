@@ -5,7 +5,7 @@ import { IPlantModel } from '../../../../../../../backend/lib/models/Plant.model
 @Component({
   selector: 'app-user-plants-list',
   templateUrl: './user-plants-list.component.html',
-  styleUrls: ['./user-plants-list.component.css']
+  styleUrls: ['./user-plants-list.component.scss']
 })
 export class UserPlantsListComponent implements OnInit {
   isActive:boolean = false;

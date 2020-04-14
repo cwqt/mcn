@@ -17,6 +17,7 @@ export class UserService {
   
   constructor(private http: HttpClient) {
     this.currentUserSubject = new BehaviorSubject<IUserModel>(JSON.parse(localStorage.getItem('currentUser')));
+    this.currentUser = this.currentUserSubject.asObservable();
   }
 
   register(user) {
@@ -32,7 +33,6 @@ export class UserService {
   }
 
   setUser(user) {
-    console.log(user)
     localStorage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }

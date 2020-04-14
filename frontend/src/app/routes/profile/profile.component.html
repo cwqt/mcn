@@ -1,15 +1,20 @@
 <app-wrapper>
-    <div class="profile-wrapper">
-        <app-profile-sidebar [user]="user"></app-profile-sidebar>
+    <div class="profile-wrapper" *ngIf="user">
+        <div class="profile-sidebar">
+            <app-profile-sidebar [user]="user"></app-profile-sidebar>
+        </div>
 
-        <mat-tab-group class="tab-group" (selectedTabChange)="setActiveTab($event)" [selectedIndex]="tabIndex">
-            <mat-tab
-                *ngFor="let tab of tabs; let index = index"
-                [label]="tab.label"> 
-                <div class="tab-content">
-                    <ng-container *ngComponentOutlet="tab.component"></ng-container>
-                </div>
-            </mat-tab>
-        </mat-tab-group>
+        <mat-card class="profile-body">
+            <mat-tab-group class="tab-group" (selectedTabChange)="setActiveTab($event)" [selectedIndex]="tabIndex">
+                <mat-tab
+                    *ngFor="let tab of tabs; let index = index"
+                    [label]="tab.label"> 
+                    <div class="tab-content">
+                        <ng-container *ngComponentOutlet="tab.component"></ng-container>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>    
+        </mat-card>
     </div>
+    <mat-spinner *ngIf="!user"></mat-spinner>
 </app-wrapper>

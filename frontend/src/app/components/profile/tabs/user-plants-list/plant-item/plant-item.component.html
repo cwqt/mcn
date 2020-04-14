@@ -1,0 +1,17 @@
+<mat-card class="container">
+    <div class="left">
+
+    </div>
+    <div class="right">
+        <div class="title">
+            <h1>{{plant.name}}</h1>
+            <h3>{{plant._id}}</h3>
+        </div>
+        <mat-divider></mat-divider>
+        <br />
+        <p><b>created:</b> {{ plant.created_at }}</p>
+        <p><b>species:</b> {{ plant.species }}</p>
+
+        <button mat-button color="primary">inspect</button>
+    </div>
+</mat-card>
