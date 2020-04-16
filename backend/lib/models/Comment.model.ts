@@ -6,7 +6,7 @@ import { IPostModel } from './Post.model';
 export interface IComment {
     user_id:        IUserModel["_id"];
     post_id:        IPostModel["_id"];
-    parent_id?:     ICommentModel["_id"];
+    replies:        ICommentModel[],
     content:        string;
     likes_count:    number;
     created_at?:    Date;
@@ -18,9 +18,8 @@ export interface ICommentModel extends IComment, Document {
 }
 
 export var CommentSchema:Schema = new Schema({
-    user_id:        Schema.Types.ObjectId,
-    post_id:        Schema.Types.ObjectId,
-    parent_id:      Schema.Types.ObjectId,
+    author_id:      Schema.Types.ObjectId,
+    replies:        [{type: Schema.Types.ObjectId, ref:"Comment"}],
     content:        String,
     likes_count:    Number,
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})

@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DynamicComponentModule, DynamicIoModule } from 'ng-dynamic-component';
 
 import { IndexComponent }           from './routes/index/index.component';
 import { LoginComponent }           from './components/index/login/login.component';
@@ -75,6 +76,8 @@ import {MatCardModule} from '@angular/material/card';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    DynamicComponentModule,
+    DynamicIoModule,
 
     MatButtonModule,
     MatButtonToggleModule,

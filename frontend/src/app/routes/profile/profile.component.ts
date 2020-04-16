@@ -20,7 +20,8 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-  user:IUserModel;
+  user:IUserModel; //user page
+  currentUser:IUserModel; //the current logged in user
 
   plants:IPlantModel[] | undefined;
   gardens:IGardenModel[] | undefined;
@@ -33,7 +34,7 @@ export class ProfileComponent implements OnInit {
     {label: "devices",  component: UserDevicesListComponent}
   ];
 
-  tabIndex:number = 0;
+  tabIndex:number;
 
   constructor(private userService:UserService,
     private route:ActivatedRoute,
@@ -42,10 +43,10 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     //route param change request different user
     this.route.params.subscribe(params => this.profileService.getUserByUsername(params.username));
+
     //subscribe to the new user being gotten
-    this.profileService.currentProfile.subscribe(user => {
-      this.user = user;
-    });
+    this.profileService.currentProfile.subscribe(user => this.user = user );
+    this.userService.currentUser.subscribe(user => this.currentUser = user );
 
     this.profileService.selectedTab.subscribe(key => {
       this.tabIndex = this.tabs.findIndex(tab => tab.label == key);

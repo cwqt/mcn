@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile.service';
 import { IPlantModel } from '../../../../../../../backend/lib/models/Plant.model';
+import { IUserModel } from '../../../../../../../backend/lib/models/User.model';
 
 @Component({
   selector: 'app-user-plants-list',
@@ -8,10 +9,13 @@ import { IPlantModel } from '../../../../../../../backend/lib/models/Plant.model
   styleUrls: ['./user-plants-list.component.scss']
 })
 export class UserPlantsListComponent implements OnInit {
-  isActive:boolean = false;
-  initialised:boolean = false;
-  plants:IPlantModel[] = [];
-  loading = false;
+  @Input() user:IUserModel;
+  @Input() currentUser:IUserModel;
+
+  isActive:boolean      = false;
+  initialised:boolean   = false;
+  loading:boolean       = false;
+  plants:IPlantModel[]  = [];
   
   constructor(private profileService:ProfileService) { }
 

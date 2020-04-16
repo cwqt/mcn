@@ -12,6 +12,8 @@ export const createPlant = (req:Request, res:Response, next:NextFunction) => {
 }
 
 export const updatePlant = (req:Request, res:Response, next:NextFunction) => {
+    console.log(res.locals.newData)
+
     Plant.findByIdAndUpdate(req.params.rid, res.locals.newData, {new:true}, (error:any, plant:IPlantModel) => {
         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
         res.json(plant);

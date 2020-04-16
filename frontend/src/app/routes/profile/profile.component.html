@@ -1,7 +1,7 @@
 <app-wrapper>
     <div class="profile-wrapper" *ngIf="user">
         <div class="profile-sidebar">
-            <app-profile-sidebar [user]="user"></app-profile-sidebar>
+            <app-profile-sidebar [user]="user" [currentUser]="currentUser"></app-profile-sidebar>
         </div>
 
         <mat-card class="profile-body">
@@ -10,7 +10,9 @@
                     *ngFor="let tab of tabs; let index = index"
                     [label]="tab.label"> 
                     <div class="tab-content">
-                        <ng-container *ngComponentOutlet="tab.component"></ng-container>
+                        <ndc-dynamic
+                            [ndcDynamicComponent]="tab.component"
+                            [ndcDynamicInputs]="{user:user, currentUser:currentUser, index:index, currentIndex:tabIndex}"></ndc-dynamic>
                     </div>
                 </mat-tab>
             </mat-tab-group>    

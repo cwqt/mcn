@@ -42,7 +42,7 @@ export var RecordableSchema:Schema = new Schema({
       required: true,
       default: false
     },
-    parmeterd:      {
+    parameters: {
       type: Map,
       of: Object
     },

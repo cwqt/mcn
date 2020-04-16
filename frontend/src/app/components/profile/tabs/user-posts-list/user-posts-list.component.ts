@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile.service';
+
+import { IPostModel } from '../../../../../../../backend/lib/models/Post.model';
+import { IUserModel } from '../../../../../../../backend/lib/models/User.model';
 
 @Component({
   selector: 'app-user-posts-list',
@@ -7,15 +10,30 @@ import { ProfileService } from 'src/app/services/profile.service';
   styleUrls: ['./user-posts-list.component.css']
 })
 export class UserPostsListComponent implements OnInit {
-  isActive:boolean = false;
+  @Input() user:IUserModel;
+  @Input() currentUser:IUserModel;
+
+  isActive:boolean      = false;
+  initialised:boolean   = false;
+  loading:boolean       = false;
+  posts:IPostModel[]  = [];
+  
   constructor(private profileService:ProfileService) { }
 
   ngOnInit(): void {
     this.profileService.selectedTab.subscribe(key => {
       this.isActive = false;
       if(key == "posts") this.isActive = true;
-      if(this.isActive) console.log('posts!')
+      if(this.isActive && !this.initialised) this.initialise();
     })
   }
 
+  initialise() {
+    this.loading = true;
+    this.initialised = true;
+    this.profileService.getPosts().then((posts:IPostModel[]) => {
+      this.posts = posts;
+      this.loading = false;
+    });
+  }
 }

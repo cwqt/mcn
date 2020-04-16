@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { IPlantModel } from '../../../../backend/lib/models/Plant.model';
 import { IUserModel } from '../../../../backend/lib/models/User.model';
+import { IPostModel } from '../../../../backend/lib/models/Post.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,11 +33,16 @@ export class ProfileService {
       })).toPromise();
   }
 
+  getPosts() {
+    return this.http.get(`/api/users/${this.currentProfileValue._id}/posts`)
+      .pipe(map((posts:IPostModel[]) => {
+        return posts;
+      })).toPromise();
+  }
+
   getPlants() {
-    if(this.cachedTabs.includes('plants')) return new Promise((r,_) => r([]));
     return this.http.get(`/api/users/${this.currentProfileValue._id}/plants`)
       .pipe(map((plants:IPlantModel[]) => {
-        if(!this.cachedTabs.includes('plants')) this.cachedTabs.push('plants');
         return plants;
       })).toPromise();
   }

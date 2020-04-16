@@ -1,1 +1,7 @@
-<p>user-post-list works!</p>
+<div *ngIf="!loading && posts">
+    <div *ngFor="let post of posts">
+        <p>{{post.content}}, {{post.created_at}}</p>
+    </div>
+</div>
+
+<mat-spinner *ngIf="loading"></mat-spinner>

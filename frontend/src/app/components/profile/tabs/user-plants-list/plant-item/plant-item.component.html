@@ -12,6 +12,10 @@
         <p><b>created:</b> {{ plant.created_at }}</p>
         <p><b>species:</b> {{ plant.species }}</p>
 
+        <div *ngFor="let param of plant.parameters | keyvalue">
+            <p><b>{{param.key}}:</b> {{param.value.lower}} &lt; x &lt; {{param.value.upper}}</p>            
+        </div>
+
         <button mat-button color="primary">inspect</button>
     </div>
 </mat-card>

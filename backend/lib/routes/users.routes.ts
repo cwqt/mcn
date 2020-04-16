@@ -18,6 +18,7 @@ import {
 import devices  from './device.routes';
 import plants   from './plants.routes';
 import gardens  from './gardens.routes';
+import posts    from './posts.routes';
 
 const router = Router();
 
@@ -62,8 +63,9 @@ router.delete('/:uid', validate([
     param('uid').isMongoId().trim().withMessage('invalid user id')
 ]), deleteUser);
 
-router.use('/:uid/devices', devices)
-router.use('/:uid/plants',  plants)
-router.use('/:uid/gardens', gardens)
+router.use('/:uid/devices', devices);
+router.use('/:uid/plants',  plants);
+router.use('/:uid/gardens', gardens);
+router.use('/:uid/posts',   posts);
 
 export default router;

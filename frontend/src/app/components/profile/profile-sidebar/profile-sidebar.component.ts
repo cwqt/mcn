@@ -10,16 +10,12 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class ProfileSidebarComponent implements OnInit {
   @Input() user:IUserModel; //the current profile being viewed
-  currentUser:IUserModel; //the current logged in user
+  @Input() currentUser:IUserModel; //current logged in user
   
   constructor(private userService:UserService, private profileService:ProfileService) {
   }
 
-  ngOnInit(): void {
-    this.userService.currentUser.subscribe(user => {
-      this.currentUser = user;
-    });
-  }
+  ngOnInit(): void {}
 
   navigateRecordable($event) {
     this.profileService.selectedTab.next($event);
