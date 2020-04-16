@@ -8,33 +8,19 @@ import { Post } from "../models/Post.model";
 
 export const createComment = (req:Request, res:Response, next:NextFunction) => {
     let data:{[index:string]:any} = {
-        content: req.body.content
+        content: req.body.content,
+        user_id: req.params.uid
     }
-    if(res.locals.isReply) data["replies"] = [];
-
-    let comment = new Comment(data);
-
-    if(!res.locals.isReply) {
-        //commenting on a post
-        comment.save()
-            .then(comment => Post.findById(req.params.pid))
-            .then(post => {
-                post.comments.unshift(comment);
-                post.save();
-            })
-            .catch(error => next(new ErrorHandler(HTTP.ServerError, error)));
+    if(res.locals.isReply) {
+        data["parent_id"] = req.params.cid;
     } else {
-        //replying to a comment
-        comment.save()
-            .then(comment => Comment.findById(req.params.cid))
-            .then(parent => {
-                parent.replies.unshift(comment);
-                parent.save();
-            })
-            .catch(error => next(new ErrorHandler(HTTP.ServerError, error)));
+        data["post_id"] = req.params.pid;
     }
 
-    res.json(comment);
+    Comment.create(data, (error:any, comment:ICommentModel) => {
+        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+        res.json(comment);
+    })
 }
 
 export const updateComment = (req:Request, res:Response, next:NextFunction) => {

@@ -1,8 +1,14 @@
 import { Document, Schema, Model, model} from "mongoose";
 
-export interface IUser {
-    name:           string,
+const mongo4j = require('mongo4j');
+
+export interface IUserStub {
     username:       string,
+    avatar?:        string,
+}
+
+export interface IUser extends IUserStub {
+    name:           string,
     email:          string,
     salt:           string,
     pw_hash:        string,
@@ -10,12 +16,8 @@ export interface IUser {
     new_user:       boolean,
     admin?:         boolean,
     bio?:           string,
-    avatar?:        string,
     cover_image?:   string,
     location?:      string,
-    plant_count:    Number,
-    garden_count:   Number,
-    device_count:   Number,
     created_at?:    Date,
     updated_at?:    Date,
     blocked_users?: Array<IUserModel["_id"]>
@@ -51,6 +53,8 @@ UserSchema.methods.toJSON = function() {
     delete obj.blocked_users;
     return obj;
 }
+
+UserSchema.plugin(mongo4j.plugin());
 
 export const User:Model<IUserModel> = model<IUserModel>("User", UserSchema);
 

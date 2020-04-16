@@ -5,11 +5,14 @@ import bodyParser       from 'body-parser';
 import cors             from 'cors';
 import session          from 'express-session';
 
+const mongo4j = require('mongo4j');
+mongo4j.init('bolt://localhost', {user: 'neo4j', pass: 'mjnk'});
+
 import config           from './config';
 import routes           from './routes';
 import { handleError, ErrorHandler } from './common/errorHandler';
 
-var server:any;
+let server:any;
 const app = express();
 app.set('trust proxy', 1);
 app.use(bodyParser.json());
@@ -25,11 +28,29 @@ app.use(session({
     }
 }))
 
+var neo4j = require('neo4j');
+var db = new neo4j.GraphDatabase('http://neo4j:mjnk@localhost:7474');
+db.cypher({
+    query: 'MATCH (c:Comment)-[:COMMENTS_ON]->(u:Post {m_id: {_id}}) RETURN c',
+    params: {
+        _id: '5e98dae80d1f01a2d562129e',
+    },
+}, function (err:any, results:any) {
+    if (err) console.log(err);
+    if(results) {
+        results.forEach((comment:any) => {
+            console.log(comment.c.properties.m_id)
+        })
+    }
+});
+
+
 mongoose.connect(config.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
 const connection = mongoose.connection;
 mongoose.Promise = Promise;
 
 connection.once('open', () => {
+
     console.log("Connected to MongoDB.")
     try {        
         app.use("/users",       routes.users)

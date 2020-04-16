@@ -42,12 +42,9 @@ export const createRecordable = (req:Request, res:Response, next:NextFunction) =
     validate([body('name').not().isEmpty().trim()])(req, res, () => {
         ((req:Request, res:Response, next:NextFunction) => {
             //should really use transactions
-            User.updateOne({_id: req.params.uid}, {$inc: {[getCounterKey(res.locals.type)]:1}}, (error, _) => {
-                if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-                req.body["user_id"] = req.params.uid;
-                req.body["type"]    = res.locals.type;
-                next();    
-            });
+            req.body["user_id"] = req.params.uid;
+            req.body["type"]    = res.locals.type;
+            next();    
         })(req, res, next);
     });
 }
@@ -64,11 +61,8 @@ export const updateRecordable = (req:Request, res:Response, next:NextFunction) =
 }
 
 export const deleteRecordable = (req:Request, res:Response, next:NextFunction) => {
-    User.updateOne({_id: req.params.uid}, {$inc: {[getCounterKey(res.locals.type)]:-1}}, (error, _) => {
+    getSchema(res.locals.type).findByIdAndDelete(req.params.rid, (error:any) => {
         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        getSchema(res.locals.type).findByIdAndDelete(req.params.rid, (error:any) => {
-            if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-            res.status(HTTP.OK).end();
-        })
-    });
+        res.status(HTTP.OK).end();
+    })
 }
