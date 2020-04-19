@@ -7,8 +7,8 @@ import { IndexComponent }     from './routes/index/index.component';
 import { HomeComponent }      from './routes/home/home.component';
 import { ProfileComponent }   from './routes/profile/profile.component';
 import { VerifiedComponent }  from './components/pages/verified/verified.component';
-import { NotFoundComponent } from './components/pages/not-found/not-found.component';
-
+import { NotFoundComponent }  from './components/pages/not-found/not-found.component';
+import { PostComponent }      from './components/profile/tabs/user-posts-list/post/post.component';
 
 const routes: Routes = [
   { path: '', component: IndexComponent},
@@ -22,6 +22,7 @@ const routes: Routes = [
       // { path: 'plants', component: PlantItemComponent},
       // { path: 'gardens', component: PlantItemComponent},
       // { path: 'devices', component: PlantItemComponent},
+      { path: 'posts/:pid', component: PostComponent }
     ]
   },
   { path: '**', component: NotFoundComponent}

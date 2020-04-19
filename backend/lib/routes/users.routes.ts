@@ -64,9 +64,9 @@ router.delete('/:uid', validate([
     param('uid').isUUID(4).trim().withMessage('invalid user id')
 ]), deleteUser);
 
-// router.use('/:uid/devices', devices);
-// router.use('/:uid/plants',  plants);
-// router.use('/:uid/gardens', gardens);
-// router.use('/:uid/posts',   posts);
+router.use('/:uid/posts',   posts);
+router.use('/:uid/devices', devices);
+router.use('/:uid/plants',  plants);
+router.use('/:uid/gardens', gardens);
 
 export default router;

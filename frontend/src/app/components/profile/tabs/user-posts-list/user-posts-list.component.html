@@ -1,6 +1,6 @@
 <div *ngIf="!loading && posts">
     <div *ngFor="let post of posts">
-        <p>{{post.content}}, {{post.created_at}}</p>
+        <app-post-thumb [post]="post" [user]="user" [currentUser]="currentUser"></app-post-thumb>
     </div>
 </div>
 

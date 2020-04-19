@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IUserModel } from '../../../../../backend/lib/models/User.model';
 import { UserService } from 'src/app/services/user.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { IPlantModel } from '../../../../../backend/lib/models/Plant.model';
 import { IGardenModel } from '../../../../../backend/lib/models/Garden.model';
@@ -37,12 +37,15 @@ export class ProfileComponent implements OnInit {
   tabIndex:number;
 
   constructor(private userService:UserService,
+    private router:Router,
     private route:ActivatedRoute,
     private profileService:ProfileService) { }
 
   ngOnInit(): void {
     //route param change request different user
-    this.route.params.subscribe(params => this.profileService.getUserByUsername(params.username));
+    this.route.params.subscribe(params => {
+      this.profileService.getUserByUsername(params.username);
+    });
 
     //subscribe to the new user being gotten
     this.profileService.currentProfile.subscribe(user => this.user = user );
@@ -55,5 +58,24 @@ export class ProfileComponent implements OnInit {
 
   setActiveTab(tab:MatTabChangeEvent) {
     this.profileService.selectedTab.next(this.tabs[tab.index].label);
+  }
+
+  showOutlet: boolean;
+
+  onActivate(event:any) {
+    this.showOutlet = true;
+  }
+
+  onDeactivate(event:any) {
+    this.showOutlet = false;
+  }
+
+  goBackToProfile() {
+    this.router.navigate([`/u/${this.currentUser.username}`])
+  }
+
+
+  pretty(label:string) {
+    return (label.charAt(0).toUpperCase() + label.slice(1)).slice(0, -1);;
   }
 }

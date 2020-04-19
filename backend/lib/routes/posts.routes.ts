@@ -22,11 +22,11 @@ router.post('/', validate([
 router.get('/', readAllPosts);
 
 router.get('/:pid',  validate([
-    param('uid').isMongoId().trim().withMessage('invalid post id')
+    param('uid').isUUID(4).trim().withMessage('invalid post id')
 ]), readPost);
 
 router.put('/:pid',  validate([
-    param('uid').isMongoId().trim().withMessage('invalid post id'),
+    param('uid').isUUID(4).trim().withMessage('invalid post id'),
     body('content').not().isEmpty().trim().withMessage('post must have some content'),
 ]), updatePost);
 

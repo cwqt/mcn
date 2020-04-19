@@ -1,0 +1,38 @@
+mat-card {
+    transition: 0.2s;
+    display: flex;
+    position: relative;
+    mat-card-actions {
+        margin: 0;
+        padding: 0;
+        button {
+            margin-right: 10px;
+        }
+    }
+    .dropdown {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 999;
+    }
+    &:hover {
+        background-color: lighten(whitesmoke, 5%);
+        cursor: pointer;
+    }
+    .left {
+        padding-right: 20px;
+        img {
+            height: 70px;
+            width: 70px;
+            object-fit: cover;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+    }
+    .right {
+        font-size: 18px;
+        p:last-child {
+            margin-bottom: 0;
+        }
+    }
+}

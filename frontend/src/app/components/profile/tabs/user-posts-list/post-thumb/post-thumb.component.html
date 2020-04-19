@@ -1,0 +1,22 @@
+<mat-card (click)="gotoPost()">
+    <button mat-icon-button class="dropdown"><mat-icon>keyboard_arrow_down</mat-icon></button>
+    <div class="left">
+        <img src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515">
+    </div>
+    <div class="right">
+        <p><b>{{currentUser.name}}</b> @{{currentUser.username}} · {{post.created_at | amTimeAgo}}</p>
+        <p>{{post.content}}</p>
+
+        <mat-card-actions>
+            <button mat-icon-button>
+                <mat-icon>reply</mat-icon>
+            </button>
+            <button mat-icon-button (click)="heart()">
+                <mat-icon>{{isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
+            </button>
+            <button mat-icon-button>
+                <mat-icon>share</mat-icon>
+            </button>
+        </mat-card-actions>
+    </div>
+</mat-card>

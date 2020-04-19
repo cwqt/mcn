@@ -2,8 +2,7 @@ import * as mongoose from 'mongoose';
 import { Document, Schema, Model, model} from "mongoose";
 import { IUserModel, IUser } from './User.model';
 import { ICommentModel } from './Comment.model';
-
-const mongo4j = require('mongo4j');
+import { Types } from "mongoose";
 
 export interface IPost {
     content:        string,
@@ -19,17 +18,34 @@ export interface IPostModel extends IPost, Document {
     comments: ICommentModel[]
 }
 
-export var PostSchema:Schema = new Schema({
-    content:        String,
-    user_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        neo_rel_name: "Created By"
+export const Post = {
+    _id: {
+        primary: true,
+        type: 'uuid',
+        required: true,
+        default: () => new Types.ObjectId(),
     },
-    images:         [String],
-    likes_count:    {type: Number, default: 0},
-}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
+    content: { type: 'string', required: true },
+    created_at: { type: 'isoDate', default: () => new Date().toISOString() },
+    created_by: {
+        type: 'relationship',
+        target: 'User',
+        relationship: 'CREATED_BY',
+        direction: 'out',
+    }
+}
 
-PostSchema.plugin(mongo4j.plugin());
 
-export const Post:Model<IPostModel> = model<IPostModel>("Post", PostSchema);
+// export var PostSchema:Schema = new Schema({
+//     content:        String,
+//     user_id: {
+//         type: Schema.Types.ObjectId,
+//         ref: 'User',
+//     },
+//     images:         [String],
+//     likes_count:    {type: Number, default: 0},
+// }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
+
+// PostSchema.plugin(mongo4j.plugin());
+
+// export const Post:Model<IPostModel> = model<IPostModel>("Post", PostSchema);

@@ -26,7 +26,6 @@ export const readAllUsers = async (req:Request, res:Response, next:NextFunction)
     const order = {[order_by]: sort};
 
     let u = await neode.instance.all('User', params, order , limit, skip);
-
     let users:any = u.map(user => filterFields(user.properties()));
     res.json(users);
 }
@@ -162,7 +161,7 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
             id: user._id,
             admin: user.admin || false
         }
-        res.status(HTTP.OK).end();
+        res.json(filterFields(user));
     } catch(e) {
         throw new ErrorHandler(HTTP.ServerError);
     }

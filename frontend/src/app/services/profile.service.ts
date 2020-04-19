@@ -18,7 +18,7 @@ export class ProfileService {
     return this.currentProfileSubject.getValue();
   }
 
-  selectedTab:BehaviorSubject<string> = new BehaviorSubject("plants");
+  selectedTab:BehaviorSubject<string> = new BehaviorSubject("posts");
   cachedTabs = [];
 
   constructor(private userService:UserService, private http:HttpClient) {
@@ -38,6 +38,10 @@ export class ProfileService {
       .pipe(map((posts:IPostModel[]) => {
         return posts;
       })).toPromise();
+  }
+
+  getFullPost(post_id:string) {
+    return this.http.get(`/api/users/${this.currentProfileValue._id}/posts/${post_id}`).toPromise();
   }
 
   getPlants() {

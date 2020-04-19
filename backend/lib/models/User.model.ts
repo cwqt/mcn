@@ -1,5 +1,6 @@
 import { Document, Schema, Model, model} from "mongoose";
 import neode from '../common/neo4j';
+import { Types } from "mongoose";
 
 export interface IUserStub {
     username:       string,
@@ -23,26 +24,31 @@ export interface IUser extends IUserStub {
 
 export interface IUserModel extends IUser, Document {
     _id: string,
+    plant_count?: number,
+    garden_count?: number,
+    device_count?: number,
 }
 
 export const User = {
     _id: {
         primary: true,
-        type: 'uuid',
+        type: 'string',
         required: true,
+        default: () => new Types.ObjectId(),
     },
     username:       { type:'string', required: true },
     email:          { type:'string', required: true },
     salt:           { type:'string', required: true },
     pw_hash:        { type:'string', required: true },
     verified:       { type:'boolean', required: true, default: false },
-    new_user:       { type:'boolean', required: true, default: false },
+    new_user:       { type:'boolean', required: true, default: true },
     admin:          { type:'boolean', default: false },
     name:           { type:'string' },
     bio:            { type:'string' },
     location:       { type:'string' },
     avatar:         { type:'string' },
     cover_image:    { type:'string' },    
+    created_at:     { type: 'isoDate', default: () => new Date().toISOString() },
 }
 
 // export var UserSchema:Schema = new Schema({

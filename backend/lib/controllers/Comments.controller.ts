@@ -6,35 +6,43 @@ import { HTTP }                     from "../common/http";
 import { Comment, ICommentModel }   from '../models/Comment.model';
 import { Post } from "../models/Post.model";
 
-export const createComment = (req:Request, res:Response, next:NextFunction) => {
+import neode from '../common/neo4j';
+
+export const createComment = async (req:Request, res:Response, next:NextFunction) => {
     let data:{[index:string]:any} = {
         content: req.body.content,
-        user_id: req.params.uid
     }
+
+    let user = await neode.instance.find('User', req.params.uid);
+    let result;
+
     if(res.locals.isReply) {
-        data["parent_id"] = req.params.cid;
+        let comment = await neode.instance.find('Comment', req.params.cid);
+        let reply = await neode.instance.create('Comment', data);
+        await reply.relateTo(comment, 'replies_to');
+        result = reply;
     } else {
-        data["post_id"] = req.params.pid;
+        let post = await neode.instance.find('Post', req.params.pid);
+        let comment = await neode.instance.create('Comment', data);
+        await comment.relateTo(post, 'comments_on');
+        result = comment;
     }
-
-    Comment.create(data, (error:any, comment:ICommentModel) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        res.json(comment);
-    })
+    await result.relateTo(user, 'created_by');
+    res.json(result.properties());
 }
 
-export const updateComment = (req:Request, res:Response, next:NextFunction) => {
-    Comment.findByIdAndUpdate(req.params.cid, {
-        content: req.body.content
-    }, {new:true}, (error:any, comment:ICommentModel) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        res.json(comment);
-    })
-}
+// export const updateComment = (req:Request, res:Response, next:NextFunction) => {
+//     Comment.findByIdAndUpdate(req.params.cid, {
+//         content: req.body.content
+//     }, {new:true}, (error:any, comment:ICommentModel) => {
+//         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+//         res.json(comment);
+//     })
+// }
 
-export const deleteComment = (req:Request, res:Response, next:NextFunction) => {
-    Comment.findByIdAndDelete(req.params.cid, (error:any) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        res.json(HTTP.OK);
-    })
-}
+// export const deleteComment = (req:Request, res:Response, next:NextFunction) => {
+//     Comment.findByIdAndDelete(req.params.cid, (error:any) => {
+//         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+//         res.json(HTTP.OK);
+//     })
+// }

@@ -1,12 +1,13 @@
-import { CookieService } from 'ngx-cookie-service';
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { CookieService }  from 'ngx-cookie-service';
+import { BrowserModule }  from '@angular/platform-browser';
+import { NgModule }       from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { AppComponent }     from './app.component';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MomentModule }     from 'ngx-moment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DynamicComponentModule, DynamicIoModule } from 'ng-dynamic-component';
 
 import { IndexComponent }           from './routes/index/index.component';
@@ -14,6 +15,7 @@ import { LoginComponent }           from './components/index/login/login.compone
 import { RegisterComponent }        from './components/index/register/register.component';
 import { LoginHelpComponent }       from './components/index/login-help/login-help.component';
 import { FirstTimeSetupComponent }  from './components/index/first-time-setup/first-time-setup.component';
+
 
 import { VerifiedComponent }        from './components/pages/verified/verified.component';
 import { NotFoundComponent }        from './components/pages/not-found/not-found.component';
@@ -33,17 +35,20 @@ import { UserPlantsListComponent }  from './components/profile/tabs/user-plants-
 import { UserGardensListComponent } from './components/profile/tabs/user-gardens-list/user-gardens-list.component';
 import { UserDevicesListComponent } from './components/profile/tabs/user-devices-list/user-devices-list.component';
 import { PlantItemComponent }       from './components/profile/tabs/user-plants-list/plant-item/plant-item.component';
+import { PostComponent }            from './components/profile/tabs/user-posts-list/post/post.component';
+import { PostThumbComponent }       from './components/profile/tabs/user-posts-list/post-thumb/post-thumb.component';
 
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatInputModule } from '@angular/material/input';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatStepperModule } from '@angular/material/stepper';
+import { MatButtonModule }        from '@angular/material/button';
+import { MatButtonToggleModule }  from '@angular/material/button-toggle';
+import { MatInputModule }         from '@angular/material/input';
+import { MatDividerModule }       from '@angular/material/divider';
+import { MatCheckboxModule }      from '@angular/material/checkbox';
+import { MatStepperModule }       from '@angular/material/stepper';
 import { MatIconModule, MatIcon } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
-import {MatCardModule} from '@angular/material/card';
+import { MatTabsModule }          from '@angular/material/tabs';
+import {MatCardModule}            from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 
 @NgModule({
@@ -68,6 +73,8 @@ import {MatCardModule} from '@angular/material/card';
     UserGardensListComponent,
     UserDevicesListComponent,
     PlantItemComponent,
+    PostComponent,
+    PostThumbComponent,
   ],
   imports: [
     BrowserModule,
@@ -78,6 +85,7 @@ import {MatCardModule} from '@angular/material/card';
     HttpClientModule,
     DynamicComponentModule,
     DynamicIoModule,
+    MomentModule,
 
     MatButtonModule,
     MatButtonToggleModule,
