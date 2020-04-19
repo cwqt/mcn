@@ -96,7 +96,7 @@ const updateImage = async (user_id:string, file:Express.Multer.File, field:strin
     try {
         image = await uploadImageToS3(user_id, file, field) as S3Image;
     } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
+        throw new Error(e);
     }
 
     let results = await neode.instance.cypher(`
@@ -109,6 +109,9 @@ const updateImage = async (user_id:string, file:Express.Multer.File, field:strin
 }
 
 export const updateUserAvatar = async (req:Request, res:Response, next:NextFunction) => {
+    let u = await neode.instance.find('User', req.params.uid);
+    if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+
     try {
         let user = await updateImage(req.params.uid, req.file, 'avatar');
         res.json(user);
@@ -118,11 +121,14 @@ export const updateUserAvatar = async (req:Request, res:Response, next:NextFunct
 }
 
 export const updateUserCoverImage = async (req:Request, res:Response, next:NextFunction) => {
+    let u = await neode.instance.find('User', req.params.uid);
+    if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+
     try {
         let user = await updateImage(req.params.uid, req.file, 'cover_image');
         res.json(user);
     } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
+        throw new ErrorHandler(HTTP.ServerError, e);
     }
 }
 
