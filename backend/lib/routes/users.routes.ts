@@ -1,7 +1,8 @@
-import { Router } from 'express';
+var AsyncRouter = require("express-async-router").AsyncRouter;
 import { validate } from '../common/validate'; 
 const { body, param, query } = require('express-validator');
 var multer = require('multer');
+
 
 import {
     readAllUsers,
@@ -20,7 +21,7 @@ import plants   from './plants.routes';
 import gardens  from './gardens.routes';
 import posts    from './posts.routes';
 
-const router = Router();
+const router = AsyncRouter();
 
 const storage = multer({
     storage: multer.memoryStorage(),
@@ -52,20 +53,20 @@ router.get('/u/:username', validate([
 ]), readUserByUsername)
 
 router.get('/:uid', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id')
+    param('uid').isUUID(4).trim().withMessage('invalid user id')
 ]), readUserById);
 
 router.put('/:uid', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id')
+    param('uid').isUUID(4).trim().withMessage('invalid user id')
 ]),  updateUser);
 
 router.delete('/:uid', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id')
+    param('uid').isUUID(4).trim().withMessage('invalid user id')
 ]), deleteUser);
 
-router.use('/:uid/devices', devices);
-router.use('/:uid/plants',  plants);
-router.use('/:uid/gardens', gardens);
-router.use('/:uid/posts',   posts);
+// router.use('/:uid/devices', devices);
+// router.use('/:uid/plants',  plants);
+// router.use('/:uid/gardens', gardens);
+// router.use('/:uid/posts',   posts);
 
 export default router;

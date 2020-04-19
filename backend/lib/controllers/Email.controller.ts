@@ -2,8 +2,9 @@ const { generateVerificationHash, verifyHash } = require('dbless-email-verificat
 import { Request, Response, NextFunction } from 'express';
 import nodemailer from 'nodemailer';
 
+import neode from '../common/neo4j';
+
 import { ErrorHandler } from '../common/errorHandler';
-import { User } from '../models/User.model';
 import config from '../config';
 import { HTTP } from '../common/http';
 
@@ -13,13 +14,14 @@ const generateEmailHash  = (email:string) => {
 }
 
 export const verifyEmail = (email:string, hash:string) => {
+    if(process.env.NODE_ENV == 'development') return true;
     const isEmailVerified = verifyHash(hash, email, config.PRIVATE_KEY);
     return isEmailVerified;
 }
 
 export const sendVerificationEmail = (email:string):Promise<boolean> => {
     return new Promise((resolve, reject) => {
-        // if(process.env.NODE_ENV == 'development') resolve(true);
+        if(process.env.NODE_ENV == 'development') resolve(true);
 
         let hash = generateEmailHash(email);
         let verificationUrl = `${config.API_URL}/auth/verify?email=${email}&hash=${hash}`
@@ -49,15 +51,17 @@ export const sendVerificationEmail = (email:string):Promise<boolean> => {
     })
 }
 
-export const verifyUserEmail = (req:Request, res:Response, next:NextFunction) => {
-    let hash = req.query.hash;
-    let email = req.query.email;
+export const verifyUserEmail = async (req:Request, res:Response, next:NextFunction) => {
+    let hash = req.query.hash as string;
+    let email = req.query.email as string;
 
     let isVerified = verifyEmail(email, hash);
     if(!isVerified) throw new ErrorHandler(HTTP.BadRequest, 'Not a valid hash')
 
-    User.findOneAndUpdate({email: email}, {verified:true}, {new:true}, (err, user) => {
-        if(err) next(new ErrorHandler(HTTP.ServerError, err.message));
-        res.redirect(HTTP.Moved, `${config.FE_URL}/verified`)
-    })
+    await neode.instance.cypher(`
+        MATCH (u:User {email: '${email}'})
+        SET u.verified = TRUE
+        RETURN u`, {})
+ 
+    res.redirect(HTTP.Moved, `${config.FE_URL}/verified`)
 }

@@ -1,64 +1,81 @@
 import bcrypt                                   from "bcrypt"
 import { Request, Response, NextFunction }      from "express"
 
-import { User, IUserModel }             from "../models/User.model"
+import { IUserModel }             from "../models/User.model"
 import { sendVerificationEmail }        from "./Email.controller";
 import { ErrorHandler }                 from '../common/errorHandler';
 import { HTTP }                         from '../common/http';
 import config                           from '../config';
 import { uploadImageToS3, S3Image }     from '../common/storage';
+import neode from '../common/neo4j';
 
-export const readAllUsers = (req:Request, res:Response, next:NextFunction) => {
-    User.find({}, (error:any, users:IUserModel[]) => {
-        if (error) return next(new ErrorHandler(HTTP.ServerError, error))
-        return res.json(users)
-    })
+const filterFields = (user:any) => {
+    let hiddenFields = ["_labels", "pw_hash", "salt"];
+    hiddenFields.forEach(field => delete user[field]);
+    return user;
 }
 
-export const createUser = (req:Request, res:Response, next:NextFunction) => {
+export const readAllUsers = async (req:Request, res:Response, next:NextFunction) => {
+    const order_by = (req.query.order || 'title') as string;
+    const sort = (req.query.sort || 'ASC') as string;
+    const limit = (req.query.limit || 10) as number;
+    const page = (req.query.page || 1) as number;
+    const skip = (page-1) * limit;
+
+    const params = {};
+    const order = {[order_by]: sort};
+
+    let u = await neode.instance.all('User', params, order , limit, skip);
+
+    let users:any = u.map(user => filterFields(user.properties()));
+    res.json(users);
+}
+
+export const createUser = async (req:Request, res:Response, next:NextFunction) => {
+    //see if username/email already taken
+    let result = await neode.instance.cypher(`MATCH (u:User) WHERE u.email = $email OR u.username = $username RETURN u`, {
+        email: req.body.email,
+        username: req.body.username
+    })
+
+    if(result.records.length) {
+        let errors = [];
+        let user = result.records[0].get('u').properties;
+        if(user.username == req.body.username) errors.push({param:"username", msg:"username is taken"});
+        if(user.email == req.body.email) errors.push({param:"email", msg:"email already in use"});
+        throw new ErrorHandler(HTTP.Conflict, errors);
+    }
+
+    let emailSent = await sendVerificationEmail(req.body.email);
+    if(!emailSent) throw new ErrorHandler(HTTP.ServerError, 'Verification email could not be sent');
+
     //generate password hash
-    req.body["salt"] = bcrypt.genSaltSync(10)
-    req.body["pw_hash"] = bcrypt.hashSync(req.body["password"], req.body["salt"])
-    delete req.body["password"]
+    req.body["salt"] = await bcrypt.genSalt(10);
+    req.body["pw_hash"] = await bcrypt.hash(req.body["password"], req.body["salt"]);
+    delete req.body["password"];
 
-    //Username musn't be taken, nor the email
-    User.findOne({$or: [{email: req.body.email}, {username: req.body.username}]}, (error:any, user:IUserModel) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error['message']));
-        if(user) {
-            let errors = []
-            if(user.username == req.body.username) errors.push({param:"username", msg:"username is taken"})
-            if(user.email == req.body.email) errors.push({param:"email", msg:"email already in use"})
-            return next(new ErrorHandler(HTTP.Conflict, errors))
-        } else {
-            let emailSent = sendVerificationEmail(req.body.email)
-            emailSent.then(success => {
-                if(!success) return next(new ErrorHandler(HTTP.ServerError, 'Verification email could not be sent'))
-                User.create(req.body, (error: any, created_user:IUserModel) => {
-                    if (error) return next(new ErrorHandler(HTTP.ServerError, error.message));
-                    res.status(HTTP.Created).json(created_user);
-                });            
-            })
-        }
-    }).catch(next)
+    let created_user = (await neode.instance.create('User', req.body)).properties();
+    res.status(HTTP.Created).json(filterFields(created_user));
 }
 
-export const readUserById = (req:Request, res:Response, next:NextFunction) => {
-    User.findById(req.params.uid, (error:any, user:IUserModel | undefined) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error.message));
-        if(!user) return next(new ErrorHandler(HTTP.NotFound, "No such user exists"))
-        return res.json(user)
+export const readUserById = async (req:Request, res:Response, next:NextFunction) => {
+    let u = await neode.instance.find('User', req.params.uid);
+    if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+
+    res.json(filterFields(u.properties()));
+}
+
+export const readUserByUsername = async (req:Request, res:Response, next:NextFunction) => {
+    let result = await neode.instance.cypher(`MATCH (u:User {username: $username}) RETURN u`, {
+        username: req.params.username
     })
+
+    if(!result.records[0]) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+    let user = result.records[0].get('u').properties;
+    res.json(filterFields(user));
 }
 
-export const readUserByUsername = (req:Request, res:Response, next:NextFunction) => {
-    User.findOne({username: req.params.username}, (error:any, user:IUserModel | undefined) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error.message));
-        if(!user) return next(new ErrorHandler(HTTP.NotFound, "No such user exists"))
-        return res.json(user)
-    })
-}
-
-export const updateUser = (req:Request, res:Response, next:NextFunction) => {
+export const updateUser = async (req:Request, res:Response, next:NextFunction) => {
     var newData:any = {}
     let allowedFields = ["name", "email", "location", "bio", "new_user"];
     let reqKeys = Object.keys(req.body);
@@ -67,64 +84,82 @@ export const updateUser = (req:Request, res:Response, next:NextFunction) => {
         newData[reqKeys[i]] = req.body[reqKeys[i]];
     }
 
-    User.findByIdAndUpdate(req.params.uid, newData, {new:true, runValidators:true}, (error:any, user:IUserModel) => {
-        if (error) return next(new ErrorHandler(HTTP.ServerError, error))
-        return res.json(user)
-    })    
+    let u = await neode.instance.find('User', req.params.uid);
+    if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+
+    let user = (await u.update(newData)).properties();
+    res.json(filterFields(user));
 }
 
-const updateImage = (user_id:string, file:Express.Multer.File, field:string) => {
-    return new Promise((resolve, reject) => {
-        uploadImageToS3(user_id, file, field).then((image:S3Image) => {
-            User.findByIdAndUpdate(user_id, {[field]: image.data.Location}, {new:true}, (error:any, user:IUserModel) => {
-                if (error) reject(error)
-                return resolve(user)
-            })                
-        }).catch(err => reject(err))
-    })
+const updateImage = async (user_id:string, file:Express.Multer.File, field:string) => {
+    let image:S3Image;
+    try {
+        image = await uploadImageToS3(user_id, file, field) as S3Image;
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    }
+
+    let results = await neode.instance.cypher(`
+        MATCH (u:User {_id: '${user_id}'})
+        SET u.${field} = '${image.data.Location}'
+        RETURN u
+    `, {})
+
+    return filterFields(results.records[0].get('u').properties);
 }
 
-export const updateUserAvatar = (req:Request, res:Response, next:NextFunction) => {
-    updateImage(req.params.uid, req.file, 'avatar').then((user:IUserModel) => {
-        res.json(user)
-    }).catch(err => next(new ErrorHandler(HTTP.ServerError, err)))
+export const updateUserAvatar = async (req:Request, res:Response, next:NextFunction) => {
+    try {
+        let user = await updateImage(req.params.uid, req.file, 'avatar');
+        res.json(user);
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    }
 }
 
-export const updateUserCoverImage = (req:Request, res:Response, next:NextFunction) => {
-    updateImage(req.params.uid, req.file, 'cover_image').then((user:IUserModel) => {
-        res.json(user)
-    }).catch(err => next(new ErrorHandler(HTTP.ServerError, err)))
+export const updateUserCoverImage = async (req:Request, res:Response, next:NextFunction) => {
+    try {
+        let user = await updateImage(req.params.uid, req.file, 'cover_image');
+        res.json(user);
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    }
 }
 
-export const deleteUser = (req:Request, res:Response, next:NextFunction) => {
-    User.findOneAndDelete({ _id: req.params.uid }, (error:any) => {
-        if (error) return next(new ErrorHandler(HTTP.ServerError, error))
-        return res.status(HTTP.OK).end()
-    })
+export const deleteUser = async (req:Request, res:Response, next:NextFunction) => {
+    let u = await neode.instance.find('User', req.params.uid);
+    if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+    try {
+        await u.delete();
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    }
+    return res.status(HTTP.OK).end();
 }
 
-export const loginUser = (req:Request, res:Response, next:NextFunction) => {
+export const loginUser = async (req:Request, res:Response, next:NextFunction) => {
     let email = req.body.email;
     let password = req.body.password;
-  
-    //see if user exists
-    User.findOne({email: email}, (err, user:IUserModel | undefined) => {
-        if(err) return next(new ErrorHandler(HTTP.ServerError))
-        if(!user) return next(new ErrorHandler(HTTP.NotFound, [{param:'email', msg:'No such user for this email'}]))
-        if(!user.verified) return next(new ErrorHandler(HTTP.Unauthorised, [{param:'form', msg:'Your account has not been verified'}]))
 
-        bcrypt.compare(password, user.pw_hash, (err, result:boolean) => {
-            if(err) return next(new ErrorHandler(HTTP.ServerError))
-            if(!result) return next(new ErrorHandler(HTTP.Unauthorised, [{param:'password', msg:'Incorrect password'}]))
-            
-            // All checks passed, create session
-            req.session.user = {
-                id: user._id,
-                admin: user.admin || false
-            }
-            res.json(user)
-        })
-    })
+    //find user by email
+    let result = await neode.instance.cypher(`MATCH (u:User {email: '${email}'}) RETURN u`, {})
+    if(!result.records.length) throw new ErrorHandler(HTTP.NotFound, [{param:'email', msg:'No such user for this email'}]);
+
+    let user = result.records[0].get('u').properties as IUserModel;
+    if(!user.verified) throw new ErrorHandler(HTTP.Unauthorised, [{param:'form', msg:'Your account has not been verified'}]);
+
+    try {
+        let match = bcrypt.compare(password, user.pw_hash);
+        if(!match) throw new ErrorHandler(HTTP.Unauthorised, [{param:'password', msg:'Incorrect password'}]);
+
+        req.session.user = {
+            id: user._id,
+            admin: user.admin || false
+        }
+        res.status(HTTP.OK).end();
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError);
+    }
 }
 
 export const logoutUser = (req:Request, res:Response, next:NextFunction) => {

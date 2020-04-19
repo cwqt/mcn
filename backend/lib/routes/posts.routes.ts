@@ -1,6 +1,8 @@
 import { Router }    from "express"
 const { body, param } = require('express-validator');
 
+var AsyncRouter = require("express-async-router").AsyncRouter;
+
 import { validate } from '../common/validate';
 import {
     createPost,
@@ -11,7 +13,7 @@ import {
 
 import comments from './comments.routes';
 
-const router = Router({mergeParams: true});
+const router = AsyncRouter({mergeParams: true});
 
 router.post('/', validate([
     body('content').not().isEmpty().trim().withMessage('post must have some content'),

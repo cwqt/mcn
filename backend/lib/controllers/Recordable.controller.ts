@@ -8,7 +8,6 @@ import { Garden, IGardenModel }         from "../models/Garden.model";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 import { Model } from "mongoose";
-import { User } from "../models/User.model";
 
 const getSchema = (recordable_type:string):Model<any> => {
     switch(recordable_type) {
@@ -52,9 +51,8 @@ export const createRecordable = (req:Request, res:Response, next:NextFunction) =
 export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
     let newData:{[index:string]:any} = {};
     let reqKeys = Object.keys(req.body);
-    for(let i=0; i<reqKeys.length; i++) {
-        newData[reqKeys[i]] = req.body[reqKeys[i]];
-    }
+
+    for(let i=0; i<reqKeys.length; i++) newData[reqKeys[i]] = req.body[reqKeys[i]];
 
     res.locals["newData"] = newData;
     next();

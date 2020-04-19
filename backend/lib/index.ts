@@ -4,9 +4,10 @@ import mongoose         from 'mongoose';
 import bodyParser       from 'body-parser';
 import cors             from 'cors';
 import session          from 'express-session';
+// import mongo4j          from './common/mongo4j';
+import n4j              from './common/neo4j';
 
-const mongo4j = require('mongo4j');
-mongo4j.init('bolt://localhost', {user: 'neo4j', pass: 'mjnk'});
+// mongo4j.init();
 
 import config           from './config';
 import routes           from './routes';
@@ -27,23 +28,6 @@ app.use(session({
         secure: process.env.NODE_ENV == 'development' ? false : true
     }
 }))
-
-var neo4j = require('neo4j');
-var db = new neo4j.GraphDatabase('http://neo4j:mjnk@localhost:7474');
-db.cypher({
-    query: 'MATCH (c:Comment)-[:COMMENTS_ON]->(u:Post {m_id: {_id}}) RETURN c',
-    params: {
-        _id: '5e98dae80d1f01a2d562129e',
-    },
-}, function (err:any, results:any) {
-    if (err) console.log(err);
-    if(results) {
-        results.forEach((comment:any) => {
-            console.log(comment.c.properties.m_id)
-        })
-    }
-});
-
 
 mongoose.connect(config.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
 const connection = mongoose.connection;
@@ -74,5 +58,6 @@ function graceful_exit() {
     connection.close(() => {
         console.log(`Termination requested, MongoDB connection closed`);
         server.close();
+        n4j.instance.close();
     });
 }

@@ -16,6 +16,7 @@ export interface IPost {
 
 export interface IPostModel extends IPost, Document {
     _id: string,
+    comments: ICommentModel[]
 }
 
 export var PostSchema:Schema = new Schema({

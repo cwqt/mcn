@@ -23,43 +23,47 @@ export interface S3Image {
     fieldname?: string;
 }
 
-export const uploadImageToS3 = (user_id:string, file:Express.Multer.File, filename?:string):Promise<string | S3Image> => {
-    return new Promise((resolve, reject) => {
-        if(!file) reject('No image provided');
-
-        // check magic bytes to ensure incorrect extensions aren't uploaded
-        let check = new Promise(function(resolve, reject) {
-            require('file-type').fromBuffer(file.buffer).then((ft:any) => {
-                if(!ft) {
-                    reject('Could not validate the file by magic bytes');
+export const uploadImageToS3 = async (user_id:string, file:Express.Multer.File, filename?:string):Promise<S3Image> => {
+    if(!file) throw new Error('No image provided');
+    // check magic bytes to ensure incorrect extensions aren't uploaded
+    let check = new Promise(function(resolve, reject) {
+        require('file-type').fromBuffer(file.buffer).then((ft:any) => {
+            if(!ft) {
+                reject('Could not validate the file by magic bytes');
+            } else {
+                let allowedMimes = ['image/jpg', 'image/jpeg', 'image/png'];
+                if(allowedMimes.indexOf(ft.mime) > -1) {
+                    resolve();
                 } else {
-                    let allowedMimes = ['image/jpg', 'image/jpeg', 'image/png'];
-                    if(allowedMimes.indexOf(ft.mime) > -1) {
-                        resolve();
-                    } else {
-                        reject('file type not allowed')//ft.mime
-                    }
-                }    
-            });
+                    reject('file type not allowed')//ft.mime
+                }
+            }    
         });
+    });
 
-        check.then(() => {
-            let extension = file.originalname.substr(file.originalname.lastIndexOf('.') + 1);
-    
-            let fn = filename || new mongoose.Types.ObjectId();
-            let params = {
-                Bucket: config.AWS_BUCKET_NAME,
-                Body: file.buffer,
-                Key: `${user_id}/${fn}.${extension}`
-            }
-    
-            s3.upload(params, function (err:any, data:any) {
-                if(err) reject(err);
-                if(data) resolve({
-                    fieldname: fn,
-                    data: data
-                } as S3Image);
-            });        
-        }).catch(e => reject(e));
-    })
+    try {
+        await check;    
+        let extension = file.originalname.substr(file.originalname.lastIndexOf('.') + 1);
+
+        let fn = filename || new mongoose.Types.ObjectId();
+        let params = {
+            Bucket: config.AWS_BUCKET_NAME,
+            Body: file.buffer,
+            Key: `${user_id}/${fn}.${extension}`
+        }
+
+        //upload the image
+        try {
+            let data = await s3.upload(params).promise();    
+            return({
+                fieldname: fn,
+                data: data
+            } as S3Image);
+        } catch(e) {
+            throw new Error(e);
+        }
+
+    } catch(e) {
+        throw new Error(e);
+    }
 }

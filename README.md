@@ -13,7 +13,7 @@ Previously written in React & Python, now moving over to TypeScript & Angular.
 
 ## backend
 
-Express.js TypeScript REST API using MongoDB, session management, symmetric api key exchange & JWT.
+Express.js TypeScript REST API with MongoDB & Neo4j for polyglot persistence, session management, symmetric api key exchange & JWT.
 
 ## frontend
 
