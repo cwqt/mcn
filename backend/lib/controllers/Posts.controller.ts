@@ -31,24 +31,31 @@ export const readAllPosts = async (req:Request, res:Response, next:NextFunction)
     const page = (req.query.page || 1) as number;
     const skip = (page-1) * limit;
 
-    const params = {};
-    const order = {[order_by]: sort};
-
-    let p = await neode.instance.all('Post', params, order , limit, skip);
-    let posts:any = p.map(post => post.properties());
+    let result = await neode.instance.cypher(`
+        MATCH (post:Post)-[:CREATED_BY]->(:User {_id:$_id})
+        RETURN post
+    `, {
+        _id: req.params.uid
+    })
+    
+    let posts:any = result.records.map(record => record.get('post').properties);
     res.json(posts);
 }
 
 export const readPost = async (req:Request, res:Response, next:NextFunction) => {
     let result = await neode.instance.cypher(`
-        MATCH (post:Post {_id:$_id})
+        MATCH (post:Post {_id:$pid})-[:CREATED_BY]->(:User {_id:$uid})
         OPTIONAL MATCH (commenters:User)<-[:CREATED_BY]-(comment:Comment)-[:COMMENTS_ON]->(post)
         OPTIONAL MATCH (repliers:User)<-[:CREATED_BY]-(reply:Comment)-[:REPLIES_TO]->(comment)
         WITH post, comment, commenters, COLLECT(reply{.content, name:repliers.name, username:repliers.username, .created_at}) as replies
         WITH post, comment{.content, .created_at, name:commenters.name, username:commenters.username, replies:coalesce(replies)} as comments
         RETURN post{.content, .created_at, comments:COLLECT(comments)} as p
-    `, {_id: req.params.pid})
+    `, {
+        pid: req.params.pid,
+        uid: req.params.uid
+    })
 
+    if(!result.records.length) throw new ErrorHandler(HTTP.NotFound, "No such post")
     res.json(result.records[0].get('p'));
 }
 

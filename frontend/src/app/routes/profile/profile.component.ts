@@ -20,7 +20,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-  user:IUserModel; //user page
+  user:IUserModel;        //the page user
   currentUser:IUserModel; //the current logged in user
 
   plants:IPlantModel[] | undefined;

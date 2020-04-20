@@ -53,15 +53,15 @@ router.get('/u/:username', validate([
 ]), readUserByUsername)
 
 router.get('/:uid', validate([
-    param('uid').isUUID(4).trim().withMessage('invalid user id')
+    param('uid').isMongoId().trim().withMessage('invalid user id')
 ]), readUserById);
 
 router.put('/:uid', validate([
-    param('uid').isUUID(4).trim().withMessage('invalid user id')
+    param('uid').isMongoId().trim().withMessage('invalid user id')
 ]),  updateUser);
 
 router.delete('/:uid', validate([
-    param('uid').isUUID(4).trim().withMessage('invalid user id')
+    param('uid').isMongoId().trim().withMessage('invalid user id')
 ]), deleteUser);
 
 router.use('/:uid/posts',   posts);

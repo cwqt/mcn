@@ -21,9 +21,9 @@ export interface IPostModel extends IPost, Document {
 export const Post = {
     _id: {
         primary: true,
-        type: 'uuid',
+        type: 'string',
         required: true,
-        default: () => new Types.ObjectId(),
+        default: () => new Types.ObjectId().toHexString(),
     },
     content: { type: 'string', required: true },
     created_at: { type: 'isoDate', default: () => new Date().toISOString() },

@@ -13,16 +13,15 @@ import { PostComponent }      from './components/profile/tabs/user-posts-list/po
 const routes: Routes = [
   { path: '', component: IndexComponent},
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
-  { path: 'verified', component: VerifiedComponent},
+  { path: 'verified', component: VerifiedComponent, canActivate: [AuthGuard]},
   {
     path: 'u/:username',
-    component: ProfileComponent,
+    component: ProfileComponent, canActivate: [AuthGuard],
     children: [
-      // { path: '', component: PlantItemComponent},
-      // { path: 'plants', component: PlantItemComponent},
-      // { path: 'gardens', component: PlantItemComponent},
-      // { path: 'devices', component: PlantItemComponent},
-      { path: 'posts/:pid', component: PostComponent }
+      { path: 'posts/:pid', component: PostComponent },
+      // { path: 'plants/:pid', component: PostComponent },
+      // { path: 'gardens/:gid', component: PostComponent },
+      // { path: 'devices/:did', component: PostComponent },
     ]
   },
   { path: '**', component: NotFoundComponent}

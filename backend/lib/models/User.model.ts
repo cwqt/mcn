@@ -34,7 +34,8 @@ export const User = {
         primary: true,
         type: 'string',
         required: true,
-        default: () => new Types.ObjectId(),
+        default: () => new Types.ObjectId().toHexString(),
+        error: () => "ooops"
     },
     username:       { type:'string', required: true },
     email:          { type:'string', required: true },

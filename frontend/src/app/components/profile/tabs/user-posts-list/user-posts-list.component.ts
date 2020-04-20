@@ -7,7 +7,7 @@ import { IUserModel } from '../../../../../../../backend/lib/models/User.model';
 @Component({
   selector: 'app-user-posts-list',
   templateUrl: './user-posts-list.component.html',
-  styleUrls: ['./user-posts-list.component.css']
+  styleUrls: ['./user-posts-list.component.scss']
 })
 export class UserPostsListComponent implements OnInit {
   @Input() user:IUserModel;
@@ -16,11 +16,13 @@ export class UserPostsListComponent implements OnInit {
   isActive:boolean      = false;
   initialised:boolean   = false;
   loading:boolean       = false;
+  userIsOurself:boolean = false;
   posts:IPostModel[]  = [];
   
   constructor(private profileService:ProfileService) { }
 
   ngOnInit(): void {
+    if(this.currentUser.username == this.user.username) this.userIsOurself = true;
     this.profileService.selectedTab.subscribe(key => {
       this.isActive = false;
       if(key == "posts") this.isActive = true;

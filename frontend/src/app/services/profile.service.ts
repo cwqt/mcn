@@ -34,6 +34,7 @@ export class ProfileService {
   }
 
   getPosts() {
+    console.log(this.currentProfileValue);
     return this.http.get(`/api/users/${this.currentProfileValue._id}/posts`)
       .pipe(map((posts:IPostModel[]) => {
         return posts;
