@@ -50,6 +50,12 @@ export const User = {
     avatar:         { type:'string' },
     cover_image:    { type:'string' },    
     created_at:     { type: 'isoDate', default: () => new Date().toISOString() },
+    follows: {
+        type: 'relationship',
+        target: 'User',
+        relationship: 'FOLLOWS',
+        direction: 'out',
+    }
 }
 
 // export var UserSchema:Schema = new Schema({

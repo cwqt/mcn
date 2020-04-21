@@ -101,6 +101,45 @@ or instead of an array for `message`, a string.
         - __500__: mongoose/aws error 
         - __520__: multer error
 
+### `/users/:uid/posts`
+* __GET__: get user posts
+* __POST__: create a post/thread of posts
+
+### `/users/:uid/posts/:pid`
+* __GET__: get post
+* __PUT__: update post body
+* __DELETE__: delete post
+
+### `/user/:uid/followers
+* __GET__: get paginated list of followers
+
+### `/user/:uid/following
+* __GET__: get paginated list of people we're following
+
+### `/user/:uid/follows/:uid2
+* __POST__: follow another user
+* __DELETE__: un-follow a user
+
+### `/user/:uid/blocks
+* __GET__: get paginated list of blocked users
+
+### `/user/:uid/blocks/:uid2
+* __POST__: block a user
+* __DELETE__: un-block a user
+
+### `/user/:uid/timeline
+* __GET__: get curated list of posts
+
+### `/user/:uid/hearts
+* __GET__: get paginated list of hearted posts
+
+### `/user/:uid/hearts/:pid
+* __POST__: heart a post
+* __DELETE__: un-heart a post
+
+### `/users/:uid/posts/comments`
+### `/users/:uid/posts/comments/:cid`
+
 ---
 
 ## recordables
@@ -166,15 +205,6 @@ or instead of an array for `message`, a string.
 
 ### `/users/:uid/api_keys`
 ### `/users/:uid/api_keys/:kid`
-
----
-
-## posts
-
-### `/users/:uid/posts`
-### `/users/:uid/posts/:pid`
-### `/users/:uid/posts/comments`
-### `/users/:uid/posts/comments/:cid`
 
 ---
 

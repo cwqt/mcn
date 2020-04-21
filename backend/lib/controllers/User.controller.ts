@@ -58,10 +58,24 @@ export const createUser = async (req:Request, res:Response, next:NextFunction) =
 }
 
 export const readUserById = async (req:Request, res:Response, next:NextFunction) => {
-    let u = await neode.instance.find('User', req.params.uid);
-    if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+    // let u = await neode.instance.find('User', req.params.uid);
+    let result = await neode.instance.cypher(`
+        MATCH (u:User {_id:$_id})
+        WITH u, 
+            count((u)-[:LIKES]->()) as likes,
+            count((u)-[:FOLLOWS]->()) as following,
+            count((u)<-[:FOLLOWS]-()) as followers,
+            count((u)-[:CREATED]->(:Post)) as posts
+        RETURN u, {likes:toFloat(likes), following:toFloat(following), followers:toFloat(followers), posts:toFloat(posts)}
+    `, {
+        _id: req.params.uid
+    })
 
-    res.json(filterFields(u.properties()));
+    result.records[0].forEach(key => console.log(key))
+
+    // if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+
+    // res.json(filterFields(u.properties()));
 }
 
 export const readUserByUsername = async (req:Request, res:Response, next:NextFunction) => {
@@ -174,4 +188,42 @@ export const logoutUser = (req:Request, res:Response, next:NextFunction) => {
             res.status(HTTP.OK).end()
         })
     }
+}
+
+
+export const followUser = async (req:Request, res:Response, next:NextFunction) => {
+    let result = await neode.instance.cypher(`
+        MATCH (u1:User { _id: $_id1 }), (u2:User { _id: $_id2 })
+        OPTIONAL MATCH (u1)-[blocked:BLOCKS]-(u2)
+        return u1, u2, blocked
+    `, {
+        _id1: req.params.uid,
+        _id2: req.params.uid2
+    })
+
+    if(result.records[0].get('blocked') != null) console.log("can't follow because blocked!");
+
+    result = await neode.instance.cypher(`
+        MATCH (u1:User { _id: $_id1 }), (u2:User { _id: $_id2 })
+        CREATED (u1)-[:FOLLOWS]->[u2]
+    `, {
+        _id1: req.params.uid,
+        _id2: req.params.uid2
+    })
+
+    console.log(result.records)
+    res.end();
+}
+
+export const unfollowUser = async (req:Request, res:Response, next:NextFunction) => {
+    let result = await neode.instance.cypher(`
+        MATCH (:User { _id: $_id1 })-[r:FOLLOW]->(:User { _id: $_id2 })
+        DELETE r
+        `, {
+            _id1: req.params.uid,
+            _id2: req.params.uid2    
+        })
+
+    console.log(result.summary)
+
 }

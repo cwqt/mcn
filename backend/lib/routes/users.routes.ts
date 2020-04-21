@@ -14,7 +14,9 @@ import {
     loginUser,
     logoutUser, 
     updateUserAvatar,
-    updateUserCoverImage} from "../controllers/User.controller";
+    updateUserCoverImage,
+    followUser,
+    unfollowUser} from "../controllers/User.controller";
 
 import devices  from './device.routes';
 import plants   from './plants.routes';
@@ -64,9 +66,22 @@ router.delete('/:uid', validate([
     param('uid').isMongoId().trim().withMessage('invalid user id')
 ]), deleteUser);
 
+router.post('/:uid/follow/:uid2', validate([
+    param('uid').isMongoId().trim().withMessage('invalid user id'),
+    param('uid2').isMongoId().trim().withMessage('invalid user id')
+]), followUser)
+
+router.delete('/:uid/follow/:uid2', validate([
+    param('uid').isMongoId().trim().withMessage('invalid user id'),
+    param('uid2').isMongoId().trim().withMessage('invalid user id')
+]), unfollowUser)
+
 router.use('/:uid/posts',   posts);
 router.use('/:uid/devices', devices);
 router.use('/:uid/plants',  plants);
 router.use('/:uid/gardens', gardens);
 
 export default router;
+
+// 5e9f7cbc3d91542ad479c9b2
+//5e9f7cc53d91542ad479c9b3
