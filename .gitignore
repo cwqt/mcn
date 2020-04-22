@@ -11,3 +11,5 @@ mycreds.txt
 build
 mcn-images-key.json
 logs
+builds
+cache

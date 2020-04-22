@@ -45,6 +45,7 @@
     "@types/mocha": "^7.0.2",
     "@types/mongoose": "^5.7.3",
     "@types/morgan": "^1.9.0",
+    "@types/multer": "^1.4.3",
     "@types/node": "^13.9.0",
     "@types/nodemailer": "^6.4.0",
     "chai": "^4.2.0",
