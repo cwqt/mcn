@@ -1,12 +1,13 @@
 import { Response } from 'express';
+import log          from './logger';
 
 interface ErrorResponse {
     [key: string]: any
 }
 
 export const handleError = (err:ErrorHandler, res:Response) => {
-    console.log('@@@@@' , err.name)
     const { statusCode, message } = err;
+    log.error(`==> ${err.name}: ${err.message} (${err.statusCode})`)
     let response:ErrorResponse = {
         status: `${statusCode}`.startsWith('4') ? 'fail' : 'error',
         statusCode: statusCode || 520,
@@ -15,7 +16,6 @@ export const handleError = (err:ErrorHandler, res:Response) => {
     if(message) response['message'] = message;
     if(process.env.NODE_ENV == 'development') {
         response['stack'] = err.stack
-        console.log(err.stack)    
     } else {
         //log somewhere online
     }

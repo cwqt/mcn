@@ -58,24 +58,22 @@ export const createUser = async (req:Request, res:Response, next:NextFunction) =
 }
 
 export const readUserById = async (req:Request, res:Response, next:NextFunction) => {
-    // let u = await neode.instance.find('User', req.params.uid);
     let result = await neode.instance.cypher(`
         MATCH (u:User {_id:$_id})
         WITH u, 
-            count((u)-[:LIKES]->()) as likes,
+            count((u)-[:LIKES]->()) as hearts,
             count((u)-[:FOLLOWS]->()) as following,
             count((u)<-[:FOLLOWS]-()) as followers,
             count((u)-[:CREATED]->(:Post)) as posts
-        RETURN u, {likes:toFloat(likes), following:toFloat(following), followers:toFloat(followers), posts:toFloat(posts)}
+        RETURN u, {hearts:toFloat(hearts), following:toFloat(following), followers:toFloat(followers), posts:toFloat(posts)} AS meta
     `, {
         _id: req.params.uid
     })
 
-    result.records[0].forEach(key => console.log(key))
+    let r = result.records[0];
+    if(!r || r.get('u') == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
 
-    // if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
-
-    // res.json(filterFields(u.properties()));
+    res.json(filterFields({...r.get('u').properties, ...r.get('meta')}));
 }
 
 export const readUserByUsername = async (req:Request, res:Response, next:NextFunction) => {
@@ -161,7 +159,7 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
     let password = req.body.password;
 
     //find user by email
-    let result = await neode.instance.cypher(`MATCH (u:User {email: '${email}'}) RETURN u`, {})
+    let result = await neode.instance.cypher(`MATCH (u:User {email: $email}) RETURN u`, {email:email})
     if(!result.records.length) throw new ErrorHandler(HTTP.NotFound, [{param:'email', msg:'No such user for this email'}]);
 
     let user = result.records[0].get('u').properties as IUserModel;
@@ -190,6 +188,29 @@ export const logoutUser = (req:Request, res:Response, next:NextFunction) => {
     }
 }
 
+export const blockUser = async (req:Request, res:Response, next:NextFunction) => {
+    await neode.instance.cypher(`
+        MATCH (u1:User {_id:$_id1}), (u2:User {_id:$_id2})
+        OPTIONAL MATCH (u1)-[r:FOLLOWS]-(u2)
+        DELETE r
+        MERGE (u1)-[:BLOCKS]->(u2)
+    `, {
+        _id1: req.params.uid,
+        _id2: req.params.uid2
+    })
+    res.status(HTTP.OK).end();
+}
+
+export const unblockUser = async (req:Request, res:Response, next:NextFunction) => {
+    await neode.instance.cypher(`
+        MATCH (:User {_id:$_id1})-[r:BLOCKS]->(:User {_id:$_id2})
+        DELETE r
+    `, {
+        _id1: req.params.uid,
+        _id2: req.params.uid2
+    })
+    res.status(HTTP.OK).end();
+}
 
 export const followUser = async (req:Request, res:Response, next:NextFunction) => {
     let result = await neode.instance.cypher(`
@@ -201,29 +222,36 @@ export const followUser = async (req:Request, res:Response, next:NextFunction) =
         _id2: req.params.uid2
     })
 
-    if(result.records[0].get('blocked') != null) console.log("can't follow because blocked!");
+    if(result.records[0].get('blocked') != null) {
+        throw new ErrorHandler(HTTP.Unauthorised, "Can't follow blocked user");
+    }
 
-    result = await neode.instance.cypher(`
+    await neode.instance.cypher(`
         MATCH (u1:User { _id: $_id1 }), (u2:User { _id: $_id2 })
-        CREATED (u1)-[:FOLLOWS]->[u2]
+        MERGE (u1)-[:FOLLOWS]->(u2)
     `, {
         _id1: req.params.uid,
-        _id2: req.params.uid2
+        _id2: req.params.uid2,
     })
 
-    console.log(result.records)
-    res.end();
+    res.status(HTTP.OK).end();
 }
 
 export const unfollowUser = async (req:Request, res:Response, next:NextFunction) => {
-    let result = await neode.instance.cypher(`
-        MATCH (:User { _id: $_id1 })-[r:FOLLOW]->(:User { _id: $_id2 })
+    await neode.instance.cypher(`
+        MATCH (:User { _id: $_id1 })-[r:FOLLOWS]->(:User { _id: $_id2 })
         DELETE r
         `, {
             _id1: req.params.uid,
             _id2: req.params.uid2    
         })
+    res.status(HTTP.OK).end();
+}
 
-    console.log(result.summary)
+export const readFollowers = async (req:Request, res:Response, next:NextFunction) => {
 
+}
+
+export const readBlockedUsers = async (req:Request, res:Response, next:NextFunction) => {
+    
 }

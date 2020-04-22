@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import AWS from 'aws-sdk';
 import config from '../config';
-import ft from 'file-type'
 
 AWS.config.update({
     accessKeyId: config.AWS_ACCESS_KEY_ID,

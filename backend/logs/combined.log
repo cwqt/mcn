@@ -1,0 +1,60 @@
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"message":"Termination requested, MongoDB connection closed","level":"info","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"message":"Termination requested, MongoDB connection closed","level":"info","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"message":"Termination requested, MongoDB connection closed","level":"info","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"service":"user-service","level":"error","message":"@@@@@"}
+{"message":"Error: No such route exists\n    at app.all (/Users/cass/Code/Projects/Sites/hydroponics/backend/lib/index.ts:49:62)\n    at Layer.handle [as handle_request] (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/layer.js:95:5)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:137:13)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at Route.dispatch (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:112:3)\n    at Layer.handle [as handle_request] (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/layer.js:95:5)\n    at /Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/index.js:281:22\n    at param (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/index.js:354:14)\n    at param (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/index.js:365:14)\n    at Function.process_params (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/index.js:410:3)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/index.js:275:10)","level":"error","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"service":"user-service","level":"error","message":"@@@@@"}
+{"message":"Error: No such route exists\n    at app.all (/Users/cass/Code/Projects/Sites/hydroponics/backend/lib/index.ts:49:62)\n    at Layer.handle [as handle_request] (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/layer.js:95:5)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:137:13)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:131:14)\n    at Route.dispatch (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/route.js:112:3)\n    at Layer.handle [as handle_request] (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/layer.js:95:5)\n    at /Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/index.js:281:22\n    at param (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/index.js:354:14)\n    at param (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/index.js:365:14)\n    at Function.process_params (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/index.js:410:3)\n    at next (/Users/cass/Code/Projects/Sites/hydroponics/backend/node_modules/express/lib/router/index.js:275:10)","level":"error","service":"user-service"}
+{"service":"user-service","level":"error","message":"@@@@@"}
+{"message":"Error: No such user exists\n    at /Users/cass/Code/Projects/Sites/hydroponics/backend/lib/controllers/User.controller.ts:74:40\n    at Generator.next (<anonymous>)\n    at fulfilled (/Users/cass/Code/Projects/Sites/hydroponics/backend/lib/controllers/User.controller.ts:5:58)\n    at process._tickCallback (internal/process/next_tick.js:68:7)","level":"error","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"service":"user-service","level":"error","message":"@@@@@"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"service":"user-service","level":"error","message":"@@@@@"}
+{"message":"::1 - - [22/Apr/2020:21:30:09 +0000] \"GET /users/5e9f7cc53d91542ad479c9b3 HTTP/1.1\" 404 420 \"-\" \"PostmanRuntime/7.24.1\"\n","level":"http","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"service":"user-service","level":"error","message":"@@@@@"}
+{"message":"GET /users/5e9f7cc53d91542ad479c9b3 404 420 - 36.184 ms\n","level":"http","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"service":"user-service","level":"error","message":"===>"}
+{"message":"GET /users/5e9f7cc53d91542ad479c9b3 404 420 - 36.633 ms\n","level":"http","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"service":"user-service","level":"error","message":"===>"}
+{"message":"GET /users/5e9f7cc53d91542ad479c9b3 404 420 - 36.598 ms\n","level":"http","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"service":"user-service","level":"error","message":"===>"}
+{"message":"GET /users/5e9f7cc53d91542ad479c9b3 404 420 - 36.014 ms\n","level":"http","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"message":"==> Error 404","level":"error","service":"user-service"}
+{"message":"GET /users/5e9f7cc53d91542ad479c9b3 404 420 - 35.780 ms\n","level":"http","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"message":"==> Error No such user exists","level":"error","service":"user-service"}
+{"message":"GET /users/5e9f7cc53d91542ad479c9b3 404 420 - 35.000 ms\n","level":"http","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"message":"Connected to MongoDB.","level":"info","service":"user-service"}
+{"message":"Listening on 3000","level":"info","service":"user-service"}
+{"message":"==> Error: No such user exists (404)","level":"error","service":"user-service"}
+{"message":"GET /users/5e9f7cc53d91542ad479c9b3 404 420 - 36.799 ms\n","level":"http","service":"user-service"}

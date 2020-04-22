@@ -1,8 +1,7 @@
-var AsyncRouter = require("express-async-router").AsyncRouter;
 import { validate } from '../common/validate'; 
-const { body, param, query } = require('express-validator');
-var multer = require('multer');
-
+const AsyncRouter               = require("express-async-router").AsyncRouter;
+const { body, param, query }    = require('express-validator');
+const multer                    = require('multer');
 
 import {
     readAllUsers,
@@ -16,7 +15,11 @@ import {
     updateUserAvatar,
     updateUserCoverImage,
     followUser,
-    unfollowUser} from "../controllers/User.controller";
+    unfollowUser,
+    readFollowers,
+    blockUser,
+    unblockUser,
+    readBlockedUsers} from "../controllers/User.controller";
 
 import devices  from './device.routes';
 import plants   from './plants.routes';
@@ -76,12 +79,23 @@ router.delete('/:uid/follow/:uid2', validate([
     param('uid2').isMongoId().trim().withMessage('invalid user id')
 ]), unfollowUser)
 
+router.post('/:uid/block/:uid2', validate([
+    param('uid').isMongoId().trim().withMessage('invalid user id'),
+    param('uid2').isMongoId().trim().withMessage('invalid user id')
+]), blockUser)
+
+router.delete('/:uid/block/:uid2', validate([
+    param('uid').isMongoId().trim().withMessage('invalid user id'),
+    param('uid2').isMongoId().trim().withMessage('invalid user id')
+]), unblockUser)
+
+// router.get('/:uid/following', readFollowing)
+router.get('/:uid/followers', readFollowers)
+router.get('/:uid/blocking', readBlockedUsers)
+
 router.use('/:uid/posts',   posts);
 router.use('/:uid/devices', devices);
 router.use('/:uid/plants',  plants);
 router.use('/:uid/gardens', gardens);
 
 export default router;
-
-// 5e9f7cbc3d91542ad479c9b2
-//5e9f7cc53d91542ad479c9b3

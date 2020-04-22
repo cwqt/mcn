@@ -5,6 +5,7 @@ import events       from './events.routes';
 import measurements from './measurements.routes';
 import time         from './time.routes';
 import auth         from './auth.routes';
+import test         from './test.routes';
 
 export default {
   users,
@@ -14,4 +15,5 @@ export default {
   measurements,
   time,
   auth,
+  test
 }
