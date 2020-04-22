@@ -12,14 +12,8 @@ export const handleError = (err:ErrorHandler, res:Response) => {
         status: `${statusCode}`.startsWith('4') ? 'fail' : 'error',
         statusCode: statusCode || 520,
     }
-
+    
     if(message) response['message'] = message;
-    if(process.env.NODE_ENV == 'development') {
-        response['stack'] = err.stack
-    } else {
-        //log somewhere online
-    }
-
     return res.status(response.statusCode).json(response);
 };
 

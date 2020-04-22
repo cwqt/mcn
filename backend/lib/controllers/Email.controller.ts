@@ -14,14 +14,14 @@ const generateEmailHash  = (email:string) => {
 }
 
 export const verifyEmail = (email:string, hash:string) => {
-    if(process.env.NODE_ENV == 'development') return true;
+    if(!config.PRODUCTION) return true;
     const isEmailVerified = verifyHash(hash, email, config.PRIVATE_KEY);
     return isEmailVerified;
 }
 
 export const sendVerificationEmail = (email:string):Promise<boolean> => {
     return new Promise((resolve, reject) => {
-        if(process.env.NODE_ENV == 'development') resolve(true);
+        if(!config.PRODUCTION) resolve(true);
 
         let hash = generateEmailHash(email);
         let verificationUrl = `${config.API_URL}/auth/verify?email=${email}&hash=${hash}`

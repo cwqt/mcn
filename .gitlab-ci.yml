@@ -1,0 +1,22 @@
+stages:
+  - build
+  - test
+
+cache:
+  paths:
+    - backend/node_modules/
+
+install_backend_deps:
+  stage: build
+  script:
+    - cd backend
+    - npm install
+  artifacts:
+    paths:
+      - node_modules/
+
+test_backend:
+  stage: test
+  script:
+    - cd backend
+    - npm run test
