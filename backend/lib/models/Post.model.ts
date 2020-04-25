@@ -25,12 +25,12 @@ export const Post = {
         required: true,
         default: () => new Types.ObjectId().toHexString(),
     },
-    content: { type: 'string', required: true },
+    content: { type: 'string', required: false },
     created_at: { type: 'isoDate', default: () => new Date().toISOString() },
-    created_by: {
+    repost_of: {
         type: 'relationship',
-        target: 'User',
-        relationship: 'CREATED_BY',
+        target: 'Post',
+        relationship: 'REPOST_OF',
         direction: 'out',
     }
 }

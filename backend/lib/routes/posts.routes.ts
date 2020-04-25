@@ -8,10 +8,11 @@ import {
     createPost,
     readAllPosts,
     readPost,
-    updatePost
+    updatePost,
+    repostPost,
+    replyToPost,
  } from '../controllers/Posts.controller';
 
-import comments from './comments.routes';
 
 const router = AsyncRouter({mergeParams: true});
 
@@ -30,6 +31,11 @@ router.put('/:pid',  validate([
     body('content').not().isEmpty().trim().withMessage('post must have some content'),
 ]), updatePost);
 
-router.use('/:pid/comments', comments);
+router.post('/:pid/repost', repostPost);
+
+router.post('/:pid/reply', validate([
+    body('content').not().isEmpty().trim().withMessage('reply must have some content'),
+]), replyToPost);
+// router.get('/:pid/replies', getReplies);
 
 export default router;

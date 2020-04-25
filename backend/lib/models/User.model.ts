@@ -55,6 +55,12 @@ export const User = {
         target: 'User',
         relationship: 'FOLLOWS',
         direction: 'out',
+    },
+    posted: {
+        type: 'relationship',
+        target: 'Post',
+        relationship: 'POSTED',
+        direction: 'out',
     }
 }
 

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "env NODE_ENV=development nodemon",
     "dev": "tsc && env NODE_ENV=development nodemon --inspect build/index.js",
-    "test": "tsc && env NODE_ENV=testing mocha --bail -r ts-node/register test/*.test.ts"
+    "test": "tsc && env NODE_ENV=testing mocha --bail -r ts-node/register test/index.test.ts"
   },
   "keywords": [],
   "author": "",

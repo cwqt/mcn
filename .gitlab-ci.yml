@@ -21,4 +21,5 @@ test_backend:
   stage: test
   script:
     - cd backend
+    - npm install
     - npm run test

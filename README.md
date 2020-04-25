@@ -5,6 +5,7 @@ A social network and management system for gardeners, plant growers and hobbyist
 * Event based system notifies when an action needs completing e.g. watering, re-seeding
 * Gardens and Plants, manage entire gardens constituted of subplants
 * Create custom event queues for carrying out tasks at certain intervals
+* Compile timelines of posts of plants growing over time
 * Remotely trigger events on micro-controllers, e.g. turn on light, open watering valve
 * Monitor all metrics on a front-end dashboard
 * Code support for ESP-32, Wemos D1 Mini & Raspberry Pi
