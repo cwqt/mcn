@@ -11,6 +11,8 @@ import {
     updatePost,
     repostPost,
     replyToPost,
+    heartPost,
+    unheartPost
  } from '../controllers/Posts.controller';
 
 
@@ -36,6 +38,8 @@ router.post('/:pid/repost', repostPost);
 router.post('/:pid/reply', validate([
     body('content').not().isEmpty().trim().withMessage('reply must have some content'),
 ]), replyToPost);
-// router.get('/:pid/replies', getReplies);
+
+router.post('/:pid/heart', heartPost);
+router.delete('/:pid/heart', unheartPost);
 
 export default router;

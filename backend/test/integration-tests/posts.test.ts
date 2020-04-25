@@ -57,6 +57,25 @@ export default () => {
                     done(err);
                 })                
             })
+
+            it('should make user heart alt users post', done => {
+                request(T.app).post(`/users/${T.get('USER')._id}/posts/${T.get('POST', true)._id}/heart`)
+                .set('Content-Type', 'application/json')
+                .expect(201)
+                .end((err, res) => {
+                    done(err);
+                })                
+            })
+
+            it('should get the alt users post & it have a heart', done => {
+                request(T.app).get(`/users/${T.get('USER', true)._id}/posts/${T.get('POST', true)._id}`)
+                .expect(200)
+                .end((err, res) => {
+                    console.log(res.body)
+                    expect(res.body.hearts).to.be.eq(1);
+                    done(err)
+                })
+            })
         })
     })
 }

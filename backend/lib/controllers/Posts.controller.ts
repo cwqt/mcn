@@ -24,33 +24,44 @@ export const createPost = async (req:Request, res:Response, next:NextFunction) =
 }
 
 export const readAllPosts = async (req:Request, res:Response, next:NextFunction) => {
-    const order_by = (req.query.order || 'title') as string;
-    const sort = (req.query.sort || 'ASC') as string;
-    const limit = (req.query.limit || 10) as number;
-    const page = (req.query.page || 1) as number;
-    const skip = (page-1) * limit;
+    // const order_by = (req.query.order || 'title') as string;
+    // const sort = (req.query.sort || 'ASC') as string;
+    // const limit = (req.query.limit || 10) as number;
+    // const page = (req.query.page || 1) as number;
+    // const skip = (page-1) * limit;
 
     let result = await neode.instance.cypher(`
-        MATCH (post:Post)<-[:POSTED]-(:User {_id:$uid})
-        RETURN post
+        MATCH (u:User {_id:$uid})-[:POSTED]->(p:Post)
+        WITH p, size((p)<-[:REPOST_OF]-(:Post)) AS reposts, size((p)<-[:HEARTS]-(:User)) AS hearts
+        RETURN p{.content, .created_at, reposts:reposts, hearts:hearts}
     `, {
         uid: req.params.uid
     })
     
-    let posts:any = result.records.map(record => record.get('post').properties);
+    let posts:any = result.records.map(record => {
+        let x = record.get('p');
+        x.hearts = x.hearts.toNumber();
+        x.reposts = x.reposts.toNumber();
+        return x;
+    });
     res.json(posts);
 }
 
 export const readPost = async (req:Request, res:Response, next:NextFunction) => {
     let result = await neode.instance.cypher(`
         MATCH (p:Post {_id:$pid})
-        RETURN p
+        WITH p, size((p)<-[:REPOST_OF]-(:Post)) AS reposts, size((p)<-[:HEARTS]-(:User)) AS hearts
+        RETURN p{.content, .created_at, reposts:reposts, hearts:hearts}
     `, {
         pid: req.params.pid,
     })
 
     if(!result.records.length) throw new ErrorHandler(HTTP.NotFound, "No such post")
-    res.json(result.records[0].get('p').properties);
+
+    let post = result.records[0].get('p');
+    post.hearts = post.hearts.toNumber();
+    post.reposts = post.reposts.toNumber();
+    res.json(post);
 }
 
 export const repostPost = async (req:Request, res:Response, next:NextFunction) => {
@@ -92,4 +103,31 @@ export const updatePost = (req:Request, res:Response, next:NextFunction) => {
 }
 
 export const deletePost = (req:Request, res:Response, next:NextFunction) => {
+}
+
+
+export const heartPost = async (req:Request, res:Response, next:NextFunction) => {
+    let result = await neode.instance.cypher(`
+        MATCH (u:User { _id:$uid }), (p:Post { _id:$pid })
+        MERGE (u)-[:HEARTS]->(p)
+    `, {
+        uid:req.params.uid,
+        pid:req.params.pid
+    })
+
+    if(!result.summary.counters.containsUpdates()) throw new ErrorHandler(HTTP.ServerError, "Could not heart post")
+    res.status(201).end();
+}
+
+export const unheartPost = async (req:Request, res:Response, next:NextFunction) => {
+    let result = await neode.instance.cypher(`
+        MATCH (:User { _id:$uid })-[r:HEARTS]->(:Post { _id:$pid })
+        DELETE r
+    `, {
+        uid:req.params.uid,
+        pid:req.params.pid
+    })
+
+    if(!result.summary.counters.containsUpdates()) throw new ErrorHandler(HTTP.ServerError, "Could not un-heart post")
+    res.status(200).end();
 }

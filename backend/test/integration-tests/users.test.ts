@@ -99,14 +99,14 @@ export default () => {
                 })
             })
         
-            // it('should get a list of followers', done => {
-            //     request(T.app).get(`/users/${T.get('USER')._id}/followers`)
-            //     .expect(200)
-            //     .end((err, res) => {
-            //         expect(res.body.length).to.be.eq(1);
-            //         done(err);
-            //     })
-            // })
+            it('should get a list of followers', done => {
+                request(T.app).get(`/users/${T.get('USER', true)._id}/followers`)
+                .expect(200)
+                .end((err, res) => {
+                    expect(res.body.length).to.be.eq(1);
+                    done(err);
+                })
+            })
         
             it('should un-follow the other user', done => {
                 request(T.app).delete(`/users/${T.get('USER')._id}/follow/${T.get('USER', true)._id}`)
@@ -124,14 +124,14 @@ export default () => {
                 })
             })
         
-            // it('should get a list of blocked users', done => {
-            //     request(T.app).get(`/users/${T.get('USER')._id}/blocked`)
-            //     .expect(200)
-            //     .end((err, res) => {
-            //         expect(res.body.length).to.be.eq(1);
-            //         done(err);
-            //     })
-            // })
+            it('should get a list of blocked users', done => {
+                request(T.app).get(`/users/${T.get('USER')._id}/blocking`)
+                .expect(200)
+                .end((err, res) => {
+                    expect(res.body.length).to.be.eq(1);
+                    done(err);
+                })
+            })
         
             it('should un-block the other user', done => {
                 request(T.app).delete(`/users/${T.get('USER')._id}/block/${T.get('USER', true)._id}`)

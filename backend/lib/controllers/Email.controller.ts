@@ -21,7 +21,10 @@ export const verifyEmail = (email:string, hash:string) => {
 
 export const sendVerificationEmail = (email:string):Promise<boolean> => {
     return new Promise((resolve, reject) => {
-        if(!config.PRODUCTION) resolve(true);
+        if(config.PRODUCTION == false) {
+            resolve(true);
+            return
+        }
 
         let hash = generateEmailHash(email);
         let verificationUrl = `${config.API_URL}/auth/verify?email=${email}&hash=${hash}`

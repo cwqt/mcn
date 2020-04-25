@@ -190,36 +190,36 @@ export const logoutUser = (req:Request, res:Response, next:NextFunction) => {
 
 export const blockUser = async (req:Request, res:Response, next:NextFunction) => {
     await neode.instance.cypher(`
-        MATCH (u1:User {_id:$_id1}), (u2:User {_id:$_id2})
+        MATCH (u1:User {_id:$uid1}), (u2:User {_id:$uid2})
         OPTIONAL MATCH (u1)-[r:FOLLOWS]-(u2)
         DELETE r
         MERGE (u1)-[:BLOCKS]->(u2)
     `, {
-        _id1: req.params.uid,
-        _id2: req.params.uid2
+        uid1: req.params.uid,
+        uid2: req.params.uid2
     })
     res.status(HTTP.OK).end();
 }
 
 export const unblockUser = async (req:Request, res:Response, next:NextFunction) => {
     await neode.instance.cypher(`
-        MATCH (:User {_id:$_id1})-[r:BLOCKS]->(:User {_id:$_id2})
+        MATCH (:User {_id:$uid1})-[r:BLOCKS]->(:User {_id:$uid2})
         DELETE r
     `, {
-        _id1: req.params.uid,
-        _id2: req.params.uid2
+        uid1: req.params.uid,
+        uid2: req.params.uid2
     })
     res.status(HTTP.OK).end();
 }
 
 export const followUser = async (req:Request, res:Response, next:NextFunction) => {
     let result = await neode.instance.cypher(`
-        MATCH (u1:User { _id: $_id1 }), (u2:User { _id: $_id2 })
+        MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
         OPTIONAL MATCH (u1)-[blocked:BLOCKS]-(u2)
         return u1, u2, blocked
     `, {
-        _id1: req.params.uid,
-        _id2: req.params.uid2
+        uid1: req.params.uid,
+        uid2: req.params.uid2
     })
 
     if(result.records[0].get('blocked') != null) {
@@ -227,11 +227,11 @@ export const followUser = async (req:Request, res:Response, next:NextFunction) =
     }
 
     await neode.instance.cypher(`
-        MATCH (u1:User { _id: $_id1 }), (u2:User { _id: $_id2 })
+        MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
         MERGE (u1)-[:FOLLOWS]->(u2)
     `, {
-        _id1: req.params.uid,
-        _id2: req.params.uid2,
+        uid1: req.params.uid,
+        uid2: req.params.uid2,
     })
 
     res.status(HTTP.OK).end();
@@ -239,19 +239,36 @@ export const followUser = async (req:Request, res:Response, next:NextFunction) =
 
 export const unfollowUser = async (req:Request, res:Response, next:NextFunction) => {
     await neode.instance.cypher(`
-        MATCH (:User { _id: $_id1 })-[r:FOLLOWS]->(:User { _id: $_id2 })
+        MATCH (:User { _id: $uid1 })-[r:FOLLOWS]->(:User { _id: $uid2 })
         DELETE r
         `, {
-            _id1: req.params.uid,
-            _id2: req.params.uid2    
+            uid1: req.params.uid,
+            uid2: req.params.uid2    
         })
     res.status(HTTP.OK).end();
 }
 
 export const readFollowers = async (req:Request, res:Response, next:NextFunction) => {
+    let result = await neode.instance.cypher(`
+        MATCH (follower:User)-[:FOLLOWS]->(u:User {_id:$uid})
+        RETURN follower
+    `, {
+        uid: req.params.uid
+    })
 
+    let followers = result.records.map(record => filterFields(record.get('follower').properties));
+    res.json(followers)
 }
 
 export const readBlockedUsers = async (req:Request, res:Response, next:NextFunction) => {
-    
+    let result = await neode.instance.cypher(`
+        MATCH (blockee:User)<-[:BLOCKS]-(u:User {_id:$uid})
+        RETURN blockee
+    `, {
+        uid: req.params.uid
+    })
+
+    let blockees = result.records.map(record => filterFields(record.get('blockee').properties));
+    console.log(blockees)
+    res.json(blockees)
 }
