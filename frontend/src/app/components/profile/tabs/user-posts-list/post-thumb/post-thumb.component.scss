@@ -1,39 +1,73 @@
 mat-card {
     transition: 0.2s;
     display: flex;
+    flex-flow: column;
     position: relative;
     margin-bottom: 20px;
-    mat-card-actions {
-        margin: 0;
-        padding: 0;
-        button {
-            margin-right: 10px;
-        }
-    }
-    .dropdown {
+    .post-options-dropdown-icon {
         position: absolute;
         top: 0;
         right: 0;
         z-index: 999;
     }
+    .repost-line {
+        display: inline-flex;
+        align-items: center;
+        opacity: 0.7;
+        mat-icon {
+            margin-right: 5px;
+        }
+    }
     &:hover {
         background-color: lighten(whitesmoke, 5%);
         cursor: pointer;
     }
-    .left {
-        padding-right: 20px;
-        img {
-            height: 70px;
-            width: 70px;
-            object-fit: cover;
-            border-radius: 50%;
-            overflow: hidden;
+
+    .main {
+        display: flex;
+        .left {
+            padding-right: 20px;
+            img {
+                height: 70px;
+                width: 70px;
+                object-fit: cover;
+                border-radius: 50%;
+                overflow: hidden;
+            }
+        }
+        .right {
+            font-size: 18px;
+            width: 100%;
+            p:last-child {
+                margin-bottom: 0;
+            }
+        }    
+        mat-card-actions {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            button {
+                margin-right: 10px;
+                display: inline-flex;
+                align-items:center;
+                span {
+                    margin-left: 5px;
+                }
+            }
         }
     }
-    .right {
-        font-size: 18px;
-        p:last-child {
-            margin-bottom: 0;
-        }
+}
+
+.repost {
+    width: 100%;
+    display: flex;
+    app-post-thumb {
+        width: 100%;
+        mat-card {
+            width: 100%;
+            flex: 1;
+        }    
     }
 }

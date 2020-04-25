@@ -9,8 +9,10 @@ import config                           from '../config';
 import { uploadImageToS3, S3Image }     from '../common/storage';
 import neode from '../common/neo4j';
 
-const filterFields = (user:any) => {
+export const filterUserFields = (user:any, toStub?:boolean) => {
     let hiddenFields = ["_labels", "pw_hash", "salt"];
+    if(toStub) hiddenFields = hiddenFields.concat(['email', 'admin', 'new_user', 'created_at', 'verified'])
+
     hiddenFields.forEach(field => delete user[field]);
     return user;
 }
@@ -26,7 +28,7 @@ export const readAllUsers = async (req:Request, res:Response, next:NextFunction)
     const order = {[order_by]: sort};
 
     let u = await neode.instance.all('User', params, order , limit, skip);
-    let users:any = u.map(user => filterFields(user.properties()));
+    let users:any = u.map(user => filterUserFields(user.properties()));
     res.json(users);
 }
 
@@ -54,36 +56,47 @@ export const createUser = async (req:Request, res:Response, next:NextFunction) =
     delete req.body["password"];
 
     let created_user = (await neode.instance.create('User', req.body)).properties();
-    res.status(HTTP.Created).json(filterFields(created_user));
+    res.status(HTTP.Created).json(filterUserFields(created_user));
 }
 
-export const readUserById = async (req:Request, res:Response, next:NextFunction) => {
+export const getUserById = async (_id:string) => {
     let result = await neode.instance.cypher(`
         MATCH (u:User {_id:$_id})
         WITH u, 
-            count((u)-[:LIKES]->()) as hearts,
-            count((u)-[:FOLLOWS]->()) as following,
-            count((u)<-[:FOLLOWS]-()) as followers,
-            count((u)-[:CREATED]->(:Post)) as posts
-        RETURN u, {hearts:toFloat(hearts), following:toFloat(following), followers:toFloat(followers), posts:toFloat(posts)} AS meta
+            size((u)-[:LIKES]->(:Post)) as hearts,
+            size((u)-[:FOLLOWS]->(:User)) as following,
+            size((u)<-[:FOLLOWS]-(:User)) as followers,
+            size((u)-[:POSTED]->(:Post)) as posts
+        RETURN u, {hearts:hearts, following:following, followers:followers, posts:posts} AS meta
     `, {
-        _id: req.params.uid
+        _id: _id
     })
 
     let r = result.records[0];
     if(!r || r.get('u') == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
 
-    res.json(filterFields({...r.get('u').properties, ...r.get('meta')}));
+    let meta = {} as any;
+    meta.hearts     = r.get('meta').hearts.toNumber();
+    meta.following  = r.get('meta').following.toNumber();
+    meta.followers  = r.get('meta').followers.toNumber();
+    meta.posts      = r.get('meta').posts.toNumber()
+
+    return filterUserFields({...r.get('u').properties, ...meta});
+}
+
+export const readUserById = async (req:Request, res:Response, next:NextFunction) => {
+    res.json(await getUserById(req.params.uid));
 }
 
 export const readUserByUsername = async (req:Request, res:Response, next:NextFunction) => {
-    let result = await neode.instance.cypher(`MATCH (u:User {username: $username}) RETURN u`, {
-        username: req.params.username
-    })
+    let result = await neode.instance.cypher(`
+        MATCH (u:User {username: $username})
+        RETURN u
+    `, { username: req.params.username })
 
-    if(!result.records[0]) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
-    let user = result.records[0].get('u').properties;
-    res.json(filterFields(user));
+    let r = result.records[0];
+    if(!r || r.get('u') == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+    res.json(await getUserById(r.get('u').properties._id))
 }
 
 export const updateUser = async (req:Request, res:Response, next:NextFunction) => {
@@ -99,7 +112,7 @@ export const updateUser = async (req:Request, res:Response, next:NextFunction) =
     if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
 
     let user = (await u.update(newData)).properties();
-    res.json(filterFields(user));
+    res.json(filterUserFields(user));
 }
 
 const updateImage = async (user_id:string, file:Express.Multer.File, field:string) => {
@@ -116,7 +129,7 @@ const updateImage = async (user_id:string, file:Express.Multer.File, field:strin
         RETURN u
     `, {})
 
-    return filterFields(results.records[0].get('u').properties);
+    return filterUserFields(results.records[0].get('u').properties);
 }
 
 export const updateUserAvatar = async (req:Request, res:Response, next:NextFunction) => {
@@ -173,7 +186,7 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
             id: user._id,
             admin: user.admin || false
         }
-        res.json(filterFields(user));
+        res.json(filterUserFields(user));
     } catch(e) {
         throw new ErrorHandler(HTTP.ServerError);
     }
@@ -256,7 +269,7 @@ export const readFollowers = async (req:Request, res:Response, next:NextFunction
         uid: req.params.uid
     })
 
-    let followers = result.records.map(record => filterFields(record.get('follower').properties));
+    let followers = result.records.map(record => filterUserFields(record.get('follower').properties));
     res.json(followers)
 }
 
@@ -268,7 +281,7 @@ export const readBlockedUsers = async (req:Request, res:Response, next:NextFunct
         uid: req.params.uid
     })
 
-    let blockees = result.records.map(record => filterFields(record.get('blockee').properties));
+    let blockees = result.records.map(record => filterUserFields(record.get('blockee').properties));
     console.log(blockees)
     res.json(blockees)
 }

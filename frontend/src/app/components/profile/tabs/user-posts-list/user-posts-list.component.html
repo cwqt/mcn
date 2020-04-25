@@ -24,7 +24,7 @@
     
     <div *ngIf="posts" class="posts">
         <div *ngFor="let post of posts">
-            <app-post-thumb [post]="post" [user]="user" [currentUser]="currentUser"></app-post-thumb>
+            <app-post-thumb [post]="post" [author]="user" [currentUser]="currentUser"></app-post-thumb>
         </div>
     </div>    
 </div>

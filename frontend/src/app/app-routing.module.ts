@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './_helpers';
 
 import { IndexComponent }     from './routes/index/index.component';
-import { HomeComponent }      from './routes/home/home.component';
+import { FeedComponent }      from './routes/feed/feed.component';
 import { ProfileComponent }   from './routes/profile/profile.component';
 import { VerifiedComponent }  from './components/pages/verified/verified.component';
 import { NotFoundComponent }  from './components/pages/not-found/not-found.component';
@@ -12,7 +12,7 @@ import { PostComponent }      from './components/profile/tabs/user-posts-list/po
 
 const routes: Routes = [
   { path: '', component: IndexComponent},
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+  { path: 'feed', component: FeedComponent, canActivate: [AuthGuard]},
   { path: 'verified', component: VerifiedComponent, canActivate: [AuthGuard]},
   {
     path: 'u/:username',

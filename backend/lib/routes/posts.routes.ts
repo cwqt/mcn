@@ -42,4 +42,7 @@ router.post('/:pid/reply', validate([
 router.post('/:pid/heart', heartPost);
 router.delete('/:pid/heart', unheartPost);
 
+// router.get('/:pid/replies', readPostReplies);
+// router.get('/:pid/replies/:tid', readPostThreadReplies);
+
 export default router;

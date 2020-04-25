@@ -25,6 +25,16 @@ export default () => {
                 })
             })
 
+            it('should repost the alt users post with a comment', done => {
+                request(T.app).post(`/users/${T.get('USER')._id}/posts/${T.get('POST', true)._id}/repost`)
+                .send({"content":"hey that's a pretty cool post!"})
+                .set('Content-Type', 'application/json')
+                .expect(201)
+                .end((err, res) => {
+                    done(err);
+                })
+            })
+
             it('should make alt user reply to user post', done => {
                 request(T.app).post(`/users/${T.get('USER', true)._id}/posts/${T.get('POST')._id}/reply`)
                 .send({"content":"this is a reply"})

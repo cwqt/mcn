@@ -8,6 +8,8 @@ import { Post, IPostModel }         from '../models/Post.model';
 import {Types} from 'mongoose'
 import neode from '../common/neo4j';
 
+import { filterUserFields } from './User.controller'
+
 export const createPost = async (req:Request, res:Response, next:NextFunction) => {
     let result = await neode.instance.cypher(`
         MATCH (u:User {_id:$uid})
@@ -32,8 +34,13 @@ export const readAllPosts = async (req:Request, res:Response, next:NextFunction)
 
     let result = await neode.instance.cypher(`
         MATCH (u:User {_id:$uid})-[:POSTED]->(p:Post)
-        WITH p, size((p)<-[:REPOST_OF]-(:Post)) AS reposts, size((p)<-[:HEARTS]-(:User)) AS hearts
-        RETURN p{.content, .created_at, reposts:reposts, hearts:hearts}
+        OPTIONAL MATCH (p)-[:REPOST_OF]->(p2:Post)<-[:POSTED]-(u2:User)
+        WITH p, p2, u2,
+            size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
+            size((p)<-[:REPLY_TO]-(:Post)) AS replies,
+            size((p)<-[:HEARTS]-(:User)) AS hearts,
+            p2{.content, .created_at, author:u2} AS rt
+        RETURN p{._id, .content, .created_at, reposts:reposts, hearts:hearts, replies:replies, repost:rt}
     `, {
         uid: req.params.uid
     })
@@ -42,6 +49,12 @@ export const readAllPosts = async (req:Request, res:Response, next:NextFunction)
         let x = record.get('p');
         x.hearts = x.hearts.toNumber();
         x.reposts = x.reposts.toNumber();
+        x.replies = x.replies.toNumber();
+        if(x.repost) {
+            x.repost.author = filterUserFields(x.repost.author.properties, true);
+        } else {
+            delete x.repost;
+        }
         return x;
     });
     res.json(posts);
@@ -51,7 +64,7 @@ export const readPost = async (req:Request, res:Response, next:NextFunction) => 
     let result = await neode.instance.cypher(`
         MATCH (p:Post {_id:$pid})
         WITH p, size((p)<-[:REPOST_OF]-(:Post)) AS reposts, size((p)<-[:HEARTS]-(:User)) AS hearts
-        RETURN p{.content, .created_at, reposts:reposts, hearts:hearts}
+        RETURN p{._id, .content, .created_at, reposts:reposts, hearts:hearts}
     `, {
         pid: req.params.pid,
     })

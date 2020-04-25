@@ -1,0 +1,30 @@
+.feed-sidebar {
+    display: flex;
+    flex-flow: column
+}
+
+.feed-sidebar-button {
+    background: white;
+    width: 300px;
+    margin-bottom: 20px;
+    border-radius: 50px;
+    transition: 0.2s;
+    &:hover {
+        background-color: rgba(103,58,183, 0.1);
+        color: rgba(103,58,183, 0.8);
+    }
+    .contents {
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        h1 {
+            margin: 0;
+            font-weight: normal;
+            letter-spacing: 1px;
+            margin-left: 20px;
+        }
+        mat-icon {
+            font-size: 30px;
+        }
+    }
+}

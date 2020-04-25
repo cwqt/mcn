@@ -4,20 +4,22 @@ import { Plant, IPlantModel }       from '../models/Plant.model'
 import { ErrorHandler }             from "../common/errorHandler";
 import { HTTP }                     from "../common/http";
 
-export const createPlant = (req:Request, res:Response, next:NextFunction) => {
-    Plant.create(req.body, (error:any, plant:IPlantModel) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        res.json(plant);
+import neode from '../common/neo4j';
+
+export const createPlant = async (req:Request, res:Response, next:NextFunction) => {
+    let result = await neode.instance.cypher(`
+        CREATE (p:Plant, $body)-[:CREATED]->(:User {_id:$uid})
+        return p
+    `, {
+        uid: req.params.uid,
+        body: req.body
     })
+
+    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
+    res.json(result.records[0].get('p').properties);
 }
 
 export const updatePlant = (req:Request, res:Response, next:NextFunction) => {
-    console.log(res.locals.newData)
-
-    Plant.findByIdAndUpdate(req.params.rid, res.locals.newData, {new:true}, (error:any, plant:IPlantModel) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        res.json(plant);
-    })
 }
 
 

@@ -25,7 +25,7 @@ import { HeaderBarComponent }       from './components/app/header-bar/header-bar
 
 import { LoadButtonComponent }      from './components/_helpers/load-button/load-button.component';
 
-import { HomeComponent }            from './routes/home/home.component';
+import { FeedComponent }            from './routes/feed/feed.component';
 
 import { ProfileComponent }         from './routes/profile/profile.component';
 import { ProfileSidebarComponent }  from './components/profile/profile-sidebar/profile-sidebar.component';
@@ -48,6 +48,7 @@ import { MatIconModule, MatIcon } from '@angular/material/icon';
 import { MatTabsModule }          from '@angular/material/tabs';
 import {MatCardModule}            from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FeedSidebarComponent } from './components/feed/feed-sidebar/feed-sidebar.component';
 
 
 
@@ -57,7 +58,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     IndexComponent,
     LoginComponent,
     RegisterComponent,
-    HomeComponent,
+    FeedComponent,
     ProfileComponent,
     VerifiedComponent,
     LoginHelpComponent,
@@ -75,6 +76,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     PlantItemComponent,
     PostComponent,
     PostThumbComponent,
+    FeedSidebarComponent,
   ],
   imports: [
     BrowserModule,

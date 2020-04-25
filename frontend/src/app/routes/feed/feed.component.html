@@ -1,0 +1,11 @@
+<app-wrapper>
+    <div class="feed">
+        <div class="left">
+            <app-feed-sidebar [currentUser]="currentUser"></app-feed-sidebar>
+        </div>
+        
+        <div class="right">
+            <h1>you are signed in as @<i>{{currentUser.username}}</i></h1>
+        </div>    
+    </div>
+</app-wrapper>

@@ -1,22 +1,50 @@
-<mat-card (click)="gotoPost()">
-    <button mat-icon-button class="dropdown"><mat-icon>keyboard_arrow_down</mat-icon></button>
-    <div class="left">
-        <img src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515">
-    </div>
-    <div class="right">
-        <p><b>{{user.name}}</b> @{{user.username}} · {{post.created_at | amTimeAgo}}</p>
-        <p>{{post.content}}</p>
+<div>
+    <!-- post / repost with a comment  -->
+    <mat-card (click)="gotoPost()" *ngIf="post.content">
+        <button mat-icon-button class="post-options-dropdown-icon"><mat-icon>keyboard_arrow_down</mat-icon></button>
+        <p *ngIf="repostType == 'repost'" class="repost-line">
+            <mat-icon>repeat</mat-icon> {{parentAuthor.name}} Reposted 
+        </p>
 
-        <mat-card-actions>
-            <button mat-icon-button>
-                <mat-icon>reply</mat-icon>
-            </button>
-            <button mat-icon-button (click)="heart()">
-                <mat-icon>{{isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
-            </button>
-            <button mat-icon-button>
-                <mat-icon>share</mat-icon>
-            </button>
-        </mat-card-actions>
-    </div>
-</mat-card>
+        <div class="main">
+            <div class="left">
+                <img src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515">
+            </div>
+            <div class="right">
+                <p><b>{{author.name}}</b> @{{author.username}} · {{post.created_at | amTimeAgo}}</p>
+                <p>{{post.content}}</p>
+    
+                <app-post-thumb *ngIf="post.repost"
+                    [post]="post.repost"
+                    [author]="post.repost.author"
+                    [currentUser]="currentUser"
+                    [repostType]="'repost-comment'"
+                ></app-post-thumb>    
+        
+                <mat-card-actions *ngIf="repostType != 'repost-comment'">
+                    <button mat-icon-button>
+                        <mat-icon>reply</mat-icon>
+                        <span>{{post.replies}}</span>
+                    </button>
+                    <button mat-icon-button (click)="heart()">
+                        <mat-icon>{{isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
+                        <span>{{post.hearts}}</span>
+                    </button>
+                    <button mat-icon-button>
+                        <mat-icon>share</mat-icon>
+                        <span>{{post.reposts}}</span>
+                    </button>
+                </mat-card-actions>
+            </div>    
+        </div>
+    </mat-card>
+    
+    <!-- just a straight re-post -->
+    <app-post-thumb *ngIf="post.repost && !post.content"
+        [post]="post.repost"
+        [author]="post.repost.author"
+        [currentUser]="currentUser"
+        [parentAuthor]="author"
+        [repostType]="post.content == null ? 'repost' : 'repost-comment'"
+    ></app-post-thumb>    
+</div>

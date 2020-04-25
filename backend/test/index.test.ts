@@ -3,7 +3,8 @@ import { describe, it } from 'mocha';
 import T from './Test';
 
 import test_users from './integration-tests/users.test';
-import test_posts from './integration-tests/posts.test'
+import test_posts from './integration-tests/posts.test';
+import test_recordables from './integration-tests/recordables.test';
 
 before(done => {
     T.app.on("APP_STARTED", function(){
@@ -20,4 +21,5 @@ describe('Integration testing', () => {
 
     test_users();
     test_posts();
+    // test_recordables();
 }).afterAll(() => T.finish())

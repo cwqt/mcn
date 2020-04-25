@@ -1,0 +1,15 @@
+<div class="feed-sidebar">
+    <button mat-button *ngFor="let item of feedSidebar" class="feed-sidebar-button">
+        <div class="contents">
+            <mat-icon [inline]="true"  fontSet="material-icons-outlined">{{item[0]}}</mat-icon>
+            <h1>{{item[1]}}</h1>    
+        </div>
+    </button>
+
+    <button mat-button class="feed-sidebar-button">
+        <div class="contents">
+            <img src="currentUser.avatar">
+            <h1>Profile</h1>    
+        </div>
+    </button>
+</div>

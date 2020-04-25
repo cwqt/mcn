@@ -15,52 +15,48 @@ const getSchema = (recordable_type:string):Model<any> => {
         case RecordableTypes.Garden:    return Garden;
     }
 }
-const getCounterKey = (recordable_type:string):string => {
-    return recordable_type == RecordableTypes.Garden ? 'garden_count' : 'plant_count';
-}
-
-export const readAllRecordables = (req:Request, res:Response, next:NextFunction) => {
-    let query = res.locals.query || {}
-    query["user_id"]  = req.params.uid;
-
-    getSchema(res.locals.type).find(query, (error:any, recordables:IPlantModel[] | IGardenModel[]) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        res.json(recordables);
-    })
-}
-
-export const readRecordable = (req:Request, res:Response, next:NextFunction) => {
-    getSchema(res.locals.type).findById(req.params.rid, (error:any, recordable:IPlantModel | IGardenModel) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        if(!recordable) return next(new ErrorHandler(HTTP.NotFound, `no such ${res.locals.type} exists`));
-        res.json(recordable);
-    })
-}
 
 export const createRecordable = (req:Request, res:Response, next:NextFunction) => {
     validate([body('name').not().isEmpty().trim()])(req, res, () => {
         ((req:Request, res:Response, next:NextFunction) => {
             //should really use transactions
-            req.body["user_id"] = req.params.uid;
             req.body["type"]    = res.locals.type;
             next();    
         })(req, res, next);
     });
 }
 
-export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
-    let newData:{[index:string]:any} = {};
-    let reqKeys = Object.keys(req.body);
+// export const readAllRecordables = (req:Request, res:Response, next:NextFunction) => {
+//     let query = res.locals.query || {}
+//     query["user_id"]  = req.params.uid;
 
-    for(let i=0; i<reqKeys.length; i++) newData[reqKeys[i]] = req.body[reqKeys[i]];
+//     getSchema(res.locals.type).find(query, (error:any, recordables:IPlantModel[] | IGardenModel[]) => {
+//         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+//         res.json(recordables);
+//     })
+// }
 
-    res.locals["newData"] = newData;
-    next();
-}
+// export const readRecordable = (req:Request, res:Response, next:NextFunction) => {
+//     getSchema(res.locals.type).findById(req.params.rid, (error:any, recordable:IPlantModel | IGardenModel) => {
+//         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+//         if(!recordable) return next(new ErrorHandler(HTTP.NotFound, `no such ${res.locals.type} exists`));
+//         res.json(recordable);
+//     })
+// }
 
-export const deleteRecordable = (req:Request, res:Response, next:NextFunction) => {
-    getSchema(res.locals.type).findByIdAndDelete(req.params.rid, (error:any) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        res.status(HTTP.OK).end();
-    })
-}
+// export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
+//     let newData:{[index:string]:any} = {};
+//     let reqKeys = Object.keys(req.body);
+
+//     for(let i=0; i<reqKeys.length; i++) newData[reqKeys[i]] = req.body[reqKeys[i]];
+
+//     res.locals["newData"] = newData;
+//     next();
+// }
+
+// export const deleteRecordable = (req:Request, res:Response, next:NextFunction) => {
+//     getSchema(res.locals.type).findByIdAndDelete(req.params.rid, (error:any) => {
+//         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+//         res.status(HTTP.OK).end();
+//     })
+// }

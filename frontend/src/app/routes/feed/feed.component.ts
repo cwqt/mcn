@@ -4,11 +4,11 @@ import { IUserModel, User } from "../../../../../backend/lib/models/User.model";
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: 'app-feed',
+  templateUrl: './feed.component.html',
+  styleUrls: ['./feed.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class FeedComponent implements OnInit {
   currentUser:IUserModel;
 
   constructor(private userService:UserService) { }

@@ -10,8 +10,12 @@ import { Router } from '@angular/router';
 })
 export class PostThumbComponent implements OnInit {
   @Input() post:any;
-  @Input() user:IUserModel;
+  @Input() author:IUserModel;
   @Input() currentUser:IUserModel;
+
+  //reposts ["repost", "repost-comment"]
+  @Input() parentAuthor:any;
+  @Input() repostType:string;
 
   isHearting:boolean = false;
 

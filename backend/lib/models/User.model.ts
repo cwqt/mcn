@@ -27,6 +27,8 @@ export interface IUserModel extends IUser, Document {
     plant_count?: number,
     garden_count?: number,
     device_count?: number,
+    followers?:number,
+    posts?:number,
 }
 
 export const User = {
