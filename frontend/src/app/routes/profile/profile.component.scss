@@ -1,27 +1,18 @@
-.profile-wrapper {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: 100%;
-    grid-column-gap: 10px;
-    height: 100%;
-    overflow: hidden;
 
-    .profile-sidebar {
-        grid-column: 1 / span 3;
-        display: flex;
-        justify-content: flex-end;
-    }
-    .profile-body {
-        grid-column: span 6;
-        overflow: hidden;
-        .tab-content {
-            margin: 20px;
-        }
-    }
+
+.profile-wrapper {
+    display: flex;
+    flex-flow: column;
 }
 
 mat-spinner {
     margin: 20% auto;
+}
+
+mat-card {
+    padding: 0;
+    overflow: hidden;
+
 }
 
 .tab-body-header {
@@ -40,4 +31,8 @@ mat-spinner {
 .outlet {
     display: flex;
     flex-flow: column;
+}
+
+.tab-content {
+    padding: 20px;
 }

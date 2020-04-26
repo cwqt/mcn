@@ -3,9 +3,7 @@ import { Request, Response, NextFunction }    from "express"
 import { ErrorHandler }             from "../common/errorHandler";
 import { HTTP }                     from "../common/http";
 
-import { Post, IPostModel }         from '../models/Post.model';
-
-import {Types} from 'mongoose'
+import { Types } from 'mongoose'
 import neode from '../common/neo4j';
 
 import { filterUserFields } from './User.controller'
@@ -21,6 +19,7 @@ export const createPost = async (req:Request, res:Response, next:NextFunction) =
         pid: new Types.ObjectId().toHexString(),
         created_at: new Date().toISOString()
     })
+
 
     res.status(201).json(result.records[0].get('p').properties);
 }
@@ -38,7 +37,7 @@ export const readAllPosts = async (req:Request, res:Response, next:NextFunction)
         WITH p, p2, u2,
             size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
             size((p)<-[:REPLY_TO]-(:Post)) AS replies,
-            size((p)<-[:HEARTS]-(:User)) AS hearts,
+            size((p)<-[:HEARTS]-(:User)) AS hearts,                
             p2{.content, .created_at, author:u2} AS rt
         RETURN p{._id, .content, .created_at, reposts:reposts, hearts:hearts, replies:replies, repost:rt}
     `, {
@@ -63,7 +62,9 @@ export const readAllPosts = async (req:Request, res:Response, next:NextFunction)
 export const readPost = async (req:Request, res:Response, next:NextFunction) => {
     let result = await neode.instance.cypher(`
         MATCH (p:Post {_id:$pid})
-        WITH p, size((p)<-[:REPOST_OF]-(:Post)) AS reposts, size((p)<-[:HEARTS]-(:User)) AS hearts
+        WITH p,
+            size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
+            size((p)<-[:HEARTS]-(:User)) AS hearts
         RETURN p{._id, .content, .created_at, reposts:reposts, hearts:hearts}
     `, {
         pid: req.params.pid,
@@ -115,9 +116,17 @@ export const replyToPost = async (req:Request, res:Response, next:NextFunction) 
 export const updatePost = (req:Request, res:Response, next:NextFunction) => {
 }
 
-export const deletePost = (req:Request, res:Response, next:NextFunction) => {
-}
+export const deletePost = async (req:Request, res:Response, next:NextFunction) => {
+    let result = await neode.instance.cypher(`
+        MATCH (p:Post { _id:$pid })
+        DELETE p
+    `, {
+        pid: req.params.pid
+    })
 
+    if(!result.summary.counters.containsUpdates()) throw new ErrorHandler(HTTP.ServerError, "Could not delete post")
+    res.status(200).end();
+}
 
 export const heartPost = async (req:Request, res:Response, next:NextFunction) => {
     let result = await neode.instance.cypher(`

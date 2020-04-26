@@ -1,21 +1,8 @@
-<div *ngIf="userIsOurself">
-    <form class="example-form">      
-        <mat-form-field>
-          <mat-label>make a post...</mat-label>
-          <textarea matInput></textarea>
-        </mat-form-field>
-        <div class="actions">
-            <div class="icons">
-                <button mat-icon-button><mat-icon>perm_media</mat-icon></button>
-                <button mat-icon-button><mat-icon>sentiment_satisfied_alt</mat-icon></button>
-            </div>
-            <button mat-raised-button color="primary">post!</button>
-        </div>
-      </form>
-</div>
-
-
 <div *ngIf="!loading">
+    <div *ngIf="userIsOurself">
+        <app-create-post-form (addPost)="addPost($event)" [user]="user"></app-create-post-form>
+    </div>
+    
     <div *ngIf="posts.length == 0">
         <br/>
         <h1 *ngIf="userIsOurself">hey, make a post!</h1>

@@ -282,6 +282,5 @@ export const readBlockedUsers = async (req:Request, res:Response, next:NextFunct
     })
 
     let blockees = result.records.map(record => filterUserFields(record.get('blockee').properties));
-    console.log(blockees)
     res.json(blockees)
 }

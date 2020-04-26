@@ -1,4 +1,4 @@
-<mat-card class="profile" *ngIf="user && currentUser">
+<div class="profile" *ngIf="user && currentUser">
     <h1 *ngIf="user.username == currentUser.username" class="edit-profile-button">
         <button mat-mini-fab color="default"><mat-icon>edit</mat-icon></button>
     </h1>
@@ -8,17 +8,25 @@
         </div>    
     </div>
 
-    <div class="profile-padding">
-        <p id="username"><b>{{user.username}}</b></p>
+    <div class="profile-info">
+        <h2>{{user.name}}</h2>
+        <p id="username">@{{user.username}}</p>
         <p id="bio">{{user.bio}}</p>
-        <mat-divider></mat-divider>
-        <br />
-        <p id="real-name">{{user.name}}</p>
-        <p id="location">{{user.location}}</p>
+
+        <div class="user-meta">
+            <div id="location" *ngIf="user.location">
+                <mat-icon>location_on</mat-icon>{{user.location}}
+            </div>
+        </div>
+
+        <div class="user-followers-following">
+            <p><b>{{user.following}}</b> following</p>
+            <p><b>{{user.followers}}</b> followers</p>
+        </div>
         <!-- <a id="url" href="">{{user.url || ''}}</a> -->
         <!-- <img src="{{user.cover_image}}" /> -->
 
-        <div class="recordable-container">
+        <!-- <div class="recordable-container">
             <app-recordable-count
                 (changeRecordableTab)="navigateRecordable($event)"
                 [user]="user.username"
@@ -42,12 +50,9 @@
                 [title]="'devices'"
                 [count]="user.device_count">
             </app-recordable-count>
-        </div>
+        </div> -->
 
-        <br />
-        <mat-divider></mat-divider>
-
-        <div class="sides">
+        <!-- <div class="sides">
             <div class="side">
                 <p>{{user.posts}}</p>
                 <span>post{{user.posts > 1 ? 's' :''}} </span>
@@ -57,6 +62,6 @@
                 <p>{{user.followers}}</p>
                 <span>follower{{user.followers == 1 ? '' : 's'}} </span>
             </div>
-        </div>
+        </div> -->
     </div>
-</mat-card>
+</div>

@@ -1,4 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import '~@ctrl/ngx-emoji-mart/picker';
+
 * {
     box-sizing: border-box;
 }
@@ -10,8 +12,6 @@ html, body {
     padding: 0;
     overflow: hidden;
 }
-
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 label {
     font-size: 18px;

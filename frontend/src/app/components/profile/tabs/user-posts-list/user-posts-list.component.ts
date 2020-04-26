@@ -3,6 +3,7 @@ import { ProfileService } from 'src/app/services/profile.service';
 
 import { IPostModel } from '../../../../../../../backend/lib/models/Post.model';
 import { IUserModel } from '../../../../../../../backend/lib/models/User.model';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-user-posts-list',
@@ -15,9 +16,12 @@ export class UserPostsListComponent implements OnInit {
 
   isActive:boolean      = false;
   initialised:boolean   = false;
+
   loading:boolean       = false;
   userIsOurself:boolean = false;
   posts:IPostModel[]  = [];
+
+  success:boolean;
   
   constructor(private profileService:ProfileService) { }
 
@@ -28,6 +32,7 @@ export class UserPostsListComponent implements OnInit {
       if(key == "posts") this.isActive = true;
       if(this.isActive && !this.initialised) this.initialise();
     })
+
   }
 
   initialise() {
@@ -37,5 +42,9 @@ export class UserPostsListComponent implements OnInit {
       this.posts = posts;
       this.loading = false;
     });
+  }
+
+  addPost(post) {
+    this.posts.unshift(post);
   }
 }

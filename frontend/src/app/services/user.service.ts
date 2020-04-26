@@ -41,4 +41,8 @@ export class UserService {
     return this.http.get(`/api/users/${this.currentUserValue._id}`)
       .pipe(map(user => { this.setUser(user)})).toPromise()
   }
+
+  createPost(content) {
+    return this.http.post(`/api/users/${this.currentUserValue._id}/posts`, content)
+  }
 }

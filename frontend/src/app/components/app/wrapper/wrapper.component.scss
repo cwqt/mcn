@@ -1,7 +1,13 @@
 .app-content {
-    margin-top: 60px;//height of app-header
-    height: calc(100vh - 60px);
+    height: 100vh;
     overflow: scroll;
-    padding: 20px;
+    padding: 40px 80px;
     background-color: whitesmoke;
+    display: flex;
+    .left {
+        margin-right: 50px;
+    }
+    .right {
+        width: 50%;
+    }
 }

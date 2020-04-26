@@ -27,9 +27,7 @@
 
     <br />
 
-    <button [disabled]="loginForm.invalid || loading" type="submit" mat-raised-button color="primary" class="loader">
-      <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
-      log in</button>
+    <app-load-button [disabled]="loginForm.invalid || loading" [loading]="loading">log in</app-load-button>
 
     <mat-error class="form" *ngIf="errors.form">{{errors.form}}</mat-error>
   </form>

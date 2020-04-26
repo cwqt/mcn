@@ -28,6 +28,7 @@ export interface IUserModel extends IUser, Document {
     garden_count?: number,
     device_count?: number,
     followers?:number,
+    following?:number,
     posts?:number,
 }
 

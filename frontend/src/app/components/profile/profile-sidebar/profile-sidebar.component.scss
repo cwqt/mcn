@@ -6,11 +6,9 @@ mat-card {
 .profile {
     display: flex;
     flex-flow: column;
-    font-size: 19px;
     // background: whitemoke;
-    padding: 20px;
+    font-size: 19px;
     height: 100%;
-    max-width: 400px;
     position: relative;
 
     mat-divider {
@@ -20,79 +18,59 @@ mat-card {
     .cover-image {
         padding: 10px;
         padding-top: 70px;
-        margin-bottom: 75px;
         position: relative;
         height: 250px;
         background-size: cover;
         background-position: center;
         border-bottom: 5px solid #673ab7;
     }
-
-    .profile-padding {
-        padding: 20px;
-    }
-
+    
     .avatar-container {
-        position: abs;
         max-width: 100%;
-        display: flex;
-        justify-content: center;
-        margin: 0 20px;
+        margin: 0 0px;
         img {
-            box-shadow: 0 10px 20px rgba(32,34,37,.10);
+            border: 4px solid white;
             border-radius: 50%;
             object-fit: cover;
             object-position: center;
             height: auto;
-            max-width: 250px;
-            width: 100%;
-            max-height: 100%;
-
 
             object-fit: cover;
             object-position: center center;
-            width: 250px;
-            height: 250px;
+            width: 200px;
+            height: 200px;
         }    
     }
-    #username {
-        font-family: monospace;
-        font-size: 22px;
-        b::before {
-            content: "@";
-            opacity: 0.5;
+
+    .profile-info {
+        padding: 20px;
+        padding-bottom: 0;
+        h2 {
+            margin: 0;
+            font-weight: bold;
+            font-size: 24px;
         }
-    }
-    #bio {
-        line-height: 1.4;
-    }
-    #url, #location, #real-name {
-        &::before {
-            opacity: 0.5;
-            font-family: monospace;
+        #username {
+            opacity: 0.7;
         }
+
+        .user-meta {
+            margin-bottom: 12px;
+            opacity: .7;
+            div {
+                display: inline-flex;
+                align-items: center;
+            }
+        }    
     }
 
-    #url::before{ content: 'url: ';}
-    #location::before{ content: 'location: ';}
-    #real-name::before {content : 'name: '; }
-    a { text-decoration: none; }
-}
-
-.sides {
-    margin-top: 30px;
-    display: flex;
-    flex-flow: row;
-    .side {
-        width: 50%;
-        font-family: monospace;
+    .user-followers-following {
+        display: flex;
         p {
-            font-size: 40px;
-        }
-        span {
-            opacity: 0.5;
+            padding-right: 10px;
         }
     }
+
 }
 
 .recordable-container {

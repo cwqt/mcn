@@ -1,8 +1,13 @@
 <div class="app-container">
-    <app-header-bar></app-header-bar>
-
     <div class="app-content">
+        <div class="left">
+            <app-header-bar></app-header-bar>
+            <app-feed-sidebar [currentUser]="currentUser"></app-feed-sidebar>
+        </div>
+        
+        <div class="right">
             <ng-content></ng-content>
+        </div>    
     </div>    
 </div>
 

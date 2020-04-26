@@ -9,6 +9,7 @@ import { MomentModule }     from 'ngx-moment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DynamicComponentModule, DynamicIoModule } from 'ng-dynamic-component';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
 
 import { IndexComponent }           from './routes/index/index.component';
 import { LoginComponent }           from './components/index/login/login.component';
@@ -49,6 +50,7 @@ import { MatTabsModule }          from '@angular/material/tabs';
 import {MatCardModule}            from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FeedSidebarComponent } from './components/feed/feed-sidebar/feed-sidebar.component';
+import { CreatePostFormComponent } from './components/profile/tabs/user-posts-list/create-post-form/create-post-form.component';
 
 
 
@@ -77,6 +79,7 @@ import { FeedSidebarComponent } from './components/feed/feed-sidebar/feed-sideba
     PostComponent,
     PostThumbComponent,
     FeedSidebarComponent,
+    CreatePostFormComponent,
   ],
   imports: [
     BrowserModule,
@@ -88,6 +91,7 @@ import { FeedSidebarComponent } from './components/feed/feed-sidebar/feed-sideba
     DynamicComponentModule,
     DynamicIoModule,
     MomentModule,
+    PickerModule,
 
     MatButtonModule,
     MatButtonToggleModule,

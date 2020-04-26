@@ -81,7 +81,6 @@ export default () => {
                 request(T.app).get(`/users/${T.get('USER', true)._id}/posts/${T.get('POST', true)._id}`)
                 .expect(200)
                 .end((err, res) => {
-                    console.log(res.body)
                     expect(res.body.hearts).to.be.eq(1);
                     done(err)
                 })
