@@ -1,11 +1,11 @@
 <div class="app-container">
     <div class="app-content">
         <div class="left">
-            <app-header-bar></app-header-bar>
-            <app-feed-sidebar [currentUser]="currentUser"></app-feed-sidebar>
+            <app-sidebar [currentUser]="currentUser"></app-sidebar>
         </div>
         
         <div class="right">
+            <app-header-bar></app-header-bar>
             <ng-content></ng-content>
         </div>    
     </div>    

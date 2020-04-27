@@ -1,8 +1,10 @@
 .post {
     max-height: 100%;
     overflow: scroll;
-    padding-top: 15px;
-    padding-bottom: 30px;
+    .post-content {
+        padding: 20px;
+        padding-bottom: 0;
+    }
 }
 
 .post-header {

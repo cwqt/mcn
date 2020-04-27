@@ -32,7 +32,6 @@ export class UserPostsListComponent implements OnInit {
       if(key == "posts") this.isActive = true;
       if(this.isActive && !this.initialised) this.initialise();
     })
-
   }
 
   initialise() {

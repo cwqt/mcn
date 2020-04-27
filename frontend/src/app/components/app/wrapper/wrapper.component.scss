@@ -1,13 +1,15 @@
-.app-content {
+.app-container {
+    max-height: 100vh;
     height: 100vh;
-    overflow: scroll;
-    padding: 40px 80px;
+    overflow: hidden;
+}
+.app-content {
+    height: 100%;
     background-color: whitesmoke;
     display: flex;
     .left {
-        margin-right: 50px;
     }
     .right {
-        width: 50%;
+        width: 100%;
     }
 }

@@ -1,12 +1,10 @@
-<div class="profile" *ngIf="user && currentUser">
+<mat-card class="profile" *ngIf="user && currentUser">
     <h1 *ngIf="user.username == currentUser.username" class="edit-profile-button">
         <button mat-mini-fab color="default"><mat-icon>edit</mat-icon></button>
     </h1>
-    <div class="cover-image" style="background-image: url(https://www.shared.com/content/images/2017/03/screen-shot-2015-06-09-at-11-22-55-pm-1.png);">
         <div class="avatar-container">
             <img src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515" />
         </div>    
-    </div>
 
     <div class="profile-info">
         <h2>{{user.name}}</h2>
@@ -20,8 +18,9 @@
         </div>
 
         <div class="user-followers-following">
-            <p><b>{{user.following}}</b> following</p>
-            <p><b>{{user.followers}}</b> followers</p>
+            <p>Posts<b>{{user.posts}}</b></p>
+            <p>Followers<b>{{user.followers}}</b></p>
+            <p>Following<b>{{user.following}}</b></p>
         </div>
         <!-- <a id="url" href="">{{user.url || ''}}</a> -->
         <!-- <img src="{{user.cover_image}}" /> -->
@@ -64,4 +63,4 @@
             </div>
         </div> -->
     </div>
-</div>
+</mat-card>

@@ -1,0 +1,22 @@
+<div class="sidebar">
+    <div class="icon">
+        <img src="/assets/leaf.png">
+        <h1>mcn</h1>    
+    </div>
+
+    <div class="sidebar-buttons">
+        <button mat-button *ngFor="let item of feedSidebar" class="sidebar-button">
+            <div class="contents">
+                <mat-icon [inline]="true"  fontSet="material-icons-outlined">{{item[0]}}</mat-icon>
+                <h2>{{item[1]}}</h2>    
+            </div>
+        </button>    
+    </div>
+
+    <button mat-button class="sidebar-button">
+        <div class="contents">
+            <img src="currentUser.avatar">
+            <h2>Profile</h2>    
+        </div>
+    </button>
+</div>

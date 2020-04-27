@@ -49,9 +49,8 @@ import { MatIconModule, MatIcon } from '@angular/material/icon';
 import { MatTabsModule }          from '@angular/material/tabs';
 import {MatCardModule}            from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { FeedSidebarComponent } from './components/feed/feed-sidebar/feed-sidebar.component';
+import { SidebarComponent } from './components/app/sidebar/sidebar.component';
 import { CreatePostFormComponent } from './components/profile/tabs/user-posts-list/create-post-form/create-post-form.component';
-
 
 
 @NgModule({
@@ -78,7 +77,7 @@ import { CreatePostFormComponent } from './components/profile/tabs/user-posts-li
     PlantItemComponent,
     PostComponent,
     PostThumbComponent,
-    FeedSidebarComponent,
+    SidebarComponent,
     CreatePostFormComponent,
   ],
   imports: [

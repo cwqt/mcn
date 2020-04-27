@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { IUserModel } from '../../../../../backend/lib/models/User.model';
 import { UserService } from 'src/app/services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,7 +17,9 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+  styleUrls: ['./profile.component.scss'],
+  encapsulation: ViewEncapsulation.None
+
 })
 export class ProfileComponent implements OnInit {
   user:IUserModel;        //the page user

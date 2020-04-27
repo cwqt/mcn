@@ -1,12 +1,12 @@
 <div>
     <!-- post / repost with a comment  -->
-    <mat-card (click)="gotoPost()" *ngIf="post.content">
-        <button mat-icon-button class="post-options-dropdown-icon"><mat-icon>keyboard_arrow_down</mat-icon></button>
+    <div class="post-thumb-container" (click)="gotoPost()" *ngIf="post.content">
+        <button *ngIf="repostType != 'repost'" mat-icon-button class="post-options-dropdown-icon"><mat-icon>keyboard_arrow_down</mat-icon></button>
         <p *ngIf="repostType == 'repost'" class="repost-line">
             <mat-icon>repeat</mat-icon> {{parentAuthor.name}} Reposted 
         </p>
 
-        <div class="main">
+        <div class="post-thumb-content">
             <div class="left">
                 <img src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515">
             </div>
@@ -37,7 +37,7 @@
                 </mat-card-actions>
             </div>    
         </div>
-    </mat-card>
+    </div>
     
     <!-- just a straight re-post -->
     <app-post-thumb *ngIf="post.repost && !post.content"

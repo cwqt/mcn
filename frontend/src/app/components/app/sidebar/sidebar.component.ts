@@ -1,17 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-feed-sidebar',
-  templateUrl: './feed-sidebar.component.html',
-  styleUrls: ['./feed-sidebar.component.scss']
+  selector: 'app-sidebar',
+  templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.component.scss']
 })
-export class FeedSidebarComponent implements OnInit {
+export class SidebarComponent implements OnInit {
   @Input() currentUser:any;
 
   feedSidebar = [
     ["home", "Home"],
-    ["explore", "Explore"],
-    ["notifications", "Notifications"],
+    // ["explore", "Explore"],
+    // ["notifications", "Notifications"],
     ["group_work", "Gardens"],
     ["eco", "Plants"],
     ["device_hub", "Devices"],

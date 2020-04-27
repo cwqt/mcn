@@ -1,36 +1,48 @@
 <app-wrapper>
-    <mat-card class="profile-wrapper" *ngIf="user">
+    <div class="profile-wrapper" *ngIf="user">
 
+        <div class="profile-cover-container">
+            <div class="profile-covers">
+                <img class="profile-cover" src="https://img5.goodfon.com/wallpaper/nbig/b/27/greenhouse-plants-green-tropical-exotic-nature-interior.jpg" />
+                <img class="profile-cover-blur" src="https://img5.goodfon.com/wallpaper/nbig/b/27/greenhouse-plants-green-tropical-exotic-nature-interior.jpg" />        
+            </div>
+        </div>
+
+        <div class="profile-body-container">
             <app-profile-sidebar [user]="user" [currentUser]="currentUser"></app-profile-sidebar>
 
-            <div class="profile-body">
-                <div *ngIf="showOutlet" class="tab-body-header">
-                    <button mat-icon-button (click)="goBackToProfile()">
-                        <mat-icon>keyboard_backspace</mat-icon>
-                    </button>
-                    <h1>{{pretty(tabs[tabIndex].label)}}</h1>
-                </div>
-    
-                <router-outlet class="outlet"
-                    (activate)="onActivate($event)"
-                    (deactivate)="onDeactivate($event)">
-                </router-outlet>
-    
-                <mat-tab-group *ngIf="!showOutlet" class="tab-group" (selectedTabChange)="setActiveTab($event)" [selectedIndex]="tabIndex">
-                    <mat-tab
-                        *ngFor="let tab of tabs; let index = index"
-                        [label]="tab.label"> 
-                        <div class="tab-content">
-                            <ndc-dynamic
-                                [ndcDynamicComponent]="tab.component"
-                                [ndcDynamicInputs]="{user:user, currentUser:currentUser, index:index, currentIndex:tabIndex}">
-                            </ndc-dynamic>
-                        </div>
-                    </mat-tab>
-                </mat-tab-group>    
+            <div class="profile-body-scroll">
+                <mat-card class="profile-body">
+                    <div *ngIf="showOutlet" class="tab-body-header">
+                        <button mat-icon-button (click)="goBackToProfile()">
+                            <mat-icon>keyboard_backspace</mat-icon>
+                        </button>
+                        <h1>{{pretty(tabs[tabIndex].label)}}</h1>
+                    </div>    
+                    <div class="children">
+                        <router-outlet class="outlet"
+                            (activate)="onActivate($event)"
+                            (deactivate)="onDeactivate($event)">
+                        </router-outlet>
+                    </div>
+        
+                    <mat-tab-group *ngIf="!showOutlet" class="tab-group" (selectedTabChange)="setActiveTab($event)" [selectedIndex]="tabIndex">
+                        <mat-tab
+                            *ngFor="let tab of tabs; let index = index"
+                            [label]="tab.label"> 
+                            <div class="tab-content">
+                                <ndc-dynamic
+                                    [ndcDynamicComponent]="tab.component"
+                                    [ndcDynamicInputs]="{user:user, currentUser:currentUser, index:index, currentIndex:tabIndex}">
+                                </ndc-dynamic>
+                            </div>
+                        </mat-tab>
+                    </mat-tab-group>    
+                </mat-card>
     
             </div>
-        </mat-card>
+        </div>
+    </div>
 
     <mat-spinner *ngIf="!user"></mat-spinner>
 </app-wrapper>

@@ -1,19 +1,21 @@
 <div *ngIf="post" class="post">
 
-    <div class="post-header">
-        <div class="left">
-            <img src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515">
+    <div class="post-content">
+        <div class="post-header">
+            <div class="left">
+                <img src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515">
+            </div>
+    
+            <div class="right">
+                <p><b>{{user.name}}</b></p>
+                <p>@{{user.username}}</p>
+            </div>
         </div>
-
-        <div class="right">
-            <p><b>{{user.name}}</b></p>
-            <p>@{{user.username}}</p>
-        </div>
-    </div>
-
-    <div class="post-body">
-        <p>{{post.content}}</p>
-        <p class="date">{{post.created_at | date: 'shortTime'}} · {{post.created_at | date: 'mediumDate'}}</p> 
+    
+        <div class="post-body">
+            <p>{{post.content}}</p>
+            <p class="date">{{post.created_at | date: 'shortTime'}} · {{post.created_at | date: 'mediumDate'}}</p> 
+        </div>    
     </div>
 
     <mat-divider></mat-divider>
