@@ -46,7 +46,7 @@ export class SidebarComponent implements OnInit {
     this.router.navigate([this.feedSidebar[index][2]])
   }
 
-  toggleSidebar() {
-    this.sidebarOpen = !this.sidebarOpen
-  }
+  openSidebar() { this.sidebarOpen = true }
+  hideSidebar() { this.sidebarOpen = false }
+  toggleSidebar() { this.sidebarOpen = !this.sidebarOpen }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { IPostModel, IPost } from '../../../../../../../../backend/lib/models/Post.model';
+import { IPostModel, IPost } from '../../../../../../backend/lib/models/Post.model';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({

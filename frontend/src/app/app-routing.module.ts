@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './_helpers';
 
 import { IndexComponent }     from './routes/index/index.component';
-import { FeedComponent }      from './routes/feed/feed.component';
+import { FeedComponent }      from './components/feed/feed.component';
 import { ProfileComponent }   from './routes/profile/profile.component';
 import { VerifiedComponent }  from './components/pages/verified/verified.component';
 import { NotFoundComponent }  from './components/pages/not-found/not-found.component';

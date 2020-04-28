@@ -1,4 +1,4 @@
-<div class="sidebar" [class.closed]="!sidebarOpen" (clickOutside)="toggleSidebar()" [exclude]="'button, .sidebar-buttons'">
+<div class="sidebar" [class.closed]="!sidebarOpen" (click)="openSidebar()" (clickOutside)="hideSidebar()" [exclude]="'.sidebar-buttons'">
     <div class="sidebar-header">
         <div class="icon" (click)="toggleSidebar()">
             <img src="/assets/leaf.png">

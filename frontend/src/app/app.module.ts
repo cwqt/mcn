@@ -27,7 +27,7 @@ import { HeaderBarComponent }       from './components/app/header-bar/header-bar
 
 import { LoadButtonComponent }      from './components/_helpers/load-button/load-button.component';
 
-import { FeedComponent }            from './routes/feed/feed.component';
+import { FeedComponent }            from './components/feed/feed.component';
 
 import { ProfileComponent }         from './routes/profile/profile.component';
 import { ProfileSidebarComponent }  from './components/profile/profile-sidebar/profile-sidebar.component';
@@ -39,7 +39,7 @@ import { UserDevicesListComponent } from './components/profile/tabs/user-devices
 import { PlantItemComponent }       from './components/profile/tabs/user-plants-list/plant-item/plant-item.component';
 import { PostComponent }            from './components/profile/tabs/user-posts-list/post/post.component';
 import { PostThumbComponent }       from './components/profile/tabs/user-posts-list/post-thumb/post-thumb.component';
-import { CreatePostFormComponent }  from './components/profile/tabs/user-posts-list/create-post-form/create-post-form.component';
+import { CreatePostFormComponent }  from './components/feed/create-post-form/create-post-form.component';
 import { ProfileSidebarQuadComponent } from './components/profile/profile-sidebar/profile-sidebar-quad/profile-sidebar-quad.component';
 
 import { MatButtonModule }        from '@angular/material/button';
