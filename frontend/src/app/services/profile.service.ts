@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { IPlantModel } from '../../../../backend/lib/models/Plant.model';
 import { IUserModel } from '../../../../backend/lib/models/User.model';
 import { IPostModel } from '../../../../backend/lib/models/Post.model';
+import { IDeviceModel } from '../../../../backend/lib/models/Device.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class ProfileService {
     return this.currentProfileSubject.getValue();
   }
 
-  selectedTab:BehaviorSubject<string> = new BehaviorSubject("plants");
+  selectedTab:BehaviorSubject<string> = new BehaviorSubject("devices");
   cachedTabs = [];
 
   constructor(private userService:UserService, private http:HttpClient) {
@@ -49,6 +50,13 @@ export class ProfileService {
     return this.http.get(`/api/users/${this.currentProfileValue._id}/plants`)
       .pipe(map((plants:IPlantModel[]) => {
         return plants;
+      })).toPromise();
+  }
+
+  getDevices() {
+    return this.http.get(`/api/users/${this.currentProfileValue._id}/devices`)
+      .pipe(map((devices:IDeviceModel[]) => {
+        return devices;
       })).toPromise();
   }
 }

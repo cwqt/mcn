@@ -1,0 +1,104 @@
+<h1 mat-dialog-title>create new device wizard</h1>
+
+<div mat-dialog-content>
+    <mat-vertical-stepper [linear]="true" #matStepper>
+        <mat-step [stepControl]="createDeviceFormGroup">
+            <form [formGroup]="createDeviceFormGroup">
+                <ng-template matStepLabel>enter device details</ng-template>
+                <p>Please select the model of the device which you wish to add, if you are unsure of the model check the <a href="">supported devices</a> page for more information.</p>
+
+                <mat-form-field>
+                    <mat-label>device model</mat-label>
+                    <mat-select matInput formControlName="device_model" required>
+                      <mat-option *ngFor="let device of devices" [value]="device.model">
+                        {{device.model}}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error>must select device model</mat-error>  
+                </mat-form-field>
+
+                <p>Give your device a friendly name!</p>
+
+                <mat-form-field>
+                    <mat-label>device name</mat-label>
+                    <input matInput formControlName="device_name" placeholder="" required autocomplete="off">
+                    <mat-error>device is required to have a name</mat-error>  
+                </mat-form-field>         
+            </form>
+
+            <button mat-button matStepperNext>Next</button>
+
+        </mat-step>
+    
+        <mat-step>
+            <ng-template matStepLabel>register the device on your network</ng-template>
+            <p>
+                In order for your device to send data to <i>my.corrhizal.net</i> it must have an active Wi-Fi connection, you will now connect to your device and upload your network credentials such that it may connect to the Internet.
+            </p>
+            <ul>
+                <li>Set device into <b>AP mode</b></li>
+                <li>Reboot device</li>
+                <li>Disconnect from your current Wi-Fi connection, and connect to <b>mcn-wd1m-XXXX</b>, where <b>XXXX</b> will be random characters</li>
+                <li>Go to your web-browser and go to <a href="">http://mcn-wd1m-XXXX.local/</a></li>
+                <li>You will be prompted with a page where you can enter your network credentials</li>
+                <li>Click <i>save</i></li>
+                <li>Un-plug device, set into <b>Station mode</b> and plug back in, device will now attempt to connect to your network</li>
+                <li>Re-connect back to your normal Wi-Fi station</li>
+            </ul>
+
+            <button mat-button matStepperNext>Next</button>
+        </mat-step>
+
+        <mat-step>
+            <ng-template matStepLabel>get device API key</ng-template>
+            <p>Your device will require a private key to securely communicate with our servers. Below is the key that will now be uploaded to you device in a similar fashion to setting network credentials.</p> <b>It is important that you do not share this key with anyone.</b>
+            <pre>eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJPbmxpbmUgSldUIEJ1aWxkZXIiLCJpYXQiOjE1ODgxMTA1NDcsImV4cCI6MTYxOTY0NjU0NywiYXVkIjoid3d3LmV4YW1wbGUuY29tIiwic3ViIjoianJvY2tldEBleGFtcGxlLmNvbSIsIkdpdmVuTmFtZSI6IkpvaG5ueSIsIlN1cm5hbWUiOiJSb2NrZXQiLCJFbWFpbCI6Impyb2NrZXRAZXhhbXBsZS5jb20iLCJSb2xlIjpbIk1hbmFnZXIiLCJQcm9qZWN0IEFkbWluaXN0cmF0b3IiXX0.naPQz1WdnOU2VdJ0aTHfpgeSILkeZUyoLNTjp7vLM4E</pre>
+            <p>
+                If your device is connected to your network you will be able connect to it using the same address as previous:
+            </p>
+            <ul>
+                <li>Go to <a href="">http://mcn-wd1m-XXXX.local/</a></li>
+                <li>Copy the above key into the form text area</li>
+                <li>Click <i>save</i></li>
+                <li>Reboot the device</li>
+            </ul>
+            <button mat-button matStepperNext>Next</button>
+        </mat-step>
+
+        <mat-step optional>
+            <ng-template matStepLabel>assign device to recordable</ng-template>
+            <p>
+                Please select a recordable to assign this device to, all recorded data will be associated with this plant/garden.
+            </p>
+            <mat-form-field>
+                <mat-label>recordable name</mat-label>
+                <mat-select formControlName="device_model">
+                  <mat-option *ngFor="let device of devices" [value]="device.model">
+                    {{device.model}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <br />
+              <button mat-button matStepperNext>Next</button>
+        </mat-step>
+    
+        <mat-step>
+            <ng-template matStepLabel>verify device active</ng-template>
+            <p>
+                Assuming your device is connected to the network, it will attempt to send a ping to our servers to let us know it's active
+            </p>
+
+            <p>Device state: <b>verified</b></p>
+            <button mat-button matStepperNext>Next</button>
+        </mat-step>    
+    
+        <mat-step>
+            <ng-template matStepLabel>complete</ng-template>
+            <p>Great, your device is now operational and recording data, if you wish to know more about devices please visit the <a href="">documentation</a> page.</p>
+            <button mat-button matStepperNext>Finish</button>
+        </mat-step>
+    </mat-vertical-stepper>
+</div>
+
+
+

@@ -5,13 +5,14 @@ import T            from '../Test';
 export default () => {
     describe('test recordable routes', () => {
         it('should create a plant belonging to a user', done => {
-            request(T.app).post(`/user/${T.get('USER')._id}/plants`)
+            request(T.app).post(`/users/${T.get('USER')._id}/plants`)
             .send({
                 "name":"super cool cactus",
                 "species": "cactus"
             })
             .expect(201)
             .end((err, res) => {
+                console.log(res.body)
                 expect(res.body.name).to.be.eq('super cool cactus')
                 done(err);
             })

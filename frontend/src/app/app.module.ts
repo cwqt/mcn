@@ -24,6 +24,7 @@ import { NotFoundComponent }        from './components/pages/not-found/not-found
 
 import { WrapperComponent }         from './components/app/wrapper/wrapper.component';
 import { HeaderBarComponent }       from './components/app/header-bar/header-bar.component';
+import { SidebarComponent } from './components/app/sidebar/sidebar.component';
 
 import { LoadButtonComponent }      from './components/_helpers/load-button/load-button.component';
 
@@ -41,6 +42,7 @@ import { PostComponent }            from './components/profile/tabs/user-posts-l
 import { PostThumbComponent }       from './components/profile/tabs/user-posts-list/post-thumb/post-thumb.component';
 import { CreatePostFormComponent }  from './components/feed/create-post-form/create-post-form.component';
 import { ProfileSidebarQuadComponent } from './components/profile/profile-sidebar/profile-sidebar-quad/profile-sidebar-quad.component';
+import { CreateDeviceGuideComponent } from './components/profile/tabs/user-devices-list/create-device-guide/create-device-guide.component';
 
 import { MatButtonModule }        from '@angular/material/button';
 import { MatButtonToggleModule }  from '@angular/material/button-toggle';
@@ -51,8 +53,11 @@ import { MatStepperModule }       from '@angular/material/stepper';
 import { MatIconModule, MatIcon } from '@angular/material/icon';
 import { MatTabsModule }          from '@angular/material/tabs';
 import {MatCardModule}            from '@angular/material/card';
+import {MatDialogModule}          from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { SidebarComponent } from './components/app/sidebar/sidebar.component';
+import {MatSelectModule} from '@angular/material/select';
+import { SupportedDevicesComponent } from './components/pages/supported-devices/supported-devices.component';
+
 
 
 @NgModule({
@@ -82,6 +87,8 @@ import { SidebarComponent } from './components/app/sidebar/sidebar.component';
     SidebarComponent,
     CreatePostFormComponent,
     ProfileSidebarQuadComponent,
+    CreateDeviceGuideComponent,
+    SupportedDevicesComponent,
   ],
   imports: [
     BrowserModule,
@@ -105,7 +112,9 @@ import { SidebarComponent } from './components/app/sidebar/sidebar.component';
     MatStepperModule,
     MatIconModule,
     MatTabsModule,
-    MatCardModule
+    MatCardModule,
+    MatDialogModule,
+    MatSelectModule
 
   ],
   providers: [

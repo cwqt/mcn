@@ -9,14 +9,16 @@ import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 import { Model } from "mongoose";
 
-const getSchema = (recordable_type:string):Model<any> => {
+import neode from '../common/neo4j';
+
+const getSchema = (recordable_type:string):string => {
     switch(recordable_type) {
-        case RecordableTypes.Plant:     return Plant;
-        case RecordableTypes.Garden:    return Garden;
+        case RecordableTypes.Plant:     return 'Plant';
+        case RecordableTypes.Garden:    return 'Garden';
     }
 }
 
-export const createRecordable = (req:Request, res:Response, next:NextFunction) => {
+export const createRecordable = async (req:Request, res:Response, next:NextFunction) => {
     validate([body('name').not().isEmpty().trim()])(req, res, () => {
         ((req:Request, res:Response, next:NextFunction) => {
             //should really use transactions
@@ -26,15 +28,20 @@ export const createRecordable = (req:Request, res:Response, next:NextFunction) =
     });
 }
 
-// export const readAllRecordables = (req:Request, res:Response, next:NextFunction) => {
-//     let query = res.locals.query || {}
-//     query["user_id"]  = req.params.uid;
+export const readAllRecordables = async (req:Request, res:Response, next:NextFunction) => {
+    let query = res.locals.query || {}
+    query["user_id"]  = req.params.uid;
 
-//     getSchema(res.locals.type).find(query, (error:any, recordables:IPlantModel[] | IGardenModel[]) => {
-//         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-//         res.json(recordables);
-//     })
-// }
+    let result = await neode.instance.cypher(`
+        MATCH (x:${getSchema(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
+        RETURN x
+    `, {
+        uid:req.params.uid
+    })
+
+    let recordables = result.records.map(recordable => recordable.get('x').properties)
+    res.json(recordables)
+}
 
 // export const readRecordable = (req:Request, res:Response, next:NextFunction) => {
 //     getSchema(res.locals.type).findById(req.params.rid, (error:any, recordable:IPlantModel | IGardenModel) => {

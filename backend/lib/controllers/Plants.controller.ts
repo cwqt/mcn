@@ -8,7 +8,8 @@ import neode from '../common/neo4j';
 
 export const createPlant = async (req:Request, res:Response, next:NextFunction) => {
     let result = await neode.instance.cypher(`
-        CREATE (p:Plant, $body)-[:CREATED]->(:User {_id:$uid})
+        MATCH (u:User {_id:$uid})
+        CREATE (p:Plant $body)<-[:CREATED]-(u)
         return p
     `, {
         uid: req.params.uid,
@@ -16,7 +17,7 @@ export const createPlant = async (req:Request, res:Response, next:NextFunction) 
     })
 
     if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
-    res.json(result.records[0].get('p').properties);
+    res.status(HTTP.Created).json(result.records[0].get('p').properties);
 }
 
 export const updatePlant = (req:Request, res:Response, next:NextFunction) => {
