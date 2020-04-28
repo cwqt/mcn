@@ -1,21 +1,3 @@
-.icon {
-    height: 40px;
-    display: flex;
-    align-items: center;
-    margin-left:26px;
-    margin-top: 20px;
-    img {
-
-        max-height: 100%;
-        object-fit: contain;
-        filter: brightness(0.1);
-    }    
-    h1 {
-        margin: 0;
-        margin-left: 20px;
-    }
-}
-
 .sidebar {
     box-shadow: 0 10px 20px rgba(32,34,37,.10);
     display: flex;
@@ -26,38 +8,81 @@
     padding: 10px;
     z-index: 9;
     position: relative;
-}
-
-
-.sidebar-button {
-    display: block;
-    background: white;
-    width: 250px;
-    margin-bottom: 10px;
-    border-radius: 50px;
-    transition: 0.2s;
-    &:last-child {
-
-    }
-    &:hover {
-        background-color: rgba(103,58,183, 0.1);
-        h2, mat-icon {
-            color: rgba(103,58,183, 0.8) !important;
-        }
-    }
-    .contents {
-        padding: 10px;
+    transition: width 2s;
+    .sidebar-header {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        h2 {
-            margin: 0;
-            font-weight: normal;
-            letter-spacing: 1px;
-            margin-left: 20px;
+        margin-left:18px;
+        margin-top: 20px;
+        button {
+            margin-right: 10px;
         }
-        mat-icon {
-            font-size: 25px;
+        .icon {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            img {
+        
+                max-height: 100%;
+                object-fit: contain;
+                filter: brightness(0.1);
+            }    
+            h1 {
+                margin: 0;
+                margin-left: 20px;
+            }
+        }
+    }
+    .button-container .sidebar-button {
+        background: white;
+        &:hover {
+            background-color: rgba(103,58,183, 0.1);
+            h2, mat-icon {
+                color: rgba(103,58,183, 0.8) !important;
+            }
+        }
+        .contents mat-icon {
             color: grey;
         }
     }
+    .sidebar-button {
+        display: block;
+        width: 250px;
+        border-radius: 50px;
+        transition: 0.2s;
+        // &:last-child {}
+        .contents {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            h2 {
+                margin: 0;
+                font-weight: normal;
+                letter-spacing: 1px;
+                margin-left: 20px;
+            }
+            mat-icon {
+                font-size: 25px;
+            }
+        }
+    }
+    &.closed {
+        width: 100px;
+        overflow: hidden;
+        padding-right: 0;
+        h2, h1 {
+            opacity: 0;
+        }
+    }
+}
+
+.active {
+    overflow: hidden;
+    z-index: 999;
+    border-right: 2px solid rgba(103,58,183, 0.8) !important;
+}
+
+.button-container {
+    margin-bottom: 10px;
 }

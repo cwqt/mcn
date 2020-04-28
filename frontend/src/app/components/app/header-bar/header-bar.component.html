@@ -1,3 +1,13 @@
 <div class="header-bar">
+    <div class="search-bar">
+        <mat-icon>search</mat-icon>
+        <input matInput placeholder="Search mcn...">
+    </div>
 
+    <div class="avatar">
+        <img (click)="openUserMenu()" src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515" />
+        <div class="user-menu" [class.visible]="userMenuOpen" (clickOutside)="hideUserMenu()" [exclude]="'img'">
+            <button mat-button (click)="logout()">Logout</button>
+        </div>
+    </div>
 </div>

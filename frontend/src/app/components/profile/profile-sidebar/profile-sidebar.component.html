@@ -1,66 +1,56 @@
-<mat-card class="profile" *ngIf="user && currentUser">
-    <h1 *ngIf="user.username == currentUser.username" class="edit-profile-button">
-        <button mat-mini-fab color="default"><mat-icon>edit</mat-icon></button>
-    </h1>
-        <div class="avatar-container">
-            <img src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515" />
-        </div>    
-
-    <div class="profile-info">
-        <h2>{{user.name}}</h2>
-        <p id="username">@{{user.username}}</p>
-        <p id="bio">{{user.bio}}</p>
-
-        <div class="user-meta">
-            <div id="location" *ngIf="user.location">
-                <mat-icon>location_on</mat-icon>{{user.location}}
+<div class="profile-sidebar-container">
+    <mat-card class="profile" *ngIf="user && currentUser">
+        <h1 *ngIf="user.username == currentUser.username" class="edit-profile-button">
+            <button mat-mini-fab color="default"><mat-icon>edit</mat-icon></button>
+        </h1>
+            <div class="avatar-container">
+                <img src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515" />
+            </div>    
+    
+        <div class="profile-info">
+            <h2>{{user.name}}</h2>
+            <p id="username">@{{user.username}}</p>
+            <p id="bio">{{user.bio}}</p>
+    
+            <div class="user-meta">
+                <div id="location" *ngIf="user.location">
+                    <mat-icon>location_on</mat-icon>{{user.location}}
+                </div>
             </div>
-        </div>
-
-        <div class="user-followers-following">
-            <p>Posts<b>{{user.posts}}</b></p>
-            <p>Followers<b>{{user.followers}}</b></p>
-            <p>Following<b>{{user.following}}</b></p>
-        </div>
-        <!-- <a id="url" href="">{{user.url || ''}}</a> -->
-        <!-- <img src="{{user.cover_image}}" /> -->
-
-        <!-- <div class="recordable-container">
-            <app-recordable-count
-                (changeRecordableTab)="navigateRecordable($event)"
-                [user]="user.username"
-                [icon]="'eco'"
-                [title]="'plants'"
-                [count]="user.plant_count">
-            </app-recordable-count>
-
-            <app-recordable-count
-                (changeRecordableTab)="navigateRecordable($event)"
-                [user]="user.username"
-                [icon]="'group_work'"
-                [title]="'gardens'"
-                [count]="user.garden_count">
-            </app-recordable-count>
-
-            <app-recordable-count
-                (changeRecordableTab)="navigateRecordable($event)"
-                [user]="user.username"
-                [icon]="'device_hub'"
-                [title]="'devices'"
-                [count]="user.device_count">
-            </app-recordable-count>
-        </div> -->
-
-        <!-- <div class="sides">
-            <div class="side">
-                <p>{{user.posts}}</p>
-                <span>post{{user.posts > 1 ? 's' :''}} </span>
+    
+            <div class="user-followers-following">
+                <p>Posts<b>{{user.posts}}</b></p>
+                <p>Followers<b>{{user.followers}}</b></p>
+                <p>Following<b>{{user.following}}</b></p>
             </div>
-
-            <div class="side">
-                <p>{{user.followers}}</p>
-                <span>follower{{user.followers == 1 ? '' : 's'}} </span>
+    
+             <!-- <div class="recordable-container">
+                <app-recordable-count
+                    (changeRecordableTab)="navigateRecordable($event)"
+                    [user]="user.username"
+                    [icon]="'eco'"
+                    [title]="'plants'"
+                    [count]="user.plant_count">
+                </app-recordable-count>
+    
+                <app-recordable-count
+                    (changeRecordableTab)="navigateRecordable($event)"
+                    [user]="user.username"
+                    [icon]="'group_work'"
+                    [title]="'gardens'"
+                    [count]="user.garden_count">
+                </app-recordable-count>
+    
+                <app-recordable-count
+                    (changeRecordableTab)="navigateRecordable($event)"
+                    [user]="user.username"
+                    [icon]="'device_hub'"
+                    [title]="'devices'"
+                    [count]="user.device_count">
+                </app-recordable-count>
+            </div>  -->
             </div>
-        </div> -->
-    </div>
-</mat-card>
+    </mat-card>
+    
+    <!-- <app-profile-sidebar-quad></app-profile-sidebar-quad>     -->
+</div>

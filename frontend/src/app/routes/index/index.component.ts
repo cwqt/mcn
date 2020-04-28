@@ -21,7 +21,7 @@ export class IndexComponent implements OnInit {
         if(this.currentUser.new_user) {
           console.log('needs to do first time stuff')
         } else {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/']);
         }
       }
     });

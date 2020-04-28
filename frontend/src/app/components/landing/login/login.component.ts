@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
     .subscribe(
       user => {
         this.success = true;
-        if(!user.new_user) this.router.navigate(['/home']);
+        if(!user.new_user) this.router.navigate(['/']);
       },
       err => {
         this.success = false;

@@ -10,12 +10,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DynamicComponentModule, DynamicIoModule } from 'ng-dynamic-component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { ClickOutsideModule } from 'ng-click-outside';
 
 import { IndexComponent }           from './routes/index/index.component';
-import { LoginComponent }           from './components/index/login/login.component';
-import { RegisterComponent }        from './components/index/register/register.component';
-import { LoginHelpComponent }       from './components/index/login-help/login-help.component';
-import { FirstTimeSetupComponent }  from './components/index/first-time-setup/first-time-setup.component';
+import { LoginComponent }           from './components/landing/login/login.component';
+import { RegisterComponent }        from './components/landing/register/register.component';
+import { LoginHelpComponent }       from './components/landing/login-help/login-help.component';
+import { FirstTimeSetupComponent }  from './components/landing/first-time-setup/first-time-setup.component';
 
 
 import { VerifiedComponent }        from './components/pages/verified/verified.component';
@@ -38,6 +39,8 @@ import { UserDevicesListComponent } from './components/profile/tabs/user-devices
 import { PlantItemComponent }       from './components/profile/tabs/user-plants-list/plant-item/plant-item.component';
 import { PostComponent }            from './components/profile/tabs/user-posts-list/post/post.component';
 import { PostThumbComponent }       from './components/profile/tabs/user-posts-list/post-thumb/post-thumb.component';
+import { CreatePostFormComponent }  from './components/profile/tabs/user-posts-list/create-post-form/create-post-form.component';
+import { ProfileSidebarQuadComponent } from './components/profile/profile-sidebar/profile-sidebar-quad/profile-sidebar-quad.component';
 
 import { MatButtonModule }        from '@angular/material/button';
 import { MatButtonToggleModule }  from '@angular/material/button-toggle';
@@ -50,7 +53,6 @@ import { MatTabsModule }          from '@angular/material/tabs';
 import {MatCardModule}            from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SidebarComponent } from './components/app/sidebar/sidebar.component';
-import { CreatePostFormComponent } from './components/profile/tabs/user-posts-list/create-post-form/create-post-form.component';
 
 
 @NgModule({
@@ -79,6 +81,7 @@ import { CreatePostFormComponent } from './components/profile/tabs/user-posts-li
     PostThumbComponent,
     SidebarComponent,
     CreatePostFormComponent,
+    ProfileSidebarQuadComponent,
   ],
   imports: [
     BrowserModule,
@@ -91,6 +94,7 @@ import { CreatePostFormComponent } from './components/profile/tabs/user-posts-li
     DynamicIoModule,
     MomentModule,
     PickerModule,
+    ClickOutsideModule,
 
     MatButtonModule,
     MatButtonToggleModule,

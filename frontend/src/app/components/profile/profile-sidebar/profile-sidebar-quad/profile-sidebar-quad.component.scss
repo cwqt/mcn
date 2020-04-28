@@ -1,0 +1,23 @@
+.quad-container {
+    display: flex;
+    flex-flow: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 15px;
+    .quad {
+        text-align: center;
+        flex: 0 48%;
+        margin-bottom: 15px;
+        border-radius: 20px;
+        position: relative;
+        padding-top: 25px;
+        width: 100%;
+        mat-icon {
+            font-size: 36px;
+        }
+        h3 {
+            margin-top: 10px;
+            font-size: 20px;
+        }
+    }
+}

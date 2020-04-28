@@ -1,6 +1,88 @@
 .header-bar {
-    height: 50px;
     background: white;
     width: 100%;
     z-index: 2;
+    padding: 15px 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: visible;
+    .search-bar {
+        width: 50%;
+        background-color: whitesmoke;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        mat-icon {
+            margin-right: 20px;
+            margin-top: 5px;
+            margin-left: 5px;
+        }
+        input {
+            margin: 0;
+            height: 100%;
+            font-size: 19px;
+            outline: 0;
+            border: 0;
+            background-color: transparent;
+            width: 100%;
+        }
+    }
+
+
+    .avatar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        img {
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+        }
+        .user-menu {
+            position: absolute;
+            background-color: white;
+            padding: 10px 0;
+            top: 60px;
+            right: 0;
+            border-radius: 10px;
+            border: 1px solid lightgrey;
+            box-shadow: 0 10px 20px rgba(32, 34, 37, 0.1);
+            width: 300px;
+            display: flex;
+            flex-flow: column;
+            transition: opacity 0.2s, height 0s;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            height: 0;
+            z-index: 10;
+            &.visible {
+                opacity: 1 !important;
+                visibility: visible !important;
+                height: auto !important;
+            }
+            a {
+                opacity: 0.6;
+                font-size: 18px;
+                width: 100%;
+                padding: 10px 20px;
+                text-decoration: none;
+                color: #000;
+                transition: 0.2s;
+                &:hover {
+                    opacity: 1;
+                    background: whitesmoke;
+                }
+            }
+        }
+    }
+}
+
+.toggle-sidebar {
+
 }

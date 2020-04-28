@@ -26,9 +26,9 @@ export class AuthenticationService {
   }
 
   logout() {
-    localStorage.removeItem('currentUser');
     this.cookieService.set('connect.sid', null)
     this.userService.setUser(null);
+    localStorage.removeItem('currentUser');
     this.router.navigate(['/']);
     return this.http.post<any>('/api/users/logout', {})
   }

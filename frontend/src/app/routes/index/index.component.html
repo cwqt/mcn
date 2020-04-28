@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div class="wrapper" *ngIf="!currentUser || currentUser.new_user">
     <div class="left side">
         <div class="content-wrapper">
             <div class="blur"></div>
@@ -39,3 +39,5 @@
         </div>
     </div>
 </div>
+
+<app-feed *ngIf="currentUser && !currentUser.new_user"></app-feed>

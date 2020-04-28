@@ -15,7 +15,7 @@ const routes: Routes = [
   { path: 'feed', component: FeedComponent, canActivate: [AuthGuard]},
   { path: 'verified', component: VerifiedComponent, canActivate: [AuthGuard]},
   {
-    path: 'u/:username',
+    path: ':username',
     component: ProfileComponent, canActivate: [AuthGuard],
     children: [
       { path: 'posts/:pid', component: PostComponent },

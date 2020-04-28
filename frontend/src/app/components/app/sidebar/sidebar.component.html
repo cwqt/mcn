@@ -1,22 +1,31 @@
-<div class="sidebar">
-    <div class="icon">
-        <img src="/assets/leaf.png">
-        <h1>mcn</h1>    
-    </div>
-
-    <div class="sidebar-buttons">
-        <button mat-button *ngFor="let item of feedSidebar" class="sidebar-button">
-            <div class="contents">
-                <mat-icon [inline]="true"  fontSet="material-icons-outlined">{{item[0]}}</mat-icon>
-                <h2>{{item[1]}}</h2>    
-            </div>
+<div class="sidebar" [class.closed]="!sidebarOpen" (clickOutside)="toggleSidebar()" [exclude]="'button, .sidebar-buttons'">
+    <div class="sidebar-header">
+        <div class="icon" (click)="toggleSidebar()">
+            <img src="/assets/leaf.png">
+            <h1>mcn</h1>    
+        </div>    
+        <button mat-icon-button>
+            <mat-icon [class.inverted]="sidebarOpen">navigate_before</mat-icon>
         </button>    
     </div>
 
-    <button mat-button class="sidebar-button">
+    <div class="sidebar-buttons">
+        <div *ngFor="let item of feedSidebar; let i = index" class="button-container">
+            <div class="button-highlighter" [class.active]="isActiveRoute(i)">
+                <button mat-button (click)="changeRoute(i)" class="sidebar-button">
+                    <div class="contents">
+                        <mat-icon [inline]="true" fontSet="material-icons-outlined">{{item[0]}}</mat-icon>
+                        <h2>{{item[1]}}</h2>    
+                    </div>
+                </button>     
+            </div>
+        </div>
+    </div>
+
+    <button mat-flat-button color="primary" class="sidebar-button">
         <div class="contents">
-            <img src="currentUser.avatar">
-            <h2>Profile</h2>    
+            <mat-icon [inline]="true" fontSet="material-icons-outlined">add_circle</mat-icon>
+            <h2>Create</h2>    
         </div>
     </button>
 </div>

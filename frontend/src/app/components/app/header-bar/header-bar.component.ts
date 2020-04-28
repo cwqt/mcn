@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
@@ -7,11 +7,15 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   styleUrls: ['./header-bar.component.scss']
 })
 export class HeaderBarComponent implements OnInit {
+  @Input() currentUser:any;
+  userMenuOpen:boolean = false;
 
   constructor(private authService:AuthenticationService) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
+  openUserMenu() { this.userMenuOpen = true }
+  hideUserMenu() { this.userMenuOpen = false }
+  
   logout() { this.authService.logout(); }
 }
