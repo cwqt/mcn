@@ -12,31 +12,32 @@ export default () => {
             })
             .expect(201)
             .end((err, res) => {
-                console.log(res.body)
                 expect(res.body.name).to.be.eq('super cool cactus')
+                T.set('PLANT', res.body);
                 done(err);
             })
         })
 
-        it('should update the plant', done => {
-            request(T.app).put(`/users/${T.get('USER')._id}/plants/${T.get('PLANT')._id}`)
-            .send({
-                "name": "super cool moop",
-                "recording": ["moisture"],
-                "species": "hydromalis gigas",
-                "image": "http://somes3link.com/image.jpg",
-                "host_url": "http://192.168.0.42:3000",
-                "feed_url": "http://192.168.0.42:3001",
-                "parameters": {
-                    "temperature": {"upper":20,"avg":15,"lower":5}
-                },
-            })
-            .set('Content-Type', 'application/json')
-            .expect(200)
-            .end((err, res) => {
-                expect(res.body.name).to.be.eq('super cool moop')
-                done(err);
-            })
-        })
+
+        // it('should update the plant', done => {
+        //     request(T.app).put(`/users/${T.get('USER')._id}/plants/${T.get('PLANT')._id}`)
+        //     .send({
+        //         "name": "super cool moop",
+        //         "recording": ["moisture"],
+        //         "species": "hydromalis gigas",
+        //         "image": "http://somes3link.com/image.jpg",
+        //         "host_url": "http://192.168.0.42:3000",
+        //         "feed_url": "http://192.168.0.42:3001",
+        //         "parameters": {
+        //             "temperature": {"upper":20,"avg":15,"lower":5}
+        //         },
+        //     })
+        //     .set('Content-Type', 'application/json')
+        //     .expect(200)
+        //     .end((err, res) => {
+        //         expect(res.body.name).to.be.eq('super cool moop')
+        //         done(err);
+        //     })
+        // })
     })
 }

@@ -7,9 +7,11 @@ import { Plant, IPlantModel }           from "../models/Plant.model";
 import { Garden, IGardenModel }         from "../models/Garden.model";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
-import { Model } from "mongoose";
+import { Model, Schema } from "mongoose";
+
 
 import neode from '../common/neo4j';
+import { Types } from "mongoose";
 
 const getSchema = (recordable_type:string):string => {
     switch(recordable_type) {
@@ -22,7 +24,9 @@ export const createRecordable = async (req:Request, res:Response, next:NextFunct
     validate([body('name').not().isEmpty().trim()])(req, res, () => {
         ((req:Request, res:Response, next:NextFunction) => {
             //should really use transactions
-            req.body["type"]    = res.locals.type;
+            req.body["type"] = res.locals.type;
+            req.body["_id"]  = new Types.ObjectId().toHexString(),
+
             next();    
         })(req, res, next);
     });

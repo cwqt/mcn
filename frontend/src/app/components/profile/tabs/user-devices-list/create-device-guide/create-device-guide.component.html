@@ -5,7 +5,7 @@
         <mat-step [stepControl]="createDeviceFormGroup">
             <form [formGroup]="createDeviceFormGroup">
                 <ng-template matStepLabel>enter device details</ng-template>
-                <p>Please select the model of the device which you wish to add, if you are unsure of the model check the <a href="">supported devices</a> page for more information.</p>
+                <p>Please select the model of the device which you wish to add, if you are unsure of the model check the <a [routerLink]="['/supported_devices']">supported devices</a> page for more information.</p>
 
                 <mat-form-field>
                     <mat-label>device model</mat-label>
@@ -26,6 +26,7 @@
                 </mat-form-field>         
             </form>
 
+            <app-load-button>Create device</app-load-button>
             <button mat-button matStepperNext>Next</button>
 
         </mat-step>

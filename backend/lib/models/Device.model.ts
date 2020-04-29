@@ -10,11 +10,8 @@ export enum IHardwareModels {
 }
 
 export interface IDevice {
-    user_id:            IUserModel["_id"];
-    api_key_id?:        IApiKeyModel["_id"];
-    recordable_id?:     IPlantModel["_id"] | IGardenModel["_id"];
     verified:           boolean;
-    friendly_name:      string;
+    name:               string;
     hardware_model?:    string;
     software_version?:  string;
     device_ip?:         string;

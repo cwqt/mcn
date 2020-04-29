@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { UserService } from 'src/app/services/user.service';
 
 
 @Component({
@@ -9,6 +10,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./create-device-guide.component.scss']
 })
 export class CreateDeviceGuideComponent implements OnInit {
+  deviceCreated:boolean = false
   createDeviceFormGroup: FormGroup;
   devices = [
     { model:"mcn-wd1m" },
@@ -19,11 +21,16 @@ export class CreateDeviceGuideComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<CreateDeviceGuideComponent>,
+    private userService:UserService,
     private formBuilder:FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data:any,
   ) { }
 
   ngOnInit(): void {
     this.createDeviceFormGroup = this.formBuilder.group({ device_name: [''] }, {device_model:['']});
+  }
+
+  createDevice() {
+    this.userService.createDevice(this.createDeviceFormGroup.value);
   }
 }

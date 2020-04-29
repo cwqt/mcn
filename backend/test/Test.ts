@@ -10,7 +10,9 @@ let T = {
     globals: {
         USER: {},
         POST: {},
-        REPLY: {}
+        REPLY: {},
+        PLANT: {},
+        DEVICE: {}
     },
 } as any;
 
@@ -18,7 +20,7 @@ T.globals.ALT = Object.assign({}, T.globals)
 
 //after every integration T
 T.finish = () => {
-    console.log(T.globals)
+    // console.log(T.globals)
     T.clearVars();
     T.exit();
 }

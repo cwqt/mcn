@@ -45,4 +45,8 @@ export class UserService {
   createPost(content) {
     return this.http.post(`/api/users/${this.currentUserValue._id}/posts`, content)
   }
+
+  createDevice(content) {
+    return this.http.post(`/api/users/${this.currentUserValue._id}/devices`, content)
+  }
 }
