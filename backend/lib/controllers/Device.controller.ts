@@ -22,6 +22,7 @@ export const createDevice = async (req:Request, res:Response) => {
     res.status(HTTP.Created).json(result.records[0].get('d').properties);
 }
 
+
 export const assignDeviceToRecordable = async (req:Request, res:Response) => {
     let result;
     try {
@@ -43,12 +44,29 @@ export const assignDeviceToRecordable = async (req:Request, res:Response) => {
 }
 
 
-// export const readAllDevices = (req:Request, res:Response, next:NextFunction) => {
-//     Device.find({user_id: req.params.uid}, (error, devices:IDeviceModel[] | undefined) => {
-//         if(error) return next(new ErrorHandler(HTTP.ServerError, error.message))
-//         res.json(devices);
-//     })
-// }
+export const readAllDevices = async (req:Request, res:Response, next:NextFunction) => {
+    let result = await neode.instance.cypher(`
+        MATCH (d:Device)<-[:CREATED]-(:User {_id:$uid})
+        RETURN d
+    `, {
+        uid:req.params.uid
+    })
+
+    let recordables = result.records.map(recordable => recordable.get('d').properties)
+    res.json(recordables)
+}
+
+export const readDevice = async (req:Request, res:Response) => {
+    let result = await neode.instance.cypher(`
+        MATCH (d:Device {_id:$did})
+        RETURN d
+    `, {
+        did:req.params.did
+    })
+
+    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
+    res.status(HTTP.Created).json(result.records[0].get('d').properties);
+}
 
 // export const createDevice = (req:Request, res:Response, next:NextFunction) => {
 //     req.body["user_id"] = req.params.uid;

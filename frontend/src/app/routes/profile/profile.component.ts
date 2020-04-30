@@ -73,9 +73,8 @@ export class ProfileComponent implements OnInit {
   }
 
   goBackToProfile() {
-    this.router.navigate([`/u/${this.currentUser.username}`])
+    this.router.navigate([`/${this.currentUser.username}`])
   }
-
 
   pretty(label:string) {
     return (label.charAt(0).toUpperCase() + label.slice(1)).slice(0, -1);;

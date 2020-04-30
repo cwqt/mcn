@@ -29,6 +29,6 @@ export class PostThumbComponent implements OnInit {
   }
 
   gotoPost() {
-    this.router.navigate([`/u/${this.currentUser.username}/posts/${this.post._id}`])
+    this.router.navigate([`/${this.currentUser.username}/posts/${this.post._id}`])
   }
 }

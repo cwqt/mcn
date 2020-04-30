@@ -40,7 +40,7 @@ export class UserDevicesListComponent implements OnInit {
     if(this.currentUser.username == this.user.username) this.userIsOurself = true;
     this.profileService.selectedTab.subscribe(key => {
       this.isActive = false;
-      if(key == "posts") this.isActive = true;
+      if(key == "devices") this.isActive = true;
       if(this.isActive && !this.initialised) this.initialise();
     })
   }

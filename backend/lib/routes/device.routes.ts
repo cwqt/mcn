@@ -4,9 +4,10 @@ import { validate } from '../common/validate';
 var AsyncRouter = require("express-async-router").AsyncRouter;
 
 import {
-    // readAllDevices,
+    readAllDevices,
     createDevice,
-    assignDeviceToRecordable
+    assignDeviceToRecordable,
+    readDevice
     // unAssignDeviceFromRecordable,
     // readDevice,
     // updateDevice,
@@ -16,10 +17,14 @@ import {
 
 const router = AsyncRouter({mergeParams: true});
 
-// router.get('/', readAllDevices);
+router.get('/', readAllDevices);
 router.post('/', validate([
     body('name').not().isEmpty().trim().withMessage('device must have friendly name'),
 ]), createDevice);
+
+router.get('/:did', validate([
+    param('did').isMongoId().trim().withMessage('invalid device id'),
+]), readDevice)
 
 router.post('/:did/assign/:rid', validate([
     param('did').isMongoId().trim().withMessage('invalid device id'),

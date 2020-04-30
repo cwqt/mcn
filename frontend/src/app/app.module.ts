@@ -28,7 +28,10 @@ import { SidebarComponent } from './components/app/sidebar/sidebar.component';
 
 import { LoadButtonComponent }      from './components/_helpers/load-button/load-button.component';
 
-import { FeedComponent }            from './components/feed/feed.component';
+import { FeedComponent }            from './routes/feed/feed.component';
+import { CreatePostFormComponent }  from './routes/feed/create-post-form/create-post-form.component';
+
+import { DeviceComponent }          from './routes/device/device.component';
 
 import { ProfileComponent }         from './routes/profile/profile.component';
 import { ProfileSidebarComponent }  from './components/profile/profile-sidebar/profile-sidebar.component';
@@ -38,11 +41,12 @@ import { UserPlantsListComponent }  from './components/profile/tabs/user-plants-
 import { UserGardensListComponent } from './components/profile/tabs/user-gardens-list/user-gardens-list.component';
 import { UserDevicesListComponent } from './components/profile/tabs/user-devices-list/user-devices-list.component';
 import { PlantItemComponent }       from './components/profile/tabs/user-plants-list/plant-item/plant-item.component';
-import { PostComponent }            from './components/profile/tabs/user-posts-list/post/post.component';
+import { PostComponent }            from './routes/post/post.component';
 import { PostThumbComponent }       from './components/profile/tabs/user-posts-list/post-thumb/post-thumb.component';
-import { CreatePostFormComponent }  from './components/feed/create-post-form/create-post-form.component';
 import { ProfileSidebarQuadComponent } from './components/profile/profile-sidebar/profile-sidebar-quad/profile-sidebar-quad.component';
 import { CreateDeviceGuideComponent } from './components/profile/tabs/user-devices-list/create-device-guide/create-device-guide.component';
+import { SupportedDevicesComponent } from './components/pages/supported-devices/supported-devices.component';
+import { DeviceThumbComponent }     from './components/profile/tabs/user-devices-list/device-thumb/device-thumb.component';
 
 import { MatButtonModule }        from '@angular/material/button';
 import { MatButtonToggleModule }  from '@angular/material/button-toggle';
@@ -55,9 +59,9 @@ import { MatTabsModule }          from '@angular/material/tabs';
 import {MatCardModule}            from '@angular/material/card';
 import {MatDialogModule}          from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {MatSelectModule} from '@angular/material/select';
-import { SupportedDevicesComponent } from './components/pages/supported-devices/supported-devices.component';
+import {MatExpansionModule} from '@angular/material/expansion';
 
+import {MatSelectModule} from '@angular/material/select';
 
 
 @NgModule({
@@ -89,6 +93,8 @@ import { SupportedDevicesComponent } from './components/pages/supported-devices/
     ProfileSidebarQuadComponent,
     CreateDeviceGuideComponent,
     SupportedDevicesComponent,
+    DeviceThumbComponent,
+    DeviceComponent
   ],
   imports: [
     BrowserModule,
@@ -114,7 +120,8 @@ import { SupportedDevicesComponent } from './components/pages/supported-devices/
     MatTabsModule,
     MatCardModule,
     MatDialogModule,
-    MatSelectModule
+    MatSelectModule,
+    MatExpansionModule
 
   ],
   providers: [

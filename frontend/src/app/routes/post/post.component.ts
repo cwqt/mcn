@@ -22,7 +22,6 @@ export class PostComponent implements OnInit {
 
   getFullPost() {
     this.profileService.getFullPost(this.post_id).then(post => {
-      console.log(post)
       this.post = post
     });
   }

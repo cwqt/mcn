@@ -4,16 +4,15 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './_helpers';
 
 import { IndexComponent }     from './routes/index/index.component';
-import { FeedComponent }      from './components/feed/feed.component';
 import { ProfileComponent }   from './routes/profile/profile.component';
 import { VerifiedComponent }  from './components/pages/verified/verified.component';
 import { NotFoundComponent }  from './components/pages/not-found/not-found.component';
-import { PostComponent }      from './components/profile/tabs/user-posts-list/post/post.component';
+import { PostComponent }      from './routes/post/post.component';
 import { SupportedDevicesComponent } from './components/pages/supported-devices/supported-devices.component';
+import { DeviceComponent } from './routes/device/device.component';
 
 const routes: Routes = [
   { path: '', component: IndexComponent},
-  { path: 'feed', component: FeedComponent, canActivate: [AuthGuard]},
   { path: 'verified', component: VerifiedComponent, canActivate: [AuthGuard]},
   { path: 'supported_devices', component: SupportedDevicesComponent, canActivate: [AuthGuard]},
   {
@@ -21,6 +20,7 @@ const routes: Routes = [
     component: ProfileComponent, canActivate: [AuthGuard],
     children: [
       { path: 'posts/:pid', component: PostComponent },
+      { path: 'devices/:did', component: DeviceComponent },
       // { path: 'plants/:pid', component: PostComponent },
       // { path: 'gardens/:gid', component: PostComponent },
       // { path: 'devices/:did', component: PostComponent },
@@ -32,6 +32,7 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
     onSameUrlNavigation: 'ignore',
+    paramsInheritanceStrategy: 'always'
   })],
   exports: [RouterModule]
 })
