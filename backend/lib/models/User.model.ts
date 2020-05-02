@@ -3,12 +3,13 @@ import neode from '../common/neo4j';
 import { Types } from "mongoose";
 
 export interface IUserStub {
+    _id:            string,
     username:       string,
+    name:           string,
     avatar?:        string,
 }
 
 export interface IUser extends IUserStub {
-    name:           string,
     email:          string,
     verified:       boolean,
     new_user:       boolean,
@@ -20,10 +21,6 @@ export interface IUser extends IUserStub {
     location?:      string,
     created_at?:    Date,
     updated_at?:    Date,
-}
-
-export interface IUserModel extends IUser, Document {
-    _id: string,
     plants: number,
     gardens: number,
     devices: number,
@@ -32,3 +29,4 @@ export interface IUserModel extends IUser, Document {
     hearts: number,
     posts: number,
 }
+

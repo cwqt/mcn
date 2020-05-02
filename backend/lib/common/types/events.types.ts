@@ -1,4 +1,4 @@
-export default {
-    'WATERED':      String,
-    'FILLED_TANK':  String,
+export enum Event {
+    Watered = 'watered',
+    FilledTank = 'filled_tank'
 }

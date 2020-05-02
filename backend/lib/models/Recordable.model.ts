@@ -1,31 +1,23 @@
-import * as mongoose from 'mongoose';
-import { Document, Schema, Model, model} from "mongoose";
-
-import { IUserModel } from "./User.model"
+import { Measurement } from '../common/types/measurements.types';
+import * as IpAddress from 'ip-address';
 
 export enum RecordableTypes {
   Garden = 'garden',
   Plant = 'plant'
 }
 
-interface IParameter {
-  upper:  number,
-  avg:    number,
-  lower:  number, 
+export interface IRecordableStub {
+    _id:          string,
+    name:         string,
+    thumbnail?:   string,
+    created_at?:  Date,
 }
 
-export interface IRecordable {
-    name:           string,
-    recording?:     string[],
-    image?:         string,
-    feed_url?:      string,
-    verified:       boolean,
-    parameters?:    Map<string, IParameter[]>,
-    created_at?:    Date,
-    updated_at?:    Date,
-    test:string,
-}
-
-export interface IRecordableModel extends IRecordable {
-  _id: string,
+export interface IRecordable extends IRecordableStub {
+  images:         string[],
+  recording?:     string[],
+  feed_url?:      IpAddress.Address4 | IpAddress.Address6,
+  verified:       boolean,
+  parameters?:    Map<Measurement, [number, number, number]>, //lower, avg, upper bounds
+  updated_at?:    Date,
 }
