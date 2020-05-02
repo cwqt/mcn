@@ -1,16 +1,16 @@
 import { Request, Response, NextFunction }    from "express"
 const { body } = require('express-validator');
 
-import { Recordable, RecordableTypes }  from "../models/Recordable.model"
+import { IRecordable, RecordableTypes }  from "../models/Recordable.model"
 import { validate }                     from "../common/validate";
-import { Plant, IPlantModel }           from "../models/Plant.model";
-import { Garden, IGardenModel }         from "../models/Garden.model";
+import {  IPlant }           from "../models/Plant.model";
+import {  IGarden }         from "../models/Garden.model";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 import { Model, Schema } from "mongoose";
 
 
-import neode from '../common/neo4j';
+import { n4j } from '../common/neo4j';
 import { Types } from "mongoose";
 
 const getSchema = (recordable_type:string):string => {
@@ -33,15 +33,15 @@ export const createRecordable = async (req:Request, res:Response, next:NextFunct
 }
 
 export const readAllRecordables = async (req:Request, res:Response, next:NextFunction) => {
-    let result = await neode.instance.cypher(`
-        MATCH (x:${getSchema(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
-        RETURN x
-    `, {
-        uid:req.params.uid
-    })
+    // let result = await neode.instance.cypher(`
+    //     MATCH (x:${getSchema(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
+    //     RETURN x
+    // `, {
+    //     uid:req.params.uid
+    // })
 
-    let recordables = result.records.map(recordable => recordable.get('x').properties)
-    res.json(recordables)
+    // let recordables = result.records.map(recordable => recordable.get('x').properties)
+    // res.json(recordables)
 }
 
 // export const readRecordable = (req:Request, res:Response, next:NextFunction) => {

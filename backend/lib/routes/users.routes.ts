@@ -17,14 +17,15 @@ import {
     followUser,
     unfollowUser,
     readFollowers,
+    readFollowing,
     blockUser,
     unblockUser,
     readBlockedUsers} from "../controllers/User.controller";
 
+import posts    from './posts.routes';
 import devices  from './device.routes';
 import plants   from './plants.routes';
 import gardens  from './gardens.routes';
-import posts    from './posts.routes';
 
 const router = AsyncRouter();
 
@@ -89,7 +90,7 @@ router.delete('/:uid/block/:uid2', validate([
     param('uid2').isMongoId().trim().withMessage('invalid user id')
 ]), unblockUser)
 
-// router.get('/:uid/following', readFollowing)
+router.get('/:uid/following', readFollowing)
 router.get('/:uid/followers', readFollowers)
 router.get('/:uid/blocking', readBlockedUsers)
 

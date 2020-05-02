@@ -2,7 +2,7 @@ const { generateVerificationHash, verifyHash } = require('dbless-email-verificat
 import { Request, Response, NextFunction } from 'express';
 import nodemailer from 'nodemailer';
 
-import neode from '../common/neo4j';
+import {n4j} from '../common/neo4j';
 
 import { ErrorHandler } from '../common/errorHandler';
 import config from '../config';
@@ -61,10 +61,23 @@ export const verifyUserEmail = async (req:Request, res:Response, next:NextFuncti
     let isVerified = verifyEmail(email, hash);
     if(!isVerified) throw new ErrorHandler(HTTP.BadRequest, 'Not a valid hash')
 
-    await neode.instance.cypher(`
-        MATCH (u:User {email: '${email}'})
-        SET u.verified = TRUE
-        RETURN u`, {})
- 
-    res.redirect(HTTP.Moved, `${config.FE_URL}/verified`)
+    let session = n4j.session();
+    let result;
+    try {
+        result = await session.run(`
+            MATCH (u:User {email: $email})
+            SET u.verified = TRUE
+            RETURN u`
+        , {
+            email: email
+        })
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
+    let u = result.records[0].get('u').properties;
+    if(!u.verified) return res.redirect(HTTP.Moved, `${config.FE_URL}/verified?state=false`)
+
+    res.redirect(HTTP.Moved, `${config.FE_URL}/verified?state=true`)
 }

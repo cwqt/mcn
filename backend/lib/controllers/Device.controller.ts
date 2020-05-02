@@ -1,72 +1,71 @@
 import { Request, Response, NextFunction, request } from "express";
 
-import { Device, IDeviceModel }     from "../models/Device.model";
+import { IDevice }     from "../models/Device.model";
 import { HTTP }                     from '../common/http';
 import { ErrorHandler }             from "../common/errorHandler";
-import neode from '../common/neo4j';
 import { Types } from "mongoose";
 
 export const createDevice = async (req:Request, res:Response) => {
-    req.body["_id"] = new Types.ObjectId().toHexString();
+    // req.body["_id"] = new Types.ObjectId().toHexString();
 
-    let result = await neode.instance.cypher(`
-        MATCH (u:User {_id:$uid})
-        CREATE (d:Device $body)<-[:CREATED]-(u)
-        return d
-    `, {
-        uid: req.params.uid,
-        body: req.body
-    })
+    // let result = await neode.instance.cypher(`
+    //     MATCH (u:User {_id:$uid})
+    //     CREATE (d:Device $body)<-[:CREATED]-(u)
+    //     return d
+    // `, {
+    //     uid: req.params.uid,
+    //     body: req.body
+    // })
 
-    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
-    res.status(HTTP.Created).json(result.records[0].get('d').properties);
+    // if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
+    // res.status(HTTP.Created).json(result.records[0].get('d').properties);
 }
 
 
 export const assignDeviceToRecordable = async (req:Request, res:Response) => {
-    let result;
-    try {
-        result = await neode.instance.cypher(`
-            MATCH (r {_id:$rid}) WHERE r:Plant OR r:Garden
-            MATCH (d:Device {_id:$did})
-            MERGE (d)-[m:MONITORS]->(r)
-            RETURN m
-        `, {
-            rid: req.params.rid,
-            did: req.params.did,
-        })
-    } catch(e) { 
-        console.log(e)
-    }
+    // let result;
+    // try {
+    //     result = await neode.instance.cypher(`
+    //         MATCH (r {_id:$rid}) WHERE r:Plant OR r:Garden
+    //         MATCH (d:Device {_id:$did})
+    //         MERGE (d)-[m:MONITORS]->(r)
+    //         RETURN m
+    //     `, {
+    //         rid: req.params.rid,
+    //         did: req.params.did,
+    //     })
+    // } catch(e) { 
+    //     console.log(e)
+    // }
 
-    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
-    res.status(HTTP.Created).end()
+    // if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
+    // res.status(HTTP.Created).end()
 }
 
 
 export const readAllDevices = async (req:Request, res:Response, next:NextFunction) => {
-    let result = await neode.instance.cypher(`
-        MATCH (d:Device)<-[:CREATED]-(:User {_id:$uid})
-        RETURN d
-    `, {
-        uid:req.params.uid
-    })
+    // let result = await neode.instance.cypher(`
+    //     MATCH (d:Device)<-[:CREATED]-(:User {_id:$uid})
+    //     RETURN d
+    // `, {
+    //     uid:req.params.uid
+    // })
 
-    let recordables = result.records.map(recordable => recordable.get('d').properties)
-    res.json(recordables)
+    // let recordables = result.records.map(recordable => recordable.get('d').properties)
+    // res.json(recordables)
 }
 
 export const readDevice = async (req:Request, res:Response) => {
-    let result = await neode.instance.cypher(`
-        MATCH (d:Device {_id:$did})
-        RETURN d
-    `, {
-        did:req.params.did
-    })
+//     let result = await neode.instance.cypher(`
+//         MATCH (d:Device {_id:$did})
+//         RETURN d
+//     `, {
+//         did:req.params.did
+//     })
 
-    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
-    res.status(HTTP.Created).json(result.records[0].get('d').properties);
-}
+//     if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
+//     res.status(HTTP.Created).json(result.records[0].get('d').properties);
+// }
 
 // export const createDevice = (req:Request, res:Response, next:NextFunction) => {
 //     req.body["user_id"] = req.params.uid;
@@ -83,7 +82,7 @@ export const readDevice = async (req:Request, res:Response) => {
 //         if(!device) return next(new ErrorHandler(HTTP.NotFound, "no such device"));
 //         res.json(device);
 //     })
-// }
+}
 
 // export const updateDevice = (req:Request, res:Response, next:NextFunction) => {
 //     var newData:any = {}

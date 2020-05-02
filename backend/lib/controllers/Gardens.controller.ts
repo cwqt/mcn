@@ -1,22 +1,22 @@
 import { Request, Response, NextFunction }    from "express"
 
-import { Garden, IGardenModel }       from '../models/Garden.model';
-import { Plant, IPlantModel }         from '../models/Plant.model';
+import { IGarden }       from '../models/Garden.model';
+import { IPlant }         from '../models/Plant.model';
 import { ErrorHandler }             from "../common/errorHandler";
 import { HTTP }                     from "../common/http";
 
 export const createGarden = (req:Request, res:Response, next:NextFunction) => {
-    Garden.create(req.body, (error:any, garden:IGardenModel) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        res.json(garden);
-    })
+    // Garden.create(req.body, (error:any, garden:IGardenModel) => {
+    //     if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+    //     res.json(garden);
+    // })
 }
 
 export const updateGarden = (req:Request, res:Response, next:NextFunction) => {
-    Garden.findByIdAndUpdate(req.params.rid, res.locals.newData, (error:any, garden:IGardenModel) => {
-        if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-        res.json(garden);
-    })
+    // Garden.findByIdAndUpdate(req.params.rid, res.locals.newData, (error:any, garden:IGardenModel) => {
+    //     if(error) return next(new ErrorHandler(HTTP.ServerError, error));
+    //     res.json(garden);
+    // })
 }
 
 export const getAvgPlantMeasurements = (req:Request, res:Response) => {

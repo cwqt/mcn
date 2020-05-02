@@ -23,7 +23,7 @@ describe('Integration testing', () => {
 
     test_users();
     test_posts();
-    test_recordables();
-    test_devices();
-    test_api_keys();
+    // test_recordables();
+    // test_devices();
+    // test_api_keys();
 }).afterAll(() => T.finish())

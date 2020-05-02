@@ -1,15 +1,21 @@
-import bcrypt                                   from "bcrypt"
-import { Request, Response, NextFunction }      from "express"
+import bcrypt                               from "bcrypt"
+import { Request, Response, NextFunction }  from "express"
 
-import { IUserModel }             from "../models/User.model"
-import { sendVerificationEmail }        from "./Email.controller";
-import { ErrorHandler }                 from '../common/errorHandler';
-import { HTTP }                         from '../common/http';
-import config                           from '../config';
-import { uploadImageToS3, S3Image }     from '../common/storage';
-import neode from '../common/neo4j';
+import { sendVerificationEmail }    from "./Email.controller";
+import { ErrorHandler }             from '../common/errorHandler';
+import { HTTP }                     from '../common/http';
+import config                       from '../config';
+import { uploadImageToS3, S3Image } from '../common/storage';
+import { n4j }                      from '../common/neo4j';
+import { Types }                    from 'mongoose';
 
-export const filterUserFields = (user:any, toStub?:boolean) => {
+import {
+    IUserStub,
+    IUser,
+    IUserPrivate }      from "../models/User.model";
+
+
+export const filterUserFields = (user:any, toStub?:boolean):IUser | IUserStub => {
     let hiddenFields = ["_labels", "pw_hash", "salt"];
     if(toStub) hiddenFields = hiddenFields.concat(['email', 'admin', 'new_user', 'created_at', 'verified'])
 
@@ -18,26 +24,34 @@ export const filterUserFields = (user:any, toStub?:boolean) => {
 }
 
 export const readAllUsers = async (req:Request, res:Response, next:NextFunction) => {
-    const order_by = (req.query.order || 'title') as string;
-    const sort = (req.query.sort || 'ASC') as string;
-    const limit = (req.query.limit || 10) as number;
-    const page = (req.query.page || 1) as number;
-    const skip = (page-1) * limit;
+    let session = n4j.session();
+    try {
+        let result = await session.run(`
+            MATCH (u:User)
+            RETURN u
+        `)
 
-    const params = {};
-    const order = {[order_by]: sort};
-
-    let u = await neode.instance.all('User', params, order , limit, skip);
-    let users:any = u.map(user => filterUserFields(user.properties()));
-    res.json(users);
+        let users:IUser[] = result.records.map((record:any) => filterUserFields(record.get('u').properties));
+        res.json(users);
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    } finally {
+        session.close();
+    }
 }
 
-export const createUser = async (req:Request, res:Response, next:NextFunction) => {
+export const createUser = async (req:Request, res:Response) => {
     //see if username/email already taken
-    let result = await neode.instance.cypher(`MATCH (u:User) WHERE u.email = $email OR u.username = $username RETURN u`, {
-        email: req.body.email,
-        username: req.body.username
-    })
+    let session = n4j.session();
+    let result;
+    try {
+        result = await session.run(`MATCH (u:User) WHERE u.email = $email OR u.username = $username RETURN u`, {
+            email: req.body.email,
+            username: req.body.username
+        })
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    }
 
     if(result.records.length) {
         let errors = [];
@@ -51,26 +65,63 @@ export const createUser = async (req:Request, res:Response, next:NextFunction) =
     if(!emailSent) throw new ErrorHandler(HTTP.ServerError, 'Verification email could not be sent');
 
     //generate password hash
-    req.body["salt"] = await bcrypt.genSalt(10);
-    req.body["pw_hash"] = await bcrypt.hash(req.body["password"], req.body["salt"]);
-    delete req.body["password"];
+    let salt    = await bcrypt.genSalt(10);
+    let pw_hash = await bcrypt.hash(req.body["password"], salt);
 
-    let created_user = (await neode.instance.create('User', req.body)).properties();
-    res.status(HTTP.Created).json(filterUserFields(created_user));
+    let user:IUserPrivate = {
+        _id:           Types.ObjectId().toHexString(),
+        username:      req.body.username,
+        email:         req.body.email,
+        verified:      false,
+        new_user:      true,
+        salt:          salt,
+        pw_hash:       pw_hash,
+        admin:         false,
+        created_at:    Date.now(),
+        plants:        0,
+        gardens:       0,
+        devices:       0,
+        followers:     0,
+        following:     0,
+        hearts:        0,
+        posts:         0,
+    }
+
+    try {
+        let result = await session.run(`
+            CREATE (u:User $body)
+            RETURN u`,
+        { body: user });
+
+        let u = filterUserFields(result.records[0].get('u').properties) as IUser;
+        res.status(HTTP.Created).json(u);
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
 }
 
-export const getUserById = async (_id:string) => {
-    let result = await neode.instance.cypher(`
-        MATCH (u:User {_id:$_id})
-        WITH u, 
-            size((u)-[:LIKES]->(:Post)) as hearts,
-            size((u)-[:FOLLOWS]->(:User)) as following,
-            size((u)<-[:FOLLOWS]-(:User)) as followers,
-            size((u)-[:POSTED]->(:Post)) as posts
-        RETURN u, {hearts:hearts, following:following, followers:followers, posts:posts} AS meta
-    `, {
-        _id: _id
-    })
+export const getUserById = async (_id:string):Promise<IUser | IUserStub> => {
+    let session = n4j.session();
+    let result;
+    try {
+        result = await session.run(`
+            MATCH (u:User {_id:$_id})
+            WITH u,
+                size((u)-[:LIKES]->(:Post)) as hearts,
+                size((u)-[:FOLLOWS]->(:User)) as following,
+                size((u)<-[:FOLLOWS]-(:User)) as followers,
+                size((u)-[:POSTED]->(:Post)) as posts
+            RETURN u, {hearts:hearts, following:following, followers:followers, posts:posts} AS meta
+        `, {
+            _id: _id
+        })
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError)
+    } finally {
+        session.close();
+    }
 
     let r = result.records[0];
     if(!r || r.get('u') == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
@@ -89,10 +140,18 @@ export const readUserById = async (req:Request, res:Response, next:NextFunction)
 }
 
 export const readUserByUsername = async (req:Request, res:Response, next:NextFunction) => {
-    let result = await neode.instance.cypher(`
-        MATCH (u:User {username: $username})
-        RETURN u
-    `, { username: req.params.username })
+    let session = n4j.session();
+    let result;
+    try {
+        result = await session.run(`
+            MATCH (u:User {username: $username})
+            RETURN u
+        `, { username: req.params.username })
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError)
+    } finally {
+        session.close()
+    }
 
     let r = result.records[0];
     if(!r || r.get('u') == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
@@ -108,10 +167,24 @@ export const updateUser = async (req:Request, res:Response, next:NextFunction) =
         newData[reqKeys[i]] = req.body[reqKeys[i]];
     }
 
-    let u = await neode.instance.find('User', req.params.uid);
-    if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+    let session = n4j.session();
+    let result;
+    try {
+        result = await session.run(`
+            MATCH (u:User {_id:$uid})
+            SET u += $body
+            RETURN u
+        `, {
+            uid: req.params.uid,
+            body: newData
+        })
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
 
-    let user = (await u.update(newData)).properties();
+    let user = result.records[0].get('u').properties
     res.json(filterUserFields(user));
 }
 
@@ -120,22 +193,27 @@ const updateImage = async (user_id:string, file:Express.Multer.File, field:strin
     try {
         image = await uploadImageToS3(user_id, file, field) as S3Image;
     } catch(e) {
-        throw new Error(e);
+        throw new ErrorHandler(HTTP.ServerError, e);
     }
 
-    let results = await neode.instance.cypher(`
-        MATCH (u:User {_id: '${user_id}'})
-        SET u.${field} = '${image.data.Location}'
-        RETURN u
-    `, {})
+    let session = n4j.session();
+    let result;
+    try {
+        result = await session.run(`
+            MATCH (u:User {_id: "${user_id}"})
+            SET u.${field} = '${image.data.Location}'
+            RETURN u
+        `, {})
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    } finally {
+        session.close();
+    }
 
-    return filterUserFields(results.records[0].get('u').properties);
+    return filterUserFields(result.records[0].get('u').properties);
 }
 
 export const updateUserAvatar = async (req:Request, res:Response, next:NextFunction) => {
-    let u = await neode.instance.find('User', req.params.uid);
-    if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
-
     try {
         let user = await updateImage(req.params.uid, req.file, 'avatar');
         res.json(user);
@@ -145,9 +223,6 @@ export const updateUserAvatar = async (req:Request, res:Response, next:NextFunct
 }
 
 export const updateUserCoverImage = async (req:Request, res:Response, next:NextFunction) => {
-    let u = await neode.instance.find('User', req.params.uid);
-    if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
-
     try {
         let user = await updateImage(req.params.uid, req.file, 'cover_image');
         res.json(user);
@@ -157,14 +232,21 @@ export const updateUserCoverImage = async (req:Request, res:Response, next:NextF
 }
 
 export const deleteUser = async (req:Request, res:Response, next:NextFunction) => {
-    let u = await neode.instance.find('User', req.params.uid);
-    if(!u) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+    let session = n4j.session();
     try {
-        await u.delete();
+        await session.run(`
+            MATCH (u:User {_id:$uid})
+            DETACH DELETE u
+        `, {
+            uid:req.params.uid
+        })
     } catch(e) {
         throw new ErrorHandler(HTTP.ServerError, e);
+    } finally {
+        session.close();
     }
-    return res.status(HTTP.OK).end();
+
+    res.status(HTTP.OK).end();
 }
 
 export const loginUser = async (req:Request, res:Response, next:NextFunction) => {
@@ -172,10 +254,18 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
     let password = req.body.password;
 
     //find user by email
-    let result = await neode.instance.cypher(`MATCH (u:User {email: $email}) RETURN u`, {email:email})
-    if(!result.records.length) throw new ErrorHandler(HTTP.NotFound, [{param:'email', msg:'No such user for this email'}]);
+    let result;
+    let session = n4j.session()
+    try {
+        result = await session.run(`MATCH (u:User {email: $email}) RETURN u`, {email:email})
+        if(!result.records.length) throw new ErrorHandler(HTTP.NotFound, [{param:'email', msg:'No such user for this email'}]);
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    } finally {
+        session.close();
+    }
 
-    let user = result.records[0].get('u').properties as IUserModel;
+    let user:IUserPrivate = result.records[0].get('u').properties;
     if(!user.verified) throw new ErrorHandler(HTTP.Unauthorised, [{param:'form', msg:'Your account has not been verified'}]);
 
     try {
@@ -186,9 +276,11 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
             id: user._id,
             admin: user.admin || false
         }
+
+        user = await getUserById(user._id) as IUser;
         res.json(filterUserFields(user));
     } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError);
+        throw new ErrorHandler(HTTP.ServerError, e);
     }
 }
 
@@ -202,85 +294,148 @@ export const logoutUser = (req:Request, res:Response, next:NextFunction) => {
 }
 
 export const blockUser = async (req:Request, res:Response, next:NextFunction) => {
-    await neode.instance.cypher(`
-        MATCH (u1:User {_id:$uid1}), (u2:User {_id:$uid2})
-        OPTIONAL MATCH (u1)-[r:FOLLOWS]-(u2)
-        DELETE r
-        MERGE (u1)-[:BLOCKS]->(u2)
-    `, {
-        uid1: req.params.uid,
-        uid2: req.params.uid2
-    })
+    let session = n4j.session();
+
+    try {
+        await session.run(`
+            MATCH (u1:User {_id:$uid1}), (u2:User {_id:$uid2})
+            OPTIONAL MATCH (u1)-[r:FOLLOWS]-(u2)
+            DELETE r
+            MERGE (u1)-[:BLOCKS]->(u2)
+        `, {
+            uid1: req.params.uid,
+            uid2: req.params.uid2
+        })
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    } finally {
+        session.close();
+    }
     res.status(HTTP.OK).end();
 }
 
 export const unblockUser = async (req:Request, res:Response, next:NextFunction) => {
-    await neode.instance.cypher(`
-        MATCH (:User {_id:$uid1})-[r:BLOCKS]->(:User {_id:$uid2})
-        DELETE r
-    `, {
-        uid1: req.params.uid,
-        uid2: req.params.uid2
-    })
+    let session = n4j.session();
+    try {
+        await session.run(`
+            MATCH (:User {_id:$uid1})-[r:BLOCKS]->(:User {_id:$uid2})
+            DELETE r
+        `, {
+            uid1: req.params.uid,
+            uid2: req.params.uid2
+        })
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    } finally {
+        session.close();
+    }
     res.status(HTTP.OK).end();
 }
 
 export const followUser = async (req:Request, res:Response, next:NextFunction) => {
-    let result = await neode.instance.cypher(`
-        MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
-        OPTIONAL MATCH (u1)-[blocked:BLOCKS]-(u2)
-        return u1, u2, blocked
-    `, {
-        uid1: req.params.uid,
-        uid2: req.params.uid2
-    })
+    let session = n4j.session();
+    try {
+        let result = await session.run(`
+            MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
+            OPTIONAL MATCH (u1)-[blocked:BLOCKS]-(u2)
+            return u1, u2, blocked
+        `, {
+            uid1: req.params.uid,
+            uid2: req.params.uid2
+        })
 
-    if(result.records[0].get('blocked') != null) {
-        throw new ErrorHandler(HTTP.Unauthorised, "Can't follow blocked user");
+        if(result.records[0].get('blocked') != null) {
+            throw new ErrorHandler(HTTP.Unauthorised, "Can't follow blocked user");
+        }
+
+        await session.run(`
+            MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
+            MERGE (u1)-[:FOLLOWS]->(u2)
+        `, {
+            uid1: req.params.uid,
+            uid2: req.params.uid2,
+        })
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
     }
-
-    await neode.instance.cypher(`
-        MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
-        MERGE (u1)-[:FOLLOWS]->(u2)
-    `, {
-        uid1: req.params.uid,
-        uid2: req.params.uid2,
-    })
 
     res.status(HTTP.OK).end();
 }
 
 export const unfollowUser = async (req:Request, res:Response, next:NextFunction) => {
-    await neode.instance.cypher(`
-        MATCH (:User { _id: $uid1 })-[r:FOLLOWS]->(:User { _id: $uid2 })
-        DELETE r
+    let session = n4j.session()
+    try {
+        await session.run(`
+            MATCH (:User { _id: $uid1 })-[r:FOLLOWS]->(:User { _id: $uid2 })
+            DELETE r
         `, {
             uid1: req.params.uid,
-            uid2: req.params.uid2    
+            uid2: req.params.uid2
         })
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    } finally {
+        session.close();
+    }
+
     res.status(HTTP.OK).end();
 }
 
 export const readFollowers = async (req:Request, res:Response, next:NextFunction) => {
-    let result = await neode.instance.cypher(`
-        MATCH (follower:User)-[:FOLLOWS]->(u:User {_id:$uid})
-        RETURN follower
-    `, {
-        uid: req.params.uid
-    })
+    let session = n4j.session();
+    try {
+        let result = await session.run(`
+            MATCH (follower:User)-[:FOLLOWS]->(u:User {_id:$uid})
+            RETURN follower
+        `, {
+            uid: req.params.uid
+        })
 
-    let followers = result.records.map(record => filterUserFields(record.get('follower').properties));
-    res.json(followers)
+        let followers = result.records.map((record:any) => filterUserFields(record.get('follower').properties));
+        res.json(followers)
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
+}
+
+export const readFollowing = async (req:Request, res:Response, next:NextFunction) => {
+    let session = n4j.session();
+    try {
+        let result = await session.run(`
+            MATCH (follower:User)<-[:FOLLOWS]-(u:User {_id:$uid})
+            RETURN follower
+        `, {
+            uid: req.params.uid
+        })
+
+        let followers = result.records.map((record:any) => filterUserFields(record.get('follower').properties));
+        res.json(followers)
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
 }
 
 export const readBlockedUsers = async (req:Request, res:Response, next:NextFunction) => {
-    let result = await neode.instance.cypher(`
-        MATCH (blockee:User)<-[:BLOCKS]-(u:User {_id:$uid})
-        RETURN blockee
-    `, {
-        uid: req.params.uid
-    })
+    let session = n4j.session();
+    try {
+        let result = await session.run(`
+            MATCH (blockee:User)<-[:BLOCKS]-(u:User {_id:$uid})
+            RETURN blockee
+        `, {
+            uid: req.params.uid
+        })
 
-    let blockees = result.records.map(record => filterUserFields(record.get('blockee').properties));
-    res.json(blockees)
+        let blockees = result.records.map((record:any) => filterUserFields(record.get('blockee').properties));
+        res.json(blockees)
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
 }

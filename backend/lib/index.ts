@@ -4,11 +4,8 @@ import morgan           from 'morgan';
 import bodyParser       from 'body-parser';
 import cors             from 'cors';
 import session          from 'express-session';
-// import mongo4j          from './common/mongo4j';
-import n4j              from './common/neo4j';
+import { n4j }          from './common/neo4j';
 import log              from './common/logger';
-
-// mongo4j.init();
 
 import config           from './config';
 import routes           from './routes';
@@ -29,9 +26,7 @@ app.use(session({
     }
 }))
 
-if(!config.TESTING) {
-    app.use(morgan('tiny', { "stream": log.stream }));
-}
+if(!config.TESTING) app.use(morgan('tiny', { "stream": log.stream }));
 
 mongoose.connect(config.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
 const connection = mongoose.connection;
@@ -64,7 +59,7 @@ connection.once('open', () => {
 function graceful_exit() {
     connection.close(() => {
         server.close();
-        n4j.instance.close();
+        n4j.close();
         log.info(`Termination requested, MongoDB connection closed`);
     });
 }

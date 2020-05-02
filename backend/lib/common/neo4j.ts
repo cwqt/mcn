@@ -1,14 +1,4 @@
 import config from '../config';
-import Neode from 'neode';
+var neo4j = require('neo4j-driver')
 
-const instance = Neode.fromEnv();
-instance.with({
-    User: require('../models/User.model').User,
-    Post: require('../models/Post.model').Post,
-    Comment: require('../models/Comment.model').Comment
-})
-
-export default {
-    instance: instance,
-    close: () => instance.close()
-}
+export const n4j = neo4j.driver('neo4j://localhost', neo4j.auth.basic(config.N4J_USER, config.N4J_PASS));
