@@ -25,7 +25,7 @@ export const createRecordable = async (req:Request, res:Response, next:NextFunct
         ((req:Request, res:Response, next:NextFunction) => {
             //should really use transactions
             req.body["type"] = res.locals.type;
-            req.body["_id"]  = new Types.ObjectId().toHexString(),
+            req.body["_id"] = new Types.ObjectId().toHexString(),
 
             next();    
         })(req, res, next);
@@ -33,9 +33,6 @@ export const createRecordable = async (req:Request, res:Response, next:NextFunct
 }
 
 export const readAllRecordables = async (req:Request, res:Response, next:NextFunction) => {
-    let query = res.locals.query || {}
-    query["user_id"]  = req.params.uid;
-
     let result = await neode.instance.cypher(`
         MATCH (x:${getSchema(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
         RETURN x

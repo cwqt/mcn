@@ -14,7 +14,6 @@ export default () => {
             })
             .expect(201)
             .end((err, res) => {
-                console.log('------>', res.body)
                 expect(res.body.name).to.be.eq('wemos d1 mini')
                 T.set('DEVICE', res.body)
                 done(err);

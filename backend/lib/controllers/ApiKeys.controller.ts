@@ -7,89 +7,62 @@ import { Garden } from "../models/Garden.model";
 import { ApiKey } from "../models/ApiKey.model"
 // import { User } from "../models/User.model";
 import { ErrorHandler } from "../common/errorHandler";
+import { Types } from 'mongoose';
 
+import neode from '../common/neo4j';
+import { HTTP } from "../common/http";
 
-export const generateApiKey = (user_id:string, recordable_id:string, recordable_type:string):Promise<boolean> => {
-  return new Promise((resolve, reject) => {
-    let token = jwt.sign({
-      uid: recordable_id,
-      type: recordable_type
-    }, config.PRIVATE_KEY);
+const filterFields = (key:any) => {
+  let hiddenFields = ["key"];
+  hiddenFields.forEach(field => delete key[field]);
+  return key;
+}
+
+export const createApiKey = async (req:Request, res:Response) => {
+  let device_id = req.params.did
+  let key_name = req.body.key_name
+  let recordable_type = req.body.recordable_type
+
+  let token = await jwt.sign({
+    did: device_id,
+    typ: recordable_type,
+    iat: Date.now()
+  }, config.PRIVATE_KEY);
   
-    let key = {
-      user: user_id,
-      key: token,
-      type: recordable_type,
-      for: recordable_id
-    }
-  
-    ApiKey.create(key, (err:any, response:any) => {
-      if(err) resolve(false)
-      resolve(true)
-    })  
+  let key = {
+    key: token,
+    key_name: key_name,
+    created_at: Date.now(),
+    _id: Types.ObjectId().toHexString()
+  }
+
+  //create key & assign to device
+  let results = await neode.instance.cypher(`
+    MATCH (d:Device {_id:$did})
+    CREATE (a:ApiKey $body)
+    MERGE (d)-[m:HAS_KEY]->(a)
+    RETURN a
+  `, {
+      did: device_id,
+      body: key
   })
+
+  console.log(results)
+
+  if(!results.records.length) throw new ErrorHandler(HTTP.ServerError);
+  res.status(HTTP.Created).json(results.records[0].get('a').properties);
 }
 
-export const generateRecordableSymmetricKey = (req:Request, res:Response) => {}
+export const readApiKey = async (req:Request, res:Response) => {
+  let results = await neode.instance.cypher(`
+    MATCH (a:ApiKey {_id:$kid})
+    RETURN a
+  `, {
+    kid: req.params.kid
+  })
 
-export const validateMessageWithKey = (req:Request, res:Response) => {
-    const recordable_id = req.header('_id');
-    const type          = req.header('type');
-    if(!recordable_id || !type) {
-        res.status(400).json({message:'Needs headers'});
-    }
-    if(!['plant', 'garden'].includes(type)) {
-        res.status(400).json({message:'Must be correct type'});
-    }
-
-    let recordable;
-    if(type == 'plant') recordable = Plant;
-    if(type == 'garden') recordable = Garden;
-
+  if(!results.records.length) throw new ErrorHandler(HTTP.ServerError)
+  res.status(HTTP.Created).json(filterFields(results.records[0].get('a').properties))
 }
 
-
-export const generateJwt = (req:Request, res:Response) => {
-    let user_id = req.body._id
-
-    //encoded with user_id such that token can used on this user
-    var token = jwt.sign({
-        data: user_id,
-        exp: Math.floor(Date.now() / 1000) + (3600*24), //1 day
-    }, config.PRIVATE_KEY);
-
-    return res.json({"data": token})
-}
-
-export const validateJwt = async (req:Request, res:Response, next:NextFunction) => {
-  let token = req.headers.authorization.split(' ')[1];
-
-  let user_id = req.body._id
-  if(!token) { return res.json({"message": "No token provided"}) }
-
-  // User.findById(user_id, (err, user) => {
-  //   if(err) throw new ErrorHandler(400, err.message);
-  //   if(user == null) throw new ErrorHandler(400, "No user exists for this token");
-
-  //   // if admin, let them do whatever the hell they want
-  //   if(user.admin) next();
-  
-  //   //check if token is even valid
-  //   let decoded:any;
-  //   try {
-  //     decoded = jwt.verify(token, config.PRIVATE_KEY);
-  //   } catch(err) { throw new ErrorHandler(400, err.message) }
-
-  //   if(!decoded) throw new ErrorHandler(400, "Invalid token");
-    
-  //   //check if token is blacklisted
-  //   // todo: this with redis
-  
-  //   //check if provided token is for this user
-  //   let tokenIsForUser = decoded.data == user_id ? true : false
-  //   if(!tokenIsForUser) throw new ErrorHandler(400, "Token not valid for this user");
-  
-  //   //if all checks passed, pass onto route execution since authorised
-    next();  
-  // })
-};
+export const deleteApiKey = async (req:Request, res:Response) => {}

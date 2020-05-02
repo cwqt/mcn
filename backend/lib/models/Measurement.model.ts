@@ -7,7 +7,6 @@ export interface IDataPoint {
 }
 
 export interface IMeasurement {
-    recordable_id:  IRecordableModel["_id"],
     timestamp:      Date,
     measurements:   IDataPoint[],
     created_at?:    Date,

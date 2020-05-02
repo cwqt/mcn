@@ -3,7 +3,7 @@ import { IUserModel } from "./User.model";
 import { IPlantModel } from './Plant.model';
 import { IGardenModel } from './Garden.model';
 import { IApiKeyModel } from './ApiKey.model';
-import { ACCEPTED_MEASUREMENTS } from '../common/ACCEPTED_MEASUREMENTS';
+import { ACCEPTED_MEASUREMENTS } from '../common/types/measurements.types';
 
 export enum IHardwareModels {
     mcnWemosD1Mini = "Wemos D1 Mini",

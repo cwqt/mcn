@@ -137,9 +137,6 @@ or instead of an array for `message`, a string.
 * __POST__: heart a post
 * __DELETE__: un-heart a post
 
-### `/users/:uid/posts/comments`
-### `/users/:uid/posts/comments/:cid`
-
 ---
 
 ## recordables
@@ -160,10 +157,9 @@ or instead of an array for `message`, a string.
 
 ### `/users/:uid/devices`
 
-* __GET__: read all user devices
-    * returns
-        - __200__: all user devices, `IDeviceModel[]`
-        - __500__: mongoose error
+* __GET__: get a stub list of all devices
+    * basic device info & last measurement time
+
 * __POST__:
     * body
         - `friendly_name`: frontend name for device
@@ -174,7 +170,7 @@ or instead of an array for `message`, a string.
 
 ### `/users/:uid/devices/:did`
 
-* __GET__: read device
+* __GET__: read all device info inc. all images
     * returns
         - __200__: device, `IDeviceModel`
         - __500__: mongoose error
@@ -192,19 +188,31 @@ or instead of an array for `message`, a string.
     * returns
         __200__: deleted
 
-### `/users/:uid/devices/:did/ping`
+### `/users/:uid/devices/:did/measurements`
+* __GET__: read measurements from device
+    * `?sort=ASC&limit=1`: most recent measurement
 
+### `/users/:uid/devices/:did/ping`
 * __GET__: used by device to verify existence and update `last_ping`
     - returns
         __200__: received pong
         __500__: mongoose error
 
----
+### `/users/:uid/devices/:did/measurements
 
-## api keys
+* __POST__: create new measurement
+    - headers
+        * `x-recordable-type`: plant | garden
+    - returns
+        __201__: measurement created
+        __500__: not created
 
-### `/users/:uid/api_keys`
-### `/users/:uid/api_keys/:kid`
+
+### `/users/:uid/devices/:did/api_key
+
+* __GET__: get api key info, excluding key itself
+* __POST__: create & assign key to device
+* __DELETE__: revoke key from device
 
 ---
 

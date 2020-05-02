@@ -16,7 +16,6 @@ interface IParameter {
 
 export interface IRecordable {
     name:           string,
-    user_id:        IUserModel["_id"],
     recording?:     string[],
     image?:         string,
     feed_url?:      string,
@@ -27,25 +26,6 @@ export interface IRecordable {
     test:string,
 }
 
-export interface IRecordableModel extends IRecordable, Document {
+export interface IRecordableModel extends IRecordable {
   _id: string,
 }
-
-export var RecordableSchema:Schema = new Schema({
-    name:           String,
-    user_id:        Schema.Types.ObjectId,
-    image:          String,
-    feed_url:       String,
-    test:String,
-    verified: {
-      type: Boolean,
-      required: true,
-      default: false
-    },
-    parameters: {
-      type: Map,
-      of: Object
-    },
-}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at'  }})
-
-export const Recordable:Model<IRecordableModel> = model<IRecordableModel>("Recordable", RecordableSchema);

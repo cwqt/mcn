@@ -15,6 +15,12 @@ import {
     // pingDevice
 } from "../controllers/Device.controller";
 
+import {
+    createApiKey,
+    readApiKey,
+    deleteApiKey
+} from '../controllers/ApiKeys.controller';
+
 const router = AsyncRouter({mergeParams: true});
 
 router.get('/', readAllDevices);
@@ -31,11 +37,6 @@ router.post('/:did/assign/:rid', validate([
     param('rid').isMongoId().trim().withMessage('invalid recordable id to assign to')
 ]), assignDeviceToRecordable)
 
-// router.delete('/:did/monitor/:rid', validate([
-//     param('did').isMongoId().trim().withMessage('invalid device id'),
-//     param('rid').isMongoId().trim().withMessage('invalid recordable id to assign to')
-// ]))
-
 // router.get('/:did', validate([
 //     param('did').isMongoId().trim().withMessage('invalid device id')
 // ]), readDevice);
@@ -50,9 +51,19 @@ router.post('/:did/assign/:rid', validate([
 
 // router.get('/:did/ping',  pingDevice)
 
-// router.get('/:plant_id/measurements',   readMeasurements)
-// router.post('/:plant_id/measurements',  createMeasurement)
 
-// router.get('/:plant_id/measurements',   readEvents)
+router.post('/:did/keys', validate([
+    param('did').isMongoId().trim().withMessage('invalid device id'),
+    body('recordable_type').not().isEmpty().trim().withMessage('device must have recordable type of enum "plant" | "garden"'),
+    body('key_name').not().isEmpty().trim().withMessage('device name must be named'),
+]), createApiKey)
+
+router.get('/:did/keys/:kid', validate([
+    param('did').isMongoId().trim().withMessage('invalid key id'),
+]), readApiKey)
+
+router.delete('/:did/keys/:kid', validate([
+    param('did').isMongoId().trim().withMessage('invalid key id'),
+]), deleteApiKey)
 
 export default router;
