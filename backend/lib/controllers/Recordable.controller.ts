@@ -1,17 +1,14 @@
-import { Request, Response, NextFunction }    from "express"
+import { Request, Response, NextFunction } from "express"
+import { Types } from "mongoose";
 const { body } = require('express-validator');
 
-import { IRecordable, RecordableTypes }  from "../models/Recordable.model"
-import { validate }                     from "../common/validate";
-import {  IPlant }           from "../models/Plant.model";
-import {  IGarden }         from "../models/Garden.model";
-import { ErrorHandler } from "../common/errorHandler";
-import { HTTP } from "../common/http";
-import { Model, Schema } from "mongoose";
-
-
-import { n4j } from '../common/neo4j';
-import { Types } from "mongoose";
+import { RecordableTypes }  from "../models/Recordable.model"
+import { validate }         from "../common/validate";
+import { IPlant }           from "../models/Plant.model";
+import { IGarden }          from "../models/Garden.model";
+import { ErrorHandler }     from "../common/errorHandler";
+import { HTTP }             from "../common/http";
+import { n4j }              from '../common/neo4j';
 
 const getSchema = (recordable_type:string):string => {
     switch(recordable_type) {
@@ -33,38 +30,49 @@ export const createRecordable = async (req:Request, res:Response, next:NextFunct
 }
 
 export const readAllRecordables = async (req:Request, res:Response, next:NextFunction) => {
-    // let result = await neode.instance.cypher(`
-    //     MATCH (x:${getSchema(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
-    //     RETURN x
-    // `, {
-    //     uid:req.params.uid
-    // })
+    let session = n4j.session();
+    let result;
+    try {
+        result = await n4j.run(`
+            MATCH (x:${getSchema(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
+            RETURN x
+        `, {
+            uid:req.params.uid
+        })
+    } catch (e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
 
-    // let recordables = result.records.map(recordable => recordable.get('x').properties)
-    // res.json(recordables)
+    let recordables = result.records.map((record:any) => record.get('x').properties)
+    res.json(recordables)
 }
 
-// export const readRecordable = (req:Request, res:Response, next:NextFunction) => {
-//     getSchema(res.locals.type).findById(req.params.rid, (error:any, recordable:IPlantModel | IGardenModel) => {
-//         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-//         if(!recordable) return next(new ErrorHandler(HTTP.NotFound, `no such ${res.locals.type} exists`));
-//         res.json(recordable);
-//     })
-// }
+export const readRecordable = (req:Request, res:Response, next:NextFunction) => {
 
-// export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
-//     let newData:{[index:string]:any} = {};
-//     let reqKeys = Object.keys(req.body);
+}
 
-//     for(let i=0; i<reqKeys.length; i++) newData[reqKeys[i]] = req.body[reqKeys[i]];
+export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
+    let newData:{[index:string]:any} = {};
+    let reqKeys = Object.keys(req.body);
 
-//     res.locals["newData"] = newData;
-//     next();
-// }
+    for(let i=0; i<reqKeys.length; i++) newData[reqKeys[i]] = req.body[reqKeys[i]];
 
-// export const deleteRecordable = (req:Request, res:Response, next:NextFunction) => {
-//     getSchema(res.locals.type).findByIdAndDelete(req.params.rid, (error:any) => {
-//         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-//         res.status(HTTP.OK).end();
-//     })
-// }
+    res.locals["newData"] = newData;
+    next();
+}
+
+export const deleteRecordable = (req:Request, res:Response, next:NextFunction) => {
+    let session = n4j.session();
+    let result;
+    try {
+        
+    } catch (e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
+
+    res.status(HTTP.OK).end()
+}

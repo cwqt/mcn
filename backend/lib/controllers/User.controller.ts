@@ -12,8 +12,7 @@ import { Types }                    from 'mongoose';
 import {
     IUserStub,
     IUser,
-    IUserPrivate }      from "../models/User.model";
-
+    IUserPrivate } from "../models/User.model";
 
 export const filterUserFields = (user:any, toStub?:boolean):IUser | IUserStub => {
     let hiddenFields = ["_labels", "pw_hash", "salt"];

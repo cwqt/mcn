@@ -1,3 +1,7 @@
+interface IRepost {
+    
+}
+
 export interface IPost {
     _id:            string,
     replies:        number,
@@ -8,4 +12,5 @@ export interface IPost {
     images?:        string[],
     created_at?:    number,
     updated_at?:    number,
+    repost?:        IRepost
 }

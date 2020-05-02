@@ -1,18 +1,18 @@
-import { Request, Response, NextFunction }    from "express"
+import { Request, Response, }    from "express"
 
-import { IGarden }       from '../models/Garden.model';
-import { IPlant }         from '../models/Plant.model';
-import { ErrorHandler }             from "../common/errorHandler";
-import { HTTP }                     from "../common/http";
+import { IGarden }      from '../models/Garden.model';
+import { IPlant }       from '../models/Plant.model';
+import { ErrorHandler } from "../common/errorHandler";
+import { HTTP }         from "../common/http";
 
-export const createGarden = (req:Request, res:Response, next:NextFunction) => {
+export const createGarden = (req:Request, res:Response) => {
     // Garden.create(req.body, (error:any, garden:IGardenModel) => {
     //     if(error) return next(new ErrorHandler(HTTP.ServerError, error));
     //     res.json(garden);
     // })
 }
 
-export const updateGarden = (req:Request, res:Response, next:NextFunction) => {
+export const updateGarden = (req:Request, res:Response) => {
     // Garden.findByIdAndUpdate(req.params.rid, res.locals.newData, (error:any, garden:IGardenModel) => {
     //     if(error) return next(new ErrorHandler(HTTP.ServerError, error));
     //     res.json(garden);

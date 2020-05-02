@@ -1,12 +1,11 @@
 const { generateVerificationHash, verifyHash } = require('dbless-email-verification');
-import { Request, Response, NextFunction } from 'express';
-import nodemailer from 'nodemailer';
+import { Request, Response } from 'express';
+import nodemailer            from 'nodemailer';
 
-import {n4j} from '../common/neo4j';
-
+import config           from '../config';
 import { ErrorHandler } from '../common/errorHandler';
-import config from '../config';
-import { HTTP } from '../common/http';
+import { HTTP }         from '../common/http';
+import { n4j }          from '../common/neo4j';
 
 const generateEmailHash  = (email:string) => {
     const hash = generateVerificationHash(email, config.PRIVATE_KEY, 60)
@@ -54,7 +53,7 @@ export const sendVerificationEmail = (email:string):Promise<boolean> => {
     })
 }
 
-export const verifyUserEmail = async (req:Request, res:Response, next:NextFunction) => {
+export const verifyUserEmail = async (req:Request, res:Response) => {
     let hash = req.query.hash as string;
     let email = req.query.email as string;
 

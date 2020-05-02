@@ -5,7 +5,7 @@ import * as IpAddress from 'ip-address';
 export interface IDeviceStub {
     _id:string,
     name:string,
-    thumbnail:string
+    thumbnail?:string
 }
 
 export interface IDevice extends IDeviceStub {
@@ -14,8 +14,8 @@ export interface IDevice extends IDeviceStub {
     hardware_model?:    Hardware,
     software_version?:  string,
     device_ip?:         IpAddress.Address4 | IpAddress.Address6,
-    created_at?:        Date,
-    updated_at?:        Date,
+    created_at?:        number,
+    updated_at?:        number,
     recording?:         Array<Measurement>,
     units?:             Array<Unit>
 }
