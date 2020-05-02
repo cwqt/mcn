@@ -4,7 +4,6 @@ import { map, tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
-import { IUserModel } from '../../../../backend/lib/models/User.model';
 import { UserService } from './user.service';
 
 @Injectable({

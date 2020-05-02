@@ -3,16 +3,16 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { UserService } from './user.service';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { IPlantModel } from '../../../../backend/lib/models/Plant.model';
-import { IUserModel } from '../../../../backend/lib/models/User.model';
-import { IPostModel } from '../../../../backend/lib/models/Post.model';
-import { IDeviceModel } from '../../../../backend/lib/models/Device.model';
+import { IPlant } from '../../../../backend/lib/models/Plant.model';
+import { IUser } from '../../../../backend/lib/models/User.model';
+import { IPost } from '../../../../backend/lib/models/Post.model';
+import { IDevice } from '../../../../backend/lib/models/Device.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfileService {
-  private currentProfileSubject:BehaviorSubject<IUserModel> = new BehaviorSubject(undefined);
+  private currentProfileSubject:BehaviorSubject<IUser> = new BehaviorSubject(undefined);
   public currentProfile:Observable<any>;
 
   public get currentProfileValue() {
@@ -27,7 +27,7 @@ export class ProfileService {
   }
 
   getUserByUsername(username:string) {
-    return this.http.get<IUserModel>(`/api/users/u/${username}`)
+    return this.http.get<IUser>(`/api/users/u/${username}`)
       .pipe(map(user => {
         this.currentProfileSubject.next(user);
         return user;
@@ -37,7 +37,7 @@ export class ProfileService {
   getPosts() {
     console.log(this.currentProfileValue);
     return this.http.get(`/api/users/${this.currentProfileValue._id}/posts`)
-      .pipe(map((posts:IPostModel[]) => {
+      .pipe(map((posts:IPost[]) => {
         return posts;
       })).toPromise();
   }
@@ -48,14 +48,14 @@ export class ProfileService {
 
   getPlants() {
     return this.http.get(`/api/users/${this.currentProfileValue._id}/plants`)
-      .pipe(map((plants:IPlantModel[]) => {
+      .pipe(map((plants:IPlant[]) => {
         return plants;
       })).toPromise();
   }
 
   getDevices() {
     return this.http.get(`/api/users/${this.currentProfileValue._id}/devices`)
-      .pipe(map((devices:IDeviceModel[]) => {
+      .pipe(map((devices:IDevice[]) => {
         return devices;
       })).toPromise();
   }

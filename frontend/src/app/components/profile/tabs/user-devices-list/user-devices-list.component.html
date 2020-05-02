@@ -8,7 +8,10 @@
 
 <div *ngIf="devices && !loading">
     <div *ngFor="let device of devices">
-        <app-device-thumb [device]="device" [currentUser]="currentUser" [user]="user"></app-device-thumb>
+        <app-device-thumb
+            [device]="device"
+            [currentUser]="currentUser"
+            [profileUser]="profileUser"></app-device-thumb>
     </div>
 </div>
 

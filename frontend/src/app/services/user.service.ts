@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { of, Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { IUserModel, IUser } from '../../../../backend/lib/models/User.model';
+import { IUser } from '../../../../backend/lib/models/User.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class UserService {
   }
   
   constructor(private http: HttpClient) {
-    this.currentUserSubject = new BehaviorSubject<IUserModel>(JSON.parse(localStorage.getItem('currentUser')));
+    this.currentUserSubject = new BehaviorSubject<IUser>(JSON.parse(localStorage.getItem('currentUser')));
     this.currentUser = this.currentUserSubject.asObservable();
   }
 
@@ -44,6 +44,10 @@ export class UserService {
 
   createPost(content) {
     return this.http.post(`/api/users/${this.currentUserValue._id}/posts`, content)
+  }
+
+  createDevice(content) {
+    return this.http.post(`/api/users/${this.currentUserValue._id}/devices`, content)
   }
 
 }

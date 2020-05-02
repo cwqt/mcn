@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { IUserModel, User } from "../../../../../backend/lib/models/User.model";
+import { IUser } from "../../../../../backend/lib/models/User.model";
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./feed.component.scss']
 })
 export class FeedComponent implements OnInit {
-  currentUser:IUserModel;
+  currentUser:IUser;
 
   constructor(private userService:UserService) { }
 

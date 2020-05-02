@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./device-thumb.component.scss']
 })
 export class DeviceThumbComponent implements OnInit {
-  @Input() user:any;
+  @Input() profileUser:any;
   @Input() currentUser:any;
   @Input() device:any;
 

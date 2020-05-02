@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
-import { IUserModel } from '../../../../../backend/lib/models/User.model';
+import { IUser } from '../../../../../backend/lib/models/User.model';
 import { UserService } from 'src/app/services/user.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements OnInit {
-  currentUser:IUserModel;
+  currentUser:IUser;
   constructor(private router:Router, private userService:UserService) { }
 
   ngOnInit(): void {

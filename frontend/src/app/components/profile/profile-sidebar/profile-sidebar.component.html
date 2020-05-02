@@ -1,52 +1,64 @@
 <div class="profile-sidebar-container">
-    <mat-card class="profile" *ngIf="user && currentUser">
-        <h1 *ngIf="user.username == currentUser.username" class="edit-profile-button">
-            <button mat-mini-fab color="default"><mat-icon>edit</mat-icon></button>
-        </h1>
-            <div class="avatar-container">
-                <img src="https://media.discordapp.net/attachments/635544732939976724/699731547539898468/IMG_0029.JPG?width=1138&height=1515" />
-            </div>    
+    <mat-card class="profile" *ngIf="notFound">
+        <div class="avatar-container">
+            <img class="placeholder"/>
+        </div>    
     
         <div class="profile-info">
-            <h2>{{user.name}}</h2>
-            <p id="username">@{{user.username}}</p>
-            <p id="bio">{{user.bio}}</p>
+            <p id="username">@{{profileUser.username}}</p>
+            <p id="bio">This account doesn't exist</p>
+        </div>
+    </mat-card>
+    
+    <mat-card class="profile" *ngIf="!notFound && profileUser">
+        <h1 *ngIf="profileUser.username == currentUser?.username" class="edit-profile-button">
+            <button mat-mini-fab color="default"><mat-icon>edit</mat-icon></button>
+        </h1>
+
+        <div class="avatar-container">
+            <img src="{{profileUser.avatar}}" />
+        </div>    
+    
+        <div class="profile-info">
+            <h2>{{profileUser.name}}</h2>
+            <p id="username">@{{profileUser.username}}</p>
+            <p id="bio">{{profileUser.bio}}</p>
     
             <div class="user-meta">
-                <div id="location" *ngIf="user.location">
-                    <mat-icon>location_on</mat-icon>{{user.location}}
+                <div id="location" *ngIf="profileUser.location">
+                    <mat-icon>location_on</mat-icon>{{profileUser.location}}
                 </div>
             </div>
     
             <div class="user-followers-following">
-                <p>Posts<b>{{user.posts}}</b></p>
-                <p>Followers<b>{{user.followers}}</b></p>
-                <p>Following<b>{{user.following}}</b></p>
+                <p>Posts<b>{{profileUser.posts}}</b></p>
+                <p>Followers<b>{{profileUser.followers}}</b></p>
+                <p>Following<b>{{profileUser.following}}</b></p>
             </div>
     
              <!-- <div class="recordable-container">
                 <app-recordable-count
                     (changeRecordableTab)="navigateRecordable($event)"
-                    [user]="user.username"
+                    [profileUser]="profileUser.username"
                     [icon]="'eco'"
                     [title]="'plants'"
-                    [count]="user.plant_count">
+                    [count]="profileUser.plant_count">
                 </app-recordable-count>
     
                 <app-recordable-count
                     (changeRecordableTab)="navigateRecordable($event)"
-                    [user]="user.username"
+                    [profileUser]="profileUser.username"
                     [icon]="'group_work'"
                     [title]="'gardens'"
-                    [count]="user.garden_count">
+                    [count]="profileUser.garden_count">
                 </app-recordable-count>
     
                 <app-recordable-count
                     (changeRecordableTab)="navigateRecordable($event)"
-                    [user]="user.username"
+                    [profileUser]="profileUser.username"
                     [icon]="'device_hub'"
                     [title]="'devices'"
-                    [count]="user.device_count">
+                    [count]="profileUser.device_count">
                 </app-recordable-count>
             </div>  -->
             </div>

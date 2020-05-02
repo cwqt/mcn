@@ -33,7 +33,7 @@ export const readAllRecordables = async (req:Request, res:Response, next:NextFun
     let session = n4j.session();
     let result;
     try {
-        result = await n4j.run(`
+        result = await session.run(`
             MATCH (x:${getSchema(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
             RETURN x
         `, {

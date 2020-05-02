@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { IUserModel } from '../../../../../backend/lib/models/User.model';
+import { IUser } from '../../../../../backend/lib/models/User.model';
 import { UserService } from 'src/app/services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { IPlantModel } from '../../../../../backend/lib/models/Plant.model';
-import { IGardenModel } from '../../../../../backend/lib/models/Garden.model';
-import { IDeviceModel } from '../../../../../backend/lib/models/Device.model';
+import { IRecordableStub } from '../../../../../backend/lib/models/Recordable.model';
+import { IDeviceStub } from '../../../../../backend/lib/models/Device.model';
 
 import { UserPostsListComponent } from '../../components/profile/tabs/user-posts-list/user-posts-list.component';
 import { UserPlantsListComponent } from '../../components/profile/tabs/user-plants-list/user-plants-list.component';
@@ -22,12 +21,16 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 
 })
 export class ProfileComponent implements OnInit {
-  user:IUserModel;        //the page user
-  currentUser:IUserModel; //the current logged in user
+  loading:boolean = true;
+  tabIndex:number;
+  showOutlet: boolean;
 
-  plants:IPlantModel[] | undefined;
-  gardens:IGardenModel[] | undefined;
-  devices:IDeviceModel[] | undefined;
+  profileUser:IUser | undefined;
+  currentUser:IUser; //the current logged in user
+
+  plants:IRecordableStub[] | undefined;
+  gardens:IRecordableStub[] | undefined;
+  devices:IDeviceStub[] | undefined;
 
   tabs = [
     {label: "posts",    component: UserPostsListComponent},
@@ -35,8 +38,6 @@ export class ProfileComponent implements OnInit {
     {label: "gardens",  component: UserGardensListComponent},
     {label: "devices",  component: UserDevicesListComponent}
   ];
-
-  tabIndex:number;
 
   constructor(private userService:UserService,
     private router:Router,
@@ -46,11 +47,15 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     //route param change request different user
     this.route.params.subscribe(params => {
-      this.profileService.getUserByUsername(params.username);
-    });
+      this.profileService.getUserByUsername(params.username)
+        .then(user => this.profileUser = user)
+        .then(() => this.loading = false)
+        .catch(e => {
+          console.log(e);
+          this.loading = false;
+        })
+      });
 
-    //subscribe to the new user being gotten
-    this.profileService.currentProfile.subscribe(user => this.user = user );
     this.userService.currentUser.subscribe(user => this.currentUser = user );
 
     this.profileService.selectedTab.subscribe(key => {
@@ -61,8 +66,6 @@ export class ProfileComponent implements OnInit {
   setActiveTab(tab:MatTabChangeEvent) {
     this.profileService.selectedTab.next(this.tabs[tab.index].label);
   }
-
-  showOutlet: boolean;
 
   onActivate(event:any) {
     this.showOutlet = true;

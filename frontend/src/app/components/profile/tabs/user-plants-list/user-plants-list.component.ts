@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile.service';
-import { IPlantModel } from '../../../../../../../backend/lib/models/Plant.model';
-import { IUserModel } from '../../../../../../../backend/lib/models/User.model';
+import { IPlant } from '../../../../../../../backend/lib/models/Plant.model';
+import { IUser } from '../../../../../../../backend/lib/models/User.model';
 
 @Component({
   selector: 'app-user-plants-list',
@@ -9,13 +9,13 @@ import { IUserModel } from '../../../../../../../backend/lib/models/User.model';
   styleUrls: ['./user-plants-list.component.scss']
 })
 export class UserPlantsListComponent implements OnInit {
-  @Input() user:IUserModel;
-  @Input() currentUser:IUserModel;
+  @Input() user:IUser;
+  @Input() currentUser:IUser;
 
   isActive:boolean      = false;
   initialised:boolean   = false;
   loading:boolean       = false;
-  plants:IPlantModel[]  = [];
+  plants:IPlant[]  = [];
   
   constructor(private profileService:ProfileService) { }
 
@@ -30,7 +30,7 @@ export class UserPlantsListComponent implements OnInit {
   initialise() {
     this.loading = true;
     this.initialised = true;
-    this.profileService.getPlants().then((plants:IPlantModel[]) => {
+    this.profileService.getPlants().then((plants:IPlant[]) => {
       this.plants = plants;
       this.loading = false;
     });

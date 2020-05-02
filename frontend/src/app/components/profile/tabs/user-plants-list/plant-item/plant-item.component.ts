@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IPlantModel } from '../../../../../../../../backend/lib/models/Plant.model';
+import { IPlant } from '../../../../../../../../backend/lib/models/Plant.model';
 
 @Component({
   selector: 'app-plant-item',
@@ -7,7 +7,7 @@ import { IPlantModel } from '../../../../../../../../backend/lib/models/Plant.mo
   styleUrls: ['./plant-item.component.scss']
 })
 export class PlantItemComponent implements OnInit {
-  @Input() plant:IPlantModel;
+  @Input() plant:IPlant;
 
   constructor() { }
 

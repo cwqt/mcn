@@ -3,8 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { MatStepper } from '@angular/material/stepper';
-import { ThrowStmt } from '@angular/compiler';
-import { timingSafeEqual } from 'crypto';
 import { Router } from '@angular/router';
 
 @Component({

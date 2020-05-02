@@ -1,6 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { IUserModel } from '../../../../../../../../backend/lib/models/User.model';
-import { tick } from '@angular/core/testing';
+import { IUser } from '../../../../../../../../backend/lib/models/User.model';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,8 +9,8 @@ import { Router } from '@angular/router';
 })
 export class PostThumbComponent implements OnInit {
   @Input() post:any;
-  @Input() author:IUserModel;
-  @Input() currentUser:IUserModel;
+  @Input() author:IUser;
+  @Input() currentUser:IUser;
 
   //reposts ["repost", "repost-comment"]
   @Input() parentAuthor:any;

@@ -1,5 +1,5 @@
 <app-wrapper>
-    <div class="profile-wrapper" *ngIf="user">
+    <div class="profile-wrapper" *ngIf="!loading">
 
         <div class="profile-cover-container">
             <div class="profile-covers">
@@ -9,9 +9,9 @@
         </div>
 
         <div class="profile-body-container">
-            <app-profile-sidebar [user]="user" [currentUser]="currentUser"></app-profile-sidebar>
+            <app-profile-sidebar [profileUser]="profileUser" [currentUser]="currentUser"></app-profile-sidebar>
 
-            <div class="profile-body-scroll">
+            <div class="profile-body-scroll" *ngIf="profileUser">
                 <mat-card class="profile-body">
                     <div *ngIf="showOutlet" class="tab-body-header">
                         <button mat-icon-button (click)="goBackToProfile()">
@@ -33,7 +33,12 @@
                             <div class="tab-content">
                                 <ndc-dynamic
                                     [ndcDynamicComponent]="tab.component"
-                                    [ndcDynamicInputs]="{user:user, currentUser:currentUser, index:index, currentIndex:tabIndex}">
+                                    [ndcDynamicInputs]="{
+                                        profileUser:profileUser,
+                                        currentUser:currentUser,
+                                        index:index,
+                                        currentIndex:tabIndex
+                                    }">
                                 </ndc-dynamic>
                             </div>
                         </mat-tab>
@@ -44,6 +49,6 @@
         </div>
     </div>
 
-    <mat-spinner *ngIf="!user"></mat-spinner>
+    <mat-spinner *ngIf="loading"></mat-spinner>
 </app-wrapper>
 

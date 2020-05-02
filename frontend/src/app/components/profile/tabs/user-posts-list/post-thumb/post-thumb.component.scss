@@ -33,6 +33,8 @@
                 object-fit: cover;
                 border-radius: 50%;
                 overflow: hidden;
+                background-color: lightgrey;
+                text-indent: -10000px;//hide broken image icon if no avatar
             }
         }
         .right {
@@ -74,3 +76,4 @@
         }    
     }
 }
+
