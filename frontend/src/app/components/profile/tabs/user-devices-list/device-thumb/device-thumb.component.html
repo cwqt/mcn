@@ -1,6 +1,6 @@
 <mat-card class="container">
     <div class="left">
-        <div *ngIf="!device.image" class="placeholder">
+        <div *ngIf="!device.thumbnail" class="placeholder">
             <mat-icon>device_hub</mat-icon>
         </div>
     </div>
@@ -9,11 +9,11 @@
             <h1>{{device.name}}</h1>
 
             <div class="state-indicator" 
-                [class.unverified]="!state.verified"
-                [class.active]="state.verified && state.active"
-                [class.inactive]="state.verified && !state.active">
-                <mat-icon inline>{{state.icon}}</mat-icon>
-                <span>{{state.text}}</span>
+                [class.unverified]="!deviceState.verified"
+                [class.active]="deviceState.verified && deviceState.active"
+                [class.inactive]="deviceState.verified && !deviceState.active">
+                <mat-icon inline>{{deviceState.icon}}</mat-icon>
+                <span>{{deviceState.text}}</span>
             </div>
 
         </div>
@@ -21,23 +21,28 @@
         <br />
 
         <mat-accordion class="device-meta">
-            <mat-expansion-panel>
+            <mat-expansion-panel (click)="getDeviceMeta()">
                 <mat-expansion-panel-header>
                     <mat-panel-title>
                         Device information
                     </mat-panel-title>
                 </mat-expansion-panel-header>
-                <p><b>Device id:</b>{{device._id || '—'}}</p>
-                <p><b>Api key id:</b>{{device._id || '—'}}</p>
-                <p><b>Created:</b>{{device.created_at || '—'}}</p>
-                <p><b>Software version:</b>{{device.software_version || '—'}}</p>
-                <p><b>Hardware model:</b>{{device.hardware_model || '—'}}</p>
-                <p><b>Total data points:</b>103</p>
-                <p><b>Recording:</b>temperature, humidity, light level, water level</p>
-                <p><b>Units:</b> c, %, lux, —</p>
+                <div *ngIf="cache.device.data && !cache.device.error">
+                    <p><b>Device id:</b>{{cache.device.data._id || '—'}}</p>
+                    <p><b>Api key id:</b>{{cache.device.data.api_key._id || '—'}}</p>
+                    <p><b>Assigned to:</b>{{cache.device.data.assigned_to.type}}: {{cache.device.data.assigned_to.name}}</p>
+                    <p><b>Created:</b>{{(cache.device.data.created_at | amTimeAgo) || '—'}}</p>
+                    <p><b>Software version:</b>{{cache.device.data.software_version || '—'}}</p>
+                    <p><b>Hardware model:</b>{{cache.device.data.hardware_model || '—'}}</p>
+                    <p><b>Total data points:</b>{{cache.device.data.measurement_count || 0}}</p>
+                    <p><b>Recording:</b>{{cache.device.data.recording || '—'}}</p>
+                    <p><b>Units:</b>{{cache.device.data.units || '—'}}</p>    
+                </div>
+                <mat-spinner *ngIf="!cache.device.data && !cache.device.error"></mat-spinner>
+                <p *ngIf="cache.device.error">{{cache.device.error}}</p>
             </mat-expansion-panel>
 
-            <mat-expansion-panel>
+            <mat-expansion-panel (click)="getLatestData()">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                     Latest data
@@ -46,12 +51,29 @@
                     {{ device.last_ping | amTimeAgo }}
                 </mat-panel-description>
               </mat-expansion-panel-header>
-              <p><b></b></p>
+                <div *ngIf="cache.latest_data.data && !cache.latest_data.error">
+                    <p *ngFor="let field of cache.latest_data.data.measurements | keyvalue">
+                        <b>{{field.key}}:</b> {{field.value}}
+                    </p>
+                </div>
+                <mat-spinner *ngIf="!cache.latest_data.data && !cache.latest_data.error"></mat-spinner>
+                <p *ngIf="cache.latest_data.error">{{cache.latest_data.error}}</p>
             </mat-expansion-panel>
           </mat-accordion>
 
 
           <br />
-        <button mat-button color="primary" (click)="gotoDevice()">inspect</button>
+        
+        <div class="device-action-buttons">
+            <button mat-button color="primary" (click)="openEditDialog()">
+                <mat-icon inline>edit</mat-icon>
+                edit
+            </button>
+
+            <button mat-button color="primary" (click)="gotoDevice()">
+                <mat-icon inline>bar_chart</mat-icon>
+                view measurements
+            </button>
+        </div>
     </div>
 </mat-card>

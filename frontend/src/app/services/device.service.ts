@@ -17,6 +17,14 @@ export class DeviceService {
   }
 
   getDevice(user_id, device_id) {
-    return this.http.get(`/api/users/${user_id}/devices/${device_id}`)
+    return this.http.get(`/api/users/${user_id}/devices/${device_id}`).toPromise();
+  }
+
+  getLatestMeasurement(user_id, device_id) {
+    return this.http.get(`/api/users/${user_id}/devices/${device_id}/latest`).toPromise();
+  }
+
+  getMeasurements(user_id, device_id) {
+    return this.http.get(`/api/users/${user_id}/devices/${device_id}/measurements`).toPromise();
   }
 }

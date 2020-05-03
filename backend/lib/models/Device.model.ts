@@ -10,6 +10,7 @@ export interface IDeviceStub {
     _id:        string,
     name:       string,
     thumbnail?: string,
+    verified:   boolean,
     last_ping?: number //seconds since epoch device sent message
 }
 
@@ -21,8 +22,24 @@ export interface IDevice extends IDeviceStub {
     device_ip?:         IpAddress.Address4 | IpAddress.Address6,
     units?:             Array<Unit>,
     recording?:         Array<Measurement>,
-    verified:           boolean,
+    measurement_count?: number
+}
+
+//uses mongo data
+export interface IDeviceCollated extends IDevice {
     api_key?:           IApiKey,
     assigned_to?:       IRecordableStub,
     latest_data?:       IMeasurementModel
+}
+
+//all contained within neo4j
+export interface IDeviceMeta {
+    api_key?:           IApiKey,
+    assigned_to?:       IRecordableStub,
+    created_at?:        number,
+    hardware_model?:    Hardware,
+    software_version?:  string,
+    device_ip?:         IpAddress.Address4 | IpAddress.Address6,
+    units?:             Array<Unit>,
+    recording?:         Array<Measurement>,
 }

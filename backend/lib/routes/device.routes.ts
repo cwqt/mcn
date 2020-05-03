@@ -7,7 +7,8 @@ import {
     readAllDevices,
     createDevice,
     assignDeviceToRecordable,
-    readDevice
+    readDevice,
+    readLatestMeasurementFromDevice
     // unAssignDeviceFromRecordable,
     // readDevice,
     // updateDevice,
@@ -31,6 +32,10 @@ router.post('/', validate([
 router.get('/:did', validate([
     param('did').isMongoId().trim().withMessage('invalid device id'),
 ]), readDevice)
+
+router.get('/:did/latest', validate([
+    param('did').isMongoId().trim().withMessage('invalid device id'),
+]), readLatestMeasurementFromDevice)
 
 router.post('/:did/assign/:rid', validate([
     param('did').isMongoId().trim().withMessage('invalid device id'),

@@ -11,6 +11,7 @@ export interface IRecordableStub {
     name:         string,
     thumbnail?:   string,
     created_at?:  Date,
+    type:         RecordableTypes.Garden | RecordableTypes.Plant,
 }
 
 export interface IRecordable extends IRecordableStub {

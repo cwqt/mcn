@@ -64,6 +64,7 @@ mat-divider {
     user-select: none;
     // opacity: .8;
     span {
+        text-transform: uppercase;
         padding-left: 10px;
     }
     // &.active {
@@ -89,5 +90,16 @@ mat-divider {
     mat-expansion-panel p b {
         width: 150px;
         display: inline-block;
+    }
+}
+
+mat-spinner {
+    margin: 0 auto;
+}
+
+.device-action-buttons {
+    margin-left: auto;
+    button {
+        margin-left: 10px !important
     }
 }
