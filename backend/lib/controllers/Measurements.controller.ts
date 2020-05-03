@@ -1,19 +1,33 @@
-import { Request, Response, NextFunction, request } from "express";
-import { Document, Schema, Model, model, Types} from "mongoose";
+import { Request, Response } from "express";
+import { Model, model }      from "mongoose";
+import mongoose              from 'mongoose';
 
-import { IDevice }     from "../models/Device.model";
-import { HTTP }                     from '../common/http';
-import { ErrorHandler }             from "../common/errorHandler";
-import { n4j } from '../common/neo4j';
-import { MeasurementTypes } from '../common/types/measurements.types';
+import { IDevice }           from "../models/Device.model";
+import { HTTP }              from '../common/http';
+import { ErrorHandler }      from "../common/errorHandler";
+import { n4j }               from '../common/neo4j';
+import { MeasurementTypes }  from '../common/types/measurements.types';
+import { IGarden }           from "../models/Garden.model";
+import { IPlant }            from "../models/Plant.model";
 import {
     IMeasurementModel,
     IMeasurement,
     MeasurementSchema, 
-    RecorderTypes} from "../models/Measurement.model";
+    RecorderTypes } from "../models/Measurement.model";
+
+//each recordable has it's own collection denoted by it's _id
+// db.collections[req.params.rid]. etc...
+
+let cachedModels:{[index:string]:Model<IMeasurementModel>} = {}
+const getModel = (recordable_id:string):Model<IMeasurementModel> => {
+    if(!(recordable_id in Object.keys(cachedModels))) {
+        cachedModels[recordable_id] = model<IMeasurementModel>("Measurement", MeasurementSchema, recordable_id);
+    }
+    console.log(cachedModels)
+    return cachedModels[recordable_id];
+}
 
 export const createMeasurement = async (req:Request, res:Response) => {
-    //todo: catch err for non-existend recordable
     let measurement:IMeasurement = {
         measurements: req.body,
         recordable_id: req.params.rid || undefined,
@@ -32,37 +46,55 @@ export const createMeasurement = async (req:Request, res:Response) => {
             did: req.params.did
         })
 
-        let device = result.records[0]?.get('d')?.properties;
-        let recordable = result.records[0]?.get('r')?.properties;
+        let device:IDevice = result.records[0]?.get('d')?.properties;
+        let recordable:IPlant | IGarden = result.records[0]?.get('r')?.properties;
 
         if(!device) throw new ErrorHandler(HTTP.NotFound, 'No such device exists');
         if(!recordable) throw new ErrorHandler(HTTP.NotFound, 'No such recordable assigned to this device');
         measurement.recordable_id = recordable._id;
     }
 
-    let Measurement:Model<IMeasurementModel> = model<IMeasurementModel>("Measurement", MeasurementSchema, measurement.recordable_id);
+    let Measurement = getModel(measurement.recordable_id);
     try {
         let m:IMeasurementModel = await Measurement.create(measurement)
         if(!m) throw new ErrorHandler(HTTP.ServerError, "Failed to create measurement")
-        res.status(201).json(m);
+        res.status(HTTP.Created).json(m);
     } catch(e) {
         throw new ErrorHandler(HTTP.ServerError, e)
     }
 }
 
-export const readMeasurements = async (req:Request, res:Response) => {
-    let Measurement:Model<IMeasurementModel> = model<IMeasurementModel>("Measurement", MeasurementSchema, req.params.rid);
+export const readAllMeasurements = async (req:Request, res:Response) => {
+    let Measurement = getModel(req.params.rid);
     try {
-        let ms:IMeasurementModel[] = await Measurement.find({})
+        let ms:IMeasurementModel[] = await Measurement.find({recordable_id:req.params.rid}).select('-recordable_id')
+        res.json(ms);
     } catch (e) {
         throw new ErrorHandler(HTTP.ServerError, e)
     }
 }
 
-export const deleteMeasurement = (req:Request, res:Response) => {
-
+export const deleteMeasurements = async (req:Request, res:Response) => {
+    let Measurement = getModel(req.params.rid);
+    try {
+        let result = await Measurement.deleteMany(req.body);            
+        console.log(result);
+        res.status(HTTP.OK).end();
+    } catch (e) {
+        throw new ErrorHandler(HTTP.ServerError, e)        
+    }
 }
 
 export const getMeasurementTypes = (req:Request, res:Response) => {
     res.json(MeasurementTypes);
 }
+
+export const deleteMeasurementCollection = async (req:Request, res:Response) => {
+    try {
+        let result = await mongoose.connection.dropCollection(req.params.rid);
+        res.status(HTTP.OK);
+    } catch (e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    }
+}
+

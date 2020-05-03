@@ -18,6 +18,10 @@ import {
 } from '../controllers/Recordable.controller';
 
 import { RecordableTypes } from '../models/Recordable.model';
+import {
+    readAllMeasurements,
+    deleteMeasurements
+} from "../controllers/Measurements.controller";
 
 const router = AsyncRouter({mergeParams: true});
 router.use((req:Request, res:Response, next:NextFunction) => {
@@ -34,9 +38,12 @@ router.get('/', (req:Request, res:Response, next:NextFunction) => {
     next();
 }, readAllRecordables);
 
+
+router.get('/:rid/measurements', readAllMeasurements);
+router.delete('/:rid/measurements', deleteMeasurements);
+
 // router.get('/:rid', readRecordable);
 // router.put('/:rid', updateRecordable, updatePlant);
-
 // router.delete('/:rid', deleteRecordable);
 
 export default router;

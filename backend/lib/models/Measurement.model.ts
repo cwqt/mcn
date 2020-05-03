@@ -52,7 +52,10 @@ const MeaurementsSchema:Schema = new Schema({
 export var MeasurementSchema:Schema = new Schema({
     _id: {
         type:String,
-        default: Types.ObjectId().toHexString()
+        default: () => Types.ObjectId().toHexString(),
+        index: true,
+        required: true,
+        auto: true,
     },
     recordable_id: String,
     recorder_id: String,
@@ -65,6 +68,6 @@ export var MeasurementSchema:Schema = new Schema({
         default: Date.now()
     },
     measurements: MeaurementsSchema,
-}, { versionKey: false })
+}, { versionKey: false})
 
-export const Measurement:Model<IMeasurementModel> = model<IMeasurementModel>("Measurement", MeasurementSchema);
+// export const Measurement:Model<IMeasurementModel> = model<IMeasurementModel>("Measurement", MeasurementSchema);

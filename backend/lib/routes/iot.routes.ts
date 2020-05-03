@@ -8,8 +8,6 @@ import { Measurement as AcceptedMeasurement } from '../common/types/measurements
 import { authenticateApiKey } from '../controllers/Auth.controller';
 import {
     createMeasurement,
-    deleteMeasurement,
-    readMeasurements,
     getMeasurementTypes,
 } from '../controllers/Measurements.controller';
 import { RecorderTypes } from '../models/Measurement.model';
