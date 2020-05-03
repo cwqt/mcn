@@ -19,7 +19,7 @@ import {
 // db.collections[req.params.rid]. etc...
 
 let cachedModels:{[index:string]:Model<IMeasurementModel>} = {}
-const getModel = (recordable_id:string):Model<IMeasurementModel> => {
+export const getModel = (recordable_id:string):Model<IMeasurementModel> => {
     if(!(recordable_id in Object.keys(cachedModels))) {
         cachedModels[recordable_id] = model<IMeasurementModel>("Measurement", MeasurementSchema, recordable_id);
     }

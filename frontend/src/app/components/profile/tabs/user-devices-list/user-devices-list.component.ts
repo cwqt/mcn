@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile.service';
-import { IDevice } from '../../../../../../../backend/lib/models/Device.model';
+import { IDevice, IDeviceStub } from '../../../../../../../backend/lib/models/Device.model';
 import { IUser } from '../../../../../../../backend/lib/models/User.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { CreateDeviceGuideComponent } from './create-device-guide/create-device-guide.component';
@@ -46,7 +46,7 @@ export class UserDevicesListComponent implements OnInit {
   initialise() {
     this.loading = true;
     this.initialised = true;
-    this.profileService.getDevices().then((devices:IDevice[]) => {
+    this.profileService.getDevices().then((devices:IDeviceStub[]) => {
       this.devices = devices;
       this.loading = false;
     });

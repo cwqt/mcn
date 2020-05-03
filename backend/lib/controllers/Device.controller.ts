@@ -4,8 +4,13 @@ import { Types }                from "mongoose";
 import { IDevice }      from "../models/Device.model";
 import { HTTP }         from '../common/http';
 import { ErrorHandler } from "../common/errorHandler";
-import { IApiKey }      from '../models/ApiKey.model';
+import { IApiKey, IApiKeyPrivate }      from '../models/ApiKey.model';
+import { IPlant }       from '../models/Plant.model';
+import { IGarden }      from '../models/Garden.model';
 import { n4j }          from '../common/neo4j';
+
+import { getModel }        from './Measurements.controller';
+import { IRecordableStub } from "..//models/Recordable.model";
 
 export const createDevice = async (req:Request, res:Response) => {
     let session = n4j.session();
@@ -97,11 +102,14 @@ export const readDevice = async (req:Request, res:Response) => {
         // Total data points:103
         // Recording:temperature, humidity, light level, water level
         // Units: c, %, lux, —
+        // Assigned to: Plant/Garden
 
         result = await session.run(`
             MATCH (d:Device {_id:$did})
             OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
-            RETURN d, k
+            OPTIONAL MATCH (d)-[:MONITORS]->(r)
+            WHERE r:Plant OR r:Garden
+            RETURN d, k, r
         `, {
             did:req.params.did
         })
@@ -111,18 +119,35 @@ export const readDevice = async (req:Request, res:Response) => {
         session.close();
     }
 
-    let device = result.records[0].get('d').properties;
-    let key = result.records[0].get('k').properties;
-    if(key) {
-        delete key["key"]; //don't wanna send over credentials
-        device["api_key"] = key as IApiKey
+    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
+
+    let device:IDevice = result.records[0].get('d')?.properties;
+    let key:IApiKeyPrivate = result.records[0].get('k')?.properties;
+    if(key) delete key.key;
+    let recordable:IPlant | IGarden = result.records[0].get('r')?.properties;
+
+    let data:IDevice = {
+        ...device,
+        api_key: key as IApiKey,
     }
 
-    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
-    res.status(HTTP.Created).json(device);
+    if(recordable) {
+        data.assigned_to = {
+            _id: recordable._id,
+            name: recordable.name,
+            thumbnail: recordable.thumbnail,
+            created_at: recordable.created_at,        
+        } as IRecordableStub
+
+        //get latest measurement, if any
+        data.latest_data = await getModel(recordable._id)
+            .findOne({recordable_id:recordable._id})
+            .sort({'created_at': -1 })
+            .limit(1);
+    }
+
+    res.status(HTTP.Created).json(data);
 }
-
-
 
 // export const updateDevice = (req:Request, res:Response, next:NextFunction) => {
 //     var newData:any = {}
