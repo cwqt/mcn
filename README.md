@@ -3,7 +3,7 @@
 A social network and management system for gardeners, plant growers and hobbyists alike.
 
 * Event based system notifies when an action needs completing e.g. watering, re-seeding
-* Gardens and Plants, manage entire gardens constituted of subplants
+* Gardens and Plants, manage entire gardens constituted of sub-plants
 * Create custom event queues for carrying out tasks at certain intervals
 * Compile timelines of posts of plants growing over time
 * Remotely trigger events on micro-controllers, e.g. turn on light, open watering valve
@@ -14,7 +14,13 @@ Previously written in React & Python, now moving over to TypeScript & Angular.
 
 ## backend
 
-Express.js TypeScript REST API with MongoDB & Neo4j for polyglot persistence, session management, symmetric api key exchange & JWT.
+Express.js TypeScript REST API with polyglot persistence.
+
+* __Neo4j__: Social networking data, highly relational data
+* __MongoDB__: IoT data, low relation - high read/write throughput
+* __Redis__: Session store, very high r/w
+
+May possible move IoT over to InfluxDB at some point.
 
 ## frontend
 

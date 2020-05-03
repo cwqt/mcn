@@ -3,7 +3,7 @@
     flex-flow: column;
     position: relative;
     max-height: 100%;
-    padding: 0 60px;
+    padding: 0 0 0 60px;
     .profile-cover-container {
         position: absolute;
         top: 0; left: 0;
@@ -39,8 +39,8 @@
     }
     .profile-body-container {
         z-index: 2;
-        padding-top: 300px;
-        max-width: calc(100% - 160px);
+        padding-top: 25vh;
+        max-width: 100%;
         height: auto;
         padding-bottom: 20px;
         display: flex;

@@ -139,20 +139,6 @@ or instead of an array for `message`, a string.
 
 ---
 
-## recordables
-
-### `/users/:uid/recordables?type=garden/plant`
-* __POST__: create a new recordable of type `type`
-    * body
-        - 
-
-
-### `/users/:uid/recordables/:rid`
-### `/users/:uid/recordables/:rid/events`
-### `/users/:uid/recordables/:rid/measurements`
-
----
-
 ## devices
 
 ### `/users/:uid/devices`
@@ -227,3 +213,49 @@ or instead of an array for `message`, a string.
         - __301__: redirect to `FE_URL/verified`
         - __304__: already verified
         - __500__: mongoose err
+
+---
+
+## iot / measurements
+
+### `/iot/users/:uid/measurements
+* __POST__: create measurement by the user
+    * body
+    ```json
+        {
+            "recordable_id": "objectid_of_plant_device",
+            "measurements": {
+                "temperature": 12,
+                "light": 1402
+            }
+        }
+    ```
+
+### `/iot/devices/:did/measurements
+* __POST__: create measurement by the device
+
+### `/iot/time`
+* __GET__: get current seconds since unix epoch as `text/plain`
+
+### `/iot/types`
+* __GET__: return list of accepted measurements
+
+---
+
+## recordables
+
+### `/users/:uid/recordables?type=garden/plant`
+* __POST__: create a new recordable of type `type`
+    * body
+        - 
+
+
+### `/users/:uid/recordables/:rid`
+### `/users/:uid/recordables/:rid/events`
+### `/users/:uid/recordables/:rid/measurements`
+* __GET__: Read all measurements associated with recordable
+
+### `/users/:uid/recordables/:rid/measurements`
+* __DELETE__: Delete a set of updates
+    * body, array of measurement id's
+

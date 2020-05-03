@@ -6,7 +6,7 @@ import config           from '../config';
 import { ErrorHandler } from "../common/errorHandler";
 import { n4j }          from '../common/neo4j';
 import { HTTP }         from "../common/http";
-import { IApiKey }      from '../models/ApiKey.model';
+import { IApiKeyPrivate } from '../models/ApiKey.model';
 
 const filterFields = (key:any) => {
   let hiddenFields = ["key"];
@@ -25,7 +25,7 @@ export const createApiKey = async (req:Request, res:Response) => {
     iat: Date.now()
   }, config.PRIVATE_KEY);
   
-  let key:IApiKey = {
+  let key:IApiKeyPrivate = {
     key: token,
     key_name: key_name,
     type: recordable_type,

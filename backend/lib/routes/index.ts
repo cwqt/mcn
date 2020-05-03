@@ -1,11 +1,11 @@
 import users 	      from "./users.routes"
-import time         from './time.routes';
 import auth         from './auth.routes';
 import test         from './test.routes';
+import iot          from './iot.routes';
 
 export default {
   users,
-  time,
   auth,
-  test
+  test,
+  iot
 }

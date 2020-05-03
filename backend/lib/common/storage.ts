@@ -24,6 +24,7 @@ export interface S3Image {
 
 export const uploadImageToS3 = async (user_id:string, file:Express.Multer.File, filename?:string):Promise<S3Image> => {
     if(!file) throw new Error('No image provided');
+    let mimetype;
     // check magic bytes to ensure incorrect extensions aren't uploaded
     let check = new Promise(function(resolve, reject) {
         require('file-type').fromBuffer(file.buffer).then((ft:any) => {
@@ -32,6 +33,7 @@ export const uploadImageToS3 = async (user_id:string, file:Express.Multer.File, 
             } else {
                 let allowedMimes = ['image/jpg', 'image/jpeg', 'image/png'];
                 if(allowedMimes.indexOf(ft.mime) > -1) {
+                    mimetype = ft.mime;
                     resolve();
                 } else {
                     reject('file type not allowed')//ft.mime
@@ -48,7 +50,10 @@ export const uploadImageToS3 = async (user_id:string, file:Express.Multer.File, 
         let params = {
             Bucket: config.AWS_BUCKET_NAME,
             Body: file.buffer,
-            Key: `${user_id}/${fn}.${extension}`
+            Key: `${user_id}/${fn}.${extension}`,
+            ContentDisposition: 'inline',
+            ContentType: mimetype,
+            ACL: 'public-read',
         }
 
         //upload the image

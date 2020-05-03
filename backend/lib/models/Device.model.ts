@@ -1,11 +1,13 @@
-import { Hardware } from '../common/types/hardware.types';
+import { Hardware }          from '../common/types/hardware.types';
 import { Measurement, Unit } from '../common/types/measurements.types';
+import { IApiKey }           from './ApiKey.model';
+
 import * as IpAddress from 'ip-address';
 
 export interface IDeviceStub {
-    _id:string,
-    name:string,
-    thumbnail?:string
+    _id:        string,
+    name:       string,
+    thumbnail?: string
 }
 
 export interface IDevice extends IDeviceStub {
@@ -17,5 +19,6 @@ export interface IDevice extends IDeviceStub {
     created_at?:        number,
     updated_at?:        number,
     recording?:         Array<Measurement>,
-    units?:             Array<Unit>
+    units?:             Array<Unit>,
+    api_key?:           IApiKey
 }

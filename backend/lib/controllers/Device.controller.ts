@@ -4,6 +4,7 @@ import { Types }                from "mongoose";
 import { IDevice }      from "../models/Device.model";
 import { HTTP }         from '../common/http';
 import { ErrorHandler } from "../common/errorHandler";
+import { IApiKey }      from '../models/ApiKey.model';
 import { n4j }          from '../common/neo4j';
 
 export const createDevice = async (req:Request, res:Response) => {
@@ -87,9 +88,20 @@ export const readDevice = async (req:Request, res:Response) => {
     let session = n4j.session();
     let result;
     try {
+        //get specific info
+        // Device id:5eadbb819964c53de2c0bc63
+        // Api key id:5eadbb819964c53de2c0bc63
+        // Created:1588444033955
+        // Software version:—
+        // Hardware model:—
+        // Total data points:103
+        // Recording:temperature, humidity, light level, water level
+        // Units: c, %, lux, —
+
         result = await session.run(`
             MATCH (d:Device {_id:$did})
-            RETURN d
+            OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
+            RETURN d, k
         `, {
             did:req.params.did
         })
@@ -99,10 +111,16 @@ export const readDevice = async (req:Request, res:Response) => {
         session.close();
     }
 
-    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
-    res.status(HTTP.Created).json(result.records[0].get('d').properties);
-}
+    let device = result.records[0].get('d').properties;
+    let key = result.records[0].get('k').properties;
+    if(key) {
+        delete key["key"]; //don't wanna send over credentials
+        device["api_key"] = key as IApiKey
+    }
 
+    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
+    res.status(HTTP.Created).json(device);
+}
 
 
 

@@ -36,9 +36,9 @@ connection.once('open', () => {
     log.info("Connected to MongoDB.")
 
     try {        
-        app.use("/users",       routes.users)
-        app.use('/auth',        routes.auth)
-        app.use('/time',        routes.time)
+        app.use('/users',       routes.users);
+        app.use('/auth',        routes.auth);
+        app.use('/iot',         routes.iot);
 
         if(config.TESTING) app.use('/test', routes.test)
         

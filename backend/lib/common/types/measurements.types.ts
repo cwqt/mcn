@@ -9,6 +9,7 @@ export enum Measurement {
     CameraState = 'camera_state',
     PumpState = 'pump_state',
     HeaterState = 'heater_state',
+    Height = 'height'
 }
 
 export enum Unit {
@@ -19,7 +20,11 @@ export enum Unit {
     RelativeHumidity = "RH%",
     AbsoluteHumidity = "g/m³",
     CapacitiveMoisture = '~',
-    Percentage = '%'
+    Percentage = '%',
+    Meters = 'm',
+    Centimeters = 'cm',
+    Feet = 'ft',
+    Inches = 'in'
 }
 
 // available units for each measurement type are described: 
@@ -32,5 +37,6 @@ export const MeasurementTypes:{[index in Measurement]:Array<Unit | boolean>} = {
     [Measurement.LightState]:   [true, false], //on or off,
     [Measurement.CameraState]:  [true, false],
     [Measurement.PumpState]:    [true, false],
-    [Measurement.HeaterState]:  [true, false]
+    [Measurement.HeaterState]:  [true, false],
+    [Measurement.Height]:       [Unit.Meters, Unit.Centimeters, Unit.Feet, Unit.Inches]
 }
