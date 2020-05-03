@@ -2,7 +2,7 @@ interface IRepost {
     
 }
 
-export interface IPost {
+export interface IPostStub {
     _id:            string,
     replies:        number,
     hearts:         number,
@@ -11,6 +11,9 @@ export interface IPost {
     content:        string,
     images?:        string[],
     created_at?:    number,
-    updated_at?:    number,
     repost?:        IRepost
+}
+
+export interface IPost extends IPostStub {
+    replies:any;
 }

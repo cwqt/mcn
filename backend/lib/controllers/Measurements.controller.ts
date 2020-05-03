@@ -41,9 +41,11 @@ export const createMeasurement = async (req:Request, res:Response) => {
         let result = await session.run(`
             MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
             WHERE r:Plant OR r:Garden
+            SET d.last_ping = $date
             RETURN d, r
         `, {
-            did: req.params.did
+            did: req.params.did,
+            date: Date.now()
         })
 
         let device:IDevice = result.records[0]?.get('d')?.properties;

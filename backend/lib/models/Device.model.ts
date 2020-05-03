@@ -7,7 +7,8 @@ import * as IpAddress from 'ip-address';
 export interface IDeviceStub {
     _id:        string,
     name:       string,
-    thumbnail?: string
+    thumbnail?: string,
+    last_ping?: number //seconds since epoch device sent message
 }
 
 export interface IDevice extends IDeviceStub {

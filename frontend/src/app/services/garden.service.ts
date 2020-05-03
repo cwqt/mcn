@@ -6,17 +6,9 @@ import { UserService } from './user.service';
 @Injectable({
   providedIn: 'root'
 })
-export class DeviceService {
+export class GardenService {
 
   constructor(private profileService:ProfileService,
     private userService:UserService,
     private http:HttpClient) {}
-
-  createDevice(user_id, content) {
-    return this.http.post(`/api/users/${user_id}/devices`, content)
-  }
-
-  getDevice(user_id, device_id) {
-    return this.http.get(`/api/users/${user_id}/devices/${device_id}`)
-  }
 }

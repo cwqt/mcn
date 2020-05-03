@@ -6,17 +6,13 @@ import { UserService } from './user.service';
 @Injectable({
   providedIn: 'root'
 })
-export class DeviceService {
+export class PostService {
 
   constructor(private profileService:ProfileService,
     private userService:UserService,
     private http:HttpClient) {}
 
-  createDevice(user_id, content) {
-    return this.http.post(`/api/users/${user_id}/devices`, content)
-  }
-
-  getDevice(user_id, device_id) {
-    return this.http.get(`/api/users/${user_id}/devices/${device_id}`)
+  getFullPost(post_id:string) {
+    return this.http.get(`/api/users/${this.profileService.currentProfileValue._id}/posts/${post_id}`).toPromise();
   }
 }

@@ -3,10 +3,10 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { UserService } from './user.service';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
-import { IPlant } from '../../../../backend/lib/models/Plant.model';
 import { IUser } from '../../../../backend/lib/models/User.model';
-import { IPost } from '../../../../backend/lib/models/Post.model';
-import { IDevice } from '../../../../backend/lib/models/Device.model';
+import { IPostStub } from '../../../../backend/lib/models/Post.model';
+import { IDeviceStub } from '../../../../backend/lib/models/Device.model';
+import { IRecordableStub } from '../../../../backend/lib/models/Recordable.model';
 
 @Injectable({
   providedIn: 'root'
@@ -37,25 +37,28 @@ export class ProfileService {
   getPosts() {
     console.log(this.currentProfileValue);
     return this.http.get(`/api/users/${this.currentProfileValue._id}/posts`)
-      .pipe(map((posts:IPost[]) => {
+      .pipe(map((posts:IPostStub[]) => {
         return posts;
       })).toPromise();
   }
 
-  getFullPost(post_id:string) {
-    return this.http.get(`/api/users/${this.currentProfileValue._id}/posts/${post_id}`).toPromise();
-  }
-
   getPlants() {
     return this.http.get(`/api/users/${this.currentProfileValue._id}/plants`)
-      .pipe(map((plants:IPlant[]) => {
+      .pipe(map((plants:IRecordableStub[]) => {
         return plants;
+      })).toPromise();
+  }
+
+  getGardens() {
+    return this.http.get(`/api/users/${this.currentProfileValue._id}/gardens`)
+      .pipe(map((gardens:IRecordableStub[]) => {
+        return gardens;
       })).toPromise();
   }
 
   getDevices() {
     return this.http.get(`/api/users/${this.currentProfileValue._id}/devices`)
-      .pipe(map((devices:IDevice[]) => {
+      .pipe(map((devices:IDeviceStub[]) => {
         return devices;
       })).toPromise();
   }

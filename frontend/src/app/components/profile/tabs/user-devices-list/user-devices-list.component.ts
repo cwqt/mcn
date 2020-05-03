@@ -18,7 +18,7 @@ export class UserDevicesListComponent implements OnInit {
   initialised:boolean   = false;
 
   loading:boolean       = false;
-  devices:IDevice[]  = [];
+  devices:IDeviceStub[] = [];
 
   success:boolean;
   
