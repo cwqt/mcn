@@ -15,7 +15,7 @@ import {
 export const createMeasurement = async (req:Request, res:Response) => {
     //todo: catch err for non-existend recordable
     let measurement:IMeasurement = {
-        measurements: req.body.measurements,
+        measurements: req.body,
         recordable_id: req.params.rid || undefined,
         recorder_type: res.locals.type,
         recorder_id: req.params.did || req.params.uid
@@ -25,11 +25,19 @@ export const createMeasurement = async (req:Request, res:Response) => {
         //find linked recordable
         let session = n4j.session();
         let result = await session.run(`
-            MATCH (d:Device)-[:MONITORS]->(r:Plant, Garden)
-            RETURN r
-        `)
-        if(!result.records.length) throw new ErrorHandler(HTTP.NotFound, "No assigned recordable to this device")
-        measurement.recordable_id = result.records[0].get('r').properties._id;
+            MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
+            WHERE r:Plant OR r:Garden
+            RETURN d, r
+        `, {
+            did: req.params.did
+        })
+
+        let device = result.records[0]?.get('d')?.properties;
+        let recordable = result.records[0]?.get('r')?.properties;
+
+        if(!device) throw new ErrorHandler(HTTP.NotFound, 'No such device exists');
+        if(!recordable) throw new ErrorHandler(HTTP.NotFound, 'No such recordable assigned to this device');
+        measurement.recordable_id = recordable._id;
     }
 
     let Measurement:Model<IMeasurementModel> = model<IMeasurementModel>("Measurement", MeasurementSchema, measurement.recordable_id);

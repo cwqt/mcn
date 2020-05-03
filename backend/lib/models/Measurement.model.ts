@@ -36,6 +36,19 @@ export interface IMeasurementModel extends IMeasurement, Document {
     _id:            string,
 }
 
+const MeaurementsSchema:Schema = new Schema({
+    [AcceptedMeasurement.Temperature]:  Number,
+    [AcceptedMeasurement.Moisture]:     Number,
+    [AcceptedMeasurement.Humidity]:     Number,
+    [AcceptedMeasurement.Light]:        Number,
+    [AcceptedMeasurement.WaterLevel]:   Number,
+    [AcceptedMeasurement.LightState]:   Boolean,
+    [AcceptedMeasurement.CameraState]:  Boolean,
+    [AcceptedMeasurement.PumpState]:    Boolean,
+    [AcceptedMeasurement.HeaterState]:  Boolean,
+    [AcceptedMeasurement.Height]:       Number
+}, { _id: false})
+
 export var MeasurementSchema:Schema = new Schema({
     _id: {
         type:String,
@@ -43,12 +56,15 @@ export var MeasurementSchema:Schema = new Schema({
     },
     recordable_id: String,
     recorder_id: String,
-    recordable_type: String,
+    recorder_type: {
+        type: String,
+        enum: [RecorderTypes.User, RecorderTypes.Device]
+    },
     created_at: {
         type: Number,
         default: Date.now()
     },
-    measurements: Object,
-})
+    measurements: MeaurementsSchema,
+}, { versionKey: false })
 
 export const Measurement:Model<IMeasurementModel> = model<IMeasurementModel>("Measurement", MeasurementSchema);
