@@ -42,7 +42,7 @@ export const createMeasurement = async (req:Request, res:Response) => {
             MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
             WHERE r:Plant OR r:Garden
             SET d.last_ping = $date
-            SET d.measurement_count += 1
+            SET d.measurement_count = d.measurement_count + 1
             RETURN d, r
         `, {
             did: req.params.did,

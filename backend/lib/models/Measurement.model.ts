@@ -18,7 +18,6 @@ import { Document, Schema, Model, model, Types} from "mongoose";
 //     }
 // }
 
-
 export enum RecorderTypes {
     User = 'user',
     Device = 'device'

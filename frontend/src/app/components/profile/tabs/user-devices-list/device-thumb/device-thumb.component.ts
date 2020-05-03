@@ -1,18 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { DeviceService } from 'src/app/services/device.service';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { EditDeviceModalComponent } from '../edit-device-modal/edit-device-modal.component';
 
 import { IUser } from '../../../../../../../../backend/lib/models/User.model';
-import { IDeviceStub, IDevice } from '../../../../../../../../backend/lib/models/Device.model';
+import { IDeviceStub, IDevice, DeviceState } from '../../../../../../../../backend/lib/models/Device.model';
 import { IMeasurementModel } from '../../../../../../../../backend/lib/models/Measurement.model';
-import { ThrowStmt } from '@angular/compiler';
-
-enum DeviceStates {
-  Active = "active",
-  InActive = "inactive",
-  Verified = "verified",
-  UnVerified = "unverified"
-}
 
 interface IDeviceState {
   active: boolean,
@@ -46,14 +40,17 @@ export class DeviceThumbComponent implements OnInit {
 
   deviceState:IDeviceState;
   iconMap = {
-    [DeviceStates.Active]:"signal_cellular_4_bar",
-    [DeviceStates.InActive]:"signal_cellular_off",
-    [DeviceStates.UnVerified]:"signal_cellular_connected_no_internet_4_bar"
+    [DeviceState.Active]:"signal_cellular_4_bar",
+    [DeviceState.InActive]:"signal_cellular_off",
+    [DeviceState.UnVerified]:"signal_cellular_connected_no_internet_4_bar"
   }
   meta:undefined;
   latest_data:undefined;
 
-  constructor(private router:Router, private deviceService:DeviceService) {
+  constructor(private router:Router, private deviceService:DeviceService, private dialog:MatDialog) {
+  }
+
+  ngOnInit(): void {
     this.deviceState = {
       active: true,
       verified: true,
@@ -61,17 +58,16 @@ export class DeviceThumbComponent implements OnInit {
       icon:""
     } as IDeviceState
 
-    this.deviceState.text = this.getStateText();
+    console.log(this.device)
+    this.deviceState.text = this.device.state;
     this.deviceState.icon = this.iconMap[this.deviceState.text]
   }
 
-  getStateText() {
-    if(this.deviceState.verified && this.deviceState.active) return DeviceStates.Active
-    if(this.deviceState.verified && !this.deviceState.active) return DeviceStates.InActive
-    if(!this.deviceState.verified) return DeviceStates.UnVerified;
-  }
-
-  ngOnInit(): void {
+  openEditDeviceDialog():void {
+    const dialogRef = this.dialog.open(EditDeviceModalComponent, {
+      width: '50%',
+      data: this.device
+    });
   }
 
   getDeviceMeta() {
@@ -101,6 +97,6 @@ export class DeviceThumbComponent implements OnInit {
   }
 
   openEditDialog() {
-    
+
   }
 }

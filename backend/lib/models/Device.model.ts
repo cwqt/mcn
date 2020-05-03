@@ -6,11 +6,19 @@ import { IMeasurementModel } from './Measurement.model';
 
 import * as IpAddress from 'ip-address';
 
+export enum DeviceState {
+    Active = "active",
+    InActive = "inactive",
+    Verified = "verified",
+    UnVerified = "unverified"
+}
+  
 export interface IDeviceStub {
     _id:        string,
     name:       string,
     thumbnail?: string,
     verified:   boolean,
+    state:      DeviceState,
     last_ping?: number //seconds since epoch device sent message
 }
 
@@ -42,4 +50,5 @@ export interface IDeviceMeta {
     device_ip?:         IpAddress.Address4 | IpAddress.Address6,
     units?:             Array<Unit>,
     recording?:         Array<Measurement>,
+    state:              DeviceState
 }

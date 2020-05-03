@@ -18,21 +18,20 @@ export class UserDevicesListComponent implements OnInit {
   initialised:boolean   = false;
 
   loading:boolean       = false;
-  devices:IDeviceStub[] = [];
-
   success:boolean;
+  devices:IDeviceStub[] = [];
   
-  constructor(private profileService:ProfileService, public dialog: MatDialog) {}
+  constructor(private profileService:ProfileService, public dialog:MatDialog) {}
 
-  openDialog():void {
+  openCreateDeviceDialog():void {
     const dialogRef = this.dialog.open(CreateDeviceGuideComponent, {
       width: '50%',
       data: {}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-    });
+    // dialogRef.afterClosed().subscribe(result => {
+    //   console.log('The dialog was closed');
+    // });
   }
 
   ngOnInit(): void {

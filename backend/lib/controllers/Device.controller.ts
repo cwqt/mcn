@@ -14,10 +14,25 @@ import {
     IDeviceStub,
     IDevice,
     IDeviceCollated,
-    IDeviceMeta }            from "../models/Device.model";
+    IDeviceMeta, 
+    DeviceState}            from "../models/Device.model";
 import {
     IApiKey,
     IApiKeyPrivate }         from '../models/ApiKey.model';
+
+
+export const getDeviceState = (device:IDevice):DeviceState => {
+    if(device.last_ping == undefined) return DeviceState.UnVerified
+    if(device.last_ping && device.measurement_count == 0) return DeviceState.Verified
+    if(device.last_ping && device.measurement_count > 0) {
+        let current_time = Date.now();
+        if(current_time - device.last_ping > 86400*1000) {//1 day
+            return DeviceState.InActive
+        } else {
+            return DeviceState.Active
+        }
+    }
+}
 
 export const createDevice = async (req:Request, res:Response) => {
     let session = n4j.session();
@@ -27,6 +42,8 @@ export const createDevice = async (req:Request, res:Response) => {
         images:     [],
         verified:   false,
         created_at: Date.now(),
+        state:      DeviceState.UnVerified,
+        measurement_count: 0
     }
 
     let result;
@@ -46,7 +63,9 @@ export const createDevice = async (req:Request, res:Response) => {
     }
 
     if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
-    res.status(HTTP.Created).json(result.records[0].get('d').properties);
+    let d = result.records[0].get('d').properties;
+    d.measurement_count = d.measurement_count.toNumber();
+    res.status(HTTP.Created).json(d);
 }
 
 
@@ -96,7 +115,9 @@ export const readAllDevices = async (req:Request, res:Response) => {
             name: r.name,
             verified: r.verified,
             created_at: r.created_at,
-            last_ping: r.last_ping
+            last_ping: r.last_ping,
+            measurement_count: r.measurement_count.toNumber(),
+            state: getDeviceState(r),
         } as IDeviceStub
     })
 
@@ -180,13 +201,15 @@ const readDeviceMeta = async (device_id:string):Promise<IDeviceMeta> => {
         session.close();
     }
 
-    let device:IDevice = result.records[0].get('d')?.properties;
+    let device = result.records[0].get('d')?.properties;
+    device.measurement_count = device.measurement_count.toNumber();
     let recordable:IPlant | IGarden = result.records[0].get('r')?.properties;
     let key:IApiKeyPrivate = result.records[0].get('k')?.properties;
     if(key) delete key.key;
 
     let data:IDeviceMeta = {
         ...device,
+        state: getDeviceState(device),
         assigned_to: recordable || undefined,
         api_key: key as IApiKey || undefined
     };

@@ -3,7 +3,6 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from 'src/app/services/user.service';
 
-
 @Component({
   selector: 'app-create-device-guide',
   templateUrl: './create-device-guide.component.html',

@@ -18,7 +18,6 @@ import { RegisterComponent }        from './components/landing/register/register
 import { LoginHelpComponent }       from './components/landing/login-help/login-help.component';
 import { FirstTimeSetupComponent }  from './components/landing/first-time-setup/first-time-setup.component';
 
-
 import { VerifiedComponent }        from './components/pages/verified/verified.component';
 import { NotFoundComponent }        from './components/pages/not-found/not-found.component';
 
@@ -60,8 +59,10 @@ import {MatCardModule}            from '@angular/material/card';
 import {MatDialogModule}          from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 import {MatSelectModule} from '@angular/material/select';
+import { EditDeviceModalComponent } from './components/profile/tabs/user-devices-list/edit-device-modal/edit-device-modal.component';
 
 
 @NgModule({
@@ -94,7 +95,8 @@ import {MatSelectModule} from '@angular/material/select';
     CreateDeviceGuideComponent,
     SupportedDevicesComponent,
     DeviceThumbComponent,
-    DeviceComponent
+    DeviceComponent,
+    EditDeviceModalComponent
   ],
   imports: [
     BrowserModule,
@@ -121,7 +123,8 @@ import {MatSelectModule} from '@angular/material/select';
     MatCardModule,
     MatDialogModule,
     MatSelectModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatSlideToggleModule
 
   ],
   providers: [

@@ -8,10 +8,7 @@
         <div class="title">
             <h1>{{device.name}}</h1>
 
-            <div class="state-indicator" 
-                [class.unverified]="!deviceState.verified"
-                [class.active]="deviceState.verified && deviceState.active"
-                [class.inactive]="deviceState.verified && !deviceState.active">
+            <div class="state-indicator" id={{device.state}}>
                 <mat-icon inline>{{deviceState.icon}}</mat-icon>
                 <span>{{deviceState.text}}</span>
             </div>
@@ -65,7 +62,7 @@
           <br />
         
         <div class="device-action-buttons">
-            <button mat-button color="primary" (click)="openEditDialog()">
+            <button mat-button color="primary" (click)="openEditDeviceDialog()">
                 <mat-icon inline>edit</mat-icon>
                 edit
             </button>
