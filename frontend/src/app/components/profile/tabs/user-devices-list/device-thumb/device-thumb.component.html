@@ -30,10 +30,12 @@
                     <p><b>Assigned to:</b>{{cache.device.data.assigned_to.type}}: {{cache.device.data.assigned_to.name}}</p>
                     <p><b>Created:</b>{{(cache.device.data.created_at | amTimeAgo) || '—'}}</p>
                     <p><b>Software version:</b>{{cache.device.data.software_version || '—'}}</p>
-                    <p><b>Hardware model:</b>{{cache.device.data.hardware_model || '—'}}</p>
+                    <p><b>Hardware model:</b>{{deviceInfo.model_name || '—'}}</p>
                     <p><b>Total data points:</b>{{cache.device.data.measurement_count || 0}}</p>
-                    <p><b>Recording:</b>{{cache.device.data.recording || '—'}}</p>
-                    <p><b>Units:</b>{{cache.device.data.units || '—'}}</p>    
+                    <p><b>Recording:</b>
+                        <span *ngFor="let measurement of deviceInfo.recording | keyvalue" class="recording-item">
+                            {{measurement.key}} ({{measurement.value}})</span>
+                    </p>
                 </div>
                 <mat-spinner *ngIf="!cache.device.data && !cache.device.error"></mat-spinner>
                 <p *ngIf="cache.device.error">{{cache.device.error}}</p>
@@ -50,7 +52,7 @@
               </mat-expansion-panel-header>
                 <div *ngIf="cache.latest_data.data && !cache.latest_data.error">
                     <p *ngFor="let field of cache.latest_data.data.measurements | keyvalue">
-                        <b>{{field.key}}:</b> {{field.value}}
+                        <b>{{field.key}}:</b> {{field.value}} {{deviceInfo.recording[field.key]}}
                     </p>
                 </div>
                 <mat-spinner *ngIf="!cache.latest_data.data && !cache.latest_data.error"></mat-spinner>

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile.service';
 import { ActivatedRoute } from '@angular/router';
+import { PostService } from 'src/app/services/post.service';
 
 @Component({
   selector: 'app-post',
@@ -12,7 +13,9 @@ export class PostComponent implements OnInit {
   post:any;
   user:any;
 
-  constructor(private profileService:ProfileService, private route:ActivatedRoute) { }
+  constructor(private profileService:ProfileService,
+    private postService:PostService,
+    private route:ActivatedRoute) { }
 
   ngOnInit(): void {
     this.post_id = this.route.snapshot.paramMap.get('pid');
@@ -21,7 +24,7 @@ export class PostComponent implements OnInit {
   }
 
   getFullPost() {
-    this.profileService.getFullPost(this.post_id).then(post => {
+    this.postService.getFullPost(this.post_id).then(post => {
       this.post = post
     });
   }

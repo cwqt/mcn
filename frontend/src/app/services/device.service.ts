@@ -3,25 +3,35 @@ import { HttpClient } from '@angular/common/http';
 import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 
+import { MeasurementTypes } from '../../../../backend/lib/common/types/measurements.types';
+import { IDevice } from '../../../../backend/lib/models/Device.model';
+import { IMeasurementModel } from '../../../../backend/lib/models/Measurement.model';
+
 @Injectable({
   providedIn: 'root'
 })
 export class DeviceService {
+  availableMeasurements = MeasurementTypes;
 
   constructor(private profileService:ProfileService,
     private userService:UserService,
-    private http:HttpClient) {}
+    private http:HttpClient) {
+  }
+
+  getAvailableMeasurements = () => {
+    return this.availableMeasurements;
+  }
 
   createDevice(user_id, content) {
     return this.http.post(`/api/users/${user_id}/devices`, content)
   }
 
-  getDevice(user_id, device_id) {
-    return this.http.get(`/api/users/${user_id}/devices/${device_id}`).toPromise();
+  getDevice(user_id, device_id):Promise<IDevice> {
+    return this.http.get<IDevice>(`/api/users/${user_id}/devices/${device_id}`).toPromise();
   }
 
-  getLatestMeasurement(user_id, device_id) {
-    return this.http.get(`/api/users/${user_id}/devices/${device_id}/latest`).toPromise();
+  getLatestMeasurement(user_id, device_id):Promise<IMeasurementModel> {
+    return this.http.get<IMeasurementModel>(`/api/users/${user_id}/devices/${device_id}/latest`).toPromise();
   }
 
   getMeasurements(user_id, device_id) {

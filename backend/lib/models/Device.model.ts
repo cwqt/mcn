@@ -1,4 +1,4 @@
-import { Hardware }          from '../common/types/hardware.types';
+import { SupportedHardware } from '../common/types/hardware.types';
 import { Measurement, Unit } from '../common/types/measurements.types';
 import { IApiKey }           from './ApiKey.model';
 import { IRecordableStub }   from './Recordable.model';
@@ -20,35 +20,15 @@ export interface IDeviceStub {
     verified:   boolean,
     state:      DeviceState,
     last_ping?: number //seconds since epoch device sent message
+    hardware_model:    SupportedHardware,
 }
 
 export interface IDevice extends IDeviceStub {
     images:             string[],
     created_at?:        number,
-    hardware_model?:    Hardware,
     software_version?:  string,
     device_ip?:         IpAddress.Address4 | IpAddress.Address6,
-    units?:             Array<Unit>,
-    recording?:         Array<Measurement>,
     measurement_count?: number
-}
-
-//uses mongo data
-export interface IDeviceCollated extends IDevice {
     api_key?:           IApiKey,
     assigned_to?:       IRecordableStub,
-    latest_data?:       IMeasurementModel
-}
-
-//all contained within neo4j
-export interface IDeviceMeta {
-    api_key?:           IApiKey,
-    assigned_to?:       IRecordableStub,
-    created_at?:        number,
-    hardware_model?:    Hardware,
-    software_version?:  string,
-    device_ip?:         IpAddress.Address4 | IpAddress.Address6,
-    units?:             Array<Unit>,
-    recording?:         Array<Measurement>,
-    state:              DeviceState
 }

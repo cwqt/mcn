@@ -7,6 +7,9 @@ import { EditDeviceModalComponent } from '../edit-device-modal/edit-device-modal
 import { IUser } from '../../../../../../../../backend/lib/models/User.model';
 import { IDeviceStub, IDevice, DeviceState } from '../../../../../../../../backend/lib/models/Device.model';
 import { IMeasurementModel } from '../../../../../../../../backend/lib/models/Measurement.model';
+import {
+  HardwareInformation,
+  HardwareDevice } from '../../../../../../../../backend/lib/common/types/hardware.types';
 
 interface IDeviceState {
   active: boolean,
@@ -24,6 +27,8 @@ export class DeviceThumbComponent implements OnInit {
   @Input() profileUser:IUser;
   @Input() currentUser:IUser;
   @Input() device:IDeviceStub;
+
+  deviceInfo:HardwareDevice;
 
   cache = {
     "device": {
@@ -59,6 +64,10 @@ export class DeviceThumbComponent implements OnInit {
     } as IDeviceState
 
     console.log(this.device)
+    this.deviceInfo = HardwareInformation[this.device.hardware_model];
+    console.log(HardwareInformation)
+    console.log(this.deviceInfo)
+
     this.deviceState.text = this.device.state;
     this.deviceState.icon = this.iconMap[this.deviceState.text]
   }

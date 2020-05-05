@@ -11,6 +11,8 @@ import { IDevice, IDeviceStub } from '../../../../../../../../backend/lib/models
 })
 export class EditDeviceModalComponent implements OnInit {
   editDeviceForm: FormGroup;
+  displayedColumns = ["Measurement", "Unit", "Active?"];
+  dataSource = [];
 
   constructor(
     public dialogRef: MatDialogRef<EditDeviceModalComponent>,

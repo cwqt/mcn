@@ -60,6 +60,8 @@ import {MatDialogModule}          from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatTableModule} from '@angular/material/table';
+
 
 import {MatSelectModule} from '@angular/material/select';
 import { EditDeviceModalComponent } from './components/profile/tabs/user-devices-list/edit-device-modal/edit-device-modal.component';
@@ -124,7 +126,8 @@ import { EditDeviceModalComponent } from './components/profile/tabs/user-devices
     MatDialogModule,
     MatSelectModule,
     MatExpansionModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatTableModule
 
   ],
   providers: [

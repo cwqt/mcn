@@ -103,3 +103,7 @@ mat-spinner {
         margin-left: 10px !important
     }
 }
+
+p  .recording-item:not(:last-child)::after {
+    content: ","
+}

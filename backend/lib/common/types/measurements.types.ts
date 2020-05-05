@@ -24,7 +24,9 @@ export enum Unit {
     Meters = 'm',
     Centimeters = 'cm',
     Feet = 'ft',
-    Inches = 'in'
+    Inches = 'in',
+    Unknown = "-",
+    Boolean = "{on, off}"
 }
 
 // available units for each measurement type are described: 

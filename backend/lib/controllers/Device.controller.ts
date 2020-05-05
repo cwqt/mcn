@@ -13,8 +13,6 @@ import { IMeasurementModel } from "../models/Measurement.model";
 import {
     IDeviceStub,
     IDevice,
-    IDeviceCollated,
-    IDeviceMeta, 
     DeviceState}            from "../models/Device.model";
 import {
     IApiKey,
@@ -43,7 +41,8 @@ export const createDevice = async (req:Request, res:Response) => {
         verified:   false,
         created_at: Date.now(),
         state:      DeviceState.UnVerified,
-        measurement_count: 0
+        measurement_count: 0,
+        hardware_model: req.body.hardware_model
     }
 
     let result;
@@ -116,6 +115,7 @@ export const readAllDevices = async (req:Request, res:Response) => {
             verified: r.verified,
             created_at: r.created_at,
             last_ping: r.last_ping,
+            hardware_model: r.hardware_model,
             measurement_count: r.measurement_count.toNumber(),
             state: getDeviceState(r),
         } as IDeviceStub
@@ -125,8 +125,47 @@ export const readAllDevices = async (req:Request, res:Response) => {
 }
 
 export const readDevice = async (req:Request, res:Response) => {
-    let data = await readDeviceMeta(req.params.did) as IDeviceCollated;
-    res.status(HTTP.Created).json(data);
+    let session = n4j.session();
+    let result;
+    try {
+        result = await session.run(`
+            MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
+            WHERE r:Plant OR r:GARDEN
+            OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
+            RETURN d, r, k
+        `, {
+            did: req.params.did
+        })
+    } catch (e) {
+        throw new Error(e);
+    } finally {
+        session.close();
+    }
+
+    let device = result.records[0].get('d')?.properties;
+    device.measurement_count = device.measurement_count.toNumber();
+    let recordable:IPlant | IGarden = result.records[0].get('r')?.properties;
+    let key:IApiKeyPrivate = result.records[0].get('k')?.properties;
+    if(key) delete key.key;
+
+    let data:IDevice = {
+        ...device,
+        state: getDeviceState(device),
+        assigned_to: recordable || undefined,
+        api_key: key as IApiKey || undefined
+    };
+
+    if(recordable) {
+        data.assigned_to = {
+            _id: recordable._id,
+            name: recordable.name,
+            thumbnail: recordable.thumbnail,
+            created_at: recordable.created_at,        
+            type: recordable.type
+        } as IRecordableStub
+    }
+
+    res.json(data);
 }
 
 export const readLatestMeasurementFromDevice = async (req:Request, res:Response) => {
@@ -182,50 +221,6 @@ export const readLatestMeasurementFromDevice = async (req:Request, res:Response)
 //         res.status(HTTP.OK).end();
 //     });
 // }
-
-const readDeviceMeta = async (device_id:string):Promise<IDeviceMeta> => {
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
-            WHERE r:Plant OR r:GARDEN
-            OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
-            RETURN d, r, k
-        `, {
-            did: device_id
-        })
-    } catch (e) {
-        throw new Error(e);
-    } finally {
-        session.close();
-    }
-
-    let device = result.records[0].get('d')?.properties;
-    device.measurement_count = device.measurement_count.toNumber();
-    let recordable:IPlant | IGarden = result.records[0].get('r')?.properties;
-    let key:IApiKeyPrivate = result.records[0].get('k')?.properties;
-    if(key) delete key.key;
-
-    let data:IDeviceMeta = {
-        ...device,
-        state: getDeviceState(device),
-        assigned_to: recordable || undefined,
-        api_key: key as IApiKey || undefined
-    };
-
-    if(recordable) {
-        data.assigned_to = {
-            _id: recordable._id,
-            name: recordable.name,
-            thumbnail: recordable.thumbnail,
-            created_at: recordable.created_at,        
-            type: recordable.type
-        } as IRecordableStub
-    }
-
-    return data;
-}
 
 const getAssignedRecordable = async (device_id:string):Promise<IPlant | IGarden> => {
     let session = n4j.session();
