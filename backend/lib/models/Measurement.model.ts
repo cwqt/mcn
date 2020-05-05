@@ -28,7 +28,7 @@ export interface IMeasurement {
     recorder_id:    string, // which device/user made this measurement
     recorder_type:  RecorderTypes.User | RecorderTypes.Device, //what recordertype made the measurement
     measurements:   Array<{[index in AcceptedMeasurement]:number | string | boolean}>,
-    created_at?:    Date,
+    created_at:     number,
 }
 
 export interface IMeasurementModel extends IMeasurement, Document {

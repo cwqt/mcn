@@ -19,7 +19,7 @@ export enum SupportedHardware {
 export interface HardwareDevice {
     model_name:      string,
     microcontroller: MicroController,
-    recording:       {[index:Measurement]:Unit},
+    recording:       {[index in Measurement]?:Unit},
     capabilities:    DeviceCapability[],
     mcnEnabled:      boolean,
     supportsPlants:  boolean,

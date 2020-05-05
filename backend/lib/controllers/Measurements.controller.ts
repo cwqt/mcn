@@ -32,7 +32,8 @@ export const createMeasurement = async (req:Request, res:Response) => {
         measurements: req.body,
         recordable_id: req.params.rid || undefined,
         recorder_type: res.locals.type,
-        recorder_id: req.params.did || req.params.uid
+        recorder_id: req.params.did || req.params.uid,
+        created_at: Date.now()
     };
 
     if(res.locals.type == RecorderTypes.Device) {

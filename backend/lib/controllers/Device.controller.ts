@@ -215,12 +215,25 @@ export const readLatestMeasurementFromDevice = async (req:Request, res:Response)
 //     })
 // }
 
-// export const pingDevice = (req:Request, res:Response, next:NextFunction) => {
-//     Device.findByIdAndUpdate(req.params.did, {"last_ping": new Date(), "verified": true}, {new: true}, (error, device:IDeviceModel) => {
-//         if (error) return next(new ErrorHandler(HTTP.ServerError));
-//         res.status(HTTP.OK).end();
-//     });
-// }
+export const pingDevice = async (req:Request, res:Response) => {
+    let session = n4j.session();
+    try {
+        await session.run(`
+            MATCH (d:Device {_id:$did})
+            SET d.last_ping = $time
+            RETURN d
+        `, {
+            did: req.params.did,
+            time: Date.now()
+        })    
+    } catch (e) {
+        throw new ErrorHandler(HTTP.ServerError, e);        
+    } finally {
+        session.close();
+    }
+
+    res.status(HTTP.OK).end()
+}
 
 const getAssignedRecordable = async (device_id:string):Promise<IPlant | IGarden> => {
     let session = n4j.session();

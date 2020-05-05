@@ -1,0 +1,7 @@
+<mat-card *ngFor="let graph of formattedData | keyvalue">
+    <p>
+        {{graph.key}}
+        <mat-icon>{{iconMap[graph.value.datasets[0].label]}}</mat-icon>
+    </p>
+    <ngx-chartjs [data]="graph.value" type="line"></ngx-chartjs>
+</mat-card>

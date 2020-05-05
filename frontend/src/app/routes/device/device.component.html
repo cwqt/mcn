@@ -1,3 +1,7 @@
 <div class="device-container">
     <h1>{{cache.device.data.name}}</h1>
+
+    <div *ngIf="!cache.measurements.loading">
+        <app-measurements-graphs [data]="cache.measurements.data"></app-measurements-graphs>
+    </div>
 </div>

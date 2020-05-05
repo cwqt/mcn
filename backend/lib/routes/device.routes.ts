@@ -8,12 +8,10 @@ import {
     createDevice,
     assignDeviceToRecordable,
     readDevice,
-    readLatestMeasurementFromDevice
-    // unAssignDeviceFromRecordable,
-    // readDevice,
+    readLatestMeasurementFromDevice,
+    pingDevice,
     // updateDevice,
     // deleteDevice,
-    // pingDevice
 } from "../controllers/Device.controller";
 
 import {
@@ -42,10 +40,6 @@ router.post('/:did/assign/:rid', validate([
     param('rid').isMongoId().trim().withMessage('invalid recordable id to assign to')
 ]), assignDeviceToRecordable)
 
-// router.get('/:did', validate([
-//     param('did').isMongoId().trim().withMessage('invalid device id')
-// ]), readDevice);
-
 // router.put('/:did', validate([
 //     param('did').isMongoId().trim().withMessage('invalid device id')
 // ]), updateDevice);
@@ -54,8 +48,7 @@ router.post('/:did/assign/:rid', validate([
 //     param('did').isMongoId().trim().withMessage('invalid device id')
 // ]), deleteDevice);
 
-// router.get('/:did/ping',  pingDevice)
-
+router.get('/:did/ping',  pingDevice)
 
 router.post('/:did/keys', validate([
     param('did').isMongoId().trim().withMessage('invalid device id'),

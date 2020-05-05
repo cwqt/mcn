@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DynamicComponentModule, DynamicIoModule } from 'ng-dynamic-component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { ClickOutsideModule } from 'ng-click-outside';
+import { ChartjsModule } from '@ctrl/ngx-chartjs';
 
 import { IndexComponent }           from './routes/index/index.component';
 import { LoginComponent }           from './components/landing/login/login.component';
@@ -23,7 +24,7 @@ import { NotFoundComponent }        from './components/pages/not-found/not-found
 
 import { WrapperComponent }         from './components/app/wrapper/wrapper.component';
 import { HeaderBarComponent }       from './components/app/header-bar/header-bar.component';
-import { SidebarComponent } from './components/app/sidebar/sidebar.component';
+import { SidebarComponent }         from './components/app/sidebar/sidebar.component';
 
 import { LoadButtonComponent }      from './components/_helpers/load-button/load-button.component';
 
@@ -46,6 +47,7 @@ import { ProfileSidebarQuadComponent } from './components/profile/profile-sideba
 import { CreateDeviceGuideComponent } from './components/profile/tabs/user-devices-list/create-device-guide/create-device-guide.component';
 import { SupportedDevicesComponent } from './components/pages/supported-devices/supported-devices.component';
 import { DeviceThumbComponent }     from './components/profile/tabs/user-devices-list/device-thumb/device-thumb.component';
+import { EditDeviceModalComponent } from './components/profile/tabs/user-devices-list/edit-device-modal/edit-device-modal.component';
 
 import { MatButtonModule }        from '@angular/material/button';
 import { MatButtonToggleModule }  from '@angular/material/button-toggle';
@@ -61,10 +63,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatTableModule} from '@angular/material/table';
-
-
 import {MatSelectModule} from '@angular/material/select';
-import { EditDeviceModalComponent } from './components/profile/tabs/user-devices-list/edit-device-modal/edit-device-modal.component';
+import { MeasurementsGraphsComponent } from './components/measurements-graphs/measurements-graphs.component';
 
 
 @NgModule({
@@ -98,7 +98,8 @@ import { EditDeviceModalComponent } from './components/profile/tabs/user-devices
     SupportedDevicesComponent,
     DeviceThumbComponent,
     DeviceComponent,
-    EditDeviceModalComponent
+    EditDeviceModalComponent,
+    MeasurementsGraphsComponent,
   ],
   imports: [
     BrowserModule,
@@ -112,6 +113,7 @@ import { EditDeviceModalComponent } from './components/profile/tabs/user-devices
     MomentModule,
     PickerModule,
     ClickOutsideModule,
+    ChartjsModule,
 
     MatButtonModule,
     MatButtonToggleModule,
