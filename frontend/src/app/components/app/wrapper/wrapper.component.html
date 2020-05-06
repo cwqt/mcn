@@ -1,5 +1,5 @@
 <div class="app-container">
-    <div class="app-content">
+    <div class="app-content" *ngIf="currentUser">
         <div class="left">
             <app-sidebar [currentUser]="currentUser"></app-sidebar>
         </div>

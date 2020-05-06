@@ -12,7 +12,9 @@ export class HeaderBarComponent implements OnInit {
 
   constructor(private authService:AuthenticationService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.currentUser)
+  }
 
   openUserMenu() { this.userMenuOpen = true }
   hideUserMenu() { this.userMenuOpen = false }

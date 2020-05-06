@@ -1,9 +1,35 @@
-mat-icon {
-    color: black !important;
-    font-size: 30px;
+.graphs-container {
+    .graph-item {
+        display: inline-block;
+        width: calc(50% - 10px);
+        &:nth-child(odd) { margin-right: 5px; }
+        &:nth-child(even) { margin-left: 5px; }
+        &:not(:last-child) {
+            margin-bottom: 10px;
+        }
+        &.full-width {
+            width: 100%;
+            margin: 0;
+        }
+        overflow: hidden;
+        border-radius: 20px;
+        border: 1px solid lightgrey;
+        .title {
+            padding: 10px 20px;
+            display: flex;
+            color: white;
+            align-items: center;
+            h2 {
+                font-size: 24px;
+                letter-spacing: 1px;
+                margin: 0;
+                margin-left: 10px;
+            }
+        }
+        .graph-wrapper {
+            margin: 10px;
+            overflow: visible;
+        }
+    }
 }
 
-mat-card {
-    width: 50%;
-    display: inline-block;
-}
