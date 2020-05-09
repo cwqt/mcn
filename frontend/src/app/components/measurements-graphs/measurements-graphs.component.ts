@@ -1,10 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IMeasurementModel, IMeasurement } from '../../../../../backend/lib/models/Measurement.model';
-import { Measurement } from '../../../../../backend/lib/common/types/measurements.types';
+import { Measurement, IoTMeasurement } from '../../../../../backend/lib/common/types/measurements.types';
 import { IDevice } from '../../../../../backend/lib/models/Device.model';
 import {
   HardwareInformation,
   HardwareDevice } from '../../../../../backend/lib/common/types/hardware.types';
+import moment from 'moment';
 
 @Component({
   selector: 'app-measurements-graphs',
@@ -28,7 +29,11 @@ export class MeasurementsGraphsComponent implements OnInit {
     [Measurement.LightState]:   ["Light state",   "wb_incandescent", "#e1ffb1", false],
     [Measurement.CameraState]:  ["Camera state",  "linked_camera", "#ffe97d", false],
     [Measurement.PumpState]:    ["Pump state",    "blur_linear", "#d3b8ae", false],
-    [Measurement.HeaterState]:  ["Heater state",  "toggle_on", "#c1d5e0", false]
+    [Measurement.HeaterState]:  ["Heater state",  "toggle_on", "#c1d5e0", false],
+    [IoTMeasurement.Voltage]:   ["Voltage",       "flash_on", "#ffb74d", false],
+    [IoTMeasurement.Current]:   ["Current",       "show_chart", "#c1d5e0", false],
+    [IoTMeasurement.Power]:     ["Power",         "power_input", "#e6ceff", false],
+    [IoTMeasurement.SignalStrength]: ["Connection strength", "network_check", "#81c784", false],
   }
 
   chartOptions = {
@@ -46,13 +51,18 @@ export class MeasurementsGraphsComponent implements OnInit {
       yAxes: [{
         ticks: {
           autoSkip: true,
+          maxTicksLimit: 5
         }
       }],
       xAxes: [{
         type: 'time',
+        time: {
+          unit: 'minute'
+        },
         ticks: {
           autoSkip: true,
-          maxTicksLimit: 20
+          maxTicksLimit: 5,
+          maxRotation: 20
         },
         gridLines : {
           display : false
@@ -82,10 +92,10 @@ export class MeasurementsGraphsComponent implements OnInit {
   formatDataForNgxCharts(data:IMeasurementModel[]) {
     for(let i=0; i<data.length; i++) {
       let packet:IMeasurementModel = data[i];
-      Object.keys(packet.measurements).forEach((m:Measurement) => {
+      Object.keys(packet.data).forEach((m:Measurement) => {
         if(this.parsedData[m] == undefined) this.parsedData[m] = [[], []];
-        this.parsedData[m][0].push(new Date(packet.created_at)); //push date
-        this.parsedData[m][1].push(packet.measurements[m]); //push value
+        this.parsedData[m][0].push(moment.unix(packet.created_at)); //push date
+        this.parsedData[m][1].push(packet.data[m]); //push value
       })
     }
 
@@ -99,7 +109,7 @@ export class MeasurementsGraphsComponent implements OnInit {
 
       //fudging last item full width because chrome is gay and hasn't added 
       //column-gap yet
-      if(idx == Object.keys(this.parsedData).length-1) {
+      if(idx == Object.keys(this.parsedData).length-1 && Object.keys(this.parsedData).length % 2 == 1) {
         this.measurementMap[measurement][3] = true;
       }
 

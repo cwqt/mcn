@@ -68,8 +68,7 @@ export class DeviceComponent implements OnInit {
 
   getDeviceMeasurements() {
     this.cache.measurements.loading = true;
-    this.plantService.getMeasurements(this.user_id, this.cache.device.data.assigned_to._id)
-      .then((measurements:IMeasurementModel[]) => measurements.filter(m => m.recorder_id == this.device_id))
+    this.deviceService.getMeasurements(this.user_id, this.cache.device.data._id)
       .then((measurements:IMeasurementModel[]) => this.cache.measurements.data = measurements)
       .catch(e => this.cache.measurements.error = e)
       .finally(() => this.cache.measurements.loading = false)

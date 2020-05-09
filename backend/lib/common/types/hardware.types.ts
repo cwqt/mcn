@@ -1,4 +1,4 @@
-import { Measurement, Unit } from './measurements.types';
+import { Measurement, Unit, IoTMeasurement } from './measurements.types';
 
 enum MicroController {
     ESP8266 = "ESP-8266",
@@ -19,7 +19,7 @@ export enum SupportedHardware {
 export interface HardwareDevice {
     model_name:      string,
     microcontroller: MicroController,
-    recording:       {[index in Measurement]?:Unit},
+    recording:       {[index in (Measurement | IoTMeasurement)]?:Unit},
     capabilities:    DeviceCapability[],
     mcnEnabled:      boolean,
     supportsPlants:  boolean,
@@ -34,7 +34,9 @@ export const HardwareInformation:{[index in SupportedHardware]:HardwareDevice} =
             [Measurement.Temperature]:  Unit.Celcius,
             [Measurement.Humidity]:     Unit.RelativeHumidity,
             [Measurement.Light]:        Unit.Lux,
-            [Measurement.Moisture]:     Unit.CapacitiveMoisture
+            [Measurement.Moisture]:     Unit.CapacitiveMoisture,
+            [IoTMeasurement.Voltage]:   Unit.Volts,
+            [IoTMeasurement.SignalStrength]: Unit.DecibelMilliWatts
         },
         capabilities: [
             DeviceCapability.WiFi,

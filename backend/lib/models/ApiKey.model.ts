@@ -1,9 +1,9 @@
-import { RecordableTypes } from "./Recordable.model";
+import { RecordableType } from "./Recordable.model";
 
 export interface IApiKey {
     _id:        string,
     key_name:   string,
-    type:       RecordableTypes,
+    type:       RecordableType,
     created_at: number;
 }
 
