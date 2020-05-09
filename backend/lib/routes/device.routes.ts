@@ -1,14 +1,14 @@
-import { Router } from 'express';
+import { Router, NextFunction, Request, Response } from 'express';
 const { body, param, query } = require('express-validator');
 import { validate } from '../common/validate'; 
 var AsyncRouter = require("express-async-router").AsyncRouter;
 
+import { readAllMeasurements } from '../controllers/Measurements.controller';
 import {
     readAllDevices,
     createDevice,
     assignDeviceToRecordable,
     readDevice,
-    readLatestMeasurementFromDevice,
     pingDevice,
     // updateDevice,
     // deleteDevice,
@@ -19,6 +19,7 @@ import {
     readApiKey,
     deleteApiKey
 } from '../controllers/ApiKeys.controller';
+import { RecordableType } from '../models/Recordable.model';
 
 const router = AsyncRouter({mergeParams: true});
 
@@ -31,14 +32,17 @@ router.get('/:did', validate([
     param('did').isMongoId().trim().withMessage('invalid device id'),
 ]), readDevice)
 
-router.get('/:did/latest', validate([
+router.get('/:did/measurements', validate([
     param('did').isMongoId().trim().withMessage('invalid device id'),
-]), readLatestMeasurementFromDevice)
+]), ((req:Request, res:Response, next:NextFunction) => {
+    res.locals.type = RecordableType.Device;
+    next();
+}), readAllMeasurements)
 
 router.post('/:did/assign/:rid', validate([
     param('did').isMongoId().trim().withMessage('invalid device id'),
     param('rid').isMongoId().trim().withMessage('invalid recordable id to assign to')
-]), assignDeviceToRecordable)
+]), assignDeviceToRecordable);
 
 // router.put('/:did', validate([
 //     param('did').isMongoId().trim().withMessage('invalid device id')

@@ -168,20 +168,6 @@ export const readDevice = async (req:Request, res:Response) => {
     res.json(data);
 }
 
-export const readLatestMeasurementFromDevice = async (req:Request, res:Response) => {
-    let data:IMeasurementModel;
-    try {
-        data = await getModel(RecordableType.Device, req.params.did)
-            .findOne({})
-            .sort({'created_at': -1 })
-            .limit(1);
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    }
-
-    res.json(data)
-}
-
 // export const updateDevice = (req:Request, res:Response, next:NextFunction) => {
 //     var newData:any = {}
 //     let allowedFields = [

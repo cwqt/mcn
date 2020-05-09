@@ -125,17 +125,35 @@ export const createMeasurementAsUser = async (req:Request, res:Response) => {
 
 
 
-
-
 export const readAllMeasurements = async (req:Request, res:Response) => {
-    let Measurement = getModel(res.locals.recordable_type, req.params.rid);
+    let page = req.query.page ? parseInt(req.query.page as string) : 1;
+    let per_page = req.query.per_page ? parseInt(req.query.per_page as string) : 5;
+  
+    let data:IMeasurementModel[];
     try {
-        let ms:IMeasurementModel[] = await Measurement.find({recordable_id:req.params.rid}).select('-recordable_id')
-        res.json(ms);
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
+        let Recordable = getModel(res.locals.type, req.params.rid ?? req.params.did);
+        // let measurement_count = await Recordable.countDocuments({});
+        data = await Recordable.find({})
+            .sort({'created_at': -1 })
+            .skip((page - 1) * per_page)
+            .limit(per_page)
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
     }
+
+    res.json(data)
 }
+
+
+// export const readAllMeasurements = async (req:Request, res:Response) => {
+//     let Measurement = getModel(res.locals.recordable_type, req.params.rid);
+//     try {
+//         let ms:IMeasurementModel[] = await Measurement.find({recordable_id:req.params.rid}).select('-recordable_id')
+//         res.json(ms);
+//     } catch (e) {
+//         throw new ErrorHandler(HTTP.ServerError, e)
+//     }
+// }
 
 export const deleteMeasurements = async (req:Request, res:Response) => {
     let Measurement = getModel(res.locals.recordable_type, req.params.rid);

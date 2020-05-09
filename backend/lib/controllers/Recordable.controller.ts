@@ -49,9 +49,11 @@ export const readAllRecordables = async (req:Request, res:Response, next:NextFun
     res.json(recordables)
 }
 
-export const readRecordable = (req:Request, res:Response, next:NextFunction) => {
+export const readRecordable = (req:Request, res:Response) => {
 
 }
+
+export const readRecordableMeasurements = (req:Request, res:Response) => {}
 
 export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
     let newData:{[index:string]:any} = {};
