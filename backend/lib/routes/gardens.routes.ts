@@ -17,7 +17,7 @@ import {
 //     readAllRecordables
 // } from '../controllers/Recordable.controller';
 
-import { RecordableTypes } from '../models/Recordable.model';
+import { RecordableType } from '../models/Recordable.model';
 
 const router = Router({mergeParams: true});
 // router.use((req:Request, res:Response, next:NextFunction) => {

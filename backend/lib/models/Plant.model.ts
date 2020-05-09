@@ -1,7 +1,7 @@
-import { IRecordable, RecordableTypes, IRecordableStub } from "./Recordable.model"
+import { IRecordable, RecordableType, IRecordableStub } from "./Recordable.model"
 
 export interface IPlant extends IRecordable {
-    type:           RecordableTypes.Plant,
+    type:           RecordableType.Plant,
     species:        string,
     garden?:        IRecordableStub,
     date_added?:    Date, //when added to garden

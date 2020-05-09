@@ -10,6 +10,7 @@ import { NotFoundComponent }  from './components/pages/not-found/not-found.compo
 import { PostComponent }      from './routes/post/post.component';
 import { SupportedDevicesComponent } from './components/pages/supported-devices/supported-devices.component';
 import { DeviceComponent } from './routes/device/device.component';
+import { PlantComponent } from './routes/plant/plant.component';
 
 const routes: Routes = [
   { path: '', component: IndexComponent},
@@ -21,9 +22,8 @@ const routes: Routes = [
     children: [
       { path: 'posts/:pid', component: PostComponent },
       { path: 'devices/:did', component: DeviceComponent },
-      // { path: 'plants/:pid', component: PostComponent },
+      { path: 'plants/:rid', component: PlantComponent },
       // { path: 'gardens/:gid', component: PostComponent },
-      // { path: 'devices/:did', component: PostComponent },
     ]
   },
   { path: '**', component: NotFoundComponent}

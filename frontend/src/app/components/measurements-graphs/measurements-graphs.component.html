@@ -1,11 +1,14 @@
 <div class="graphs-container">
-    <div class="graph-item" [class.full-width]="measurementMap[graph.value.datasets[0].label][3] == true" *ngFor="let graph of formattedData | keyvalue">
-        <div class="title" [style.backgroundColor]="measurementMap[graph.value.datasets[0].label][2]">
-            <mat-icon>{{measurementMap[graph.value.datasets[0].label][1]}}</mat-icon>    
-            <h2>{{measurementMap[graph.value.datasets[0].label][0]}}</h2>
+    <div class="graph-item" [class.full-width]="measurementMap[graph.key][3] == true" *ngFor="let graph of formattedData | keyvalue">
+        <div class="title" [style.backgroundColor]="measurementMap[graph.key][2]">
+            <mat-icon>{{measurementMap[graph.key][1]}}</mat-icon>    
+            <h2>{{measurementMap[graph.key][0]}}</h2>
+            <h2>
+                {{graph.value.datasets[0].data[graph.value.datasets[0].data.length - 1]}}<span *ngIf="device">{{deviceInfo.recording[graph.key]}}</span>
+            </h2>
         </div>
         <div class="graph-wrapper">
-            <ngx-chartjs [data]="graph.value" [options]="chartOptions" type="line"></ngx-chartjs>
+            <ngx-chartjs [data]="graph.value" [options]="chartOptions" [height]="measurementMap[graph.key][3] == true ? '72px' : 'auto'" type="line"></ngx-chartjs>
         </div>
     </div>    
 </div>

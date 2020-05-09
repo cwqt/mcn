@@ -1,7 +1,7 @@
-import { IRecordable, RecordableTypes, IRecordableStub } from "./Recordable.model"
+import { IRecordable, RecordableType, IRecordableStub } from "./Recordable.model"
 
 export interface IGarden extends IRecordable {
-    type:           RecordableTypes.Plant,
+    type:           RecordableType.Plant,
     species:        string,
     children:       IRecordableStub[],
     created_at?:    Date,

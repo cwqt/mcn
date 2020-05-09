@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express"
 import { Types } from "mongoose";
 const { body } = require('express-validator');
 
-import { RecordableTypes }  from "../models/Recordable.model"
+import { RecordableType }  from "../models/Recordable.model"
 import { validate }         from "../common/validate";
 import { IPlant }           from "../models/Plant.model";
 import { IGarden }          from "../models/Garden.model";
@@ -12,8 +12,8 @@ import { n4j }              from '../common/neo4j';
 
 const getSchema = (recordable_type:string):string => {
     switch(recordable_type) {
-        case RecordableTypes.Plant:     return 'Plant';
-        case RecordableTypes.Garden:    return 'Garden';
+        case RecordableType.Plant:     return 'Plant';
+        case RecordableType.Garden:    return 'Garden';
     }
 }
 

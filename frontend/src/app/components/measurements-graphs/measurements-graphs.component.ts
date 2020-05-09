@@ -1,7 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IMeasurementModel, IMeasurement } from '../../../../../backend/lib/models/Measurement.model';
 import { Measurement } from '../../../../../backend/lib/common/types/measurements.types';
-
+import { IDevice } from '../../../../../backend/lib/models/Device.model';
+import {
+  HardwareInformation,
+  HardwareDevice } from '../../../../../backend/lib/common/types/hardware.types';
 
 @Component({
   selector: 'app-measurements-graphs',
@@ -10,8 +13,10 @@ import { Measurement } from '../../../../../backend/lib/common/types/measurement
 })
 export class MeasurementsGraphsComponent implements OnInit {
   @Input() data:IMeasurementModel[];
+  @Input() device?:IDevice;
   parsedData:{[index in Measurement]?:[any[], number[]]} = {};
-  formattedData:any[] = [];
+  formattedData = {};
+  deviceInfo;
 
   measurementMap = {
     [Measurement.Temperature]:  ["Temperature",   "ac_unit",  "#ffa4a2", false],
@@ -61,6 +66,7 @@ export class MeasurementsGraphsComponent implements OnInit {
   ngOnInit(): void {
     console.log(this.data);
     this.formatDataForNgxCharts(this.data);
+    this.deviceInfo = HardwareInformation[this.device.hardware_model];
   }
 
 
@@ -86,7 +92,7 @@ export class MeasurementsGraphsComponent implements OnInit {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext("2d");
 
-    this.formattedData = Object.keys(this.parsedData).map((measurement, idx) => {
+    Object.keys(this.parsedData).slice().reverse().forEach((measurement, idx) => {
       const gradient = ctx.createLinearGradient(0, 0, 0, ctx.canvas.height);
       gradient.addColorStop(0,  this.measurementMap[measurement][2]+'ff');
       gradient.addColorStop(1,  this.measurementMap[measurement][2]+'00');
@@ -97,7 +103,7 @@ export class MeasurementsGraphsComponent implements OnInit {
         this.measurementMap[measurement][3] = true;
       }
 
-      return {
+      this.formattedData[measurement] = {
         labels: this.parsedData[measurement][0],
         datasets: [{
           backgroundColor: gradient,

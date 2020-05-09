@@ -1,5 +1,6 @@
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import '~@ctrl/ngx-emoji-mart/picker';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 
 * {
     box-sizing: border-box;
@@ -21,16 +22,16 @@ label {
     display: none;
 }
 
+@keyframes example {
+    from { margin-bottom: 0; }
+    to { margin-bottom: 24px; }
+}
 mat-form-field.ng-invalid.ng-touched {
     animation: example;
     animation-duration: 0.3s;
     margin-bottom: 24px;
 }
-  
-@keyframes example {
-    from { margin-bottom: 0; }
-    to { margin-bottom: 24px; }
-}
+
 
 button,
 a {

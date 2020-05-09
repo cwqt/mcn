@@ -1,38 +1,34 @@
 <div class="wrapper" *ngIf="!currentUser || currentUser.new_user">
     <div class="left side">
         <div class="content-wrapper">
-            <div class="blur"></div>
             <div class="content">
-                <img src="/assets/leaf.png" />
-                <h1 class="mat-display-2">mycorrhizal<br>network</h1>
-                <p>a social network and management system for gardeners, plant growers and hobbyists alike.</p>
-                <div class="bottom">
-                    <button mat-raised-button>learn more</button>
-                    <button mat-raised-button>support</button>
-                </div>    
+                <div class="card">
+                    <img src="/assets/leaf.png" />
+                    <div>
+                        <h1 class="mat-display-2">mcn</h1>
+                    </div>
+                </div>
+
+                <div class="information">
+                    <p>a social network and management system for gardeners, plant growers and hobbyists alike.</p>
+                    <app-rounded-button [color]="'primary'">create account</app-rounded-button>
+                </div>
             </div>
         </div>
         <div class="copyright">
             <p>copyright <b>daughter.systems</b> (2020)</p>
-        </div>
+        </div>        
     </div>
 
     <div class="right side">
         <div class="content-wrapper">
             <div *ngIf="!currentUser">
-                <mat-button-toggle-group class="selector" value="login" #group="matButtonToggleGroup"  aria-label="Login or Register">
-                    <mat-button-toggle value="login">login</mat-button-toggle>
-                    <mat-button-toggle value="register">register</mat-button-toggle>
-                </mat-button-toggle-group>
-
-                <br>
-                <br>
-
                 <div class="content">
-                    <app-login *ngIf="group.value == 'login'"></app-login>
-                    <app-register *ngIf="group.value == 'register'"></app-register>
+                    <app-login></app-login>
+                    <!-- <app-register *ngIf="group.value == 'register'"></app-register> -->
                 </div>
             </div>
+
             <div *ngIf="currentUser && currentUser.new_user">
                 <app-first-time-setup></app-first-time-setup>
             </div>

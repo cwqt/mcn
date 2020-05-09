@@ -8,8 +8,8 @@ import { n4j }               from '../common/neo4j';
 import { IPlant }            from '../models/Plant.model';
 import { IGarden }           from '../models/Garden.model';
 import { getModel }          from './Measurements.controller';
-import { IRecordableStub }   from "../models/Recordable.model";
-import { IMeasurementModel } from "../models/Measurement.model";
+import { IRecordableStub, RecordableType }   from "../models/Recordable.model";
+import { IMeasurementModel, RecorderType } from "../models/Measurement.model";
 import {
     IDeviceStub,
     IDevice,
@@ -169,17 +169,10 @@ export const readDevice = async (req:Request, res:Response) => {
 }
 
 export const readLatestMeasurementFromDevice = async (req:Request, res:Response) => {
-    let recordable:IPlant | IGarden;
-    try {
-        recordable = await getAssignedRecordable(req.params.did);        
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    }
-
     let data:IMeasurementModel;
     try {
-        data = await getModel(recordable._id)
-            .findOne({recordable_id: recordable._id})
+        data = await getModel(RecordableType.Device, req.params.did)
+            .findOne({})
             .sort({'created_at': -1 })
             .limit(1);
     } catch(e) {

@@ -1,9 +1,10 @@
 import { Measurement } from '../common/types/measurements.types';
 import * as IpAddress from 'ip-address';
 
-export enum RecordableTypes {
+export enum RecordableType {
   Garden = 'garden',
-  Plant = 'plant'
+  Plant = 'plant',
+  Device = 'device'//devices can have data recorded onto them, iot metrics etc
 }
 
 export interface IRecordableStub {
@@ -11,7 +12,7 @@ export interface IRecordableStub {
     name:         string,
     thumbnail?:   string,
     created_at?:  Date,
-    type:         RecordableTypes.Garden | RecordableTypes.Plant,
+    type:         RecordableType.Garden | RecordableType.Plant,
 }
 
 export interface IRecordable extends IRecordableStub {

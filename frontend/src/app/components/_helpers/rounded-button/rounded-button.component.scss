@@ -1,0 +1,10 @@
+.rounded-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 25px !important;
+    border-radius: 20px;
+    mat-icon {
+        padding-right: 5px;
+    }
+}

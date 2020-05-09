@@ -1,7 +1,42 @@
-<div class="device-container">
-    <h1>{{cache.device.data.name}}</h1>
+<div class="device-container" *ngIf="!cache.device.loading">
+    <div class="title">
+        <h1>{{device.name}}</h1>
+        <div class="manage-device-buttons">
+            <app-rounded-button [icon]="'vpn_key'" >API key</app-rounded-button>
+            <span>&nbsp;</span>
+            <app-rounded-button [icon]="'edit'" [color]="'primary'">edit</app-rounded-button>    
+        </div>
+    </div>
+    <mat-divider></mat-divider>
+    <br />
 
+    <div class="device-info">
+        <div class="description">
+            <div class="body">
+                This is a description of my plant, it's pretty <b>neat!</b>
+            </div>
+            <div class="assigned-to" (click)="goToAssignedRecordable()">
+                <img src="https://66.media.tumblr.com/ee4132c368e0b77e664365f29694dc5c/88d8f262f55f0a79-5f/s640x960/07138e9e9d089ef7d9a6565d6bd547d97be6eef5.jpg"/>
+                <div class="right">
+                    <span>ASSIGNED TO</span>
+                    {{device.assigned_to.name}}    
+                </div>
+            </div>    
+        </div>
+    </div>
+
+    <div lightbox-group id="gallery">
+        <img src="https://media.discordapp.net/attachments/264522461943562244/704820132312252426/IMG_0028.JPG?width=2152&height=2152" lightbox [fullImage]="{path: 'https://media.discordapp.net/attachments/264522461943562244/704820132312252426/IMG_0028.JPG?width=2152&height=2152'}" />
+        <img src="" lightbox [fullImage]="{path: 'path_to_fullimage'}" />
+        <img src="" lightbox [fullImage]="{path: 'path_to_fullimage'}" />
+        <img src="" lightbox [fullImage]="{path: 'path_to_fullimage'}" />
+    </div>
+
+    <mat-divider></mat-divider>
+    <br />
+    <h2>Recent data</h2>
     <div *ngIf="!cache.measurements.loading">
-        <app-measurements-graphs [data]="cache.measurements.data"></app-measurements-graphs>
+        <app-measurements-graphs [data]="measurements" [device]="cache.device.data"></app-measurements-graphs>
     </div>
 </div>
+<mat-spinner *ngIf="cache.device.loading"></mat-spinner>

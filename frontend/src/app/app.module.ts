@@ -12,6 +12,8 @@ import { DynamicComponentModule, DynamicIoModule } from 'ng-dynamic-component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { ClickOutsideModule } from 'ng-click-outside';
 import { ChartjsModule } from '@ctrl/ngx-chartjs';
+import {CrystalLightboxModule} from '@crystalui/angular-lightbox';
+
 
 import { IndexComponent }           from './routes/index/index.component';
 import { LoginComponent }           from './components/landing/login/login.component';
@@ -65,6 +67,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatTableModule} from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
 import { MeasurementsGraphsComponent } from './components/measurements-graphs/measurements-graphs.component';
+import { RoundedButtonComponent } from './components/_helpers/rounded-button/rounded-button.component';
+import { PlantComponent } from './routes/plant/plant.component';
 
 
 @NgModule({
@@ -100,6 +104,8 @@ import { MeasurementsGraphsComponent } from './components/measurements-graphs/me
     DeviceComponent,
     EditDeviceModalComponent,
     MeasurementsGraphsComponent,
+    RoundedButtonComponent,
+    PlantComponent,
   ],
   imports: [
     BrowserModule,
@@ -114,6 +120,7 @@ import { MeasurementsGraphsComponent } from './components/measurements-graphs/me
     PickerModule,
     ClickOutsideModule,
     ChartjsModule,
+    CrystalLightboxModule,
 
     MatButtonModule,
     MatButtonToggleModule,
