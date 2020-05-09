@@ -10,6 +10,8 @@ import { ErrorHandler }     from "../common/errorHandler";
 import { HTTP }             from "../common/http";
 import { n4j }              from '../common/neo4j';
 
+import { IRecordable, IRecordableStub } from '../models/Recordable.model';
+
 const getSchema = (recordable_type:string):string => {
     switch(recordable_type) {
         case RecordableType.Plant:     return 'Plant';
@@ -23,6 +25,7 @@ export const createRecordable = async (req:Request, res:Response, next:NextFunct
             //should really use transactions
             req.body["type"] = res.locals.type;
             req.body["_id"] = new Types.ObjectId().toHexString(),
+            req.body["created_at"] = Date.now()
 
             next();    
         })(req, res, next);
@@ -34,8 +37,8 @@ export const readAllRecordables = async (req:Request, res:Response, next:NextFun
     let result;
     try {
         result = await session.run(`
-            MATCH (x:${getSchema(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
-            RETURN x
+            MATCH (r:${getSchema(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
+            RETURN r
         `, {
             uid:req.params.uid
         })
@@ -45,23 +48,47 @@ export const readAllRecordables = async (req:Request, res:Response, next:NextFun
         session.close();
     }
 
-    let recordables = result.records.map((record:any) => record.get('x').properties)
-    res.json(recordables)
+    let recordables:IRecordableStub[] = result.records.map((record:any) => {
+        let r = record.get('r').properties;
+        console.log(r)
+        return {
+            name: r.name,
+            _id: r._id,
+            thumbnail: r.thumbnail ?? undefined,
+            created_at: r.created_at,
+            type: r.type        
+        } as IRecordableStub;
+    });
+
+    res.json(recordables);
 }
 
-export const readRecordable = (req:Request, res:Response) => {
+export const readRecordable = async (req:Request, res:Response) => {
+    let session = n4j.session();
+    let result;
+    try {
+        result = await session.run(`
+            MATCH (r {_id:$rid})
+            WHERE r:Plant OR r:Garden
+            RETURN r    
+        `, {
+            rid: req.params.rid
+        })
+    } catch (e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
 
+    let recordable:any = result.records[0]?.get('r').properties;
+    if(!recordable) throw new ErrorHandler(HTTP.NotFound, "No such recordable exists");
+    if(recordable.parameters) recordable.parameters = JSON.parse(recordable.parameters);
+
+    res.json(recordable);
 }
-
-export const readRecordableMeasurements = (req:Request, res:Response) => {}
 
 export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
-    let newData:{[index:string]:any} = {};
-    let reqKeys = Object.keys(req.body);
-
-    for(let i=0; i<reqKeys.length; i++) newData[reqKeys[i]] = req.body[reqKeys[i]];
-
-    res.locals["newData"] = newData;
+    res.locals.allowed = ['name', 'images', 'feed_url', 'parameters'];
     next();
 }
 

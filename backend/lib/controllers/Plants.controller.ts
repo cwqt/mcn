@@ -27,5 +27,43 @@ export const createPlant = async (req:Request, res:Response) => {
     res.status(HTTP.Created).json(plant);
 }
 
-export const updatePlant = (req:Request, res:Response) => {
+export const updatePlant = async (req:Request, res:Response) => {
+    const allowed = ['species', 'garden', ...res.locals.allowed];
+    let newData:any = Object.keys(req.body)
+        .filter(key => allowed.includes(key))
+        .reduce((obj, key) => {
+            return {
+                ...obj,
+                [key]: req.body[key]
+            }}, {});
+
+    //hack to get nested properties on a node
+    if(newData.parameters) newData.parameters = JSON.stringify(newData.parameters);
+
+    console.log(newData)
+
+    let session = n4j.session();
+    let result;
+
+    try {
+        result = await session.run(`
+            MATCH (p:Plant {_id:$rid})
+            SET p += $body
+            RETURN p
+        `, {
+            rid: req.params.rid,
+            body: newData
+        })
+    } catch (e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
+
+    let plant = result.records[0]?.get('p').properties;
+    if(!plant) throw new ErrorHandler(HTTP.NotFound)
+
+    //reparse json back into nested object
+    plant.parameters = JSON.parse(plant.parameters);
+    res.json(plant);
 }

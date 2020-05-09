@@ -7,6 +7,8 @@ import {
   HardwareDevice } from '../../../../../backend/lib/common/types/hardware.types';
 import moment from 'moment';
 
+import ChartjsPluginAnnotation from 'chartjs-plugin-annotation';
+
 @Component({
   selector: 'app-measurements-graphs',
   templateUrl: './measurements-graphs.component.html',
@@ -14,7 +16,9 @@ import moment from 'moment';
 })
 export class MeasurementsGraphsComponent implements OnInit {
   @Input() data:IMeasurementModel[];
+  @Input() bounds?:{[index in (Measurement | IoTMeasurement)]:[number, number, number]}//lower, avg, upper bounds
   @Input() device?:IDevice;
+  plugins = [ChartjsPluginAnnotation]
   parsedData:{[index in Measurement]?:[any[], number[]]} = {};
   formattedData = {};
   deviceInfo;
@@ -76,9 +80,9 @@ export class MeasurementsGraphsComponent implements OnInit {
   ngOnInit(): void {
     console.log(this.data);
     this.formatDataForNgxCharts(this.data);
-    this.deviceInfo = HardwareInformation[this.device.hardware_model];
+    console.log(this.measurementMap)
+    if(this.device) this.deviceInfo = HardwareInformation[this.device.hardware_model];
   }
-
 
   // const data = {
   //   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -111,6 +115,24 @@ export class MeasurementsGraphsComponent implements OnInit {
       //column-gap yet
       if(idx == Object.keys(this.parsedData).length-1 && Object.keys(this.parsedData).length % 2 == 1) {
         this.measurementMap[measurement][3] = true;
+      }
+
+      if(this.bounds && measurement in this.bounds) {
+        let options:any = Object.assign({}, this.chartOptions);
+        //draw range
+        options = {...options, 
+          annotation: {
+            annotations: [{
+                type: 'box',
+                drawTime: 'beforeDatasetsDraw',
+                yScaleID: 'y-axis-0',
+                yMin: this.bounds[measurement][0],
+                yMax: this.bounds[measurement][2],
+                backgroundColor: 'rgba(0, 255, 0, 0.2)'
+            }]
+          },      
+        }
+        this.measurementMap[measurement].push(options);
       }
 
       this.formattedData[measurement] = {

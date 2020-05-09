@@ -1,1 +1,5 @@
-<p>plant works!</p>
+<div class="plant-container">
+    <div *ngIf="!cache.measurements.loading">
+        <app-measurements-graphs [data]="cache.measurements.data" [bounds]="cache.plant.data.parameters"></app-measurements-graphs>
+    </div>
+</div>

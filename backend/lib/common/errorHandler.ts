@@ -7,7 +7,7 @@ interface ErrorResponse {
 
 export const handleError = (err:ErrorHandler, res:Response) => {
     const { statusCode, message } = err;
-    log.error(`==> ${err.name}: ${err.message} (${err.statusCode})`)
+    log.error(`--> ${err.name}: ${err.message} (${err.statusCode})`)
     let response:ErrorResponse = {
         status: `${statusCode}`.startsWith('4') ? 'fail' : 'error',
         statusCode: statusCode || 520,

@@ -31,7 +31,7 @@ export class DeviceService {
   }
 
   getLatestMeasurement(user_id, device_id):Promise<IMeasurementModel> {
-    return this.http.get<IMeasurementModel>(`/api/users/${user_id}/devices/${device_id}/latest`).toPromise();
+    return this.http.get<IMeasurementModel>(`/api/users/${user_id}/devices/${device_id}/measurements?page=1&per_page=1`).toPromise();
   }
 
   getMeasurements(user_id, device_id) {

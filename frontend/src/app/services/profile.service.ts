@@ -19,7 +19,7 @@ export class ProfileService {
     return this.currentProfileSubject.getValue();
   }
 
-  selectedTab:BehaviorSubject<string> = new BehaviorSubject("devices");
+  selectedTab:BehaviorSubject<string> = new BehaviorSubject("plants");
   cachedTabs = [];
 
   constructor(private userService:UserService, private http:HttpClient) {

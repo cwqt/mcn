@@ -13,7 +13,7 @@ import {
     createRecordable,
     // readRecordable,
     // deleteRecordable,
-    // updateRecordable,
+    updateRecordable,
     readAllRecordables,
     readRecordable
 } from '../controllers/Recordable.controller';
@@ -44,7 +44,7 @@ router.get('/:rid/measurements', readAllMeasurements);
 router.delete('/:rid/measurements', deleteMeasurements);
 
 // router.get('/:rid', readRecordable);
-// router.put('/:rid', updateRecordable, updatePlant);
+router.put('/:rid', updateRecordable, updatePlant);
 // router.delete('/:rid', deleteRecordable);
 
 export default router;

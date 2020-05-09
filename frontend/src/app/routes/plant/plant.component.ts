@@ -44,6 +44,7 @@ export class PlantComponent implements OnInit {
       this.plant_id = params.rid
       this.getPlant().then(() => {
         this.getPlantMeasurements();
+        console.log(this.cache)
       })
     });
   }

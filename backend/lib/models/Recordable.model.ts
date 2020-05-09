@@ -19,7 +19,5 @@ export interface IRecordable extends IRecordableStub {
   images:         string[],
   recording?:     string[],
   feed_url?:      IpAddress.Address4 | IpAddress.Address6,
-  verified:       boolean,
   parameters?:    Map<Measurement, [number, number, number]>, //lower, avg, upper bounds
-  updated_at?:    Date,
 }

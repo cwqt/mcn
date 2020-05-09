@@ -87,9 +87,14 @@ mat-divider {
 }
 
 .device-meta {
-    mat-expansion-panel p b {
-        width: 150px;
-        display: inline-block;
+    mat-expansion-panel p {
+        display: flex;
+        b {
+            min-width: 150px;
+        }
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 }
 
@@ -105,5 +110,5 @@ mat-spinner {
 }
 
 p  .recording-item:not(:last-child)::after {
-    content: ","
+    content: ", "
 }

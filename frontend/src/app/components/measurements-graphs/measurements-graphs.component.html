@@ -8,8 +8,7 @@
             </h2>
         </div>
         <div class="graph-wrapper">
-            <ngx-chartjs [data]="graph.value" [options]="chartOptions" [height]="measurementMap[graph.key][3] == true ? '72px' : 'auto'" type="line"></ngx-chartjs>
+            <ngx-chartjs [plugins]="plugins" [data]="graph.value" [options]="measurementMap[graph.key][4] || chartOptions" [height]="measurementMap[graph.key][3] == true ? '72px' : 'auto'" type="line"></ngx-chartjs>
         </div>
     </div>    
 </div>
-

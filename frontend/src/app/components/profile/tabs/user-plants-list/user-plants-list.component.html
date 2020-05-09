@@ -8,7 +8,7 @@
 
 <div *ngIf="plants && !loading">
     <div *ngFor="let plant of plants">
-        <app-plant-item [plant]="plant"></app-plant-item>
+        <app-plant-item [plant]="plant" [user]="user" [currentUser]="currentUser"></app-plant-item>
     </div>
 </div>
 

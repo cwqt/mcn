@@ -95,7 +95,7 @@ export class DeviceThumbComponent implements OnInit {
       this.cache.latest_data.loading = true;
 
       this.deviceService.getLatestMeasurement(this.profileUser._id, this.device._id)
-        .then((measurement:IMeasurementModel) => this.cache.latest_data.data = measurement)
+        .then((measurement:IMeasurementModel) => this.cache.latest_data.data = measurement[0])
         .catch(e => this.cache.latest_data.error = e)
         .finally(() => this.cache.latest_data.loading = false)
     }
