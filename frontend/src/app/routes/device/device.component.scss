@@ -1,11 +1,9 @@
 .device-container {
-    padding: 20px;
-    padding-top: 10px;
+    padding: 10px 20px;
     .title {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 10px;
         h1 {
             margin: 0;
             &:last-child {
@@ -18,7 +16,6 @@
 #gallery {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 20px;
     img {
         flex: 1 0 21%; /* explanation below */
         margin: 5px;
@@ -45,10 +42,12 @@
 .device-info {
     position: relative;
     min-height: 100px;
+    padding: 20px;
 
     .description {
         display: flex;
         justify-content: space-between;
+        margin-bottom: 10px;
     }
 }
 
@@ -92,4 +91,8 @@
     *:last-child {
         margin-left: 10px;
     }
+}
+
+.mat-icon {
+    margin-right: 10px !important;
 }
