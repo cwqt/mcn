@@ -69,6 +69,7 @@ import {MatSelectModule} from '@angular/material/select';
 import { MeasurementsGraphsComponent } from './components/measurements-graphs/measurements-graphs.component';
 import { RoundedButtonComponent } from './components/_helpers/rounded-button/rounded-button.component';
 import { PlantComponent } from './routes/plant/plant.component';
+import { DocumentationComponent } from './routes/documentation/documentation.component';
 
 
 @NgModule({
@@ -106,6 +107,7 @@ import { PlantComponent } from './routes/plant/plant.component';
     MeasurementsGraphsComponent,
     RoundedButtonComponent,
     PlantComponent,
+    DocumentationComponent,
   ],
   imports: [
     BrowserModule,

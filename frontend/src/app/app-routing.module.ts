@@ -11,11 +11,13 @@ import { PostComponent }      from './routes/post/post.component';
 import { SupportedDevicesComponent } from './components/pages/supported-devices/supported-devices.component';
 import { DeviceComponent } from './routes/device/device.component';
 import { PlantComponent } from './routes/plant/plant.component';
+import { DocumentationComponent } from './routes/documentation/documentation.component';
 
 const routes: Routes = [
   { path: '', component: IndexComponent},
   { path: 'verified', component: VerifiedComponent, canActivate: [AuthGuard]},
   { path: 'supported_devices', component: SupportedDevicesComponent, canActivate: [AuthGuard]},
+  { path: 'documentation', component: DocumentationComponent },
   {
     path: ':username',
     component: ProfileComponent, canActivate: [AuthGuard],

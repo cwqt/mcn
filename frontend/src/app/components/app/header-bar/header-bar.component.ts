@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class HeaderBarComponent implements OnInit {
   @Input() currentUser:any;
-  userMenuOpen:boolean = true;
+  userMenuOpen:boolean = false;
 
   constructor(private authService:AuthenticationService, private router:Router) { }
 
@@ -23,7 +23,7 @@ export class HeaderBarComponent implements OnInit {
   logout() { this.authService.logout(); }
 
   gotoDocumentation() {
-    this.router.navigate(['/docs'])
+    this.router.navigate(['/documentation'])
   }
 
   gotoSettings() {
