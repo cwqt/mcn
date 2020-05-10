@@ -6,7 +6,7 @@ import { IDevice }           from "../models/Device.model";
 import { HTTP }              from '../common/http';
 import { ErrorHandler }      from "../common/errorHandler";
 import { n4j }               from '../common/neo4j';
-import { MeasurementTypes }  from '../common/types/measurements.types';
+import { MeasurementUnits }  from '../common/types/measurements.types';
 import { IGarden }           from "../models/Garden.model";
 import { IPlant }            from "../models/Plant.model";
 import {
@@ -167,7 +167,7 @@ export const deleteMeasurements = async (req:Request, res:Response) => {
 }
 
 export const getMeasurementTypes = (req:Request, res:Response) => {
-    res.json(MeasurementTypes);
+    res.json(MeasurementUnits);
 }
 
 export const deleteMeasurementCollection = async (req:Request, res:Response) => {

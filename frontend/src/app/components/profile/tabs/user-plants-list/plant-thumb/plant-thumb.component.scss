@@ -50,9 +50,10 @@
                 line-height: 0.7;
             }
         }
-        button {
-            margin-top: auto;
-            margin-left: auto;
+        .verified {
+            position: absolute;
+            right: 0;
+            top: 0;
         }
     }
 }
@@ -61,38 +62,7 @@ mat-divider {
     position: relative !important;
 }
 
-.state-indicator {
-    padding: 2px 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 17px;
-    user-select: none;
-    // opacity: .8;
-    span {
-        text-transform: uppercase;
-        padding-left: 10px;
-    }
-    // &.active {
-    //     // background: lighten(#03A9F4, 20%);
-    //     border: 2px solid lighten(#03A9F4, 40%);
-    // }
-    // &.inactive {
-    //     // background: #FF9800
-    //     border: 2px solid lighten(#FF9800, 20%);
-
-    // }
-    // &.verified {
-    //     // background: #8BC34A
-    //     border: 2px solid lighten(#8BC34A, 20%);
-
-    // }
-    // &.unverified {
-    //     border: 2px solid lighten(#E91E63, 20%);
-    // }
-}
-
-.device-meta {
+.plant-meta {
     mat-expansion-panel p {
         display: flex;
         b {
@@ -104,25 +74,9 @@ mat-divider {
     }
 }
 
-mat-spinner {
-    margin: 0 auto;
-}
-
-.device-action-buttons {
-    margin-left: auto;
-    button {
-        margin-left: 10px !important
-    }
-}
-
-p  .recording-item:not(:last-child)::after {
-    content: ", "
-}
 
 mat-card-actions {
     margin: 0;
-    padding-bottom: 0;
-    margin-top: auto;
     display: flex;
     justify-content: space-between;
     button {

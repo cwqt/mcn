@@ -257,7 +257,7 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
     let session = n4j.session()
     try {
         result = await session.run(`MATCH (u:User {email: $email}) RETURN u`, {email:email})
-        if(!result.records.length) throw new ErrorHandler(HTTP.NotFound, [{param:'email', msg:'No such user for this email'}]);
+        if(!result.records.length) next(new ErrorHandler(HTTP.NotFound, [{param:'email', msg:'No such user for this email'}]));
     } catch(e) {
         throw new ErrorHandler(HTTP.ServerError, e);
     } finally {
@@ -265,11 +265,11 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
     }
 
     let user:IUserPrivate = result.records[0].get('u').properties;
-    if(!user.verified) throw new ErrorHandler(HTTP.Unauthorised, [{param:'form', msg:'Your account has not been verified'}]);
+    if(!user.verified) next(new ErrorHandler(HTTP.Unauthorised, [{param:'form', msg:'Your account has not been verified'}]));
 
     try {
-        let match = bcrypt.compare(password, user.pw_hash);
-        if(!match) throw new ErrorHandler(HTTP.Unauthorised, [{param:'password', msg:'Incorrect password'}]);
+        let match = await bcrypt.compare(password, user.pw_hash);
+        if(!match) next( new ErrorHandler(HTTP.Unauthorised, [{param:'password', msg:'Incorrect password'}]));
 
         req.session.user = {
             id: user._id,

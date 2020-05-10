@@ -47,6 +47,7 @@
         flex-flow: row;
         align-items: flex-start;
         overflow: scroll;
+        overflow-x: hidden;
         .profile-body {
             padding: 0;
             border-radius: 20px;

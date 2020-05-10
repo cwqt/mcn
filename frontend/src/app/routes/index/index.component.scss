@@ -32,17 +32,18 @@
         margin-top: 20vh;
         .content {
             display: flex;
-            flex-flow: column;
-            .card {
-                max-width: 30%;
-                display: inline-flex;
-                align-items: center;
-                img {
-                    height: 10vh;
-                    max-height: 130px;
-                    filter: brightness(0);
-                    padding-right: 45px;
-                }
+            flex-flow: row;
+            margin-left: 5vw;
+            img {
+                height: 10vh;
+                max-height: 130px;
+                filter: brightness(0);
+                padding-right: 45px;
+            }
+
+            .information {
+                width: 80%;
+                margin-top: 20px;
                 h1 {
                     font-family: 'Poppins', sans-serif;
                     margin-bottom: 10px;
@@ -51,18 +52,10 @@
                     line-height: 0.8;
                     font-size: 60px;
                 }
-                span {
-                    opacity: 0.7;
-                    font-size: 20px;
-                }
-            }
-            .information {
-                width: 80%;
-                margin-top: 20px;
-                margin-left: 130px;
-                p:first-child {
+                p {
                     width: 80%;
                     opacity: .6;
+                    font-size: 24px;
                     line-height: 1.2;
                     margin-bottom: 30px;
                 }

@@ -23,27 +23,6 @@ export interface IMeasurementModel extends IMeasurement, Document {
     _id:            string,
 }
 
-const RecordableMeasurementSchema:Schema = new Schema({
-    [RecordableMeasurement.Temperature]:  Number,
-    [RecordableMeasurement.Moisture]:     Number,
-    [RecordableMeasurement.Humidity]:     Number,
-    [RecordableMeasurement.Light]:        Number,
-    [RecordableMeasurement.WaterLevel]:   Number,
-    [RecordableMeasurement.LightState]:   Boolean,
-    [RecordableMeasurement.CameraState]:  Boolean,
-    [RecordableMeasurement.PumpState]:    Boolean,
-    [RecordableMeasurement.HeaterState]:  Boolean,
-    [RecordableMeasurement.Height]:       Number,
-    [RecordableMeasurement.pH]:           Number,
-}, { _id: false})
-
-const DeviceMeasurementSchema:Schema = new Schema({
-    [IoTMeasurement.Voltage]:        Number,
-    [IoTMeasurement.Current]:        Number,
-    [IoTMeasurement.Power]:          Number,
-    [IoTMeasurement.SignalStrength]: Number
-}, { _id: false })
-
 export const MeasurementSchema:Schema = new Schema({
     _id: {
         type:String,

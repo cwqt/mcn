@@ -35,4 +35,6 @@ export class UserPlantsListComponent implements OnInit {
       this.loading = false;
     });
   }
+
+  openCreatePlantDialog() {}
 }

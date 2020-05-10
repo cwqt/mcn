@@ -31,28 +31,48 @@
     }
 
 
-    .avatar {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        img {
-            height: 50px;
-            width: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            object-position: center;
+    .header-bar-control {
+        .header-bar-thumb {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background-color: whitesmoke;
+            // background-color: lighten(lightgrey, 10%);
+            padding: 8px;
+            border-radius: 30px;
+            transition: .2s;
+            &:hover {
+                box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+                cursor: pointer;
+            }
+            img {
+                height: 40px;
+                width: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+                object-position: center;
+            }
+            p {
+                margin: 0;
+                margin-left: 10px;
+                font-size: 18px;
+                opacity: .8;
+                padding-right: 20px;
+            }    
         }
+
+
         .user-menu {
             position: absolute;
             background-color: white;
             padding: 10px 0;
-            top: 60px;
-            right: 0;
+            top: 80px;
+            right: 50px;
             border-radius: 10px;
             border: 1px solid lightgrey;
             box-shadow: 0 10px 20px rgba(32, 34, 37, 0.1);
-            width: 300px;
+            width: 400px;
             display: flex;
             flex-flow: column;
             transition: opacity 0.2s, height 0s;
@@ -61,21 +81,48 @@
             visibility: hidden;
             height: 0;
             z-index: 10;
+
+            mat-divider {
+                position: relative;
+                margin-top: 10px;
+                padding: 5px 0;
+            }
+            
             &.visible {
                 opacity: 1 !important;
                 visibility: visible !important;
                 height: auto !important;
             }
             button {
+                display: flex;
+                flex-flow: row;
+                align-items: center;
                 opacity: 0.6;
-                font-size: 18px;
                 width: 100%;
+                font-size: 15px;
                 padding: 10px 20px;
                 text-decoration: none;
                 color: #000;
                 transition: 0.2s;
+                p {
+                    margin: 0;
+                    display: inline-flex;
+                    flex-flow: column;
+                    text-align: left;
+                    line-height: 1.3; 
+                    span {
+                        opacity: .8;
+                        font-weight: normal;
+                    }
+                }
+                mat-icon {
+                    min-width: 50px;
+                    transform: scale(1.3);
+                    margin-left: -10px;
+                    margin-right: 10px;
+                    margin-top: 3px;
+                }
                 &:hover {
-                    opacity: 1;
                     background: whitesmoke;
                 }
             }
@@ -83,6 +130,10 @@
     }
 }
 
-.toggle-sidebar {
-
+.copyright {
+    width: 100%;
+    text-align: center;
+    opacity: .3;
+    margin: 0;
+    margin-top: 4px;
 }

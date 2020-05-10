@@ -42,7 +42,7 @@ import { UserPostsListComponent }   from './components/profile/tabs/user-posts-l
 import { UserPlantsListComponent }  from './components/profile/tabs/user-plants-list/user-plants-list.component';
 import { UserGardensListComponent } from './components/profile/tabs/user-gardens-list/user-gardens-list.component';
 import { UserDevicesListComponent } from './components/profile/tabs/user-devices-list/user-devices-list.component';
-import { PlantItemComponent }       from './components/profile/tabs/user-plants-list/plant-item/plant-item.component';
+import { PlantThumbComponent }       from './components/profile/tabs/user-plants-list/plant-thumb/plant-thumb.component';
 import { PostComponent }            from './routes/post/post.component';
 import { PostThumbComponent }       from './components/profile/tabs/user-posts-list/post-thumb/post-thumb.component';
 import { ProfileSidebarQuadComponent } from './components/profile/profile-sidebar/profile-sidebar-quad/profile-sidebar-quad.component';
@@ -92,7 +92,7 @@ import { PlantComponent } from './routes/plant/plant.component';
     UserPlantsListComponent,
     UserGardensListComponent,
     UserDevicesListComponent,
-    PlantItemComponent,
+    PlantThumbComponent,
     PostComponent,
     PostThumbComponent,
     SidebarComponent,

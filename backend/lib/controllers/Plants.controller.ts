@@ -12,7 +12,7 @@ export const createPlant = async (req:Request, res:Response) => {
         result = await session.run(`
             MATCH (u:User {_id:$uid})
             CREATE (p:Plant $body)<-[:CREATED]-(u)
-            return p
+            RETURN p
         `, {
             uid: req.params.uid,
             body: req.body

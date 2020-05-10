@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header-bar',
@@ -8,9 +9,9 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 })
 export class HeaderBarComponent implements OnInit {
   @Input() currentUser:any;
-  userMenuOpen:boolean = false;
+  userMenuOpen:boolean = true;
 
-  constructor(private authService:AuthenticationService) { }
+  constructor(private authService:AuthenticationService, private router:Router) { }
 
   ngOnInit(): void {
     console.log(this.currentUser)
@@ -20,4 +21,12 @@ export class HeaderBarComponent implements OnInit {
   hideUserMenu() { this.userMenuOpen = false }
   
   logout() { this.authService.logout(); }
+
+  gotoDocumentation() {
+    this.router.navigate(['/docs'])
+  }
+
+  gotoSettings() {
+    this.router.navigate(['/settings'])
+  }
 }

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 
-import { MeasurementTypes } from '../../../../backend/lib/common/types/measurements.types';
+import { MeasurementUnits } from '../../../../backend/lib/common/types/measurements.types';
 import { IDevice } from '../../../../backend/lib/models/Device.model';
 import { IMeasurementModel } from '../../../../backend/lib/models/Measurement.model';
 
@@ -11,7 +11,7 @@ import { IMeasurementModel } from '../../../../backend/lib/models/Measurement.mo
   providedIn: 'root'
 })
 export class DeviceService {
-  availableMeasurements = MeasurementTypes;
+  availableMeasurements = MeasurementUnits;
 
   constructor(private profileService:ProfileService,
     private userService:UserService,

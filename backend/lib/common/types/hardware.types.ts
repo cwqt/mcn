@@ -31,11 +31,11 @@ export const HardwareInformation:{[index in SupportedHardware]:HardwareDevice} =
         model_name: "MCN Wemos D1 Mini",
         microcontroller: MicroController.ESP8266,
         recording: {
-            [Measurement.Temperature]:  Unit.Celcius,
-            [Measurement.Humidity]:     Unit.RelativeHumidity,
-            [Measurement.Light]:        Unit.Lux,
-            [Measurement.Moisture]:     Unit.CapacitiveMoisture,
-            [IoTMeasurement.Voltage]:   Unit.Volts,
+            [Measurement.AirTemperature]:    Unit.Celcius,
+            [Measurement.Humidity]:          Unit.RelativeHumidity,
+            [Measurement.Light]:             Unit.Lux,
+            [Measurement.Moisture]:          Unit.CapacitiveMoisture,
+            [IoTMeasurement.Voltage]:        Unit.Volts,
             [IoTMeasurement.SignalStrength]: Unit.DecibelMilliWatts
         },
         capabilities: [
@@ -49,14 +49,14 @@ export const HardwareInformation:{[index in SupportedHardware]:HardwareDevice} =
         model_name: "MCN ESP32 Garden",
         microcontroller: MicroController.ESP32,
         recording: {
-            [Measurement.Temperature]:   Unit.Celcius,
-            [Measurement.Humidity]:      Unit.RelativeHumidity,
-            [Measurement.Light]:         Unit.Lux,
-            [Measurement.Moisture]:      Unit.CapacitiveMoisture,
-            [Measurement.LightState]:    Unit.Boolean,
-            [Measurement.CameraState]:   Unit.Boolean,
-            [Measurement.WaterLevel]:    Unit.Percentage,
-            [Measurement.Humidity]:      Unit.RelativeHumidity
+            [Measurement.AirTemperature]:   Unit.Celcius,
+            [Measurement.Humidity]:         Unit.RelativeHumidity,
+            [Measurement.Light]:            Unit.Lux,
+            [Measurement.Moisture]:         Unit.CapacitiveMoisture,
+            [Measurement.WaterLevel]:       Unit.Percentage,
+            [Measurement.Humidity]:         Unit.RelativeHumidity,
+            [IoTMeasurement.LightState]:    Unit.Boolean,
+            [IoTMeasurement.CameraState]:   Unit.Boolean,
         },
         capabilities: [
             DeviceCapability.WiFi

@@ -24,19 +24,20 @@ export class MeasurementsGraphsComponent implements OnInit {
   deviceInfo;
 
   measurementMap = {
-    [Measurement.Temperature]:  ["Temperature",   "ac_unit",  "#ffa4a2", false],
-    [Measurement.Light]:        ["Light",         "wb_sunny", "#ff94c2", false],
-    [Measurement.Humidity]:     ["Humidity",      "waves",    "#ee98fb", false],
-    [Measurement.WaterLevel]:   ["Water level",   "opacity",  "#aab6fe", false],
-    [Measurement.Moisture]:     ["Soil moisture", "grain",    "#8bf6ff", false],
-    [Measurement.Height]:       ["Plant height",  "height",   "#82e9de", false],
-    [Measurement.LightState]:   ["Light state",   "wb_incandescent", "#e1ffb1", false],
-    [Measurement.CameraState]:  ["Camera state",  "linked_camera", "#ffe97d", false],
-    [Measurement.PumpState]:    ["Pump state",    "blur_linear", "#d3b8ae", false],
-    [Measurement.HeaterState]:  ["Heater state",  "toggle_on", "#c1d5e0", false],
-    [IoTMeasurement.Voltage]:   ["Voltage",       "flash_on", "#ffb74d", false],
-    [IoTMeasurement.Current]:   ["Current",       "show_chart", "#c1d5e0", false],
-    [IoTMeasurement.Power]:     ["Power",         "power_input", "#e6ceff", false],
+    [Measurement.AirTemperature]:  ["Air Temperature",   "ac_unit",  "#ffa4a2", false],
+    [Measurement.SoilTemperature]: ["Soil Temperature",   "ac_unit",  "#ffa4a2", false],
+    [Measurement.Light]:           ["Light",         "wb_sunny", "#ff94c2", false],
+    [Measurement.Humidity]:        ["Humidity",      "waves",    "#ee98fb", false],
+    [Measurement.WaterLevel]:      ["Water level",   "opacity",  "#aab6fe", false],
+    [Measurement.Moisture]:        ["Soil moisture", "grain",    "#8bf6ff", false],
+    [Measurement.Height]:          ["Plant height",  "height",   "#82e9de", false],
+    [IoTMeasurement.LightState]:   ["Light state",   "wb_incandescent", "#e1ffb1", false],
+    [IoTMeasurement.CameraState]:  ["Camera state",  "linked_camera", "#ffe97d", false],
+    [IoTMeasurement.PumpState]:    ["Pump state",    "blur_linear", "#d3b8ae", false],
+    [IoTMeasurement.HeaterState]:  ["Heater state",  "toggle_on", "#c1d5e0", false],
+    [IoTMeasurement.Voltage]:      ["Voltage",       "flash_on", "#ffb74d", false],
+    [IoTMeasurement.Current]:      ["Current",       "show_chart", "#c1d5e0", false],
+    [IoTMeasurement.Power]:        ["Power",         "power_input", "#e6ceff", false],
     [IoTMeasurement.SignalStrength]: ["Connection strength", "network_check", "#81c784", false],
   }
 
