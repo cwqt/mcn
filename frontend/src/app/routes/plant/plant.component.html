@@ -1,5 +1,32 @@
-<div class="plant-container">
-    <div *ngIf="!cache.measurements.loading">
-        <app-measurements-graphs [data]="cache.measurements.data" [bounds]="cache.plant.data.parameters"></app-measurements-graphs>
-    </div>
-</div>
+<mat-tab-group>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>information</mat-icon>
+            information
+        </ng-template>
+        <div class="plant-container"></div>
+
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>timeline</mat-icon>
+            progress
+        </ng-template>
+
+        <div class="plant-container"></div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>bar_chart</mat-icon>
+            measurements
+        </ng-template>
+        <div class="plant-container">
+            <div *ngIf="!cache.measurements.loading">
+                <app-measurements-graphs [data]="cache.measurements.data" [bounds]="cache.plant.data.parameters"></app-measurements-graphs>
+            </div>        
+        </div>
+    </mat-tab>
+</mat-tab-group>
+
