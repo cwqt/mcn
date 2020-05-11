@@ -17,13 +17,13 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.feedSidebar = [
-      ["home", "Home", ''],
+      ["home",       "Home", ''],
       // ["explore", "Explore"],
       // ["notifications", "Notifications"],
-      ["group_work", "Gardens", `${this.currentUser.username}/gardens`],
-      ["eco", "Plants", `${this.currentUser.username}/plants`],
-      ["device_hub", "Devices", `${this.currentUser.username}/devices`],
-      ["person", "Profile", `${this.currentUser.username}`],
+      ["group_work", "Gardens", `${this.currentUser.username}?tab=gardens`],
+      ["eco",        "Plants",  `${this.currentUser.username}?tab=plants`],
+      ["device_hub", "Devices", `${this.currentUser.username}?tab=devices`],
+      ["person",     "Profile", `${this.currentUser.username}`],
       ["more_horiz", "More", `more`],
     ];  
 
@@ -43,7 +43,7 @@ export class SidebarComponent implements OnInit {
   }
 
   changeRoute(index) {
-    this.router.navigate([this.feedSidebar[index][2]])
+    this.router.navigateByUrl(this.feedSidebar[index][2])
   }
 
   openSidebar() { this.sidebarOpen = true }

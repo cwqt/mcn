@@ -1,96 +1,35 @@
-.container {
-    display: flex;
-    flex-flow: row;
-    padding: 0;
-    min-height: 15vh;
-    align-items: stretch;
-    overflow: hidden;
-    margin-bottom: 20px;
-    .left {
-        position: relative;
-        width: 30%;
-        background-color: lighten(lightgrey, 10%);
-        background-size: cover;
-        background-position: center;
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-        }
-        .placeholder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-            mat-icon {
-                opacity: 0.5;
-                transform: scale(3);
-            }
+app-thumb-wrapper {
+    .title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        * { margin: 0 }
+        margin-bottom: 15px;
+        h3 {
+            opacity: 0.5;
+            line-height: 0.7;
         }
     }
-    .right {
-        flex: 1 1;
-        margin: 20px;
-        display: inline-flex;
-        flex-flow: column;
-        .title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            * { margin: 0 }
-            margin-bottom: 15px;
-            h3 {
-                opacity: 0.5;
-                line-height: 0.7;
-            }
-        }
-        .verified {
-            position: absolute;
-            right: 0;
-            top: 0;
-        }
+    button {
+        margin-top: auto;
+        margin-left: auto;
     }
+    mat-divider {
+        position: relative !important;
+    }    
 }
 
-mat-divider {
-    position: relative !important;
-}
-
-.plant-meta {
+.object-meta {
     mat-expansion-panel p {
         display: flex;
+        .recording-item:not(:last-child)::after {
+            content: ", "
+        }        
         b {
             min-width: 150px;
         }
         &:last-child {
             margin-bottom: 0;
-        }
-    }
-}
-
-
-mat-card-actions {
-    margin: 0;
-    display: flex;
-    justify-content: space-between;
-    button {
-        margin-right: 0;
-    }
-    .view-comments-button {
-        opacity: .8;
-    }
-    .social {
-        button {
-            margin-right: 10px;
-        }
-        span {
-            margin-left: 5px;
         }
     }
 }

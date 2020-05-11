@@ -1,0 +1,29 @@
+<mat-card class="container">
+    <div class="left">
+        <img *ngIf="thumbItem.thumbnail" src="thumbnail" />
+        <div *ngIf="!thumbItem.thumbnail" class="placeholder"><mat-icon>{{thumbPlaceholderIcon}}</mat-icon></div>
+    </div>
+    <div class="right">
+        <ng-content></ng-content>
+        <br />
+        <mat-card-actions>
+            <div class="social">
+                <button mat-icon-button>
+                    <!-- <mat-icon>{{isHearting ? 'favorite' : 'favorite_border'}}</mat-icon> -->
+                    <mat-icon>favorite_border</mat-icon>
+                    <span>{{0}}</span>
+                </button>
+                <button mat-icon-button>
+                    <mat-icon>reply</mat-icon>
+                    <span>{{0}}</span>
+                </button>
+                <button mat-icon-button>
+                    <mat-icon>share</mat-icon>
+                    <span>{{0}}</span>
+                </button>    
+            </div>       
+            <button mat-button class="view-comments-button">view comments</button>
+            <button mat-button color="primary">inspect</button>
+        </mat-card-actions>
+    </div>
+</mat-card>

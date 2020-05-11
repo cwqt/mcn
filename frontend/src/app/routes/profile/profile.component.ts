@@ -53,17 +53,23 @@ export class ProfileComponent implements OnInit {
           console.log(e);
           this.loading = false;
         })
-      });
+    });
+
+    this.route.queryParams.subscribe(queries => {
+      if('tab' in queries) {
+        this.tabIndex = this.tabs.findIndex(tab => tab.label == queries.tab);
+        this.profileService.selectedTab.next(queries['tab']);
+      } else {
+        this.tabIndex = 0;
+        this.profileService.selectedTab.next('posts');
+      }
+    });
 
     this.userService.currentUser.subscribe(user => this.currentUser = user );
-
-    this.profileService.selectedTab.subscribe(key => {
-      this.tabIndex = this.tabs.findIndex(tab => tab.label == key);
-    })
   }
 
   setActiveTab(tab:MatTabChangeEvent) {
-    this.profileService.selectedTab.next(this.tabs[tab.index].label);
+    this.router.navigateByUrl(`${this.profileUser.username}?tab=${this.tabs[tab.index].label}`)
   }
 
   onActivate(event:any) {

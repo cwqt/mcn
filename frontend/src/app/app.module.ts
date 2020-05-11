@@ -70,6 +70,7 @@ import { MeasurementsGraphsComponent } from './components/measurements-graphs/me
 import { RoundedButtonComponent } from './components/_helpers/rounded-button/rounded-button.component';
 import { PlantComponent } from './routes/plant/plant.component';
 import { DocumentationComponent } from './routes/documentation/documentation.component';
+import { ThumbWrapperComponent } from './components/profile/tabs/thumb-wrapper/thumb-wrapper.component';
 
 
 @NgModule({
@@ -108,6 +109,7 @@ import { DocumentationComponent } from './routes/documentation/documentation.com
     RoundedButtonComponent,
     PlantComponent,
     DocumentationComponent,
+    ThumbWrapperComponent,
   ],
   imports: [
     BrowserModule,

@@ -34,7 +34,7 @@ const routes: Routes = [
 @NgModule({
   imports: [RouterModule.forRoot(routes, {
     onSameUrlNavigation: 'ignore',
-    paramsInheritanceStrategy: 'always'
+    paramsInheritanceStrategy: 'always',
   })],
   exports: [RouterModule]
 })

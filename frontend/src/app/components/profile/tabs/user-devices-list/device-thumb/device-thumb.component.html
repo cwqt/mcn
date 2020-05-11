@@ -1,92 +1,57 @@
-<mat-card class="container">
-    <div class="left">
-        <div *ngIf="!device.thumbnail" class="placeholder"><mat-icon>device_hub</mat-icon></div>
-        <img src="https://media.discordapp.net/attachments/264522461943562244/704820132312252426/IMG_0028.JPG?width=2152&height=2152" />
-    </div>
-    <div class="right">
-        <div class="title">
-            <h1>{{device.name}}</h1>
+<app-thumb-wrapper [thumbItem]="device" [type]="'device'">
+    <div class="title">
+        <h1>{{device.name}}</h1>
 
-            <div class="state-indicator" id={{device.state}}>
-                <mat-icon inline>{{deviceState.icon}}</mat-icon>
-                <span>{{deviceState.text}}</span>
-            </div>
+        <div class="state-indicator" id={{device.state}}>
+            <mat-icon inline>{{deviceState.icon}}</mat-icon>
+            <span>{{deviceState.text}}</span>
         </div>
-        <mat-divider></mat-divider>
-        <br />
-
-        <mat-accordion class="device-meta">
-            <mat-expansion-panel (click)="getDeviceMeta()">
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        Device information
-                    </mat-panel-title>
-                </mat-expansion-panel-header>
-                <div *ngIf="cache.device.data && !cache.device.error">
-                    <p><b>Device id:</b>{{cache.device.data._id || '—'}}</p>
-                    <p><b>Api key id:</b>{{cache.device.data.api_key._id || '—'}}</p>
-                    <p><b>Assigned to:</b>{{cache.device.data.assigned_to.type}}: {{cache.device.data.assigned_to.name}}</p>
-                    <p><b>Created:</b>{{(cache.device.data.created_at | amTimeAgo) || '—'}}</p>
-                    <p><b>Software version:</b>{{cache.device.data.software_version || '—'}}</p>
-                    <p><b>Hardware model:</b>{{deviceInfo.model_name || '—'}}</p>
-                    <p><b>Total data points:</b>{{cache.device.data.measurement_count || 0}}</p>
-                    <p>
-                        <b>Recording:</b>
-                        <span>
-                            <span *ngFor="let measurement of deviceInfo.recording | keyvalue" class="recording-item">{{measurement.key}} ({{measurement.value}})</span>
-                        </span>
-                    </p>
-                </div>
-                <mat-spinner *ngIf="!cache.device.data && !cache.device.error"></mat-spinner>
-                <p *ngIf="cache.device.error">{{cache.device.error}}</p>
-            </mat-expansion-panel>
-
-            <mat-expansion-panel (click)="getLatestData()">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                    Latest data
-                </mat-panel-title>
-                <mat-panel-description>
-                    {{ device.last_ping | amTimeAgo }}
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-                <div *ngIf="cache.latest_data.data && !cache.latest_data.error">
-                    <p *ngFor="let field of cache.latest_data.data.data | keyvalue">
-                        <b>{{field.key}}:</b> {{field.value}} {{deviceInfo.recording[field.key]}}
-                    </p>
-                </div>
-                <mat-spinner *ngIf="!cache.latest_data.data && !cache.latest_data.error"></mat-spinner>
-                <p *ngIf="cache.latest_data.error">{{cache.latest_data.error}}</p>
-            </mat-expansion-panel>
-          </mat-accordion>
-
-
-          <br />
-
-
-
-          <mat-card-actions>
-            <div class="social">
-                <button mat-icon-button>
-                    <!-- <mat-icon>{{isHearting ? 'favorite' : 'favorite_border'}}</mat-icon> -->
-                    <mat-icon>favorite_border</mat-icon>
-                    <span>{{0}}</span>
-                </button>
-                <button mat-icon-button>
-                    <mat-icon>reply</mat-icon>
-                    <span>{{0}}</span>
-                </button>
-                <button mat-icon-button>
-                    <mat-icon>share</mat-icon>
-                    <span>{{0}}</span>
-                </button>    
-            </div>       
-            <button mat-button class="view-comments-button">view comments</button>
-
-            <button mat-button color="primary" (click)="gotoDevice()">
-                <mat-icon inline>bar_chart</mat-icon>
-                inspect
-            </button>
-        </mat-card-actions>
     </div>
-</mat-card>
+    <mat-divider></mat-divider>
+    <br />
+
+    <mat-accordion class="object-meta">
+        <mat-expansion-panel (click)="getDeviceMeta()">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Device information
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div *ngIf="cache.device.data && !cache.device.error">
+                <p><b>Device id:</b>{{cache.device.data._id || '—'}}</p>
+                <p><b>Api key id:</b>{{cache.device.data.api_key._id || '—'}}</p>
+                <p><b>Assigned to:</b>{{cache.device.data.assigned_to.type}}: {{cache.device.data.assigned_to.name}}</p>
+                <p><b>Created:</b>{{(cache.device.data.created_at | amTimeAgo) || '—'}}</p>
+                <p><b>Software version:</b>{{cache.device.data.software_version || '—'}}</p>
+                <p><b>Hardware model:</b>{{deviceInfo.model_name || '—'}}</p>
+                <p><b>Total data points:</b>{{cache.device.data.measurement_count || 0}}</p>
+                <p>
+                    <b>Recording:</b>
+                    <span>
+                        <span *ngFor="let measurement of deviceInfo.recording | keyvalue" class="recording-item">{{measurement.key}} ({{measurement.value}})</span>
+                    </span>
+                </p>
+            </div>
+            <mat-spinner *ngIf="!cache.device.data && !cache.device.error"></mat-spinner>
+            <p *ngIf="cache.device.error">{{cache.device.error}}</p>
+        </mat-expansion-panel>
+
+        <mat-expansion-panel (click)="getLatestData()">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+                Latest data
+            </mat-panel-title>
+            <mat-panel-description>
+                {{ device.last_ping | amTimeAgo }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+            <div *ngIf="cache.latest_data.data && !cache.latest_data.error">
+                <p *ngFor="let field of cache.latest_data.data.data | keyvalue">
+                    <b>{{field.key}}:</b> {{field.value}} {{deviceInfo.recording[field.key]}}
+                </p>
+            </div>
+            <mat-spinner *ngIf="!cache.latest_data.data && !cache.latest_data.error"></mat-spinner>
+            <p *ngIf="cache.latest_data.error">{{cache.latest_data.error}}</p>
+        </mat-expansion-panel>
+      </mat-accordion>
+</app-thumb-wrapper>
