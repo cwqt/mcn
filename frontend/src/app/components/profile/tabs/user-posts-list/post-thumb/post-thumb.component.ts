@@ -21,6 +21,7 @@ export class PostThumbComponent implements OnInit {
   constructor(private router:Router) { }
 
   ngOnInit(): void {
+    this.isHearting = this.post.isHearting ?? false;
   }
 
   heart() {

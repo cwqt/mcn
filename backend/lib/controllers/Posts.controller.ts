@@ -3,17 +3,13 @@ import { Types }                from 'mongoose'
 
 import { ErrorHandler }     from "../common/errorHandler";
 import { HTTP }             from "../common/http";
-import { IPost }            from '../models/Post.model';
+import { IPost, IPostStub } from '../models/Post.model';
 import { n4j }              from '../common/neo4j';
 import { filterUserFields } from './User.controller'
 
-const makePost = (content:string | null, repost?:any):IPost => {
-    let post:IPost = {
+const makePost = (content:string | null, repost?:any):IPostStub => {
+    let post:IPostStub = {
         _id:           Types.ObjectId().toHexString(),
-        replies:       0,
-        hearts:        0,
-        reposts:       0,
-        shares:        0,
         content:       content,
         created_at:    Date.now(),
     }
@@ -47,18 +43,23 @@ export const createPost = async (req:Request, res:Response) => {
 export const readAllPosts = async (req:Request, res:Response) => {
     let session = n4j.session();
     let result;
+    console.log(req.session)
+
     try {
         result = await session.run(`
             MATCH (u:User {_id:$uid})-[:POSTED]->(p:Post)
             OPTIONAL MATCH (p)-[:REPOST_OF]->(p2:Post)<-[:POSTED]-(u2:User)
-            WITH p, p2, u2,
+            OPTIONAL MATCH (:User {_id:$selfid})-[isHearting:HEARTS]->(p)
+            OPTIONAL MATCH (:User {_id:$selfid})-[:POSTED]->(:Post)-[hasReposted:REPOST_OF]->(p)
+            WITH p, p2, u2, isHearting, hasReposted,
                 size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
                 size((p)<-[:REPLY_TO]-(:Post)) AS replies,
                 size((p)<-[:HEARTS]-(:User)) AS hearts,                
                 p2{.content, .created_at, author:u2} AS rt
-            RETURN p{._id, .content, .created_at, reposts:reposts, hearts:hearts, replies:replies, repost:rt}
+            RETURN p{._id, .content, .created_at, reposts:reposts, hearts:hearts, replies:replies, repost:rt}, isHearting, hasReposted
         `, {
-            uid: req.params.uid
+            uid: req.params.uid,
+            selfid: req.session.user.id
         })        
     } catch (e) {
         throw new ErrorHandler(HTTP.ServerError, e)        
@@ -68,6 +69,8 @@ export const readAllPosts = async (req:Request, res:Response) => {
 
     let posts:IPost[] = result.records.map((record:any) => {
         let x = record.get('p');
+        x.isHearting = record.get('isHearting') ? true : false;
+        x.hasReposted = record.get('hasReposted') ? true : false;
         x.hearts = x.hearts.toNumber();
         x.reposts = x.reposts.toNumber();
         x.replies = x.replies.toNumber();

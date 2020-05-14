@@ -4,6 +4,7 @@ import morgan           from 'morgan';
 import bodyParser       from 'body-parser';
 import cors             from 'cors';
 import session          from 'express-session';
+import redis            from 'redis';
 import { n4j }          from './common/neo4j';
 import log              from './common/logger';
 
@@ -16,6 +17,9 @@ const app = express();
 app.set('trust proxy', 1);
 app.use(bodyParser.json());
 app.use(cors());
+
+const redisClient       = redis.createClient();
+const redisStore        = require('connect-redis')(session);
 app.use(session({
     secret: config.PRIVATE_KEY,
     resave: false,
@@ -23,7 +27,13 @@ app.use(session({
     cookie: {
         httpOnly: !config.PRODUCTION ? false : true,
         secure: !config.PRODUCTION ? false : true
-    }
+    },
+    store: new redisStore({
+        host: 'localhost',
+        port: 6379,
+        client: redisClient,
+        ttl: 86400
+    }),
 }))
 
 if(!config.TESTING) app.use(morgan('tiny', { "stream": log.stream }));

@@ -277,7 +277,7 @@ export const loginUser = async (req:Request, res:Response, next:NextFunction) =>
         }
 
         user = await getUserById(user._id) as IUser;
-        res.json(filterUserFields(user));
+        res.json(filterUserFields(user));    
     } catch(e) {
         throw new ErrorHandler(HTTP.ServerError, e);
     }
