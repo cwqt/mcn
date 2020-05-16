@@ -1,6 +1,6 @@
 <div>
     <!-- post / repost with a comment  -->
-    <div class="post-thumb-container" (click)="gotoPost()" *ngIf="post.content">
+    <div class="post-thumb-container" [class.mini]="mini" (click)="gotoPost()" *ngIf="post.content">
         <button *ngIf="repostType != 'repost'" mat-icon-button class="post-options-dropdown-icon"><mat-icon>keyboard_arrow_down</mat-icon></button>
         <p *ngIf="repostType == 'repost'" class="repost-line">
             <mat-icon>repeat</mat-icon> {{parentAuthor.name}} Reposted 
@@ -11,37 +11,34 @@
                 <img src="{{author.avatar}}">
             </div>
             <div class="right">
-                <p><b>{{author.name}}</b> @{{author.username}} · {{ post.created_at | amTimeAgo}}</p>
+                <p><b>{{author.name}}</b> <span>@{{author.username}} · {{ post.created_at | amTimeAgo}}</span></p>
                 
                 <div *ngIf="!post.repostType">
                     <p>{{post.content}}</p>
                 </div>
 
-                <div *ngIf="post.repostType">
-                    <div *ngIf="post.repost.type == 'repost-post'">
-                        <p>{{post.content.content}}</p>
-                    </div>
-
-                    <div *ngIf="post.repost.type == 'repost-recordable'">
-                        <p>{{post.content.content}}</p>
-                    </div>
-
-                    <div *ngIf="post.repost.type == 'repost-device'">
-                        <p>{{post.content.content}}</p>
-                    </div>
-                </div>
-    
-                <!-- repost with comment post -->
-                <div class="repost" *ngIf="post.repost">
+                <div *ngIf="post.repost" class="repost">
                     <app-post-thumb *ngIf="post.repost.type == 'repost-post'"
+                        [mini]="true"
                         [post]="post.repost.content"
                         [author]="post.repost.author"
                         [currentUser]="currentUser"
                         [repostType]="'repost-comment'">
                     </app-post-thumb>                    
+
+                    <div *ngIf="post.repost.type == 'repost-recordable'">
+                        <p>{{post.content.content}}</p>
+                    </div>
+
+                    <app-device-thumb *ngIf="post.repost.type == 'repost-device'"
+                        [mini]="true"
+                        [device]="post.content"
+                        [profileUser]="post.author"
+                        [currentUser]="currentUser">
+                    </app-device-thumb>
                 </div>
-        
-                <mat-card-actions *ngIf="!repostType">
+            
+                <mat-card-actions *ngIf="!repostType && !mini">
                     <button mat-icon-button>
                         <mat-icon>reply</mat-icon>
                         <span>{{post.meta.replies}}</span>
@@ -65,6 +62,6 @@
         [author]="post.repost.author"
         [currentUser]="currentUser"
         [parentAuthor]="author"
-        [repostType]="post.content ? 'repost-comment' : 'repost'"
+        [repostType]="'repost'"
     ></app-post-thumb>    
 </div>

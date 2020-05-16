@@ -1,9 +1,9 @@
-<mat-card class="container">
+<mat-card class="container" [class.mini]="mini">
     <div class="left">
         <img *ngIf="thumbItem.thumbnail" src="thumbnail" />
         <div *ngIf="!thumbItem.thumbnail" class="placeholder"><mat-icon>{{thumbPlaceholderIcon}}</mat-icon></div>
     </div>
-    <div class="right">
+    <div class="right" *ngIf="!mini">
         <ng-content></ng-content>
         <br />
         <mat-card-actions>
@@ -23,7 +23,11 @@
                 </button>    
             </div>       
             <button mat-button class="view-comments-button">view comments</button>
-            <button mat-button color="primary">inspect</button>
+            <button mat-button color="primary" (click)="gotoItem()">inspect</button>
         </mat-card-actions>
+    </div>
+
+    <div class="right-mini" *ngIf="mini">
+        <h1>{{thumbItem.name}}</h1>
     </div>
 </mat-card>

@@ -15,7 +15,7 @@ import {
     IRepost, 
     RepostType} from '../models/Post.model';
 
-const makePost = (content:string | null, repost?:any):IPostStub => {
+export const makePost = (content:string | null, repost?:any):IPostStub => {
     let post:IPostStub = {
         _id:           Types.ObjectId().toHexString(),
         content:       content,
@@ -59,7 +59,7 @@ export const readAllPosts = async (req:Request, res:Response) => {
             WHERE o:Plant OR o:Garden OR o:Device OR o:Post
             OPTIONAL MATCH (:User {_id:$selfid})-[isHearting:HEARTS]->(o)
             OPTIONAL MATCH (:User {_id:$selfid})-[:POSTED]->(:Post)-[hasReposted:REPOST_OF]->(o)
-            WITH p, o, op, isHearting, hasReposted,
+            WITH p, o, op, collect(isHearting) AS isHearting, collect(hasReposted) AS hasReposted,
                 size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
                 size((p)<-[:REPLY_TO]-(:Post)) AS replies,
                 size((p)<-[:HEARTS]-(:User)) AS hearts          
@@ -73,6 +73,8 @@ export const readAllPosts = async (req:Request, res:Response) => {
     } finally {
         session.close();
     }
+
+    console.log(result.records.length)
 
     let posts:IPostStub[] = result.records.map((record:any) => {
         let p = record.get('p').properties;
@@ -189,8 +191,6 @@ export const readPost = async (req:Request, res:Response) => {
 }
 
 export const repostPost = async (req:Request, res:Response) => {
-    // /users/:uid/posts/:pid/repost -- user uid is reposting post with pid
-    // todo: disable ability to repost a repost w/ no content
     let session = n4j.session();
     let result;
     try {

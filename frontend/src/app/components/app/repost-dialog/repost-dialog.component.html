@@ -8,10 +8,14 @@
 
 <div class="repost-wrapper">
     <div class="left">
-
     </div>
 
     <div class="right">
+
+        <app-create-post-form [user]="data.currentUser"></app-create-post-form>
+        
         {{data}}
+
+        <app-rounded-button [color]="'primary'">Repost</app-rounded-button>
     </div>
 </div>

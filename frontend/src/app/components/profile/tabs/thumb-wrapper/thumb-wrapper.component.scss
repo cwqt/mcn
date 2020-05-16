@@ -69,3 +69,13 @@ mat-card-actions {
     }
 }
 
+.container.mini {
+    width: 100%;
+    min-height: 0px;
+    mat-card-actions {
+        display: none;
+    }
+    .right-mini {
+        padding: 15px 10px;
+    }
+}

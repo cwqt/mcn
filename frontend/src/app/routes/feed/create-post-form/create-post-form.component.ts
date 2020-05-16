@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { IPost } from '../../../../../../backend/lib/models/Post.model';
 import { UserService } from 'src/app/services/user.service';
+import { IUser } from '../../../../../../backend/lib/models/User.model';
 
 @Component({
   selector: 'app-create-post-form',
@@ -10,7 +11,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class CreatePostFormComponent implements OnInit {
   @Output() addPost:EventEmitter<IPost> = new EventEmitter();
-  @Input() user:any;
+  @Input() user:IUser;
 
   loading:boolean = false;
   success:boolean = false;

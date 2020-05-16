@@ -23,7 +23,8 @@ export interface IDeviceStub {
     last_ping?:     number //seconds since epoch device sent message
     hardware_model: SupportedHardware,
     created_at?:    number,
-    meta?:          IPostableMeta
+    meta?:          IPostableMeta,
+    short_desc?:    string
 }
 
 export interface IDevice extends IDeviceStub {
@@ -33,4 +34,5 @@ export interface IDevice extends IDeviceStub {
     measurement_count?: number
     api_key?:           IApiKey,
     assigned_to?:       IRecordableStub,
+    full_desc?:         string
 }

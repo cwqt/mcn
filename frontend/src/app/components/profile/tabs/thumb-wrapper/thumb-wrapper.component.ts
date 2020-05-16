@@ -5,6 +5,7 @@ import { IRecordableStub, RecordableType } from '../../../../../../../backend/li
 import { MatDialog } from '@angular/material/dialog';
 import { RepostDialogComponent } from 'src/app/components/app/repost-dialog/repost-dialog.component';
 import { IUser } from '../../../../../../../backend/lib/models/User.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-thumb-wrapper',
@@ -14,12 +15,17 @@ import { IUser } from '../../../../../../../backend/lib/models/User.model';
 export class ThumbWrapperComponent implements OnInit {
   @Input() thumbItem:IRecordableStub | IDeviceStub;
   @Input() type:RecordableType;
+  @Input() mini:boolean = false;
+  
   @Input() currentUser:IUser;
+  @Input() user:IUser;
   
   thumbPlaceholderIcon:string;
+  dialogData:any;
 
   constructor(
-    private dialog:MatDialog
+    private dialog:MatDialog,
+    private router:Router
   ) {}
 
   ngOnInit(): void {
@@ -37,16 +43,23 @@ export class ThumbWrapperComponent implements OnInit {
         this.thumbPlaceholderIcon = 'help'
         break;
     }
+
+    this.dialogData = {
+      type: this.type,
+      object: this.thumbItem,
+      user: this.user,
+      currentUser: this.currentUser
+    }
   }
 
   openRepostDialog() {
     const dialogRef = this.dialog.open(RepostDialogComponent, {
       width: '50%',
-      data: {
-        type: this.type,
-        object: this.thumbItem,
-        user: this.currentUser
-      }
+      data: this.dialogData
     })
+  }
+
+  gotoItem() {
+    this.router.navigate([`${this.user.username}/${this.type}s/${this.thumbItem._id}`])
   }
 }

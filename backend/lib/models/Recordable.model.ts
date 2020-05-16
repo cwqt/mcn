@@ -14,7 +14,8 @@ export interface IRecordableStub {
     thumbnail?:   string,
     created_at?:  Date,
     type:         RecordableType.Garden | RecordableType.Plant,
-    meta?:        IPostableMeta
+    meta?:        IPostableMeta,
+    short_desc?:  string,
 }
 
 export interface IRecordable extends IRecordableStub {
@@ -22,4 +23,5 @@ export interface IRecordable extends IRecordableStub {
   recording?:     string[],
   feed_url?:      IpAddress.Address4 | IpAddress.Address6,
   parameters?:    Map<Measurement, [number, number, number]>, //lower, avg, upper bounds
+  full_desc?:     string
 }

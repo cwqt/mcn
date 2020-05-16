@@ -11,6 +11,7 @@ export class PostThumbComponent implements OnInit {
   @Input() post:any;
   @Input() author:IUser;
   @Input() currentUser:IUser;
+  @Input() mini:boolean = false;
 
   //reposts ["repost", "repost-comment"]
   @Input() parentAuthor:any;
@@ -23,8 +24,7 @@ export class PostThumbComponent implements OnInit {
   ngOnInit(): void {
     this.isHearting = this.post.isHearting ?? false;
 
-    if(this.repostType == 'repost')
-      console.log(this.post, this.repostType)
+    if(this.post.repost) console.log(this.post)
   }
 
   heart() {

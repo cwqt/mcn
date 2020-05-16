@@ -16,7 +16,7 @@ import {
 
 export const filterUserFields = (user:any, toStub?:boolean):IUser | IUserStub => {
     let hiddenFields = ["_labels", "pw_hash", "salt"];
-    if(toStub) hiddenFields = hiddenFields.concat(['email', 'admin', 'new_user', 'created_at', 'verified'])
+    if(toStub) hiddenFields = hiddenFields.concat(['email', 'admin', 'new_user', 'created_at', 'verified', "gardens", "plants", "devices", "hearts", "followers", "following", "location", "posts", "bio"])
 
     hiddenFields.forEach(field => delete user[field]);
     return user;

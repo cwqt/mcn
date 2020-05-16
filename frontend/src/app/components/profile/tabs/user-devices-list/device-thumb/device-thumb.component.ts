@@ -27,6 +27,7 @@ export class DeviceThumbComponent implements OnInit {
   @Input() profileUser:IUser;
   @Input() currentUser:IUser;
   @Input() device:IDeviceStub;
+  @Input() mini:boolean = false;
 
   deviceInfo:HardwareDevice;
 

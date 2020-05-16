@@ -4,6 +4,7 @@
     flex-flow: column;
     position: relative;
     margin-bottom: 20px;
+
     .post-options-dropdown-icon {
         position: absolute;
         top: 10px;
@@ -44,6 +45,10 @@
             border-radius: 10px;
             padding: 20px;        
             padding-bottom: 5px;
+            span {
+                opacity: .7;
+                margin-left: 5px;
+            }
             .repost app-post-thumb .post-thumb-container {
                 margin: 5px 0;
             }
@@ -77,3 +82,28 @@
     }
 }
 
+.post-thumb-container.mini {
+    .post-options-dropdown-icon {
+        display: none;
+    }
+
+    .post-thumb-content {
+        padding: 15px 10px;
+        border: 1px solid lightgrey;
+        border-radius: 10px;
+        .left {
+            img {
+                height: 25px;
+                width: 25px;
+            }
+        }
+        .right {
+            margin-top: 2px;
+            padding: 0;
+            border: 0px;
+            p:last-child {
+                margin: 0;
+            }
+        }    
+    }
+}

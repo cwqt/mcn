@@ -10,6 +10,8 @@ import { ErrorHandler }     from "../common/errorHandler";
 import { HTTP }             from "../common/http";
 import { n4j }              from '../common/neo4j';
 
+import { makePost } from './Posts.controller';
+
 import { IRecordable, IRecordableStub } from '../models/Recordable.model';
 
 const getSchema = (recordable_type:string):string => {
@@ -109,4 +111,31 @@ export const deleteRecordable = (req:Request, res:Response, next:NextFunction) =
 
 export const heartRecordable = () => {}
 export const unheartRecordable = () => {}
-export const repostRecordable = () => {}
+
+
+export const repostRecordable = async (req:Request, res:Response) => {
+    let session = n4j.session();
+    let result;
+    try {
+        let post = makePost(req.body.content || '');
+    
+        result = await session.run(`
+            MATCH (o {_id:$rid}), (u:User {_id:$uid})
+            WHERE o:Plant OR o:Garden OR o:Device
+            CREATE (u)-[:POSTED]->(r:Post $body)-[:REPOST_OF]->(o)
+            RETURN r
+        `, {
+            rid: req.params.rid ?? req.params.did,
+            uid:req.session.user.id,
+            body: post
+        })        
+    } catch (e) {
+        throw new ErrorHandler(HTTP.ServerError, e)        
+    } finally {
+        session.close();
+    }
+
+    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError, "Did not create repost")
+    res.status(201).json(result.records[0].get('r').properties);
+
+}
