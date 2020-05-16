@@ -14,6 +14,15 @@ export interface IUser extends IUserStub {
     cover_image?:   string,
     location?:      string,
     created_at?:    number,
+}
+
+export interface IUserPrivate extends IUser {
+    salt?:          string,
+    pw_hash?:       string,
+}
+
+// collected meta-data
+export interface IUserFE extends IUser {
     plants:         number,
     gardens:        number,
     devices:        number,
@@ -22,9 +31,3 @@ export interface IUser extends IUserStub {
     hearts:         number,
     posts:          number,
 }
-
-export interface IUserPrivate extends IUser {
-    salt?:          string,
-    pw_hash?:       string,
-}
-

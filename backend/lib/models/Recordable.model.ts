@@ -1,6 +1,6 @@
 import { Measurement } from '../common/types/measurements.types';
 import * as IpAddress from 'ip-address';
-import { IPostable } from './Post.model';
+import { IPostableMeta } from './Post.model';
 
 export enum RecordableType {
   Garden = 'garden',
@@ -8,7 +8,7 @@ export enum RecordableType {
   Device = 'device'//devices can have data recorded onto them, iot metrics etc
 }
 
-export interface IRecordableStub extends IPostable {
+export interface IRecordableStub {
     _id:          string,
     name:         string,
     thumbnail?:   string,

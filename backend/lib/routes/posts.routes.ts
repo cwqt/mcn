@@ -1,7 +1,5 @@
-import { Router }    from "express"
 const { body, param } = require('express-validator');
-
-var AsyncRouter = require("express-async-router").AsyncRouter;
+var AsyncRouter       = require("express-async-router").AsyncRouter;
 
 import { validate } from '../common/validate';
 import {
@@ -15,10 +13,7 @@ import {
     unheartPost
  } from '../controllers/Posts.controller';
 
-
 const router = AsyncRouter({mergeParams: true});
-const postRouter = AsyncRouter({mergeParams: true});
-router.use('/:pid', postRouter);
 
 router.post('/', validate([
     body('content').not().isEmpty().trim().withMessage('post must have some content'),
@@ -27,6 +22,9 @@ router.post('/', validate([
 router.get('/', readAllPosts);
 
 // POST ===========================================================================================
+const postRouter = AsyncRouter({mergeParams: true});
+router.use('/:pid', postRouter);
+
 postRouter.use(validate([
     param('pid').isMongoId().trim().withMessage('invalid post id')
 ]))

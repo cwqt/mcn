@@ -1,6 +1,6 @@
-import { Router, Request, Response, NextFunction }    from "express"
-const { body } = require('express-validator');
-const AsyncRouter               = require("express-async-router").AsyncRouter;
+import {Request, Response, NextFunction }    from "express"
+const { body, param } = require('express-validator');
+const AsyncRouter     = require("express-async-router").AsyncRouter;
 
 import { validate } from '../common/validate';
 
@@ -15,7 +15,10 @@ import {
     // deleteRecordable,
     updateRecordable,
     readAllRecordables,
-    readRecordable
+    readRecordable,
+    unheartRecordable,
+    heartRecordable,
+    repostRecordable
 } from '../controllers/Recordable.controller';
 
 import { RecordableType } from '../models/Recordable.model';
@@ -39,12 +42,23 @@ router.get('/', (req:Request, res:Response, next:NextFunction) => {
     next();
 }, readAllRecordables);
 
-router.get('/:rid', readRecordable)
-router.get('/:rid/measurements', readAllMeasurements);
-router.delete('/:rid/measurements', deleteMeasurements);
+// PLANT ==========================================================================================
+const plantRouter = AsyncRouter({mergeParams: true});
+router.use('/:rid', plantRouter);
 
-// router.get('/:rid', readRecordable);
-router.put('/:rid', updateRecordable, updatePlant);
-// router.delete('/:rid', deleteRecordable);
+plantRouter.use(validate([
+    param('pid').isMongoId().trim().withMessage('invalid plant id')
+]))
+
+router.get('/',         readRecordable)
+router.put('/',         updateRecordable, updatePlant);
+// router.delete('/',      deleteRecordable);
+
+router.post('/repost',  repostRecordable);
+router.post('/heart',   heartRecordable);
+router.delete('/heart', unheartRecordable);
+
+router.get('/measurements', readAllMeasurements);
+router.delete('/measurements', deleteMeasurements);
 
 export default router;

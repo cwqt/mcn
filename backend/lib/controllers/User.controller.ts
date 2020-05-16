@@ -12,9 +12,10 @@ import { Types }                    from 'mongoose';
 import {
     IUserStub,
     IUser,
+    IUserFE,
     IUserPrivate } from "../models/User.model";
 
-export const filterUserFields = (user:any, toStub?:boolean):IUser | IUserStub => {
+export const filterUserFields = (user:any, toStub?:boolean):IUser | IUserStub | IUserFE => {
     let hiddenFields = ["_labels", "pw_hash", "salt"];
     if(toStub) hiddenFields = hiddenFields.concat(['email', 'admin', 'new_user', 'created_at', 'verified'])
 
@@ -77,13 +78,6 @@ export const createUser = async (req:Request, res:Response) => {
         pw_hash:       pw_hash,
         admin:         false,
         created_at:    Date.now(),
-        plants:        0,
-        gardens:       0,
-        devices:       0,
-        followers:     0,
-        following:     0,
-        hearts:        0,
-        posts:         0,
     }
 
     try {
@@ -101,7 +95,7 @@ export const createUser = async (req:Request, res:Response) => {
     }
 }
 
-export const getUserById = async (_id:string):Promise<IUser | IUserStub> => {
+export const getUserById = async (_id:string):Promise<IUserFE> => {
     let session = n4j.session();
     let result;
     try {
@@ -131,7 +125,7 @@ export const getUserById = async (_id:string):Promise<IUser | IUserStub> => {
     meta.followers  = r.get('meta').followers.toNumber();
     meta.posts      = r.get('meta').posts.toNumber()
 
-    return filterUserFields({...r.get('u').properties, ...meta});
+    return filterUserFields({...r.get('u').properties, ...meta}) as IUserFE;
 }
 
 export const readUserById = async (req:Request, res:Response, next:NextFunction) => {
@@ -237,7 +231,7 @@ export const deleteUser = async (req:Request, res:Response, next:NextFunction) =
             MATCH (u:User {_id:$uid})
             DETACH DELETE u
         `, {
-            uid:req.params.uid
+            uid: req.params.uid
         })
     } catch(e) {
         throw new ErrorHandler(HTTP.ServerError, e);
@@ -302,7 +296,7 @@ export const blockUser = async (req:Request, res:Response, next:NextFunction) =>
             DELETE r
             MERGE (u1)-[:BLOCKS]->(u2)
         `, {
-            uid1: req.params.uid,
+            uid1: req.session.user.id,
             uid2: req.params.uid2
         })
     } catch(e) {
@@ -320,7 +314,7 @@ export const unblockUser = async (req:Request, res:Response, next:NextFunction) 
             MATCH (:User {_id:$uid1})-[r:BLOCKS]->(:User {_id:$uid2})
             DELETE r
         `, {
-            uid1: req.params.uid,
+            uid1: req.session.user.id,
             uid2: req.params.uid2
         })
     } catch(e) {
@@ -339,7 +333,7 @@ export const followUser = async (req:Request, res:Response, next:NextFunction) =
             OPTIONAL MATCH (u1)-[blocked:BLOCKS]-(u2)
             return u1, u2, blocked
         `, {
-            uid1: req.params.uid,
+            uid1: req.session.user.id,
             uid2: req.params.uid2
         })
 
@@ -351,7 +345,7 @@ export const followUser = async (req:Request, res:Response, next:NextFunction) =
             MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
             MERGE (u1)-[:FOLLOWS]->(u2)
         `, {
-            uid1: req.params.uid,
+            uid1: req.session.user.id,
             uid2: req.params.uid2,
         })
     } catch(e) {
@@ -370,7 +364,7 @@ export const unfollowUser = async (req:Request, res:Response, next:NextFunction)
             MATCH (:User { _id: $uid1 })-[r:FOLLOWS]->(:User { _id: $uid2 })
             DELETE r
         `, {
-            uid1: req.params.uid,
+            uid1: req.session.user.id,
             uid2: req.params.uid2
         })
     } catch(e) {

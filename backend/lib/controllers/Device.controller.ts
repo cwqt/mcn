@@ -13,7 +13,8 @@ import { IMeasurementModel, RecorderType } from "../models/Measurement.model";
 import {
     IDeviceStub,
     IDevice,
-    DeviceState}            from "../models/Device.model";
+    DeviceState,
+    IDeviceStubFE}            from "../models/Device.model";
 import {
     IApiKey,
     IApiKeyPrivate }         from '../models/ApiKey.model';
@@ -115,7 +116,7 @@ export const readAllDevices = async (req:Request, res:Response) => {
         session.close();
     }
 
-    let devices:IDeviceStub[] = result.records.map((record:any) => {
+    let devices:IDeviceStubFE[] = result.records.map((record:any) => {
         let d = record.get('d').properties;
 
         return {
@@ -132,7 +133,7 @@ export const readAllDevices = async (req:Request, res:Response) => {
             hearts:      record.get('hearts').toNumber(),
             reposts:     record.get('reposts').toNumber(),
             replies:     record.get('replies').toNumber(),
-        } as IDeviceStub
+        } as IDeviceStubFE
     })
 
     res.json(devices);

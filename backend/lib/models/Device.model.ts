@@ -3,7 +3,7 @@ import { Measurement, Unit } from '../common/types/measurements.types';
 import { IApiKey }           from './ApiKey.model';
 import { IRecordableStub }   from './Recordable.model';
 import { IMeasurementModel } from './Measurement.model';
-import { IPostable }         from './Post.model';
+import { IPostableMeta }         from './Post.model';
 
 import * as IpAddress from 'ip-address';
 
@@ -14,7 +14,7 @@ export enum DeviceState {
     UnVerified = "unverified"
 }
   
-export interface IDeviceStub extends IPostable {
+export interface IDeviceStub {
     _id:            string,
     name:           string,
     thumbnail?:     string,
@@ -33,3 +33,8 @@ export interface IDevice extends IDeviceStub {
     api_key?:           IApiKey,
     assigned_to?:       IRecordableStub,
 }
+
+export interface IDeviceStubFE extends IDeviceStub, IPostableMeta {
+
+}
+

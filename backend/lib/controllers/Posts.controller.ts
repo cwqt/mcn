@@ -3,7 +3,7 @@ import { Types }                from 'mongoose'
 
 import { ErrorHandler }     from "../common/errorHandler";
 import { HTTP }             from "../common/http";
-import { IPost, IPostStub } from '../models/Post.model';
+import { IPost, IPostStub, IPostFE } from '../models/Post.model';
 import { n4j }              from '../common/neo4j';
 import { filterUserFields } from './User.controller'
 
@@ -48,15 +48,17 @@ export const readAllPosts = async (req:Request, res:Response) => {
     try {
         result = await session.run(`
             MATCH (u:User {_id:$uid})-[:POSTED]->(p:Post)
-            OPTIONAL MATCH (p)-[:REPOST_OF]->(p2:Post)<-[:POSTED]-(u2:User)
+            OPTIONAL MATCH (p)-[:REPOST_OF]->(z)<-[:POSTED]-(u2:User)
+            // where z  = post, device, plant, garden
+
             OPTIONAL MATCH (:User {_id:$selfid})-[isHearting:HEARTS]->(p)
             OPTIONAL MATCH (:User {_id:$selfid})-[:POSTED]->(:Post)-[hasReposted:REPOST_OF]->(p)
             WITH p, p2, u2, isHearting, hasReposted,
                 size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
                 size((p)<-[:REPLY_TO]-(:Post)) AS replies,
                 size((p)<-[:HEARTS]-(:User)) AS hearts,                
-                p2{.content, .created_at, author:u2} AS rt
-            RETURN p{._id, .content, .created_at, reposts:reposts, hearts:hearts, replies:replies, repost:rt}, isHearting, hasReposted
+                p2{.content, .created_at, author:u2} AS repost
+            RETURN p, reposts, replies, hearts, repost, isHearting, hasReposted
         `, {
             uid: req.params.uid,
             selfid: req.session.user.id
@@ -67,19 +69,24 @@ export const readAllPosts = async (req:Request, res:Response) => {
         session.close();
     }
 
-    let posts:IPost[] = result.records.map((record:any) => {
-        let x = record.get('p');
-        x.isHearting = record.get('isHearting') ? true : false;
-        x.hasReposted = record.get('hasReposted') ? true : false;
-        x.hearts = x.hearts.toNumber();
-        x.reposts = x.reposts.toNumber();
-        x.replies = x.replies.toNumber();
-        if(x.repost) {
-            x.repost.author = filterUserFields(x.repost.author.properties, true);
-        } else {
-            delete x.repost;
+    let posts:IPostFE[] = result.records.map((record:any) => {
+        let p = record.get('p').properties;
+        let post:IPostFE = {
+            _id: p._id,
+            content: p.content,
+            isHearting: record.get('isHearting') ? true : false,
+            hasReposted: record.get('hasReposted') ? true : false,
+            hearts: record.get('hearts').toNumber(),
+            reposts: record.get('reposts').toNumber(),
+            replies: record.get('replies').toNumber(),
+            repost: record.get('repost').properties
         }
-        return x;
+
+        if(post.repost) {
+            post.repost.author = filterUserFields(p.repost.author.properties, true);
+        }
+
+        return post;
     });
 
     res.json(posts);
@@ -91,12 +98,16 @@ export const readPost = async (req:Request, res:Response) => {
     try {
         result = await session.run(`
             MATCH (p:Post {_id:$pid})
+            OPTIONAL MATCH (:User {_id:$selfid})-[isHearting:HEARTS]->(p)
+            OPTIONAL MATCH (:User {_id:$selfid})-[:POSTED]->(:Post)-[hasReposted:REPOST_OF]->(p)
             WITH p,
                 size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
-                size((p)<-[:HEARTS]-(:User)) AS hearts
-            RETURN p{._id, .content, .created_at, reposts:reposts, hearts:hearts}
+                size((p)<-[:REPLY_TO]-(:Post)) AS replies,
+                size((p)<-[:HEARTS]-(:User)) AS hearts,                
+            RETURN p, reposts, replies, hearts, isHearting, hasReposted
         `, {
             pid: req.params.pid,
+            selfid: req.session.user.id
         })
     } catch (e) {
         throw new ErrorHandler(HTTP.ServerError, e)        
@@ -106,9 +117,17 @@ export const readPost = async (req:Request, res:Response) => {
 
     if(!result.records.length) throw new ErrorHandler(HTTP.NotFound, "No such post")
 
-    let post = result.records[0].get('p');
-    post.hearts = post.hearts.toNumber();
-    post.reposts = post.reposts.toNumber();
+    let p = result.records[0].get('p').properties;
+    let post:IPostFE =  {
+        _id: p._id,
+        content: p.content,
+        hearts: result.records[0].get('hearts').toNumber(),
+        reposts: result.records[0].get('reposts').toNumber(),
+        replies: result.records[0].get('replies').toNumber(),
+        isHearting: result.records[0].get('isHearting') ? true : false,
+        hasReposted: result.records[0].get('hasReposted') ? true : false
+    }
+
     res.json(post);
 }
 
