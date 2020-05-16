@@ -94,12 +94,20 @@ export const assignDeviceToRecordable = async (req:Request, res:Response) => {
 export const readAllDevices = async (req:Request, res:Response) => {
     let session = n4j.session();
     let result;
+    console.log(req.session)
     try {
         result = await session.run(`
             MATCH (d:Device)<-[:CREATED]-(:User {_id:$uid})
-            RETURN d
+            OPTIONAL MATCH (:User {_id:$selfid})-[isHearting:HEARTS]->(d)
+            OPTIONAL MATCH (:User {_id:$selfid})-[:POSTED]->(:Post)-[hasReposted:REPOST_OF]->(d)
+            WITH d, isHearting, hasReposted,
+                size((d)<-[:REPOST_OF]-(:Post)) AS reposts,
+                size((d)<-[:REPLY_TO]-(:Post)) AS replies,
+                size((d)<-[:HEARTS]-(:User)) AS hearts                
+            RETURN d, hearts, replies, reposts, isHearting, hasReposted
         `, {
-            uid:req.params.uid
+            uid: req.params.uid,
+            selfid: req.session.user.id
         })
     } catch(e) {
         throw new ErrorHandler(HTTP.ServerError, e);
@@ -107,21 +115,27 @@ export const readAllDevices = async (req:Request, res:Response) => {
         session.close();
     }
 
-    let recordables:IDeviceStub[] = result.records.map((record:any) => {
-        let r = record.get('d').properties;
+    let devices:IDeviceStub[] = result.records.map((record:any) => {
+        let d = record.get('d').properties;
+
         return {
-            _id: r._id,
-            name: r.name,
-            verified: r.verified,
-            created_at: r.created_at,
-            last_ping: r.last_ping,
-            hardware_model: r.hardware_model,
-            measurement_count: r.measurement_count.toNumber(),
-            state: getDeviceState(r),
+            _id: d._id,
+            name: d.name,
+            verified: d.verified,
+            created_at: d.created_at,
+            last_ping: d.last_ping,
+            hardware_model: d.hardware_model,
+            measurement_count: d.measurement_count.toNumber(),
+            state: getDeviceState(d),
+            isHearting:  record.get('isHearting') ? true : false,
+            hasReposted: record.get('hasReposted') ? true : false,
+            hearts:      record.get('hearts').toNumber(),
+            reposts:     record.get('reposts').toNumber(),
+            replies:     record.get('replies').toNumber(),
         } as IDeviceStub
     })
 
-    res.json(recordables)
+    res.json(devices);
 }
 
 export const readDevice = async (req:Request, res:Response) => {

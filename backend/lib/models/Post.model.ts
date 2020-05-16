@@ -1,16 +1,21 @@
+import { IRecordableStub } from "./Recordable.model";
+import { IDeviceStub } from "./Device.model";
+
 export interface IPostStub {
     _id:            string,
     content:        string,
     images?:        string[],
     created_at?:    number,
-    repost?:        IPostStub
+    repost?:        IPostStub | IRecordableStub | IDeviceStub
 }
 
-export interface IPost extends IPostStub {
-    replies:        number,
-    hearts:         number,
-    reposts:        number,
-    shares:         number,
-    isHearting:     boolean,
-    hasReposted:    boolean
+export interface IPostable {
+    hearts?:        number,
+    replies?:       number,
+    reposts?:       number,
+    isHearting?:    boolean,
+    hasReposted?:   boolean
+}
+
+export interface IPost extends IPostStub, IPostable {
 }

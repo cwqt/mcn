@@ -86,3 +86,26 @@
         }    
     }
 }
+
+@media only screen and (max-width: 1000px) {
+    .wrapper {
+        flex-flow: column !important;
+        overflow: scroll;
+        .side {
+            width: 100%;
+            &.left {
+                height: 80vh;
+                .content-wrapper {
+                    margin: 10vh 0;
+                }
+            }
+            &.right {
+                padding: 0;
+                .content-wrapper {
+                    margin: 10vh auto;
+                    padding: 0
+                }
+            }
+        }
+    }
+}

@@ -20,29 +20,41 @@ import {
     deleteApiKey
 } from '../controllers/ApiKeys.controller';
 import { RecordableType } from '../models/Recordable.model';
+import { heartRecordable, repostRecordable, unheartRecordable } from '../controllers/Recordable.controller';
 
 const router = AsyncRouter({mergeParams: true});
+router.use((req:Request, res:Response, next:NextFunction) => {
+    res.locals.type = RecordableType.Device
+    next();
+})
 
 router.get('/', readAllDevices);
 router.post('/', validate([
     body('name').not().isEmpty().trim().withMessage('device must have friendly name'),
 ]), createDevice);
 
-router.get('/:did', validate([
-    param('did').isMongoId().trim().withMessage('invalid device id'),
-]), readDevice)
+// DEVICES ========================================================================================
+const deviceRouter = AsyncRouter({mergeParams: true});
+router.use('/:did', deviceRouter);
 
-router.get('/:did/measurements', validate([
+deviceRouter.use(validate([
     param('did').isMongoId().trim().withMessage('invalid device id'),
-]), ((req:Request, res:Response, next:NextFunction) => {
-    res.locals.type = RecordableType.Device;
-    next();
-}), readAllMeasurements)
+]));
 
-router.post('/:did/assign/:rid', validate([
-    param('did').isMongoId().trim().withMessage('invalid device id'),
+deviceRouter.get('/',               readDevice);
+deviceRouter.get('/measurements',   readAllMeasurements);
+deviceRouter.get('/ping',           pingDevice);
+deviceRouter.post('/repost',        repostRecordable);
+deviceRouter.post('/heart',         heartRecordable);
+deviceRouter.delete('/heart',       unheartRecordable);
+
+deviceRouter.post('/assign/:rid', validate([
     param('rid').isMongoId().trim().withMessage('invalid recordable id to assign to')
 ]), assignDeviceToRecordable);
+
+// router.post('/:pid/reply', validate([
+//     body('content').not().isEmpty().trim().withMessage('reply must have some content'),
+// ]), replyToRecordable);
 
 // router.put('/:did', validate([
 //     param('did').isMongoId().trim().withMessage('invalid device id')
@@ -52,20 +64,22 @@ router.post('/:did/assign/:rid', validate([
 //     param('did').isMongoId().trim().withMessage('invalid device id')
 // ]), deleteDevice);
 
-router.get('/:did/ping',  pingDevice)
-
-router.post('/:did/keys', validate([
-    param('did').isMongoId().trim().withMessage('invalid device id'),
-    body('recordable_type').not().isEmpty().trim().withMessage('device must have recordable type of enum "plant" | "garden"'),
+deviceRouter.post('/keys', validate([
+    body('recordable_type')
+        .not().isEmpty().trim()
+        .isIn(Object.values(RecordableType)).withMessage(`must be of type: ${Object.values(RecordableType)}`),
     body('key_name').not().isEmpty().trim().withMessage('device name must be named'),
 ]), createApiKey)
 
-router.get('/:did/keys/:kid', validate([
-    param('did').isMongoId().trim().withMessage('invalid key id'),
-]), readApiKey)
+// API KEYS =======================================================================================
+const keyRouter = AsyncRouter({mergeParams:true});
+deviceRouter.use('/keys/:kid', keyRouter);
 
-router.delete('/:did/keys/:kid', validate([
-    param('did').isMongoId().trim().withMessage('invalid key id'),
-]), deleteApiKey)
+keyRouter.use(validate([
+    param('kid').isMongoId().trim().withMessage('invalid key id'),
+]));
+
+keyRouter.get('/',      readApiKey)
+keyRouter.delete('/',   deleteApiKey)
 
 export default router;

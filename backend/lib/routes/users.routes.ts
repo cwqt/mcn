@@ -27,14 +27,14 @@ import devices  from './device.routes';
 import plants   from './plants.routes';
 import gardens  from './gardens.routes';
 
-const router = AsyncRouter();
-
 const storage = multer({
     storage: multer.memoryStorage(),
     limits: {
         fileSize: 2*1024*1024 //no files larger than 2mb
     }
 });
+
+const router = AsyncRouter({mergeParams: true});
 
 router.get('/', readAllUsers);
 
@@ -49,54 +49,50 @@ router.post('/login', validate([
     body('password').not().isEmpty().isLength({ min: 6 }).withMessage('password length must be > 6 characters')
 ]), loginUser)
 
-router.post('/logout', logoutUser)
-
-router.put('/:uid/avatar', storage.single('avatar'), updateUserAvatar)
-router.put('/:uid/cover_image', storage.single('cover_image'), updateUserCoverImage)
-
 router.get('/u/:username', validate([
     param('username').not().isEmpty().trim()
 ]), readUserByUsername)
 
-router.get('/:uid', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id')
-]), readUserById);
+// uses req.session.user
+router.post('/logout', logoutUser)
 
-router.put('/:uid', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id')
-]),  updateUser);
-
-router.delete('/:uid', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id')
-]), deleteUser);
-
-router.post('/:uid/follow/:uid2', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id'),
+router.post('/follow/:uid2', validate([
     param('uid2').isMongoId().trim().withMessage('invalid user id')
 ]), followUser)
 
-router.delete('/:uid/follow/:uid2', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id'),
+router.delete('/follow/:uid2', validate([
     param('uid2').isMongoId().trim().withMessage('invalid user id')
 ]), unfollowUser)
 
-router.post('/:uid/block/:uid2', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id'),
+router.post('/block/:uid2', validate([
     param('uid2').isMongoId().trim().withMessage('invalid user id')
 ]), blockUser)
 
-router.delete('/:uid/block/:uid2', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id'),
+router.delete('/block/:uid2', validate([
     param('uid2').isMongoId().trim().withMessage('invalid user id')
 ]), unblockUser)
 
-router.get('/:uid/following', readFollowing)
-router.get('/:uid/followers', readFollowers)
-router.get('/:uid/blocking', readBlockedUsers)
+// USER ===========================================================================================
+const userRouter = AsyncRouter({mergeParams: true});
+router.use('/:uid', userRouter);
 
-router.use('/:uid/posts',   posts);
-router.use('/:uid/devices', devices);
-router.use('/:uid/plants',  plants);
-router.use('/:uid/gardens', gardens);
+userRouter.use(validate([
+    param('uid').isMongoId().trim().withMessage('invalid user id'),
+]))
+
+userRouter.put('/avatar', storage.single('avatar'), updateUserAvatar)
+userRouter.put('/cover_image', storage.single('cover_image'), updateUserCoverImage)
+
+userRouter.get('/',             readUserById);
+userRouter.put('/',             updateUser);
+userRouter.delete('/',          deleteUser);
+userRouter.get('/following',    readFollowing)
+userRouter.get('/followers',    readFollowers)
+userRouter.get('/blocking',     readBlockedUsers)
+
+userRouter.use('/posts',        posts);
+userRouter.use('/plants',       plants);
+userRouter.use('/gardens',      gardens);
+userRouter.use('/devices',      devices);
 
 export default router;

@@ -16,6 +16,7 @@ const getSchema = (recordable_type:string):string => {
     switch(recordable_type) {
         case RecordableType.Plant:     return 'Plant';
         case RecordableType.Garden:    return 'Garden';
+        case RecordableType.Device:    return 'Device';
     }
 }
 
@@ -105,3 +106,7 @@ export const deleteRecordable = (req:Request, res:Response, next:NextFunction) =
 
     res.status(HTTP.OK).end()
 }
+
+export const heartRecordable = () => {}
+export const unheartRecordable = () => {}
+export const repostRecordable = () => {}

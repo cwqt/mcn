@@ -12,6 +12,8 @@ export const handleError = (err:ErrorHandler, res:Response) => {
         status: `${statusCode}`.startsWith('4') ? 'fail' : 'error',
         statusCode: statusCode || 520,
     }
+
+    console.log(err.stack)
     
     if(message) response['message'] = message;
     return res.status(response.statusCode).json(response);

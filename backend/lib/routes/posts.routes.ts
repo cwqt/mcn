@@ -17,6 +17,8 @@ import {
 
 
 const router = AsyncRouter({mergeParams: true});
+const postRouter = AsyncRouter({mergeParams: true});
+router.use('/:pid', postRouter);
 
 router.post('/', validate([
     body('content').not().isEmpty().trim().withMessage('post must have some content'),
@@ -24,25 +26,26 @@ router.post('/', validate([
 
 router.get('/', readAllPosts);
 
-router.get('/:pid',  validate([
+// POST ===========================================================================================
+postRouter.use(validate([
     param('pid').isMongoId().trim().withMessage('invalid post id')
-]), readPost);
+]))
 
-router.put('/:pid',  validate([
-    param('pid').isMongoId().trim().withMessage('invalid post id'),
+postRouter.get('/',         readPost);
+postRouter.post('/repost',  repostPost);
+postRouter.post('/heart',   heartPost);
+postRouter.delete('/heart', unheartPost);
+
+postRouter.put('/',  validate([
     body('content').not().isEmpty().trim().withMessage('post must have some content'),
 ]), updatePost);
 
-router.post('/:pid/repost', repostPost);
-
-router.post('/:pid/reply', validate([
+postRouter.post('/reply', validate([
     body('content').not().isEmpty().trim().withMessage('reply must have some content'),
 ]), replyToPost);
 
-router.post('/:pid/heart', heartPost);
-router.delete('/:pid/heart', unheartPost);
 
-// router.get('/:pid/replies', readPostReplies);
-// router.get('/:pid/replies/:tid', readPostThreadReplies);
+// router.get('/replies', readPostReplies);
+// router.get('/replies/:tid', readPostThreadReplies);
 
 export default router;

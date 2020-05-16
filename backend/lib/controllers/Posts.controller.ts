@@ -126,7 +126,7 @@ export const repostPost = async (req:Request, res:Response) => {
             RETURN r
         `, {
             pid: req.params.pid,
-            uid: req.params.uid,
+            uid:req.session.user.id,
             body: post
         })        
     } catch (e) {
@@ -151,7 +151,7 @@ export const replyToPost = async (req:Request, res:Response) => {
             RETURN r
         `, {
             pid: req.params.pid,
-            uid: req.params.uid,
+            uid:req.session.user.id,
             body: post
         })
     } catch (e) {
@@ -195,7 +195,7 @@ export const heartPost = async (req:Request, res:Response) => {
             MATCH (u:User { _id:$uid }), (p:Post { _id:$pid })
             MERGE (u)-[:HEARTS]->(p)
         `, {
-            uid:req.params.uid,
+            uid:req.session.user.id,
             pid:req.params.pid
         })
     } catch (e) {
@@ -216,7 +216,7 @@ export const unheartPost = async (req:Request, res:Response) => {
             MATCH (:User { _id:$uid })-[r:HEARTS]->(:Post { _id:$pid })
             DELETE r
         `, {
-            uid:req.params.uid,
+            uid:req.session.user.id,
             pid:req.params.pid
         })
     } catch (e) {
