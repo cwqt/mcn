@@ -11,7 +11,3 @@ export interface IPlant extends IRecordable {
     created_at?:    Date,
     updated_at?:    Date
 }
-
-export interface IPlantFE extends IPlant, IPostableMeta {
-
-}

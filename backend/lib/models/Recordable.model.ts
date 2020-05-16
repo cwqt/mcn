@@ -4,7 +4,7 @@ import { IPostableMeta } from './Post.model';
 
 export enum RecordableType {
   Garden = 'garden',
-  Plant = 'plant',
+  Plant =  'plant',
   Device = 'device'//devices can have data recorded onto them, iot metrics etc
 }
 
@@ -14,6 +14,7 @@ export interface IRecordableStub {
     thumbnail?:   string,
     created_at?:  Date,
     type:         RecordableType.Garden | RecordableType.Plant,
+    meta?:        IPostableMeta
 }
 
 export interface IRecordable extends IRecordableStub {

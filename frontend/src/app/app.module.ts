@@ -71,6 +71,7 @@ import { RoundedButtonComponent } from './components/_helpers/rounded-button/rou
 import { PlantComponent } from './routes/plant/plant.component';
 import { DocumentationComponent } from './routes/documentation/documentation.component';
 import { ThumbWrapperComponent } from './components/profile/tabs/thumb-wrapper/thumb-wrapper.component';
+import { RepostDialogComponent } from './components/app/repost-dialog/repost-dialog.component';
 
 
 @NgModule({
@@ -110,6 +111,7 @@ import { ThumbWrapperComponent } from './components/profile/tabs/thumb-wrapper/t
     PlantComponent,
     DocumentationComponent,
     ThumbWrapperComponent,
+    RepostDialogComponent,
   ],
   imports: [
     BrowserModule,

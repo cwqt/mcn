@@ -1,8 +1,19 @@
+export interface IUserMeta {
+    plants:         number,
+    gardens:        number,
+    devices:        number,
+    followers:      number,
+    following:      number,
+    hearts:         number,
+    posts:          number,    
+}
+
 export interface IUserStub {
     _id:            string,
     username:       string,
     name?:          string,
     avatar?:        string,
+    meta?:          IUserMeta
 }
 
 export interface IUser extends IUserStub {
@@ -21,13 +32,3 @@ export interface IUserPrivate extends IUser {
     pw_hash?:       string,
 }
 
-// collected meta-data
-export interface IUserFE extends IUser {
-    plants:         number,
-    gardens:        number,
-    devices:        number,
-    followers:      number,
-    following:      number,
-    hearts:         number,
-    posts:          number,
-}

@@ -11,28 +11,48 @@
                 <img src="{{author.avatar}}">
             </div>
             <div class="right">
-                <p><b>{{author.name}}</b> @{{author.username}} · {{post.created_at | amTimeAgo}}</p>
-                <p>{{post.content}}</p>
+                <p><b>{{author.name}}</b> @{{author.username}} · {{ post.created_at | amTimeAgo}}</p>
+                
+                <div *ngIf="!post.repostType">
+                    <p>{{post.content}}</p>
+                </div>
+
+                <div *ngIf="post.repostType">
+                    <div *ngIf="post.repost.type == 'repost-post'">
+                        <p>{{post.content.content}}</p>
+                    </div>
+
+                    <div *ngIf="post.repost.type == 'repost-recordable'">
+                        <p>{{post.content.content}}</p>
+                    </div>
+
+                    <div *ngIf="post.repost.type == 'repost-device'">
+                        <p>{{post.content.content}}</p>
+                    </div>
+                </div>
     
-                <app-post-thumb *ngIf="post.repost"
-                    [post]="post.repost"
-                    [author]="post.repost.author"
-                    [currentUser]="currentUser"
-                    [repostType]="'repost-comment'"
-                ></app-post-thumb>    
+                <!-- repost with comment post -->
+                <div class="repost" *ngIf="post.repost">
+                    <app-post-thumb *ngIf="post.repost.type == 'repost-post'"
+                        [post]="post.repost.content"
+                        [author]="post.repost.author"
+                        [currentUser]="currentUser"
+                        [repostType]="'repost-comment'">
+                    </app-post-thumb>                    
+                </div>
         
-                <mat-card-actions *ngIf="repostType != 'repost-comment'">
+                <mat-card-actions *ngIf="!repostType">
                     <button mat-icon-button>
                         <mat-icon>reply</mat-icon>
-                        <span>{{post.replies}}</span>
+                        <span>{{post.meta.replies}}</span>
                     </button>
                     <button mat-icon-button (click)="heart()">
-                        <mat-icon>{{isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
-                        <span>{{post.hearts}}</span>
+                        <mat-icon>{{post.meta.isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
+                        <span>{{post.meta.hearts}}</span>
                     </button>
                     <button mat-icon-button>
                         <mat-icon>share</mat-icon>
-                        <span>{{post.reposts}}</span>
+                        <span>{{post.meta.reposts}}</span>
                     </button>
                 </mat-card-actions>
             </div>    
@@ -41,10 +61,10 @@
     
     <!-- just a straight re-post -->
     <app-post-thumb *ngIf="post.repost && !post.content"
-        [post]="post.repost"
+        [post]="post.repost.content"
         [author]="post.repost.author"
         [currentUser]="currentUser"
         [parentAuthor]="author"
-        [repostType]="post.content == null ? 'repost' : 'repost-comment'"
+        [repostType]="post.content ? 'repost-comment' : 'repost'"
     ></app-post-thumb>    
 </div>

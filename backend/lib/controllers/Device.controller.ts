@@ -13,8 +13,7 @@ import { IMeasurementModel, RecorderType } from "../models/Measurement.model";
 import {
     IDeviceStub,
     IDevice,
-    DeviceState,
-    IDeviceStubFE}            from "../models/Device.model";
+    DeviceState }            from "../models/Device.model";
 import {
     IApiKey,
     IApiKeyPrivate }         from '../models/ApiKey.model';
@@ -116,7 +115,7 @@ export const readAllDevices = async (req:Request, res:Response) => {
         session.close();
     }
 
-    let devices:IDeviceStubFE[] = result.records.map((record:any) => {
+    let devices:IDeviceStub[] = result.records.map((record:any) => {
         let d = record.get('d').properties;
 
         return {
@@ -128,12 +127,14 @@ export const readAllDevices = async (req:Request, res:Response) => {
             hardware_model: d.hardware_model,
             measurement_count: d.measurement_count.toNumber(),
             state: getDeviceState(d),
-            isHearting:  record.get('isHearting') ? true : false,
-            hasReposted: record.get('hasReposted') ? true : false,
-            hearts:      record.get('hearts').toNumber(),
-            reposts:     record.get('reposts').toNumber(),
-            replies:     record.get('replies').toNumber(),
-        } as IDeviceStubFE
+            meta: {
+                isHearting:  record.get('isHearting') ? true : false,
+                hasReposted: record.get('hasReposted') ? true : false,
+                hearts:      record.get('hearts').toNumber(),
+                reposts:     record.get('reposts').toNumber(),
+                replies:     record.get('replies').toNumber(),    
+            }
+        } as IDeviceStub
     })
 
     res.json(devices);

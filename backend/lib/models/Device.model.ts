@@ -22,19 +22,15 @@ export interface IDeviceStub {
     state:          DeviceState,
     last_ping?:     number //seconds since epoch device sent message
     hardware_model: SupportedHardware,
+    created_at?:    number,
+    meta?:          IPostableMeta
 }
 
 export interface IDevice extends IDeviceStub {
     images:             string[],
-    created_at?:        number,
     software_version?:  string,
     device_ip?:         IpAddress.Address4 | IpAddress.Address6,
     measurement_count?: number
     api_key?:           IApiKey,
     assigned_to?:       IRecordableStub,
 }
-
-export interface IDeviceStubFE extends IDeviceStub, IPostableMeta {
-
-}
-

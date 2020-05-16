@@ -47,18 +47,18 @@ const plantRouter = AsyncRouter({mergeParams: true});
 router.use('/:rid', plantRouter);
 
 plantRouter.use(validate([
-    param('pid').isMongoId().trim().withMessage('invalid plant id')
+    param('rid').isMongoId().trim().withMessage('invalid plant id')
 ]))
 
-router.get('/',         readRecordable)
-router.put('/',         updateRecordable, updatePlant);
-// router.delete('/',      deleteRecordable);
+plantRouter.get('/',         readRecordable)
+plantRouter.put('/',         updateRecordable, updatePlant);
+// plantRouter.delete('/',      deleteRecordable);
 
-router.post('/repost',  repostRecordable);
-router.post('/heart',   heartRecordable);
-router.delete('/heart', unheartRecordable);
+plantRouter.post('/repost',  repostRecordable);
+plantRouter.post('/heart',   heartRecordable);
+plantRouter.delete('/heart', unheartRecordable);
 
-router.get('/measurements', readAllMeasurements);
-router.delete('/measurements', deleteMeasurements);
+plantRouter.get('/measurements', readAllMeasurements);
+plantRouter.delete('/measurements', deleteMeasurements);
 
 export default router;

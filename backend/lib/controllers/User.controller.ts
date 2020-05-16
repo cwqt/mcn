@@ -12,10 +12,9 @@ import { Types }                    from 'mongoose';
 import {
     IUserStub,
     IUser,
-    IUserFE,
     IUserPrivate } from "../models/User.model";
 
-export const filterUserFields = (user:any, toStub?:boolean):IUser | IUserStub | IUserFE => {
+export const filterUserFields = (user:any, toStub?:boolean):IUser | IUserStub => {
     let hiddenFields = ["_labels", "pw_hash", "salt"];
     if(toStub) hiddenFields = hiddenFields.concat(['email', 'admin', 'new_user', 'created_at', 'verified'])
 
@@ -95,7 +94,7 @@ export const createUser = async (req:Request, res:Response) => {
     }
 }
 
-export const getUserById = async (_id:string):Promise<IUserFE> => {
+export const getUserById = async (_id:string):Promise<IUser> => {
     let session = n4j.session();
     let result;
     try {
@@ -119,13 +118,15 @@ export const getUserById = async (_id:string):Promise<IUserFE> => {
     let r = result.records[0];
     if(!r || r.get('u') == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
 
-    let meta = {} as any;
-    meta.hearts     = r.get('meta').hearts.toNumber();
-    meta.following  = r.get('meta').following.toNumber();
-    meta.followers  = r.get('meta').followers.toNumber();
-    meta.posts      = r.get('meta').posts.toNumber()
+    let user = r.get('u').properties;
+    user.meta = {
+        hearts:     r.get('meta').hearts.toNumber(),
+        following:  r.get('meta').following.toNumber(),
+        followers:  r.get('meta').followers.toNumber(),
+        posts:      r.get('meta').posts.toNumber()    
+    }
 
-    return filterUserFields({...r.get('u').properties, ...meta}) as IUserFE;
+    return filterUserFields(user) as IUser;
 }
 
 export const readUserById = async (req:Request, res:Response, next:NextFunction) => {

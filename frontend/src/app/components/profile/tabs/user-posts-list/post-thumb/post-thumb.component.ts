@@ -22,6 +22,9 @@ export class PostThumbComponent implements OnInit {
 
   ngOnInit(): void {
     this.isHearting = this.post.isHearting ?? false;
+
+    if(this.repostType == 'repost')
+      console.log(this.post, this.repostType)
   }
 
   heart() {
