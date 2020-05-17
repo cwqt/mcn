@@ -59,6 +59,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            .isHearting { color: rgb(224, 36, 94); }
+            .hasReposted { color: rgb(23, 191, 99); }    
             button {
                 display: inline-flex;
                 align-items:center;
@@ -107,3 +109,33 @@
         }    
     }
 }
+
+// #mat-tab-content-0-0 > div > div > app-user-posts-list > div > div > div:nth-child(1) > app-post-thumb > div > div > div > div.right > div.repost.ng-star-inserted > app-device-thumb
+app-device-thumb, app-post-thumb {
+    width: 100%;
+}
+
+.device-mini {
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+    padding: 0;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid lightgrey;
+    .mini-header {
+        display: flex;
+        align-items: center;
+        padding: 15px 10px;
+        margin: 0
+    }
+    img {
+        width: 25px !important;
+        height: 25px !important;
+        margin-right: 10px;
+    }
+    mat-divider {
+        position: relative;
+    }
+}                

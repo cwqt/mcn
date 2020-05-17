@@ -1,25 +1,25 @@
-<mat-card class="container" [class.mini]="mini">
+<mat-card class="thumb-wrapper-container" [class.mini]="mini">
     <div class="left">
-        <img *ngIf="thumbItem.thumbnail" src="thumbnail" />
+        <img *ngIf="thumbItem.thumbnail" class="blur-bg" [src]="thumbItem.thumbnail" />
+        <img *ngIf="thumbItem.thumbnail" [src]="thumbItem.thumbnail" />
         <div *ngIf="!thumbItem.thumbnail" class="placeholder"><mat-icon>{{thumbPlaceholderIcon}}</mat-icon></div>
     </div>
     <div class="right" *ngIf="!mini">
-        <ng-content></ng-content>
+        <ng-content class="thumb-wrapper-content"></ng-content>
         <br />
         <mat-card-actions>
-            <div class="social">
-                <button mat-icon-button>
-                    <!-- <mat-icon>{{isHearting ? 'favorite' : 'favorite_border'}}</mat-icon> -->
-                    <mat-icon>favorite_border</mat-icon>
-                    <span>{{0}}</span>
+            <div class="thumb-wrapper-social">
+                <button mat-icon-button [class.isHearting]="thumbItem.meta.isHearting">
+                    <mat-icon>{{thumbItem.meta.isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
+                    <span>{{thumbItem.meta.hearts}}</span>
                 </button>
-                <button mat-icon-button (click)="openRepostDialog()">
+                <button mat-icon-button [class.hasReposted]="thumbItem.meta.hasReposted" (click)="openRepostDialog()">
                     <mat-icon>reply</mat-icon>
-                    <span>{{0}}</span>
+                    <span>{{thumbItem.meta.reposts}}</span>
                 </button>
                 <button mat-icon-button>
                     <mat-icon>share</mat-icon>
-                    <span>{{0}}</span>
+                    <span>{{thumbItem.meta.replies}}</span>
                 </button>    
             </div>       
             <button mat-button class="view-comments-button">view comments</button>
@@ -27,7 +27,11 @@
         </mat-card-actions>
     </div>
 
-    <div class="right-mini" *ngIf="mini">
-        <h1>{{thumbItem.name}}</h1>
+    <div class="mini-footer" *ngIf="mini">
+        <p>{{thumbItem.name}}</p>
+        <button mat-button [color]="'primary'">
+            <mat-icon inline>device_hub</mat-icon>
+            &nbsp;view {{user.username}}'s {{type}}s
+        </button>
     </div>
 </mat-card>

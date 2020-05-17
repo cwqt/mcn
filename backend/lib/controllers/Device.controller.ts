@@ -98,13 +98,13 @@ export const readAllDevices = async (req:Request, res:Response) => {
     try {
         result = await session.run(`
             MATCH (d:Device)<-[:CREATED]-(:User {_id:$uid})
-            OPTIONAL MATCH (:User {_id:$selfid})-[isHearting:HEARTS]->(d)
-            OPTIONAL MATCH (:User {_id:$selfid})-[:POSTED]->(:Post)-[hasReposted:REPOST_OF]->(d)
-            WITH d, isHearting, hasReposted,
-                size((d)<-[:REPOST_OF]-(:Post)) AS reposts,
-                size((d)<-[:REPLY_TO]-(:Post)) AS replies,
-                size((d)<-[:HEARTS]-(:User)) AS hearts                
-            RETURN d, hearts, replies, reposts, isHearting, hasReposted
+            WITH d,
+                SIZE((d)<-[:REPOST_OF]-(:Post)) AS reposts,
+                SIZE((d)<-[:REPLY_TO]-(:Post)) AS replies,
+                SIZE((d)<-[:HEARTS]-(:User)) AS hearts                
+            RETURN d, hearts, replies, reposts,
+                EXISTS ((:User {_id:$selfid})-[:HEARTS]->(d)) AS isHearting,
+                EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(d)) AS hasReposted
         `, {
             uid: req.params.uid,
             selfid: req.session.user.id
@@ -117,6 +117,8 @@ export const readAllDevices = async (req:Request, res:Response) => {
 
     let devices:IDeviceStub[] = result.records.map((record:any) => {
         let d = record.get('d').properties;
+
+        console.log(record.get('isHearting'))
 
         return {
             _id: d._id,

@@ -18,24 +18,30 @@
                 </div>
 
                 <div *ngIf="post.repost" class="repost">
+
                     <app-post-thumb *ngIf="post.repost.type == 'repost-post'"
                         [mini]="true"
                         [post]="post.repost.content"
                         [author]="post.repost.author"
                         [currentUser]="currentUser"
                         [repostType]="'repost-comment'">
-                    </app-post-thumb>                    
+                    </app-post-thumb>                        
 
                     <div *ngIf="post.repost.type == 'repost-recordable'">
                         <p>{{post.content.content}}</p>
                     </div>
 
-                    <app-device-thumb *ngIf="post.repost.type == 'repost-device'"
-                        [mini]="true"
-                        [device]="post.content"
-                        [profileUser]="post.author"
-                        [currentUser]="currentUser">
-                    </app-device-thumb>
+
+                    <div class="device-mini" *ngIf="post.repost.type == 'repost-device'">
+                        <p class="mini-header"><img src="{{post.repost.author.avatar}}"><b>{{post.repost.author.name}}</b> <span>@{{post.repost.author.username}} · Created {{ post.repost.content.created_at | amTimeAgo}}</span></p>
+                        <mat-divider></mat-divider>
+                        <app-device-thumb
+                            [mini]="true"
+                            [device]="post.repost.content"
+                            [profileUser]="post.repost.author"
+                            [currentUser]="currentUser">
+                        </app-device-thumb>    
+                    </div>
                 </div>
             
                 <mat-card-actions *ngIf="!repostType && !mini">
@@ -43,12 +49,12 @@
                         <mat-icon>reply</mat-icon>
                         <span>{{post.meta.replies}}</span>
                     </button>
-                    <button mat-icon-button (click)="heart()">
+                    <button mat-icon-button [class.isHearting]="post.meta.isHearting" (click)="heart()">
                         <mat-icon>{{post.meta.isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
                         <span>{{post.meta.hearts}}</span>
                     </button>
-                    <button mat-icon-button>
-                        <mat-icon>share</mat-icon>
+                    <button mat-icon-button [class.hasReposted]="post.meta.hasReposted">
+                        <mat-icon>repeat</mat-icon>
                         <span>{{post.meta.reposts}}</span>
                     </button>
                 </mat-card-actions>
@@ -57,11 +63,14 @@
     </div>
     
     <!-- just a straight re-post -->
-    <app-post-thumb *ngIf="post.repost && !post.content"
-        [post]="post.repost.content"
-        [author]="post.repost.author"
-        [currentUser]="currentUser"
-        [parentAuthor]="author"
-        [repostType]="'repost'"
-    ></app-post-thumb>    
+    <div *ngIf="post.repost && !post.content">
+        <app-post-thumb
+            [post]="post.repost.content"
+            [author]="post.repost.author"
+            [currentUser]="currentUser"
+            [parentAuthor]="author"
+            [repostType]="'repost'"
+        ></app-post-thumb>    
+    </div>
+
 </div>

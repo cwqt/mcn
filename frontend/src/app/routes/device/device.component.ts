@@ -60,7 +60,7 @@ export class DeviceComponent implements OnInit {
 
   getDevice() {
     this.cache.device.loading = true;
-    return this.deviceService.getDevice(this.user_id, this.device_id)
+    return this.deviceService.getDevice(this.device_id, this.device_id)
       .then((device:IDevice) => this.cache.device.data = device)
       .catch(e => this.cache.device.error = e)
       .finally(() => this.cache.device.loading = false)
@@ -75,6 +75,6 @@ export class DeviceComponent implements OnInit {
   }
 
   goToAssignedRecordable() {
-    this.router.navigate([`/${this.user_id}/${this.device.assigned_to.type}s/${this.device.assigned_to._id}`]);
+    this.router.navigate([`/${this.device.assigned_to._id}/${this.device.assigned_to.type}s/${this.device.assigned_to._id}`]);
   }
 }

@@ -57,13 +57,13 @@ export const readAllPosts = async (req:Request, res:Response) => {
             MATCH (u:User {_id:$uid})-[:POSTED]->(p:Post)
             OPTIONAL MATCH (p)-[:REPOST_OF]->(o)<-[:POSTED|:CREATED]-(op:User)
             WHERE o:Plant OR o:Garden OR o:Device OR o:Post
-            OPTIONAL MATCH (:User {_id:$selfid})-[isHearting:HEARTS]->(o)
-            OPTIONAL MATCH (:User {_id:$selfid})-[:POSTED]->(:Post)-[hasReposted:REPOST_OF]->(o)
-            WITH p, o, op, collect(isHearting) AS isHearting, collect(hasReposted) AS hasReposted,
-                size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
-                size((p)<-[:REPLY_TO]-(:Post)) AS replies,
-                size((p)<-[:HEARTS]-(:User)) AS hearts          
-            RETURN p, reposts, replies, hearts, isHearting, hasReposted, o, op
+            WITH p, o, op,
+                SIZE((p)<-[:REPOST_OF]-(:Post)) AS reposts,
+                SIZE((p)<-[:REPLY_TO]-(:Post)) AS replies,
+                SIZE((p)<-[:HEARTS]-(:User)) AS hearts          
+            RETURN p, reposts, replies, hearts, o, op,
+                EXISTS ((:User {_id:$selfid})-[:HEARTS]->(p)) AS isHearting,
+                EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(p)) AS hasReposted
         `, {
             uid: req.params.uid,
             selfid: req.session.user.id
