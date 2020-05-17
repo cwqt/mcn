@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { RepostDialogComponent } from 'src/app/components/app/repost-dialog/repost-dialog.component';
 import { IUser } from '../../../../../../../backend/lib/models/User.model';
 import { Router } from '@angular/router';
+import { RecordableService } from 'src/app/services/recordable.service';
 
 @Component({
   selector: 'app-thumb-wrapper',
@@ -25,7 +26,8 @@ export class ThumbWrapperComponent implements OnInit {
 
   constructor(
     private dialog:MatDialog,
-    private router:Router
+    private router:Router,
+    private recordableService:RecordableService
   ) {}
 
   ngOnInit(): void {
@@ -61,5 +63,17 @@ export class ThumbWrapperComponent implements OnInit {
 
   gotoItem() {
     this.router.navigate([`${this.user.username}/${this.type}s/${this.thumbItem._id}`])
+  }
+
+  toggleHeartingState() {
+    if(this.thumbItem.meta.isHearting) {
+      this.thumbItem.meta.hearts--;
+      this.thumbItem.meta.isHearting = false;
+      this.recordableService.unheartItem(this.type, this.user._id, this.thumbItem._id)
+    } else {
+      this.thumbItem.meta.hearts++;
+      this.thumbItem.meta.isHearting = true;
+      this.recordableService.heartItem(this.type, this.user._id, this.thumbItem._id)
+    }
   }
 }

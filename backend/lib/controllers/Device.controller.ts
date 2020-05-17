@@ -91,57 +91,6 @@ export const assignDeviceToRecordable = async (req:Request, res:Response) => {
     res.status(HTTP.Created).end()
 }
 
-export const readAllDevices = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    console.log(req.session)
-    try {
-        result = await session.run(`
-            MATCH (d:Device)<-[:CREATED]-(:User {_id:$uid})
-            WITH d,
-                SIZE((d)<-[:REPOST_OF]-(:Post)) AS reposts,
-                SIZE((d)<-[:REPLY_TO]-(:Post)) AS replies,
-                SIZE((d)<-[:HEARTS]-(:User)) AS hearts                
-            RETURN d, hearts, replies, reposts,
-                EXISTS ((:User {_id:$selfid})-[:HEARTS]->(d)) AS isHearting,
-                EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(d)) AS hasReposted
-        `, {
-            uid: req.params.uid,
-            selfid: req.session.user.id
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
-
-    let devices:IDeviceStub[] = result.records.map((record:any) => {
-        let d = record.get('d').properties;
-
-        console.log(record.get('isHearting'))
-
-        return {
-            _id: d._id,
-            name: d.name,
-            verified: d.verified,
-            created_at: d.created_at,
-            last_ping: d.last_ping,
-            hardware_model: d.hardware_model,
-            measurement_count: d.measurement_count.toNumber(),
-            state: getDeviceState(d),
-            meta: {
-                isHearting:  record.get('isHearting') ? true : false,
-                hasReposted: record.get('hasReposted') ? true : false,
-                hearts:      record.get('hearts').toNumber(),
-                reposts:     record.get('reposts').toNumber(),
-                replies:     record.get('replies').toNumber(),    
-            }
-        } as IDeviceStub
-    })
-
-    res.json(devices);
-}
-
 export const readDevice = async (req:Request, res:Response) => {
     let session = n4j.session();
     let result;

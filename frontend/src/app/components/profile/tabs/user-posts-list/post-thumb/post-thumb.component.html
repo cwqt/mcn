@@ -1,6 +1,6 @@
 <div>
     <!-- post / repost with a comment  -->
-    <div class="post-thumb-container" [class.mini]="mini" (click)="gotoPost()" *ngIf="post.content">
+    <div class="post-thumb-container" [class.mini]="mini" *ngIf="post.content">
         <button *ngIf="repostType != 'repost'" mat-icon-button class="post-options-dropdown-icon"><mat-icon>keyboard_arrow_down</mat-icon></button>
         <p *ngIf="repostType == 'repost'" class="repost-line">
             <mat-icon>repeat</mat-icon> {{parentAuthor.name}} Reposted 

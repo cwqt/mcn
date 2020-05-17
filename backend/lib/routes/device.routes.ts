@@ -5,7 +5,6 @@ var AsyncRouter = require("express-async-router").AsyncRouter;
 
 import { readAllMeasurements } from '../controllers/Measurements.controller';
 import {
-    readAllDevices,
     createDevice,
     assignDeviceToRecordable,
     readDevice,
@@ -20,7 +19,7 @@ import {
     deleteApiKey
 } from '../controllers/ApiKeys.controller';
 import { RecordableType } from '../models/Recordable.model';
-import { heartRecordable, repostRecordable, unheartRecordable } from '../controllers/Recordable.controller';
+import { heartRecordable, repostRecordable, unheartRecordable, readAllRecordables } from '../controllers/Recordable.controller';
 
 const router = AsyncRouter({mergeParams: true});
 router.use((req:Request, res:Response, next:NextFunction) => {
@@ -28,7 +27,7 @@ router.use((req:Request, res:Response, next:NextFunction) => {
     next();
 })
 
-router.get('/', readAllDevices);
+router.get('/', readAllRecordables);
 router.post('/', validate([
     body('name').not().isEmpty().trim().withMessage('device must have friendly name'),
 ]), createDevice);

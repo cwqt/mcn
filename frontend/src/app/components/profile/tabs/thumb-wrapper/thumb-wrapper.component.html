@@ -1,6 +1,6 @@
 <mat-card class="thumb-wrapper-container" [class.mini]="mini">
     <div class="left">
-        <img *ngIf="thumbItem.thumbnail" class="blur-bg" [src]="thumbItem.thumbnail" />
+        <img *ngIf="thumbItem.thumbnail && mini" class="blur-bg" [src]="thumbItem.thumbnail" />
         <img *ngIf="thumbItem.thumbnail" [src]="thumbItem.thumbnail" />
         <div *ngIf="!thumbItem.thumbnail" class="placeholder"><mat-icon>{{thumbPlaceholderIcon}}</mat-icon></div>
     </div>
@@ -9,7 +9,7 @@
         <br />
         <mat-card-actions>
             <div class="thumb-wrapper-social">
-                <button mat-icon-button [class.isHearting]="thumbItem.meta.isHearting">
+                <button mat-icon-button [class.isHearting]="thumbItem.meta.isHearting" (click)="toggleHeartingState()">
                     <mat-icon>{{thumbItem.meta.isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
                     <span>{{thumbItem.meta.hearts}}</span>
                 </button>
