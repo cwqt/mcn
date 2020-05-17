@@ -1,6 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { AuthenticationService } from 'src/app/services/authentication.service';
-import { Router } from '@angular/router';
+import { Component, OnInit, Input, ViewChild, ElementRef, } from '@angular/core';
+import { Popover, PopoverProperties } from "../../../../assets/popover";
+import { HeaderBarUserMenuComponent } from './header-bar-user-menu/header-bar-user-menu.component';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-header-bar',
@@ -9,24 +10,23 @@ import { Router } from '@angular/router';
 })
 export class HeaderBarComponent implements OnInit {
   @Input() currentUser:any;
-  userMenuOpen:boolean = false;
+  @ViewChild('hitBox') hitBox:ElementRef
 
-  constructor(private authService:AuthenticationService, private router:Router) { }
+  constructor(private popover:Popover) { }
 
   ngOnInit(): void {
-    console.log(this.currentUser)
   }
 
-  openUserMenu() { this.userMenuOpen = true }
-  hideUserMenu() { this.userMenuOpen = false }
-  
-  logout() { this.authService.logout(); }
-
-  gotoDocumentation() {
-    this.router.navigate(['/documentation'])
+  openUserMenu() {
+    this.popover.load({
+      refComponent: this.hitBox,
+      component: HeaderBarUserMenuComponent,
+      offset: 16,
+      width: '400px',
+      placement: 'bottom-left',
+    } as PopoverProperties)
   }
 
-  gotoSettings() {
-    this.router.navigate(['/settings'])
-  }
+  hideUserMenu() { this.popover.close() }
+
 }

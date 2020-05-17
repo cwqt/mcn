@@ -1,3 +1,5 @@
+frontend/src/assets/popover
+
 node_modules
 package-lock*
 Pipefile.lock
@@ -61,3 +63,4 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+

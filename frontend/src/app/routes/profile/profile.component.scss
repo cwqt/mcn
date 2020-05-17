@@ -55,7 +55,9 @@
             margin-bottom: 100px;
             width: 1000px;
             .tab-content {
+                overflow: visible;
                 margin: 20px;
+                height: auto;
             }
         }    
     }    

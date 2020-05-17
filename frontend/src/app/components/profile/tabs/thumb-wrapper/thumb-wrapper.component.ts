@@ -7,6 +7,8 @@ import { RepostDialogComponent } from 'src/app/components/app/repost-dialog/repo
 import { IUser } from '../../../../../../../backend/lib/models/User.model';
 import { Router } from '@angular/router';
 import { RecordableService } from 'src/app/services/recordable.service';
+import { Popover, PopoverProperties } from 'src/assets/popover';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-thumb-wrapper',
@@ -24,10 +26,13 @@ export class ThumbWrapperComponent implements OnInit {
   thumbPlaceholderIcon:string;
   dialogData:any;
 
+  repostMenuOpen:boolean = false;
+
   constructor(
     private dialog:MatDialog,
     private router:Router,
-    private recordableService:RecordableService
+    private recordableService:RecordableService,
+    private popover:Popover
   ) {}
 
   ngOnInit(): void {
@@ -54,7 +59,21 @@ export class ThumbWrapperComponent implements OnInit {
     }
   }
 
+  repost() {
+    this.popover.close();
+    if(this.thumbItem.meta.hasReposted) {
+      this.thumbItem.meta.hasReposted = false;
+      this.thumbItem.meta.reposts--;
+      this.recordableService.deleteRepost(this.type, this.user._id, this.thumbItem._id);
+    } else {
+      this.thumbItem.meta.hasReposted = true;
+      this.thumbItem.meta.reposts++;
+      this.recordableService.repostItem(this.type, this.user._id, this.thumbItem._id);
+    }
+  }
+
   openRepostDialog() {
+    this.popover.close();
     const dialogRef = this.dialog.open(RepostDialogComponent, {
       width: '50%',
       data: this.dialogData

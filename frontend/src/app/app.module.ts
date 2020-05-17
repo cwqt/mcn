@@ -12,8 +12,8 @@ import { DynamicComponentModule, DynamicIoModule } from 'ng-dynamic-component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { ClickOutsideModule } from 'ng-click-outside';
 import { ChartjsModule } from '@ctrl/ngx-chartjs';
-import {CrystalLightboxModule} from '@crystalui/angular-lightbox';
-
+import { CrystalLightboxModule} from '@crystalui/angular-lightbox';
+import { PopoverModule} from '../assets/popover';
 
 import { IndexComponent }           from './routes/index/index.component';
 import { LoginComponent }           from './components/landing/login/login.component';
@@ -72,7 +72,7 @@ import { PlantComponent } from './routes/plant/plant.component';
 import { DocumentationComponent } from './routes/documentation/documentation.component';
 import { ThumbWrapperComponent } from './components/profile/tabs/thumb-wrapper/thumb-wrapper.component';
 import { RepostDialogComponent } from './components/app/repost-dialog/repost-dialog.component';
-
+import { HeaderBarUserMenuComponent } from './components/app/header-bar/header-bar-user-menu/header-bar-user-menu.component';
 
 @NgModule({
   declarations: [
@@ -112,6 +112,7 @@ import { RepostDialogComponent } from './components/app/repost-dialog/repost-dia
     DocumentationComponent,
     ThumbWrapperComponent,
     RepostDialogComponent,
+    HeaderBarUserMenuComponent,
   ],
   imports: [
     BrowserModule,
@@ -127,6 +128,7 @@ import { RepostDialogComponent } from './components/app/repost-dialog/repost-dia
     ClickOutsideModule,
     ChartjsModule,
     CrystalLightboxModule,
+    PopoverModule,
 
     MatButtonModule,
     MatButtonToggleModule,
@@ -153,6 +155,7 @@ import { RepostDialogComponent } from './components/app/repost-dialog/repost-dia
     UserPlantsListComponent,
     UserGardensListComponent,
     UserDevicesListComponent,
+    HeaderBarUserMenuComponent
   ],
   bootstrap: [AppComponent]
 })
