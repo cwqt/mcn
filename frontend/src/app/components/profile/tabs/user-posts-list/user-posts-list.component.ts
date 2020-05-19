@@ -3,6 +3,7 @@ import { ProfileService } from 'src/app/services/profile.service';
 
 import { IPost } from '../../../../../../../backend/lib/models/Post.model';
 import { IUser } from '../../../../../../../backend/lib/models/User.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-user-posts-list',
@@ -12,35 +13,37 @@ import { IUser } from '../../../../../../../backend/lib/models/User.model';
 export class UserPostsListComponent implements OnInit {
   @Input() profileUser:IUser;
   @Input() currentUser:IUser;
+  @Input() canLoad:BehaviorSubject<boolean>;
+  @Input() currentIndex:number;
+  @Input() selfIndex:number;
 
-  isActive:boolean      = false;
-  initialised:boolean   = false;
+  initialised:boolean = false;
+  loading:boolean = false;
+  error:string = "";
+  posts:IPost[] = [];
 
-  loading:boolean       = false;
-  posts:IPost[]  = [];
-
-  success:boolean;
-  
   constructor(private profileService:ProfileService) { }
 
   ngOnInit(): void {
-    this.profileService.selectedTab.subscribe(key => {
-      this.isActive = false;
-      if(key == "posts") this.isActive = true;
-      if(this.isActive && !this.initialised) this.initialise();
+    this.loading = true;
+    this.canLoad.subscribe((canLoad:boolean) => {
+      if(canLoad && this.currentIndex == this.selfIndex) {
+        if(!this.initialised) this.initialise();
+      }
     })
   }
 
   initialise() {
-    this.loading = true;
     this.initialised = true;
-    this.profileService.getPosts().then((posts:IPost[]) => {
-      this.posts = posts;
-      this.loading = false;
-    });
+    this.profileService.getPosts()
+      .then((posts:IPost[]) => {
+        this.posts = posts;
+      })
+      .catch(e => this.error = e)
+      .finally(() => this.loading = false);
   }
 
-  addPost(post) {
+  addPost(post:IPost) {
     this.posts.unshift(post);
   }
 }

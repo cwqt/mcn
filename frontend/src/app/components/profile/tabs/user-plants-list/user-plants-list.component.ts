@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile.service';
 import { IPlant } from '../../../../../../../backend/lib/models/Plant.model';
 import { IUser } from '../../../../../../../backend/lib/models/User.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-user-plants-list',
@@ -11,29 +12,34 @@ import { IUser } from '../../../../../../../backend/lib/models/User.model';
 export class UserPlantsListComponent implements OnInit {
   @Input() user:IUser;
   @Input() currentUser:IUser;
+  @Input() canLoad:BehaviorSubject<boolean>;
+  @Input() currentIndex:number;
+  @Input() selfIndex:number;
 
-  isActive:boolean      = false;
-  initialised:boolean   = false;
-  loading:boolean       = false;
+  initialised:boolean = false;
+  loading:boolean = false;
+  error:string;
   plants:IPlant[]  = [];
   
   constructor(private profileService:ProfileService) { }
 
   ngOnInit(): void {
-    this.profileService.selectedTab.subscribe(key => {
-      this.isActive = false;
-      if(key == "plants") this.isActive = true;
-      if(this.isActive && !this.initialised) this.initialise();
+    this.loading = true;
+    this.canLoad.subscribe((canLoad:boolean) => {
+      if(canLoad && this.currentIndex == this.selfIndex) {
+        if(!this.initialised) this.initialise();
+      }
     })
   }
 
   initialise() {
-    this.loading = true;
     this.initialised = true;
-    this.profileService.getPlants().then((plants:IPlant[]) => {
-      this.plants = plants;
-      this.loading = false;
-    });
+    this.profileService.getPlants()
+      .then((plants:IPlant[]) => {
+        this.plants = plants;
+      })
+      .catch(e => this.error = e)
+      .finally(() => this.loading = false);
   }
 
   openCreatePlantDialog() {}

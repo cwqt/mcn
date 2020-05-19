@@ -119,26 +119,3 @@ mat-card-actions {
         }
     }
 }
-
-popover {
-    .repost-menu {
-        background: white;
-        display: flex;
-        flex-flow: row;
-        display: flex;
-        flex-flow: column;
-        border-radius: 10px;
-        button {
-            padding: 5px 10px;
-            padding-right: 50px;
-            text-align: left;
-            span {
-                padding: 15px 10px;
-            }
-            mat-icon {
-                opacity: .5;
-                margin-right: 10px;
-            }    
-        }
-    }
-}

@@ -1,7 +1,13 @@
 <div>
     <!-- post / repost with a comment  -->
-    <div class="post-thumb-container" [class.mini]="mini" *ngIf="post.content">
-        <button *ngIf="repostType != 'repost'" mat-icon-button class="post-options-dropdown-icon"><mat-icon>keyboard_arrow_down</mat-icon></button>
+    <div class="post-thumb-container" [class.mini]="mini" *ngIf="post.content" (click)="gotoPost()">
+        <button *ngIf="repostType != 'repost'"
+            (click)="openPostOptionsPopover($event)"
+            mat-icon-button
+            class="post-options-dropdown-icon">
+            <mat-icon>keyboard_arrow_down</mat-icon>
+        </button>
+        
         <p *ngIf="repostType == 'repost'" class="repost-line">
             <mat-icon>repeat</mat-icon> {{parentAuthor.name}} Reposted 
         </p>
@@ -17,7 +23,7 @@
                     <p>{{post.content}}</p>
                 </div>
 
-                <div *ngIf="post.repost" class="repost">
+                <div *ngIf="post.repost" class="repost" (click)="$event.stopPropagation()">
 
                     <app-post-thumb *ngIf="post.repost.type == 'repost-post'"
                         [mini]="true"
@@ -30,7 +36,6 @@
                     <div *ngIf="post.repost.type == 'repost-recordable'">
                         <p>{{post.content.content}}</p>
                     </div>
-
 
                     <div class="device-mini" *ngIf="post.repost.type == 'repost-device'">
                         <p class="mini-header"><img src="{{post.repost.author.avatar}}"><b>{{post.repost.author.name}}</b> <span>@{{post.repost.author.username}} · Created {{ post.repost.content.created_at | amTimeAgo}}</span></p>
@@ -45,15 +50,15 @@
                 </div>
             
                 <mat-card-actions *ngIf="!repostType && !mini">
-                    <button mat-icon-button>
+                    <button mat-icon-button (click)="replyToPost($event)">
                         <mat-icon>reply</mat-icon>
                         <span>{{post.meta.replies}}</span>
                     </button>
-                    <button mat-icon-button [class.isHearting]="post.meta.isHearting" (click)="heart()">
+                    <button mat-icon-button [class.isHearting]="post.meta.isHearting" (click)="heartPost($event)">
                         <mat-icon>{{post.meta.isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
                         <span>{{post.meta.hearts}}</span>
                     </button>
-                    <button mat-icon-button [class.hasReposted]="post.meta.hasReposted">
+                    <button mat-icon-button [class.hasReposted]="post.meta.hasReposted" (click)="openRepostMenuPopover($event)" #repostMenuHitbox>
                         <mat-icon>repeat</mat-icon>
                         <span>{{post.meta.reposts}}</span>
                     </button>
@@ -72,5 +77,4 @@
             [repostType]="'repost'"
         ></app-post-thumb>    
     </div>
-
 </div>

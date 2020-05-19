@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { IPlant } from '../../../../../../../backend/lib/models/Plant.model';
 import { IDevice, IDeviceStub } from '../../../../../../../backend/lib/models/Device.model';
 import { IRecordableStub, RecordableType } from '../../../../../../../backend/lib/models/Recordable.model';
@@ -8,7 +8,7 @@ import { IUser } from '../../../../../../../backend/lib/models/User.model';
 import { Router } from '@angular/router';
 import { RecordableService } from 'src/app/services/recordable.service';
 import { Popover, PopoverProperties } from 'src/assets/popover';
-import { ThrowStmt } from '@angular/compiler';
+import { PostableRepostMenuPopoverComponent } from 'src/app/components/app/postable/postable-repost-menu-popover/postable-repost-menu-popover.component';
 
 @Component({
   selector: 'app-thumb-wrapper',
@@ -22,6 +22,8 @@ export class ThumbWrapperComponent implements OnInit {
   
   @Input() currentUser:IUser;
   @Input() user:IUser;
+
+  @ViewChild('repostMenuHitbox') repostMenuHitbox:any;
   
   thumbPlaceholderIcon:string;
   dialogData:any;
@@ -72,6 +74,17 @@ export class ThumbWrapperComponent implements OnInit {
     }
   }
 
+  openRepostMenuPopover(event) {
+    this.popover.load({
+      refComponent: this.repostMenuHitbox._elementRef,
+      component: PostableRepostMenuPopoverComponent,
+      offset: 16,
+      relativeTo: 'profile-body-container'
+    } as PopoverProperties)
+    event.stopPropagation();
+  }
+
+
   openRepostDialog() {
     this.popover.close();
     const dialogRef = this.dialog.open(RepostDialogComponent, {
@@ -84,7 +97,7 @@ export class ThumbWrapperComponent implements OnInit {
     this.router.navigate([`${this.user.username}/${this.type}s/${this.thumbItem._id}`])
   }
 
-  toggleHeartingState() {
+  toggleHeartingState(event) {
     if(this.thumbItem.meta.isHearting) {
       this.thumbItem.meta.hearts--;
       this.thumbItem.meta.isHearting = false;

@@ -74,6 +74,8 @@ import { ThumbWrapperComponent } from './components/profile/tabs/thumb-wrapper/t
 import { RepostDialogComponent } from './components/app/repost-dialog/repost-dialog.component';
 import { HeaderBarUserMenuComponent } from './components/app/header-bar/header-bar-user-menu/header-bar-user-menu.component';
 
+import { PostableRepostMenuPopoverComponent } from './components/app/postable/postable-repost-menu-popover/postable-repost-menu-popover.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -113,6 +115,7 @@ import { HeaderBarUserMenuComponent } from './components/app/header-bar/header-b
     ThumbWrapperComponent,
     RepostDialogComponent,
     HeaderBarUserMenuComponent,
+    PostableRepostMenuPopoverComponent
   ],
   imports: [
     BrowserModule,
@@ -155,7 +158,8 @@ import { HeaderBarUserMenuComponent } from './components/app/header-bar/header-b
     UserPlantsListComponent,
     UserGardensListComponent,
     UserDevicesListComponent,
-    HeaderBarUserMenuComponent
+    HeaderBarUserMenuComponent,
+    PostableRepostMenuPopoverComponent
   ],
   bootstrap: [AppComponent]
 })

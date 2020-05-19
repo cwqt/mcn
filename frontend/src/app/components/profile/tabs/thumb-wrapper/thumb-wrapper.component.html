@@ -13,12 +13,12 @@
                     <mat-icon>reply</mat-icon>
                     <span>{{thumbItem.meta.replies}}</span>
                 </button>    
-                <button mat-icon-button [class.hasReposted]="thumbItem.meta.hasReposted" [popoverTriggerFor]="repostMenu">
+                <button mat-icon-button [class.hasReposted]="thumbItem.meta.hasReposted" (click)="openRepostMenuPopover($event)" #repostMenuHitbox>
                     <mat-icon>repeat</mat-icon>
                     <span>{{thumbItem.meta.reposts}}</span>
 
                 </button>
-                <button mat-icon-button [class.isHearting]="thumbItem.meta.isHearting" (click)="toggleHeartingState()">
+                <button mat-icon-button [class.isHearting]="thumbItem.meta.isHearting" (click)="toggleHeartingState($event)">
                     <mat-icon>{{thumbItem.meta.isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
                     <span>{{thumbItem.meta.hearts}}</span>
                 </button>
@@ -36,17 +36,3 @@
         </button>
     </div>
 </mat-card>
-
-
-<popover #repostMenu>
-    <div class="repost-menu" [class.repost-menu-open]="repostMenuOpen">
-        <button mat-button (click)="repost()">
-            <mat-icon inline>repeat</mat-icon>
-            {{thumbItem.meta.hasReposted ? 'Undo repost' : 'Repost'}} 
-        </button>
-        <button mat-button (click)="openRepostDialog()">
-            <mat-icon inline>edit</mat-icon>
-            Repost with comment
-        </button>
-    </div>        
-</popover>

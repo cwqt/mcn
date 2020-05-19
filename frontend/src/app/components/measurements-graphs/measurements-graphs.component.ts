@@ -79,9 +79,9 @@ export class MeasurementsGraphsComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.data);
+    // console.log(this.data);
     this.formatDataForNgxCharts(this.data);
-    console.log(this.measurementMap)
+    // console.log(this.measurementMap)
     if(this.device) this.deviceInfo = HardwareInformation[this.device.hardware_model];
   }
 

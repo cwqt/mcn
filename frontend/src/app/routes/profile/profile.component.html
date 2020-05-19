@@ -13,20 +13,25 @@
 
             <div class="profile-body-scroll" *ngIf="profileUser">
                 <mat-card class="profile-body">
+                    
                     <div *ngIf="showOutlet" class="tab-body-header">
                         <button mat-icon-button (click)="goBackToProfile()">
                             <mat-icon>keyboard_backspace</mat-icon>
                         </button>
                         <h1>{{pretty(tabs[tabIndex].label)}}</h1>
-                    </div>    
+                    </div>
+
                     <div class="children">
                         <router-outlet class="outlet"
-                            (activate)="onActivate($event)"
-                            (deactivate)="onDeactivate($event)">
+                            (activate)="onActivate()"
+                            (deactivate)="onDeactivate()">
                         </router-outlet>
                     </div>
         
-                    <mat-tab-group *ngIf="!showOutlet" class="tab-group" (selectedTabChange)="setActiveTab($event)" [selectedIndex]="tabIndex">
+                    <mat-tab-group *ngIf="!showOutlet" class="tab-group"
+                        (animationDone)="setCanLoadTabContent()"
+                        (selectedTabChange)="setActiveTab($event)"
+                        [selectedIndex]="tabIndex">
                         <mat-tab
                             *ngFor="let tab of tabs; let index = index"
                             [label]="tab.label"> 
@@ -36,8 +41,9 @@
                                     [ndcDynamicInputs]="{
                                         profileUser:profileUser,
                                         currentUser:currentUser,
-                                        index:index,
-                                        currentIndex:tabIndex
+                                        selfIndex:index,
+                                        currentIndex:tabIndex,
+                                        canLoad:canLoadTabContents
                                     }">
                                 </ndc-dynamic>
                             </div>

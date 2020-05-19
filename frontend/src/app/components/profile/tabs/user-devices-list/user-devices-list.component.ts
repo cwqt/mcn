@@ -4,6 +4,7 @@ import { IDevice, IDeviceStub } from '../../../../../../../backend/lib/models/De
 import { IUser } from '../../../../../../../backend/lib/models/User.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { CreateDeviceGuideComponent } from './create-device-guide/create-device-guide.component';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-user-devices-list',
@@ -13,12 +14,13 @@ import { CreateDeviceGuideComponent } from './create-device-guide/create-device-
 export class UserDevicesListComponent implements OnInit {
   @Input() profileUser:IUser;
   @Input() currentUser:IUser;
+  @Input() canLoad:BehaviorSubject<boolean>;
+  @Input() currentIndex:number;
+  @Input() selfIndex:number;
 
-  isActive:boolean      = false;
-  initialised:boolean   = false;
-
-  loading:boolean       = false;
-  success:boolean;
+  initialised:boolean = false;
+  loading:boolean = false;
+  error:string;
   devices:IDeviceStub[] = [];
   
   constructor(private profileService:ProfileService, public dialog:MatDialog) {}
@@ -35,19 +37,21 @@ export class UserDevicesListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.profileService.selectedTab.subscribe(key => {
-      this.isActive = false;
-      if(key == "devices") this.isActive = true;
-      if(this.isActive && !this.initialised) this.initialise();
+    this.loading = true;
+    this.canLoad.subscribe((canLoad:boolean) => {
+      if(canLoad && this.currentIndex == this.selfIndex) {
+        if(!this.initialised) this.initialise();
+      }
     })
   }
 
   initialise() {
-    this.loading = true;
     this.initialised = true;
-    this.profileService.getDevices().then((devices:IDeviceStub[]) => {
-      this.devices = devices;
-      this.loading = false;
-    });
+    this.profileService.getDevices()
+      .then((devices:IDeviceStub[]) => {
+        this.devices = devices;
+      })
+      .catch(e => this.error = e)
+      .finally(() => this.loading = false);
   }
 }

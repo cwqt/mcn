@@ -12,6 +12,7 @@ import { UserGardensListComponent } from '../../components/profile/tabs/user-gar
 import { UserDevicesListComponent } from '../../components/profile/tabs/user-devices-list/user-devices-list.component';
 import { ProfileService } from 'src/app/services/profile.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -21,8 +22,9 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 })
 export class ProfileComponent implements OnInit {
   loading:boolean = true;
-  tabIndex:number;
-  showOutlet: boolean;
+  tabIndex:number = 0;
+  showOutlet:boolean = false;
+  canLoadTabContents:BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   profileUser:IUser | undefined;
   currentUser:IUser; //the current logged in user
@@ -41,7 +43,9 @@ export class ProfileComponent implements OnInit {
   constructor(private userService:UserService,
     private router:Router,
     private route:ActivatedRoute,
-    private profileService:ProfileService) { }
+    private profileService:ProfileService) {
+      this.showOutlet = false;
+    }
 
   ngOnInit(): void {
     //route param change request different user
@@ -59,9 +63,6 @@ export class ProfileComponent implements OnInit {
       if('tab' in queries) {
         this.tabIndex = this.tabs.findIndex(tab => tab.label == queries.tab);
         this.profileService.selectedTab.next(queries['tab']);
-      } else {
-        this.tabIndex = 0;
-        this.profileService.selectedTab.next('posts');
       }
     });
 
@@ -69,15 +70,24 @@ export class ProfileComponent implements OnInit {
   }
 
   setActiveTab(tab:MatTabChangeEvent) {
+    this.canLoadTabContents.next(false);
     this.router.navigateByUrl(`${this.profileUser.username}?tab=${this.tabs[tab.index].label}`)
   }
 
-  onActivate(event:any) {
-    this.showOutlet = true;
+  setCanLoadTabContent() {
+    this.canLoadTabContents.next(true);
   }
 
-  onDeactivate(event:any) {
-    this.showOutlet = false;
+  onActivate() {
+    setTimeout(() => {
+      this.showOutlet = true;
+    }, 0)
+  }
+
+  onDeactivate() {
+    setTimeout(() => {
+      this.showOutlet = false;
+    }, 0)
   }
 
   goBackToProfile() {
