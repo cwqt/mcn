@@ -32,3 +32,6 @@ Angular w/ material-angular.
 * __ESP32__: for testing gardens, supports 8 plants. 
 * __Wemos D1 Mini__: for single plants
 * __Pi Zero W__: NoIR camera to monitor active photosynthesis and stream to frontend.
+
+
+CC BY-NC-ND 4.0 — copyright daughter.systems (2020)
