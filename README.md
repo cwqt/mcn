@@ -2,10 +2,10 @@
 
 A social network and management system for gardeners, plant growers and hobbyists alike.
 
+* Manage IoT devices to monitor your gardens/plants & add your own custom hardware
+* Monitor entire gardens/farms constituted of sub-plants
 * Event based system notifies when an action needs completing e.g. watering, re-seeding
-* Gardens and Plants, manage entire gardens constituted of sub-plants
 * Create custom event queues for carrying out tasks at certain intervals
-* Manage IoT devices & add your own hardware
 * Compile timelines of posts of plants growing over time
 * Remotely trigger events on micro-controllers, e.g. turn on light, open watering valve
 * Monitor all metrics on a front-end dashboard
