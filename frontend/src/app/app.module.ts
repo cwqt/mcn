@@ -64,6 +64,7 @@ import {MatDialogModule}          from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatTableModule} from '@angular/material/table';
 import {MatSelectModule} from '@angular/material/select';
 import { MeasurementsGraphsComponent } from './components/measurements-graphs/measurements-graphs.component';
@@ -147,7 +148,8 @@ import { PostableRepostMenuPopoverComponent } from './components/app/postable/po
     MatSelectModule,
     MatExpansionModule,
     MatSlideToggleModule,
-    MatTableModule
+    MatTableModule,
+    MatProgressBarModule
 
   ],
   providers: [

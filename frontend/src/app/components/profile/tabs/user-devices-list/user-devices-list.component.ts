@@ -25,17 +25,6 @@ export class UserDevicesListComponent implements OnInit {
   
   constructor(private profileService:ProfileService, public dialog:MatDialog) {}
 
-  openCreateDeviceDialog():void {
-    const dialogRef = this.dialog.open(CreateDeviceGuideComponent, {
-      width: '50%',
-      data: {}
-    });
-
-    // dialogRef.afterClosed().subscribe(result => {
-    //   console.log('The dialog was closed');
-    // });
-  }
-
   ngOnInit(): void {
     this.loading = true;
     this.canLoad.subscribe((canLoad:boolean) => {
@@ -53,5 +42,16 @@ export class UserDevicesListComponent implements OnInit {
       })
       .catch(e => this.error = e)
       .finally(() => this.loading = false);
+  }
+
+  openCreateDeviceDialog():void {
+    const dialogRef = this.dialog.open(CreateDeviceGuideComponent, {
+      width: '50%',
+      data: {}
+    });
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   console.log('The dialog was closed');
+    // });
   }
 }

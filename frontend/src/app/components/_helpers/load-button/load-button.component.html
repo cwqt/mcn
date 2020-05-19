@@ -1,4 +1,11 @@
-<button [disabled]="disabled" type="submit" mat-raised-button color={{color}} class="loader" (click)="click()">
+<button *ngIf="raised"  [disabled]="disabled" type="submit" mat-raised-button color={{color}} class="loader" (click)="click()">
     <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <mat-icon inline *ngIf="icon && !loading">{{icon}}</mat-icon>
+    <ng-content></ng-content>
+</button>
+
+<button *ngIf="!raised"  [disabled]="disabled" type="submit" mat-button color={{color}} class="loader" (click)="click()">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <mat-icon inline *ngIf="icon && !loading">{{icon}}</mat-icon>
     <ng-content></ng-content>
 </button>

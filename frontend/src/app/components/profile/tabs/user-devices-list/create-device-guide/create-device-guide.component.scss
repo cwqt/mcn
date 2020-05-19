@@ -9,3 +9,20 @@ pre {
 app-load-button {
     margin-right: 10px;
 }
+
+.dialog-wrapper {
+    border-radius: 5px;
+    overflow: hidden;
+    .dialog-header {
+        margin: 12px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        h1 {
+            margin:  0;
+        }
+    }
+    .dialog-body {
+        margin: 20px 0 !important;
+    }
+}

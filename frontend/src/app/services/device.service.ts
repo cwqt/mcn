@@ -37,4 +37,8 @@ export class DeviceService {
   getMeasurements(user_id, device_id) {
     return this.http.get(`/api/users/${user_id}/devices/${device_id}/measurements`).toPromise();
   }
+
+  requestMeasurementsUpdate(user_id:string, device_id:string) {
+
+  }
 }

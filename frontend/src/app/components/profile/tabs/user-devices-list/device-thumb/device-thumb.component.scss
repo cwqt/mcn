@@ -47,3 +47,13 @@ app-thumb-wrapper {
     }
 }
 
+
+
+mat-expansion-panel {
+    position: relative;
+    mat-progress-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+}

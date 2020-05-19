@@ -1,6 +1,13 @@
-<h1 mat-dialog-title>create new device wizard</h1>
+<div class="dialog-wrapper">
 
-<div mat-dialog-content>
+<div class="dialog-header">
+    <h1 mat-dialog-title>Create new device wizard</h1>
+    <button mat-icon-button id="close"><mat-icon>close</mat-icon></button>
+</div>
+
+<mat-divider></mat-divider>
+
+<div mat-dialog-content class="dialog-body">
     <mat-vertical-stepper [linear]="true" #matStepper>
         <mat-step [stepControl]="createDeviceFormGroup">
             <form [formGroup]="createDeviceFormGroup">
@@ -100,6 +107,4 @@
         </mat-step>
     </mat-vertical-stepper>
 </div>
-
-
-
+</div>

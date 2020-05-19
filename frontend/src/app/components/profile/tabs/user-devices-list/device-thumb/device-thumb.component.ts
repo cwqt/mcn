@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { DeviceService } from 'src/app/services/device.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
@@ -10,6 +10,7 @@ import { IMeasurementModel } from '../../../../../../../../backend/lib/models/Me
 import {
   HardwareInformation,
   HardwareDevice } from '../../../../../../../../backend/lib/common/types/hardware.types';
+import { MatExpansionPanel } from '@angular/material/expansion';
 
 interface IDeviceState {
   active: boolean,
@@ -29,32 +30,33 @@ export class DeviceThumbComponent implements OnInit {
   @Input() device:IDeviceStub;
   @Input() mini:boolean;
 
-  deviceInfo:HardwareDevice;
+  @ViewChild('deviceInfoPanel') deviceInfoPanel:MatExpansionPanel;
+  @ViewChild('latestMeasurementsPanel') latestMeasurementsPanel:MatExpansionPanel;
 
   cache = {
-    "device": {
+    device: {
       data: undefined,
       loading: false,
       error: ""
     },
-    "latest_data": {
+    latest_data: {
       data: undefined,
       loading: false,
       error: ""
     }
   }
 
+  deviceInfo:HardwareDevice;
   deviceState:IDeviceState;
   iconMap = {
     [DeviceState.Active]:"signal_cellular_4_bar",
     [DeviceState.InActive]:"signal_cellular_off",
     [DeviceState.UnVerified]:"signal_cellular_connected_no_internet_4_bar"
   }
-  meta:undefined;
-  latest_data:undefined;
 
-  constructor(private router:Router, private deviceService:DeviceService, private dialog:MatDialog) {
-  }
+  constructor(private router:Router,
+    private deviceService:DeviceService,
+    private dialog:MatDialog) {}
 
   ngOnInit(): void {
     this.deviceState = {
@@ -65,7 +67,6 @@ export class DeviceThumbComponent implements OnInit {
     } as IDeviceState
 
     this.deviceInfo = HardwareInformation[this.device.hardware_model];
-
     this.deviceState.text = this.device.state;
     this.deviceState.icon = this.iconMap[this.deviceState.text]
   }
@@ -79,12 +80,18 @@ export class DeviceThumbComponent implements OnInit {
 
   getDeviceMeta() {
     if(!this.cache.device.data) {
+      this.deviceInfoPanel.toggle() 
       this.cache.device.loading = true;
-
-      this.deviceService.getDevice(this.profileUser._id, this.device._id)
-        .then((device:IDevice) => this.cache.device.data = device)
-        .catch(e => this.cache.device.error = e)
+      this.cache.device.error = "";
+      setTimeout(() => {
+        this.deviceService.getDevice(this.profileUser._id, this.device._id)
+        .then((device:IDevice) => {
+          this.cache.device.data = device;
+          this.deviceInfoPanel.open();
+        })
+        .catch(e => this.cache.device.error = e.error.message)
         .finally(() => this.cache.device.loading = false)
+      }, 1000);
     }
   }
 
@@ -97,6 +104,13 @@ export class DeviceThumbComponent implements OnInit {
         .catch(e => this.cache.latest_data.error = e)
         .finally(() => this.cache.latest_data.loading = false)
     }
+  }
+
+  requestLatestData() {
+    // this.deviceService.requestMeasurementsUpdate(this.profileUser._id, this.device._id)
+    //   .then((measurement:IMeasurementModel) => this.cache.latest_data.data = measurement[0])
+    //   .catch(e => this.cache.latest_data.error = e)
+    //   .finally(() => this.cache.latest_data.loading = false)
   }
 
   gotoDevice() {
