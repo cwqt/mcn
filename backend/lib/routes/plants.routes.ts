@@ -16,9 +16,6 @@ import {
     updateRecordable,
     readAllRecordables,
     readRecordable,
-    unheartRecordable,
-    heartRecordable,
-    repostRecordable
 } from '../controllers/Recordable.controller';
 
 import { RecordableType } from '../models/Recordable.model';
@@ -26,6 +23,8 @@ import {
     readAllMeasurements,
     deleteMeasurements
 } from "../controllers/Measurements.controller";
+import { repostPostable, heartPostable, unheartPostable } from "../controllers/Postable.controller";
+
 
 const router = AsyncRouter({mergeParams: true});
 router.use((req:Request, res:Response, next:NextFunction) => {
@@ -54,9 +53,9 @@ plantRouter.get('/',         readRecordable)
 plantRouter.put('/',         updateRecordable, updatePlant);
 // plantRouter.delete('/',      deleteRecordable);
 
-plantRouter.post('/repost',  repostRecordable);
-plantRouter.post('/heart',   heartRecordable);
-plantRouter.delete('/heart', unheartRecordable);
+plantRouter.post('/repost',  repostPostable);
+plantRouter.post('/heart',   heartPostable);
+plantRouter.delete('/heart', unheartPostable);
 
 plantRouter.get('/measurements', readAllMeasurements);
 plantRouter.delete('/measurements', deleteMeasurements);

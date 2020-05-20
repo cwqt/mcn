@@ -19,7 +19,8 @@ import {
     deleteApiKey
 } from '../controllers/ApiKeys.controller';
 import { RecordableType } from '../models/Recordable.model';
-import { heartRecordable, repostRecordable, unheartRecordable, readAllRecordables } from '../controllers/Recordable.controller';
+import { readAllRecordables } from '../controllers/Recordable.controller';
+import { heartPostable, unheartPostable, repostPostable } from '../controllers/Postable.controller';
 
 const router = AsyncRouter({mergeParams: true});
 router.use((req:Request, res:Response, next:NextFunction) => {
@@ -43,9 +44,9 @@ deviceRouter.use(validate([
 deviceRouter.get('/',               readDevice);
 deviceRouter.get('/measurements',   readAllMeasurements);
 deviceRouter.get('/ping',           pingDevice);
-deviceRouter.post('/repost',        repostRecordable);
-deviceRouter.post('/heart',         heartRecordable);
-deviceRouter.delete('/heart',       unheartRecordable);
+deviceRouter.post('/repost',        repostPostable);
+deviceRouter.post('/heart',         heartPostable);
+deviceRouter.delete('/heart',       unheartPostable);
 
 deviceRouter.post('/assign/:rid', validate([
     param('rid').isMongoId().trim().withMessage('invalid recordable id to assign to')

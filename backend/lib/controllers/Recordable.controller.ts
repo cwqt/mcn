@@ -1,27 +1,17 @@
 import { Request, Response, NextFunction } from "express"
-import { Types } from "mongoose";
-const { body } = require('express-validator');
+import { Types }    from "mongoose";
+import { body }     from 'express-validator';
 
-import { RecordableType }  from "../models/Recordable.model"
+import { RecordableType }   from "../models/Recordable.model"
+import { IDeviceStub }      from '../models/Device.model';
+import { IRecordableStub }  from '../models/Recordable.model';
 import { validate }         from "../common/validate";
-import { IPlant }           from "../models/Plant.model";
-import { IGarden }          from "../models/Garden.model";
 import { ErrorHandler }     from "../common/errorHandler";
 import { HTTP }             from "../common/http";
 import { n4j }              from '../common/neo4j';
-import { IDeviceStub }  from '../models/Device.model';
+import { getDeviceState }   from '../controllers/Device.controller';
+import { getN4jNodeName }   from './Postable.controller'
 
-import { makePost } from './Posts.controller';
-import { IRecordable, IRecordableStub } from '../models/Recordable.model';
-import { getDeviceState } from '../controllers/Device.controller';
-
-const getSchema = (recordable_type:string):string => {
-    switch(recordable_type) {
-        case RecordableType.Plant:     return 'Plant';
-        case RecordableType.Garden:    return 'Garden';
-        case RecordableType.Device:    return 'Device';
-    }
-}
 
 export const createRecordable = async (req:Request, res:Response, next:NextFunction) => {
     validate([body('name').not().isEmpty().trim()])(req, res, () => {
@@ -79,83 +69,13 @@ export const deleteRecordable = (req:Request, res:Response, next:NextFunction) =
     res.status(HTTP.OK).end()
 }
 
-export const heartRecordable = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (o:${getSchema(res.locals.type)} {_id:$rid}), (u:User {_id:$uid})
-            WHERE o:Plant OR o:Garden OR o:Device
-            MERGE (u)-[h:HEARTS]->(o)
-        `, {
-            rid: req.params.rid ?? req.params.did,
-            uid: req.session.user.id,
-        })
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e)                
-    } finally {
-        session.close()
-    }
-
-    res.status(HTTP.OK).end();
-}
-
-export const unheartRecordable = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (u:User {_id:$uid})-[h:HEARTS]->(o:${getSchema(res.locals.type)} {_id:$rid})
-            WHERE o:Plant OR o:Garden OR o:Device
-            DELETE h
-        `, {
-            rid: req.params.rid ?? req.params.did,
-            uid: req.session.user.id,
-        })
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e)                
-    } finally {
-        session.close()
-    }
-
-    res.status(HTTP.OK).end();
-}
-
-export const repostRecordable = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    try {
-        let post = makePost(req.body.content || '');
-    
-        result = await session.run(`
-            MATCH (o {_id:$rid}), (u:User {_id:$uid})
-            WHERE o:Plant OR o:Garden OR o:Device
-            CREATE (u)-[:POSTED]->(r:Post $body)-[:REPOST_OF]->(o)
-            RETURN r
-        `, {
-            rid: req.params.rid ?? req.params.did,
-            uid: req.session.user.id,
-            body: post
-        })        
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e)        
-    } finally {
-        session.close();
-    }
-
-    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError, "Did not create repost")
-    res.status(201).json(result.records[0].get('r').properties);
-
-}
-
-
 export const readAllRecordables = async (req:Request, res:Response) => {
     let session = n4j.session();
     let result;
 
     try {
         result = await session.run(`
-            MATCH (r:${getSchema(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
+            MATCH (r:${getN4jNodeName(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
             WITH r,
                 SIZE((r)<-[:REPOST_OF]-(:Post)) AS reposts,
                 SIZE((r)<-[:REPLY_TO]-(:Post)) AS replies,

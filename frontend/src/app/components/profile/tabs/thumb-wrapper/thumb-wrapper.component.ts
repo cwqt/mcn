@@ -8,7 +8,7 @@ import { IUser } from '../../../../../../../backend/lib/models/User.model';
 import { Router } from '@angular/router';
 import { RecordableService } from 'src/app/services/recordable.service';
 import { Popover, PopoverProperties } from 'src/assets/popover';
-import { PostableRepostMenuPopoverComponent } from 'src/app/components/app/postable/postable-repost-menu-popover/postable-repost-menu-popover.component';
+import { PostableRepostMenuPopoverComponent, IPostableMenuData } from 'src/app/components/app/postable/postable-repost-menu-popover/postable-repost-menu-popover.component';
 import { MatButton } from '@angular/material/button';
 
 @Component({
@@ -80,8 +80,13 @@ export class ThumbWrapperComponent implements OnInit {
       targetElement: this.repostMenuHitbox._elementRef.nativeElement,
       component: PostableRepostMenuPopoverComponent,
       offset: 16,
-      relativeTo: 'profile-body-container'
-    } as PopoverProperties)
+      data: {
+        currentUser: this.currentUser,
+        authorUser: this.user,
+        postable: this.thumbItem,
+        type: this.type
+      } as IPostableMenuData
+    })
     event.stopPropagation();
   }
 

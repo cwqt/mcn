@@ -190,56 +190,6 @@ export const readPost = async (req:Request, res:Response) => {
     res.json(post);
 }
 
-export const repostPost = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    try {
-        let post = makePost(req.body.content || '');
-    
-        result = await session.run(`
-            MATCH (p:Post {_id:$pid}), (u:User {_id:$uid})
-            CREATE (u)-[:POSTED]->(r:Post $body)-[:REPOST_OF]->(p)
-            RETURN r
-        `, {
-            pid: req.params.pid,
-            uid:req.session.user.id,
-            body: post
-        })        
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e)        
-    } finally {
-        session.close();
-    }
-
-    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError, "Did not create repost")
-    res.status(201).json(result.records[0].get('r').properties);
-}
-
-export const replyToPost = async (req:Request, res:Response) => {
-    //todo: disable ability to reply to a 'repost with no reply'
-    let session = n4j.session();
-    let result;
-    try {
-        let post = makePost(req.body.content);
-        result = await session.run(`
-            MATCH (p:Post {_id:$pid}), (u:User {_id:$uid})
-            CREATE (u)-[:POSTED]->(r:Post $body)-[:REPLY_TO]->(p)
-            RETURN r
-        `, {
-            pid: req.params.pid,
-            uid:req.session.user.id,
-            body: post
-        })
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
-
-    if(!result.records.length) throw new ErrorHandler(HTTP.ServerError, "Did not create reply")
-    res.status(201).json(result.records[0].get('r').properties);
-}
-
 export const updatePost = (req:Request, res:Response) => {
 }
 
@@ -260,47 +210,5 @@ export const deletePost = async (req:Request, res:Response) => {
     }
 
     if(!result.summary.counters.containsUpdates()) throw new ErrorHandler(HTTP.ServerError, "Could not delete post")
-    res.status(200).end();
-}
-
-export const heartPost = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (u:User { _id:$uid }), (p:Post { _id:$pid })
-            MERGE (u)-[:HEARTS]->(p)
-        `, {
-            uid:req.session.user.id,
-            pid:req.params.pid
-        })
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close()
-    }
-
-    if(!result.summary.counters.containsUpdates()) throw new ErrorHandler(HTTP.ServerError, "Could not heart post")
-    res.status(201).end();
-}
-
-export const unheartPost = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (:User { _id:$uid })-[r:HEARTS]->(:Post { _id:$pid })
-            DELETE r
-        `, {
-            uid:req.session.user.id,
-            pid:req.params.pid
-        })
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close()
-    }
-    
-    if(!result.summary.counters.containsUpdates()) throw new ErrorHandler(HTTP.ServerError, "Could not un-heart post")
     res.status(200).end();
 }

@@ -1,6 +1,14 @@
-import { IRecordableStub } from "./Recordable.model";
+import { IRecordableStub, RecordableType } from "./Recordable.model";
 import { IDeviceStub } from "./Device.model";
 import { IUserStub } from './User.model';
+import { RecorderType } from "./Measurement.model";
+
+export enum PostableType {
+    Post    = 'post',
+    Device  = 'device', // RecordableType.Device
+    Plant   = 'plant',  // RecordableType.Plant
+    Garden  = 'garden'  // RecordableType.Garden
+}
 
 export enum RepostType {
     Post = 'repost-post',

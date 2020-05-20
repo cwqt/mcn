@@ -17,22 +17,22 @@ export enum DeviceState {
 export interface IDeviceStub {
     _id:            string,
     name:           string,
+    short_desc?:    string,
     thumbnail?:     string,
     verified:       boolean,
-    state:          DeviceState,
-    last_ping?:     number //seconds since epoch device sent message
-    hardware_model: SupportedHardware,
+    last_ping?:     number, //seconds since epoch device sent message
     created_at?:    number,
+    state:          DeviceState,
+    hardware_model: SupportedHardware,
     meta?:          IPostableMeta,
-    short_desc?:    string
 }
 
 export interface IDevice extends IDeviceStub {
     images:             string[],
     software_version?:  string,
+    measurement_count?: number,
+    full_desc?:         string,
     device_ip?:         IpAddress.Address4 | IpAddress.Address6,
-    measurement_count?: number
     api_key?:           IApiKey,
     assigned_to?:       IRecordableStub,
-    full_desc?:         string
 }

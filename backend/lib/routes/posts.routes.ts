@@ -7,11 +7,8 @@ import {
     readAllPosts,
     readPost,
     updatePost,
-    repostPost,
-    replyToPost,
-    heartPost,
-    unheartPost
- } from '../controllers/Posts.controller';
+} from '../controllers/Posts.controller';
+import { heartPostable, unheartPostable, repostPostable, replyToPostable } from '../controllers/Postable.controller';
 
 const router = AsyncRouter({mergeParams: true});
 
@@ -30,9 +27,9 @@ postRouter.use(validate([
 ]))
 
 postRouter.get('/',         readPost);
-postRouter.post('/repost',  repostPost);
-postRouter.post('/heart',   heartPost);
-postRouter.delete('/heart', unheartPost);
+postRouter.post('/repost',  repostPostable);
+postRouter.post('/heart',   heartPostable);
+postRouter.delete('/heart', unheartPostable);
 
 postRouter.put('/',  validate([
     body('content').not().isEmpty().trim().withMessage('post must have some content'),
@@ -40,7 +37,7 @@ postRouter.put('/',  validate([
 
 postRouter.post('/reply', validate([
     body('content').not().isEmpty().trim().withMessage('reply must have some content'),
-]), replyToPost);
+]), replyToPostable);
 
 
 // router.get('/replies', readPostReplies);
