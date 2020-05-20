@@ -23,16 +23,12 @@ export class ThumbWrapperComponent implements OnInit {
   
   @Input() currentUser:IUser;
   @Input() user:IUser;
-
-  @ViewChild('repostMenuHitbox') repostMenuHitbox:MatButton;
   
   thumbPlaceholderIcon:string;
-  dialogData:any;
 
   repostMenuOpen:boolean = false;
 
   constructor(
-    private dialog:MatDialog,
     private router:Router,
     private recordableService:RecordableService,
     private popover:Popover
@@ -53,65 +49,9 @@ export class ThumbWrapperComponent implements OnInit {
         this.thumbPlaceholderIcon = 'help'
         break;
     }
-
-    this.dialogData = {
-      type: this.type,
-      object: this.thumbItem,
-      user: this.user,
-      currentUser: this.currentUser
-    }
-  }
-
-  repost() {
-    this.popover.close();
-    if(this.thumbItem.meta.hasReposted) {
-      this.thumbItem.meta.hasReposted = false;
-      this.thumbItem.meta.reposts--;
-      this.recordableService.deleteRepost(this.type, this.user._id, this.thumbItem._id);
-    } else {
-      this.thumbItem.meta.hasReposted = true;
-      this.thumbItem.meta.reposts++;
-      this.recordableService.repostItem(this.type, this.user._id, this.thumbItem._id);
-    }
-  }
-
-  openRepostMenuPopover(event) {
-    this.popover.load({
-      targetElement: this.repostMenuHitbox._elementRef.nativeElement,
-      component: PostableRepostMenuPopoverComponent,
-      offset: 16,
-      data: {
-        currentUser: this.currentUser,
-        authorUser: this.user,
-        postable: this.thumbItem,
-        type: this.type
-      } as IPostableMenuData
-    })
-    event.stopPropagation();
-  }
-
-
-  openRepostDialog() {
-    this.popover.close();
-    const dialogRef = this.dialog.open(RepostDialogComponent, {
-      width: '50%',
-      data: this.dialogData
-    })
   }
 
   gotoItem() {
     this.router.navigate([`${this.user.username}/${this.type}s/${this.thumbItem._id}`])
-  }
-
-  toggleHeartingState(event) {
-    if(this.thumbItem.meta.isHearting) {
-      this.thumbItem.meta.hearts--;
-      this.thumbItem.meta.isHearting = false;
-      this.recordableService.unheartItem(this.type, this.user._id, this.thumbItem._id)
-    } else {
-      this.thumbItem.meta.hearts++;
-      this.thumbItem.meta.isHearting = true;
-      this.recordableService.heartItem(this.type, this.user._id, this.thumbItem._id)
-    }
   }
 }

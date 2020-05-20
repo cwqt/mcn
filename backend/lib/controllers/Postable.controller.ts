@@ -17,12 +17,13 @@ export const getN4jNodeName = (postable_type:string):string => {
 }
 
 export const heartPostable = async (req:Request, res:Response) => {
+    console.log(req.params.rid,req.params.did,req.params.pid)
     await cypher(`
         MATCH (o:${getN4jNodeName(res.locals.type)} {_id:$oid}), (u:User {_id:$uid})
         WHERE o:Plant OR o:Garden OR o:Device OR o:Post
         MERGE (u)-[h:HEARTS]->(o)
     `, {
-        oid: req.params.oid ?? req.params.did ?? req.params.pid,
+        oid: req.params.rid ?? req.params.did ?? req.params.pid,
         uid: req.session.user.id,
     });
 
@@ -35,7 +36,7 @@ export const unheartPostable = async (req:Request, res:Response) => {
         WHERE o:Plant OR o:Garden OR o:Device OR o:Post
         DELETE h
     `, {
-        oid: req.params.oid ?? req.params.did ?? req.params.pid,
+        oid: req.params.rid ?? req.params.did ?? req.params.pid,
         uid: req.session.user.id,
     })
 
@@ -50,7 +51,7 @@ export const repostPostable = async (req:Request, res:Response) => {
         CREATE (u)-[:POSTED]->(r:Post $body)-[:REPOST_OF]->(o)
         RETURN r
     `, {
-        oid: req.params.oid ?? req.params.did ?? req.params.pid,
+        oid: req.params.rid ?? req.params.did ?? req.params.pid,
         uid: req.session.user.id,
         body: post
     })        
@@ -68,7 +69,7 @@ export const replyToPostable = async (req:Request, res:Response) => {
         CREATE (u)-[:POSTED]->(r:Post $body)-[:REPLY_TO]->(p)
         RETURN r
     `, {
-        oid: req.params.oid ?? req.params.did ?? req.params.pid,
+        oid: req.params.rid ?? req.params.did ?? req.params.pid,
         uid:req.session.user.id,
         body: post
     })

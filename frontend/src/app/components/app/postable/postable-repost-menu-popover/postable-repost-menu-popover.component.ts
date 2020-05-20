@@ -1,15 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Popover } from 'src/assets/popover';
 import { IUser } from '../../../../../../../backend/lib/models/User.model';
-import { IPostStub } from '../../../../../../../backend/lib/models/Post.model';
-import { IRecordable, RecordableType, IRecordableStub } from '../../../../../../../backend/lib/models/Recordable.model';
-import { IDeviceStub } from '../../../../../../../backend/lib/models/Device.model';
+import { PostableType, Postable } from '../../../../../../../backend/lib/models/Post.model';
 
 export interface IPostableMenuData {
   currentUser:IUser,
   authorUser:IUser,
-  postable:IPostStub | IRecordableStub | IDeviceStub,
-  type: 'post' | RecordableType
+  postable:Postable,
+  type:PostableType
 }
 
 @Component({

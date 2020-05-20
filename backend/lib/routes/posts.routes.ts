@@ -1,3 +1,4 @@
+import {Request, Response, NextFunction }    from "express"
 const { body, param } = require('express-validator');
 var AsyncRouter       = require("express-async-router").AsyncRouter;
 
@@ -9,6 +10,7 @@ import {
     updatePost,
 } from '../controllers/Posts.controller';
 import { heartPostable, unheartPostable, repostPostable, replyToPostable } from '../controllers/Postable.controller';
+import { PostableType } from "../models/Post.model";
 
 const router = AsyncRouter({mergeParams: true});
 
@@ -21,6 +23,11 @@ router.get('/', readAllPosts);
 // POST ===========================================================================================
 const postRouter = AsyncRouter({mergeParams: true});
 router.use('/:pid', postRouter);
+postRouter.use((req:Request, res:Response, next:NextFunction) => {
+    res.locals.type = PostableType.Post
+    next();
+})
+
 
 postRouter.use(validate([
     param('pid').isMongoId().trim().withMessage('invalid post id')

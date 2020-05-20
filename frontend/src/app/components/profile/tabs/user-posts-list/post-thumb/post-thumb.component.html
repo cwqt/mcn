@@ -49,20 +49,13 @@
                     </div>
                 </div>
             
-                <mat-card-actions *ngIf="!repostType && !mini">
-                    <button mat-icon-button (click)="replyToPost($event)">
-                        <mat-icon>reply</mat-icon>
-                        <span>{{post.meta.replies}}</span>
-                    </button>
-                    <button mat-icon-button [class.isHearting]="post.meta.isHearting" (click)="heartPost($event)">
-                        <mat-icon>{{post.meta.isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
-                        <span>{{post.meta.hearts}}</span>
-                    </button>
-                    <button mat-icon-button [class.hasReposted]="post.meta.hasReposted" (click)="openRepostMenuPopover($event)" #repostMenuHitbox>
-                        <mat-icon>repeat</mat-icon>
-                        <span>{{post.meta.reposts}}</span>
-                    </button>
-                </mat-card-actions>
+                <app-postable-social-actions *ngIf="!repostType && !mini"
+                    [justify]="true"
+                    [postable]="post"
+                    [type]="'post'"
+                    [authorUser]="author"
+                    [currentUser]="currentUser">
+                </app-postable-social-actions>
             </div>    
         </div>
     </div>

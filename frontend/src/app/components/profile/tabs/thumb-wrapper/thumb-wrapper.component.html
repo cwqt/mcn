@@ -8,21 +8,13 @@
         <ng-content class="thumb-wrapper-content"></ng-content>
         <br />
         <mat-card-actions>
-            <div class="thumb-wrapper-social">
-                <button mat-icon-button>
-                    <mat-icon>reply</mat-icon>
-                    <span>{{thumbItem.meta.replies}}</span>
-                </button>    
-                <button mat-icon-button [class.hasReposted]="thumbItem.meta.hasReposted" (click)="openRepostMenuPopover($event)" #repostMenuHitbox>
-                    <mat-icon>repeat</mat-icon>
-                    <span>{{thumbItem.meta.reposts}}</span>
+            <app-postable-social-actions
+                [postable]="thumbItem"
+                [type]="type"
+                [authorUser]="user"
+                [currentUser]="currentUser">
+            </app-postable-social-actions>
 
-                </button>
-                <button mat-icon-button [class.isHearting]="thumbItem.meta.isHearting" (click)="toggleHeartingState($event)">
-                    <mat-icon>{{thumbItem.meta.isHearting ? 'favorite' : 'favorite_border'}}</mat-icon>
-                    <span>{{thumbItem.meta.hearts}}</span>
-                </button>
-            </div>       
             <button mat-button class="view-comments-button">view comments</button>
             <button mat-button color="primary" (click)="gotoItem()">inspect</button>
         </mat-card-actions>

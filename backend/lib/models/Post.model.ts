@@ -1,7 +1,9 @@
 import { IRecordableStub, RecordableType } from "./Recordable.model";
-import { IDeviceStub } from "./Device.model";
+import { IDeviceStub, IDevice } from "./Device.model";
 import { IUserStub } from './User.model';
 import { RecorderType } from "./Measurement.model";
+
+export type Postable = IPostStub | IDeviceStub | IRecordableStub;
 
 export enum PostableType {
     Post    = 'post',
