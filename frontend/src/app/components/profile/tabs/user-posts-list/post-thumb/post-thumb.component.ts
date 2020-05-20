@@ -33,17 +33,12 @@ export class PostThumbComponent implements OnInit {
   }
 
   openRepostMenuPopover(event) {
+    console.log(this.repostMenuHitbox)
+
     this.popover.load({
-      refComponent: this.repostMenuHitbox._elementRef,
       component: PostableRepostMenuPopoverComponent,
+      targetElement: this.repostMenuHitbox._elementRef.nativeElement,
       offset: 16,
-      relativeTo: 'profile-body-container',
-      data: {
-        currentUser: this.currentUser,
-        creatorUser: this.author,
-        content: this.post,
-        type: 'post'
-      }
     } as PopoverProperties)
     event.stopPropagation();
   }

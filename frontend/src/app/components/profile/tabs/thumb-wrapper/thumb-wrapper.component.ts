@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { RecordableService } from 'src/app/services/recordable.service';
 import { Popover, PopoverProperties } from 'src/assets/popover';
 import { PostableRepostMenuPopoverComponent } from 'src/app/components/app/postable/postable-repost-menu-popover/postable-repost-menu-popover.component';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-thumb-wrapper',
@@ -23,7 +24,7 @@ export class ThumbWrapperComponent implements OnInit {
   @Input() currentUser:IUser;
   @Input() user:IUser;
 
-  @ViewChild('repostMenuHitbox') repostMenuHitbox:any;
+  @ViewChild('repostMenuHitbox') repostMenuHitbox:MatButton;
   
   thumbPlaceholderIcon:string;
   dialogData:any;
@@ -76,7 +77,7 @@ export class ThumbWrapperComponent implements OnInit {
 
   openRepostMenuPopover(event) {
     this.popover.load({
-      refComponent: this.repostMenuHitbox._elementRef,
+      targetElement: this.repostMenuHitbox._elementRef.nativeElement,
       component: PostableRepostMenuPopoverComponent,
       offset: 16,
       relativeTo: 'profile-body-container'
