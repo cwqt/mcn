@@ -30,9 +30,6 @@ export class DeviceThumbComponent implements OnInit {
   @Input() device:IDeviceStub;
   @Input() mini:boolean;
 
-  @ViewChild('deviceInfoPanel') deviceInfoPanel:MatExpansionPanel;
-  @ViewChild('latestMeasurementsPanel') latestMeasurementsPanel:MatExpansionPanel;
-
   cache = {
     device: {
       data: undefined,
@@ -48,9 +45,10 @@ export class DeviceThumbComponent implements OnInit {
 
   deviceInfo:HardwareDevice;
   deviceState:IDeviceState;
-  iconMap = {
+  iconMap:{[index in DeviceState]:string} = {
     [DeviceState.Active]:"signal_cellular_4_bar",
     [DeviceState.InActive]:"signal_cellular_off",
+    [DeviceState.Verified]:"tick",
     [DeviceState.UnVerified]:"signal_cellular_connected_no_internet_4_bar"
   }
 
@@ -80,18 +78,15 @@ export class DeviceThumbComponent implements OnInit {
 
   getDeviceMeta() {
     if(!this.cache.device.data) {
-      this.deviceInfoPanel.toggle() 
       this.cache.device.loading = true;
       this.cache.device.error = "";
-      setTimeout(() => {
-        this.deviceService.getDevice(this.profileUser._id, this.device._id)
-        .then((device:IDevice) => {
-          this.cache.device.data = device;
-          this.deviceInfoPanel.open();
-        })
-        .catch(e => this.cache.device.error = e.error.message)
-        .finally(() => this.cache.device.loading = false)
-      }, 1000);
+
+      this.deviceService.getDevice(this.profileUser._id, this.device._id)
+      .then((device:IDevice) => {
+        this.cache.device.data = device;
+      })
+      .catch(e => this.cache.device.error = e.error.message)
+      .finally(() => this.cache.device.loading = false)
     }
   }
 
@@ -107,6 +102,7 @@ export class DeviceThumbComponent implements OnInit {
   }
 
   requestLatestData() {
+    // TODO: backend stuff for requesting data from devices
     // this.deviceService.requestMeasurementsUpdate(this.profileUser._id, this.device._id)
     //   .then((measurement:IMeasurementModel) => this.cache.latest_data.data = measurement[0])
     //   .catch(e => this.cache.latest_data.error = e)

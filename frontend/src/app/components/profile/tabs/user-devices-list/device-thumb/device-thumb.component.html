@@ -11,18 +11,12 @@
     <br />
 
     <mat-accordion class="object-meta">
-        <mat-expansion-panel #deviceInfoPanel (click)="getDeviceMeta()">
-            <mat-expansion-panel-header>
-                <mat-progress-bar *ngIf="cache.device.loading" mode="indeterminate"></mat-progress-bar>
-                <mat-panel-title>
-                    Device information
-                </mat-panel-title>
-                <mat-panel-description>
-                    {{ cache.device.error }}
-                </mat-panel-description>    
-    
-            </mat-expansion-panel-header>
-
+        <app-loadable-panel
+            [loading]="cache.device.loading"
+            [title]="'Device information'"
+            [description]="cache.device.error"
+            [hasData]="cache.device.data != undefined"
+            (onClick)="getDeviceMeta()">
             <div *ngIf="cache.device.data && !cache.device.error">
                 <p><b>Device id:</b>{{cache.device.data._id || '—'}}</p>
                 <p><b>Api key id:</b>{{cache.device.data.api_key._id || '—'}}</p>
@@ -39,18 +33,14 @@
                     </span>
                 </p>
             </div>
-        </mat-expansion-panel>
+        </app-loadable-panel>
 
-        <mat-expansion-panel #latestMeasurementsPanel (click)="getLatestData()">
-          <mat-expansion-panel-header>
-            <mat-progress-bar *ngIf="cache.latest_data.loading" mode="indeterminate"></mat-progress-bar>
-            <mat-panel-title>
-                Latest data
-            </mat-panel-title>
-            <mat-panel-description>
-                {{ cache.latest_data.error ? cache.latest_data.error : device.last_ping | amTimeAgo }}
-            </mat-panel-description>
-          </mat-expansion-panel-header>
+        <app-loadable-panel
+            [loading]="cache.latest_data.loading"
+            [title]="'Latest data'"
+            [description]="cache.latest_data.error ? cache.latest_data.error : device.last_ping | amTimeAgo"
+            [hasData]="cache.latest_data.data != undefined"
+            (onClick)="getLatestData()">
 
             <div *ngIf="cache.latest_data.data && !cache.latest_data.error">
                 <p *ngFor="let field of cache.latest_data.data.data | keyvalue">
@@ -66,6 +56,7 @@
                     Request new data
                 </app-load-button>
             </mat-action-row>
-        </mat-expansion-panel>
+        </app-loadable-panel>
+
       </mat-accordion>
 </app-thumb-wrapper>

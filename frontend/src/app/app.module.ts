@@ -76,6 +76,7 @@ import { RepostDialogComponent } from './components/app/repost-dialog/repost-dia
 import { HeaderBarUserMenuComponent } from './components/app/header-bar/header-bar-user-menu/header-bar-user-menu.component';
 
 import { PostableRepostMenuPopoverComponent } from './components/app/postable/postable-repost-menu-popover/postable-repost-menu-popover.component';
+import { LoadablePanelComponent } from './components/_helpers/loadable-panel/loadable-panel.component';
 
 @NgModule({
   declarations: [
@@ -116,7 +117,8 @@ import { PostableRepostMenuPopoverComponent } from './components/app/postable/po
     ThumbWrapperComponent,
     RepostDialogComponent,
     HeaderBarUserMenuComponent,
-    PostableRepostMenuPopoverComponent
+    PostableRepostMenuPopoverComponent,
+    LoadablePanelComponent
   ],
   imports: [
     BrowserModule,
