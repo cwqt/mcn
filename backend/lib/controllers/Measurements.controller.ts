@@ -5,7 +5,7 @@ import mongoose              from 'mongoose';
 import { IDevice }           from "../models/Device.model";
 import { HTTP }              from '../common/http';
 import { ErrorHandler }      from "../common/errorHandler";
-import { n4j }               from '../common/neo4j';
+import { n4j, cypher }               from '../common/neo4j';
 import { MeasurementUnits }  from '../common/types/measurements.types';
 import { IGarden }           from "../models/Garden.model";
 import { IPlant }            from "../models/Plant.model";
@@ -45,20 +45,14 @@ const createMeasurement = async (measurement:IMeasurement, type:RecordableType, 
 export const createMeasurementAsDevice = async (req:Request, res:Response) => {
     req.body = req.body as IoTDataPacket;
 
-    let session = n4j.session();
-    let result;
-    try {
-        //find devices' assigned recordable
-        result = await session.run(`
-            MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
-            WHERE r:Plant OR r:Garden
-            RETURN d, r
-        `, {
-            did: req.params.did,
-        })
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e)   
-    }
+    //find devices' assigned recordable
+    let result = await cypher(`
+        MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
+        WHERE r:Plant OR r:Garden
+        RETURN d, r
+    `, {
+        did: req.params.did,
+    })
 
     let device:IDevice = result.records[0]?.get('d')?.properties;
     let recordable:IPlant | IGarden = result.records[0]?.get('r')?.properties;
@@ -89,7 +83,7 @@ export const createMeasurementAsDevice = async (req:Request, res:Response) => {
         ])
 
         //already know device exists, so no trycatch
-        await session.run(`
+        await cypher(`
             MATCH (d:Device {_id:$did})
             SET d.last_ping = $date
             SET d.measurement_count = d.measurement_count + 1

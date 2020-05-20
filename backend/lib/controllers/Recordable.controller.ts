@@ -8,7 +8,7 @@ import { IRecordableStub }  from '../models/Recordable.model';
 import { validate }         from "../common/validate";
 import { ErrorHandler }     from "../common/errorHandler";
 import { HTTP }             from "../common/http";
-import { n4j }              from '../common/neo4j';
+import { n4j, cypher }              from '../common/neo4j';
 import { getDeviceState }   from '../controllers/Device.controller';
 import { getN4jNodeName }   from './Postable.controller'
 
@@ -27,21 +27,13 @@ export const createRecordable = async (req:Request, res:Response, next:NextFunct
 }
 
 export const readRecordable = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (r {_id:$rid})
-            WHERE r:Plant OR r:Garden
-            RETURN r    
-        `, {
-            rid: req.params.rid
-        })
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    } finally {
-        session.close();
-    }
+    let result = await cypher(`
+        MATCH (r {_id:$rid})
+        WHERE r:Plant OR r:Garden
+        RETURN r    
+    `, {
+        rid: req.params.rid
+    })
 
     let recordable:any = result.records[0]?.get('r').properties;
     if(!recordable) throw new ErrorHandler(HTTP.NotFound, "No such recordable exists");
@@ -50,48 +42,29 @@ export const readRecordable = async (req:Request, res:Response) => {
     res.json(recordable);
 }
 
-export const updateRecordable = (req:Request, res:Response, next:NextFunction) => {
+export const updateRecordable = async (req:Request, res:Response, next:NextFunction) => {
     res.locals.allowed = ['name', 'images', 'feed_url', 'parameters'];
     next();
 }
 
-export const deleteRecordable = (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session();
-    let result;
-    try {
-        
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    } finally {
-        session.close();
-    }
-
+export const deleteRecordable = async (req:Request, res:Response, next:NextFunction) => {
     res.status(HTTP.OK).end()
 }
 
 export const readAllRecordables = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-
-    try {
-        result = await session.run(`
-            MATCH (r:${getN4jNodeName(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
-            WITH r,
-                SIZE((r)<-[:REPOST_OF]-(:Post)) AS reposts,
-                SIZE((r)<-[:REPLY_TO]-(:Post)) AS replies,
-                SIZE((r)<-[:HEARTS]-(:User)) AS hearts                
-            RETURN r, hearts, replies, reposts,
-                EXISTS ((:User {_id:$selfid})-[:HEARTS]->(r)) AS isHearting,
-                EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(r)) AS hasReposted
-        `, {
-            uid: req.params.uid,
-            selfid: req.session.user.id
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
+    let result = await cypher(`
+        MATCH (r:${getN4jNodeName(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
+        WITH r,
+            SIZE((r)<-[:REPOST_OF]-(:Post)) AS reposts,
+            SIZE((r)<-[:REPLY_TO]-(:Post)) AS replies,
+            SIZE((r)<-[:HEARTS]-(:User)) AS hearts                
+        RETURN r, hearts, replies, reposts,
+            EXISTS ((:User {_id:$selfid})-[:HEARTS]->(r)) AS isHearting,
+            EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(r)) AS hasReposted
+    `, {
+        uid: req.params.uid,
+        selfid: req.session.user.id
+    })
 
     let recordables:IDeviceStub[] | IRecordableStub[] = result.records.map((record:any) => {
         let r = record.get('r').properties;

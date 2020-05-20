@@ -3,7 +3,7 @@ import { Types }             from "mongoose";
 
 import { HTTP }              from '../common/http';
 import { ErrorHandler }      from "../common/errorHandler";
-import { n4j }               from '../common/neo4j';
+import { n4j, cypher }               from '../common/neo4j';
 
 import { IPlant }            from '../models/Plant.model';
 import { IGarden }           from '../models/Garden.model';
@@ -33,7 +33,6 @@ export const getDeviceState = (device:IDevice):DeviceState => {
 }
 
 export const createDevice = async (req:Request, res:Response) => {
-    let session = n4j.session();
     let device:IDevice = {
         _id:        Types.ObjectId().toHexString(),
         name:       req.body.name,
@@ -45,21 +44,14 @@ export const createDevice = async (req:Request, res:Response) => {
         hardware_model: req.body.hardware_model
     }
 
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (u:User {_id:$uid})
-            CREATE (d:Device $body)<-[:CREATED]-(u)
-            return d
-        `, {
-            uid: req.params.uid,
-            body: device
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
+    let result = await cypher(`
+        MATCH (u:User {_id:$uid})
+        CREATE (d:Device $body)<-[:CREATED]-(u)
+        return d
+    `, {
+        uid: req.params.uid,
+        body: device
+    })
 
     if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
     let d = result.records[0].get('d').properties;
@@ -69,45 +61,28 @@ export const createDevice = async (req:Request, res:Response) => {
 
 
 export const assignDeviceToRecordable = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (r {_id:$rid}) WHERE r:Plant OR r:Garden
-            MATCH (d:Device {_id:$did})
-            MERGE (d)-[m:MONITORS]->(r)
-            RETURN m
-        `, {
-            rid: req.params.rid,
-            did: req.params.did,
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
+    let result = await cypher(`
+        MATCH (r {_id:$rid}) WHERE r:Plant OR r:Garden
+        MATCH (d:Device {_id:$did})
+        MERGE (d)-[m:MONITORS]->(r)
+        RETURN m
+    `, {
+        rid: req.params.rid,
+        did: req.params.did,
+    })
 
     res.status(HTTP.Created).end()
 }
 
 export const readDevice = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
-            WHERE r:Plant OR r:GARDEN
-            OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
-            RETURN d, r, k
-        `, {
-            did: req.params.did
-        })
-    } catch (e) {
-        throw new Error(e);
-    } finally {
-        session.close();
-    }
+    let result = await cypher(`
+        MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
+        WHERE r:Plant OR r:GARDEN
+        OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
+        RETURN d, r, k
+    `, {
+        did: req.params.did
+    })
 
     let device = result.records[0].get('d')?.properties;
     device.measurement_count = device.measurement_count.toNumber();
@@ -162,21 +137,14 @@ export const readDevice = async (req:Request, res:Response) => {
 // }
 
 export const pingDevice = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    try {
-        await session.run(`
-            MATCH (d:Device {_id:$did})
-            SET d.last_ping = $time
-            RETURN d
-        `, {
-            did: req.params.did,
-            time: Date.now()
-        })    
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e);        
-    } finally {
-        session.close();
-    }
+    await cypher(`
+        MATCH (d:Device {_id:$did})
+        SET d.last_ping = $time
+        RETURN d
+    `, {
+        did: req.params.did,
+        time: Date.now()
+    })    
 
     res.status(HTTP.OK).end()
 }

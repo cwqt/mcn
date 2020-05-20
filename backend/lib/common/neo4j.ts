@@ -9,7 +9,7 @@ export const cypher = async (query:string, fields:any) => {
     let result:any;
     let session = n4j.session();
     try {
-        result = session.run(query, fields);
+        result = await session.run(query, fields);
     } catch (e) {
         throw new ErrorHandler(HTTP.ServerError, e)
     } finally {

@@ -3,7 +3,7 @@ import { Types }                from 'mongoose'
 
 import { ErrorHandler }     from "../common/errorHandler";
 import { HTTP }             from "../common/http";
-import { n4j }              from '../common/neo4j';
+import { n4j, cypher }              from '../common/neo4j';
 import { filterUserFields } from './User.controller'
 import { RecordableType }   from "../models/Recordable.model";
 import { IDeviceStub }      from '../models/Device.model';
@@ -27,52 +27,34 @@ export const makePost = (content:string | null, repost?:any):IPostStub => {
 
 export const createPost = async (req:Request, res:Response) => {
     let post = makePost(req.body.content);
-
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (u:User {_id:$uid})
-            CREATE (p:Post $body)<-[:POSTED]-(u)
-            RETURN p
-        `, {
-            uid: req.params.uid,
-            body: post
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    } finally {
-        session.close();
-    }
+    let result = await cypher(`
+        MATCH (u:User {_id:$uid})
+        CREATE (p:Post $body)<-[:POSTED]-(u)
+        RETURN p
+    `, {
+        uid: req.params.uid,
+        body: post
+    })
 
     res.status(201).json(result.records[0].get('p').properties);
 }
 
 export const readAllPosts = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-
-    try {
-        result = await session.run(`
-            MATCH (u:User {_id:$uid})-[:POSTED]->(p:Post)
-            OPTIONAL MATCH (p)-[:REPOST_OF]->(o)<-[:POSTED|:CREATED]-(op:User)
-            WHERE o:Plant OR o:Garden OR o:Device OR o:Post
-            WITH p, o, op,
-                SIZE((p)<-[:REPOST_OF]-(:Post)) AS reposts,
-                SIZE((p)<-[:REPLY_TO]-(:Post)) AS replies,
-                SIZE((p)<-[:HEARTS]-(:User)) AS hearts          
-            RETURN p, reposts, replies, hearts, o, op,
-                EXISTS ((:User {_id:$selfid})-[:HEARTS]->(p)) AS isHearting,
-                EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(p)) AS hasReposted
-        `, {
-            uid: req.params.uid,
-            selfid: req.session.user.id
-        })        
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e)        
-    } finally {
-        session.close();
-    }
+    let result = await cypher(`
+        MATCH (u:User {_id:$uid})-[:POSTED]->(p:Post)
+        OPTIONAL MATCH (p)-[:REPOST_OF]->(o)<-[:POSTED|:CREATED]-(op:User)
+        WHERE o:Plant OR o:Garden OR o:Device OR o:Post
+        WITH p, o, op,
+            SIZE((p)<-[:REPOST_OF]-(:Post)) AS reposts,
+            SIZE((p)<-[:REPLY_TO]-(:Post)) AS replies,
+            SIZE((p)<-[:HEARTS]-(:User)) AS hearts          
+        RETURN p, reposts, replies, hearts, o, op,
+            EXISTS ((:User {_id:$selfid})-[:HEARTS]->(p)) AS isHearting,
+            EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(p)) AS hasReposted
+    `, {
+        uid: req.params.uid,
+        selfid: req.session.user.id
+    })        
 
     console.log(result.records.length)
 
@@ -150,27 +132,19 @@ export const readAllPosts = async (req:Request, res:Response) => {
 }
 
 export const readPost = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (p:Post {_id:$pid})
-            OPTIONAL MATCH (:User {_id:$selfid})-[isHearting:HEARTS]->(p)
-            OPTIONAL MATCH (:User {_id:$selfid})-[:POSTED]->(:Post)-[hasReposted:REPOST_OF]->(p)
-            WITH p,
-                size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
-                size((p)<-[:REPLY_TO]-(:Post)) AS replies,
-                size((p)<-[:HEARTS]-(:User)) AS hearts,                
-            RETURN p, reposts, replies, hearts, isHearting, hasReposted
-        `, {
-            pid: req.params.pid,
-            selfid: req.session.user.id
-        })
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e)        
-    } finally {
-        session.close();
-    }
+    let result = await cypher(`
+        MATCH (p:Post {_id:$pid})
+        OPTIONAL MATCH (:User {_id:$selfid})-[isHearting:HEARTS]->(p)
+        OPTIONAL MATCH (:User {_id:$selfid})-[:POSTED]->(:Post)-[hasReposted:REPOST_OF]->(p)
+        WITH p,
+            size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
+            size((p)<-[:REPLY_TO]-(:Post)) AS replies,
+            size((p)<-[:HEARTS]-(:User)) AS hearts,                
+        RETURN p, reposts, replies, hearts, isHearting, hasReposted
+    `, {
+        pid: req.params.pid,
+        selfid: req.session.user.id
+    })
 
     if(!result.records.length) throw new ErrorHandler(HTTP.NotFound, "No such post")
 
@@ -194,20 +168,12 @@ export const updatePost = (req:Request, res:Response) => {
 }
 
 export const deletePost = async (req:Request, res:Response) => {
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (p:Post { _id:$pid })
-            DELETE p
-        `, {
-            pid: req.params.pid
-        })        
-    } catch (e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close()
-    }
+    let result = await cypher(`
+        MATCH (p:Post { _id:$pid })
+        DELETE p
+    `, {
+        pid: req.params.pid
+    })        
 
     if(!result.summary.counters.containsUpdates()) throw new ErrorHandler(HTTP.ServerError, "Could not delete post")
     res.status(200).end();

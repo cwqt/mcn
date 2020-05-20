@@ -4,7 +4,7 @@ import { Types }              from 'mongoose';
 
 import config           from '../config';
 import { ErrorHandler } from "../common/errorHandler";
-import { n4j }          from '../common/neo4j';
+import { n4j, cypher }          from '../common/neo4j';
 import { HTTP }         from "../common/http";
 import { IApiKeyPrivate } from '../models/ApiKey.model';
 
@@ -33,43 +33,27 @@ export const createApiKey = async (req:Request, res:Response) => {
     _id: Types.ObjectId().toHexString()
   }
   
-  let session = n4j.session();
-  let result;
-  try {
-    result = await session.run(`
-      MATCH (d:Device {_id:$did})
-      CREATE (a:ApiKey $body)
-      MERGE (d)-[m:HAS_KEY]->(a)
-      RETURN a
-    `, {
-        did: device_id,
-        body: key
-    })
-  } catch(e) {
-    throw new ErrorHandler(HTTP.ServerError, e)
-  } finally {
-    session.close();
-  }
+  let result = await cypher(`
+    MATCH (d:Device {_id:$did})
+    CREATE (a:ApiKey $body)
+    MERGE (d)-[m:HAS_KEY]->(a)
+    RETURN a
+  `, {
+      did: device_id,
+      body: key
+  })
 
   if(!result.records.length) throw new ErrorHandler(HTTP.ServerError, 'createApiKeyError');
   res.status(HTTP.Created).json(result.records[0].get('a').properties);
 }
 
 export const readApiKey = async (req:Request, res:Response) => {
-  let session = n4j.session();
-  let result;
-  try {
-    result = await session.run(`
-      MATCH (a:ApiKey {_id:$kid})
-      RETURN a
-    `, {
-      kid: req.params.kid
-    })    
-  } catch (e) {
-    throw new ErrorHandler(HTTP.ServerError, e)
-  } finally {
-    session.close();
-  }
+  let result = await cypher(`
+    MATCH (a:ApiKey {_id:$kid})
+    RETURN a
+  `, {
+    kid: req.params.kid
+  })    
 
   if(!result.records.length) throw new ErrorHandler(HTTP.ServerError, 'readApiKeyError')
   res.status(HTTP.Created).json(filterFields(result.records[0].get('a').properties))

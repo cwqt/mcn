@@ -6,7 +6,7 @@ import { ErrorHandler }             from '../common/errorHandler';
 import { HTTP }                     from '../common/http';
 import config                       from '../config';
 import { uploadImageToS3, S3Image } from '../common/storage';
-import { n4j }                      from '../common/neo4j';
+import { n4j, cypher }                      from '../common/neo4j';
 import { Types }                    from 'mongoose';
 
 import {
@@ -22,35 +22,26 @@ export const filterUserFields = (user:any, toStub?:boolean):IUser | IUserStub =>
     return user;
 }
 
-export const readAllUsers = async (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session();
-    try {
-        let result = await session.run(`
-            MATCH (u:User)
-            RETURN u
-        `)
+export const readAllUsers = async (req:Request, res:Response) => {
+    let result = await cypher(`
+        MATCH (u:User)
+        RETURN u
+    `, {})
 
-        let users:IUser[] = result.records.map((record:any) => filterUserFields(record.get('u').properties));
-        res.json(users);
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
+    let users:IUser[] = result.records.map((record:any) => filterUserFields(record.get('u').properties));
+    res.json(users);
 }
 
 export const createUser = async (req:Request, res:Response) => {
     //see if username/email already taken
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`MATCH (u:User) WHERE u.email = $email OR u.username = $username RETURN u`, {
-            email: req.body.email,
-            username: req.body.username
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    }
+    let result = await cypher(`
+        MATCH (u:User)
+        WHERE u.email = $email OR u.username = $username
+        RETURN u
+    `, {
+        email: req.body.email,
+        username: req.body.username
+    })
 
     if(result.records.length) {
         let errors = [];
@@ -79,20 +70,228 @@ export const createUser = async (req:Request, res:Response) => {
         created_at:    Date.now(),
     }
 
-    try {
-        let result = await session.run(`
-            CREATE (u:User $body)
-            RETURN u`,
-        { body: user });
+    result = await cypher(`
+        CREATE (u:User $body)
+        RETURN u
+    `, {
+        body: user
+    });
 
-        let u = filterUserFields(result.records[0].get('u').properties) as IUser;
-        res.status(HTTP.Created).json(u);
+    let u = filterUserFields(result.records[0].get('u').properties) as IUser;
+    res.status(HTTP.Created).json(u);
+}
+
+export const readUserById = async (req:Request, res:Response) => {
+    res.json(await getUserById(req.params.uid));
+}
+
+export const readUserByUsername = async (req:Request, res:Response) => {
+    let result = await cypher(`
+        MATCH (u:User {username: $username})
+        RETURN u
+    `, {
+        username: req.params.username
+    })
+
+    let r = result.records[0];
+    if(!r || r.get('u') == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+    res.json(await getUserById(r.get('u').properties._id))
+}
+
+export const updateUser = async (req:Request, res:Response) => {
+    var newData:any = {}
+    let allowedFields = ["name", "email", "location", "bio", "new_user"];
+    let reqKeys = Object.keys(req.body);
+    for(let i=0; i<reqKeys.length; i++) {
+        if(!allowedFields.includes(reqKeys[i])) continue;
+        newData[reqKeys[i]] = req.body[reqKeys[i]];
+    }
+
+    let result = await cypher(`
+        MATCH (u:User {_id:$uid})
+        SET u += $body
+        RETURN u
+    `, {
+        uid: req.params.uid,
+        body: newData
+    })
+
+    let user = result.records[0].get('u').properties
+    res.json(filterUserFields(user));
+}
+
+export const updateUserAvatar = async (req:Request, res:Response) => {
+    try {
+        let user = await updateImage(req.params.uid, req.file, 'avatar');
+        res.json(user);
     } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    } finally {
-        session.close();
+        throw new ErrorHandler(HTTP.ServerError, e);
     }
 }
+
+export const updateUserCoverImage = async (req:Request, res:Response) => {
+    try {
+        let user = await updateImage(req.params.uid, req.file, 'cover_image');
+        res.json(user);
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    }
+}
+
+export const deleteUser = async (req:Request, res:Response) => {
+    await cypher(`
+        MATCH (u:User {_id:$uid})
+        DETACH DELETE u
+    `, {
+        uid: req.params.uid
+    })
+
+    res.status(HTTP.OK).end();
+}
+
+export const loginUser = async (req:Request, res:Response, next:NextFunction) => {
+    let email = req.body.email;
+    let password = req.body.password;
+
+    //find user by email
+    let result = await cypher(`
+        MATCH (u:User {email: $email})
+        RETURN u
+    `, {
+        email:email
+    })
+    if(!result.records.length) next(new ErrorHandler(HTTP.NotFound, [{param:'email', msg:'No such user for this email'}]));
+
+    let user:IUserPrivate = result.records[0].get('u').properties;
+    if(!user.verified) next(new ErrorHandler(HTTP.Unauthorised, [{param:'form', msg:'Your account has not been verified'}]));
+
+    try {
+        let match = await bcrypt.compare(password, user.pw_hash);
+        if(!match) next( new ErrorHandler(HTTP.Unauthorised, [{param:'password', msg:'Incorrect password'}]));
+
+        req.session.user = {
+            id: user._id,
+            admin: user.admin || false
+        }
+
+        user = await getUserById(user._id) as IUser;
+        res.json(filterUserFields(user));    
+    } catch(e) {
+        throw new ErrorHandler(HTTP.ServerError, e);
+    }
+}
+
+export const logoutUser = (req:Request, res:Response, next:NextFunction) => {
+    if(req.session) {
+        req.session.destroy(err => {
+            if(err) return next(new ErrorHandler(HTTP.ServerError, 'Logging out failed'))
+            res.status(HTTP.OK).end()
+        })
+    }
+}
+
+export const blockUser = async (req:Request, res:Response) => {
+    await cypher(`
+        MATCH (u1:User {_id:$uid1}), (u2:User {_id:$uid2})
+        OPTIONAL MATCH (u1)-[r:FOLLOWS]-(u2)
+        DELETE r
+        MERGE (u1)-[:BLOCKS]->(u2)
+    `, {
+        uid1: req.session.user.id,
+        uid2: req.params.uid2
+    })
+
+    res.status(HTTP.OK).end();
+}
+
+export const unblockUser = async (req:Request, res:Response) => {
+    await cypher(`
+        MATCH (:User {_id:$uid1})-[r:BLOCKS]->(:User {_id:$uid2})
+        DELETE r
+    `, {
+        uid1: req.session.user.id,
+        uid2: req.params.uid2
+    })
+
+    res.status(HTTP.OK).end();
+}
+
+export const followUser = async (req:Request, res:Response) => {
+    let result = await cypher(`
+        MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
+        OPTIONAL MATCH (u1)-[blocked:BLOCKS]-(u2)
+        return u1, u2, blocked
+    `, {
+        uid1: req.session.user.id,
+        uid2: req.params.uid2
+    })
+
+    if(result.records[0].get('blocked') != null) {
+        throw new ErrorHandler(HTTP.Unauthorised, "Can't follow blocked user");
+    }
+
+    await cypher(`
+        MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
+        MERGE (u1)-[:FOLLOWS]->(u2)
+    `, {
+        uid1: req.session.user.id,
+        uid2: req.params.uid2,
+    })
+
+    res.status(HTTP.OK).end();
+}
+
+export const unfollowUser = async (req:Request, res:Response) => {
+    await cypher(`
+        MATCH (:User { _id: $uid1 })-[r:FOLLOWS]->(:User { _id: $uid2 })
+        DELETE r
+    `, {
+        uid1: req.session.user.id,
+        uid2: req.params.uid2
+    })
+
+    res.status(HTTP.OK).end();
+}
+
+export const readFollowers = async (req:Request, res:Response) => {
+    let result = await cypher(`
+        MATCH (follower:User)-[:FOLLOWS]->(u:User {_id:$uid})
+        RETURN follower
+    `, {
+        uid: req.params.uid
+    })
+
+    let followers = result.records.map((record:any) => filterUserFields(record.get('follower').properties));
+    res.json(followers)
+
+}
+
+export const readFollowing = async (req:Request, res:Response) => {
+    let result = await cypher(`
+        MATCH (follower:User)<-[:FOLLOWS]-(u:User {_id:$uid})
+        RETURN follower
+    `, {
+        uid: req.params.uid
+    })
+
+    let followers = result.records.map((record:any) => filterUserFields(record.get('follower').properties));
+    res.json(followers)
+}
+
+export const readBlockedUsers = async (req:Request, res:Response) => {
+    let result = await cypher(`
+        MATCH (blockee:User)<-[:BLOCKS]-(u:User {_id:$uid})
+        RETURN blockee
+    `, {
+        uid: req.params.uid
+    })
+
+    let blockees = result.records.map((record:any) => filterUserFields(record.get('blockee').properties));
+    res.json(blockees)
+}
+
+
+// HELPER FUNCTIONS ===============================================================================
 
 export const getUserById = async (_id:string):Promise<IUser> => {
     let session = n4j.session();
@@ -129,59 +328,6 @@ export const getUserById = async (_id:string):Promise<IUser> => {
     return filterUserFields(user) as IUser;
 }
 
-export const readUserById = async (req:Request, res:Response, next:NextFunction) => {
-    res.json(await getUserById(req.params.uid));
-}
-
-export const readUserByUsername = async (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (u:User {username: $username})
-            RETURN u
-        `, { username: req.params.username })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError)
-    } finally {
-        session.close()
-    }
-
-    let r = result.records[0];
-    if(!r || r.get('u') == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
-    res.json(await getUserById(r.get('u').properties._id))
-}
-
-export const updateUser = async (req:Request, res:Response, next:NextFunction) => {
-    var newData:any = {}
-    let allowedFields = ["name", "email", "location", "bio", "new_user"];
-    let reqKeys = Object.keys(req.body);
-    for(let i=0; i<reqKeys.length; i++) {
-        if(!allowedFields.includes(reqKeys[i])) continue;
-        newData[reqKeys[i]] = req.body[reqKeys[i]];
-    }
-
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (u:User {_id:$uid})
-            SET u += $body
-            RETURN u
-        `, {
-            uid: req.params.uid,
-            body: newData
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    } finally {
-        session.close();
-    }
-
-    let user = result.records[0].get('u').properties
-    res.json(filterUserFields(user));
-}
-
 const updateImage = async (user_id:string, file:Express.Multer.File, field:string) => {
     let image:S3Image;
     try {
@@ -205,231 +351,4 @@ const updateImage = async (user_id:string, file:Express.Multer.File, field:strin
     }
 
     return filterUserFields(result.records[0].get('u').properties);
-}
-
-export const updateUserAvatar = async (req:Request, res:Response, next:NextFunction) => {
-    try {
-        let user = await updateImage(req.params.uid, req.file, 'avatar');
-        res.json(user);
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    }
-}
-
-export const updateUserCoverImage = async (req:Request, res:Response, next:NextFunction) => {
-    try {
-        let user = await updateImage(req.params.uid, req.file, 'cover_image');
-        res.json(user);
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    }
-}
-
-export const deleteUser = async (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session();
-    try {
-        await session.run(`
-            MATCH (u:User {_id:$uid})
-            DETACH DELETE u
-        `, {
-            uid: req.params.uid
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
-
-    res.status(HTTP.OK).end();
-}
-
-export const loginUser = async (req:Request, res:Response, next:NextFunction) => {
-    let email = req.body.email;
-    let password = req.body.password;
-
-    //find user by email
-    let result;
-    let session = n4j.session()
-    try {
-        result = await session.run(`MATCH (u:User {email: $email}) RETURN u`, {email:email})
-        if(!result.records.length) next(new ErrorHandler(HTTP.NotFound, [{param:'email', msg:'No such user for this email'}]));
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
-
-    let user:IUserPrivate = result.records[0].get('u').properties;
-    if(!user.verified) next(new ErrorHandler(HTTP.Unauthorised, [{param:'form', msg:'Your account has not been verified'}]));
-
-    try {
-        let match = await bcrypt.compare(password, user.pw_hash);
-        if(!match) next( new ErrorHandler(HTTP.Unauthorised, [{param:'password', msg:'Incorrect password'}]));
-
-        req.session.user = {
-            id: user._id,
-            admin: user.admin || false
-        }
-
-        user = await getUserById(user._id) as IUser;
-        res.json(filterUserFields(user));    
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    }
-}
-
-export const logoutUser = (req:Request, res:Response, next:NextFunction) => {
-    if(req.session) {
-        req.session.destroy(err => {
-            if(err) return next(new ErrorHandler(HTTP.ServerError, 'Logging out failed'))
-            res.status(HTTP.OK).end()
-        })
-    }
-}
-
-export const blockUser = async (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session();
-
-    try {
-        await session.run(`
-            MATCH (u1:User {_id:$uid1}), (u2:User {_id:$uid2})
-            OPTIONAL MATCH (u1)-[r:FOLLOWS]-(u2)
-            DELETE r
-            MERGE (u1)-[:BLOCKS]->(u2)
-        `, {
-            uid1: req.session.user.id,
-            uid2: req.params.uid2
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
-    res.status(HTTP.OK).end();
-}
-
-export const unblockUser = async (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session();
-    try {
-        await session.run(`
-            MATCH (:User {_id:$uid1})-[r:BLOCKS]->(:User {_id:$uid2})
-            DELETE r
-        `, {
-            uid1: req.session.user.id,
-            uid2: req.params.uid2
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
-    res.status(HTTP.OK).end();
-}
-
-export const followUser = async (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session();
-    try {
-        let result = await session.run(`
-            MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
-            OPTIONAL MATCH (u1)-[blocked:BLOCKS]-(u2)
-            return u1, u2, blocked
-        `, {
-            uid1: req.session.user.id,
-            uid2: req.params.uid2
-        })
-
-        if(result.records[0].get('blocked') != null) {
-            throw new ErrorHandler(HTTP.Unauthorised, "Can't follow blocked user");
-        }
-
-        await session.run(`
-            MATCH (u1:User { _id: $uid1 }), (u2:User { _id: $uid2 })
-            MERGE (u1)-[:FOLLOWS]->(u2)
-        `, {
-            uid1: req.session.user.id,
-            uid2: req.params.uid2,
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    } finally {
-        session.close();
-    }
-
-    res.status(HTTP.OK).end();
-}
-
-export const unfollowUser = async (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session()
-    try {
-        await session.run(`
-            MATCH (:User { _id: $uid1 })-[r:FOLLOWS]->(:User { _id: $uid2 })
-            DELETE r
-        `, {
-            uid1: req.session.user.id,
-            uid2: req.params.uid2
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e);
-    } finally {
-        session.close();
-    }
-
-    res.status(HTTP.OK).end();
-}
-
-export const readFollowers = async (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session();
-    try {
-        let result = await session.run(`
-            MATCH (follower:User)-[:FOLLOWS]->(u:User {_id:$uid})
-            RETURN follower
-        `, {
-            uid: req.params.uid
-        })
-
-        let followers = result.records.map((record:any) => filterUserFields(record.get('follower').properties));
-        res.json(followers)
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    } finally {
-        session.close();
-    }
-}
-
-export const readFollowing = async (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session();
-    try {
-        let result = await session.run(`
-            MATCH (follower:User)<-[:FOLLOWS]-(u:User {_id:$uid})
-            RETURN follower
-        `, {
-            uid: req.params.uid
-        })
-
-        let followers = result.records.map((record:any) => filterUserFields(record.get('follower').properties));
-        res.json(followers)
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    } finally {
-        session.close();
-    }
-}
-
-export const readBlockedUsers = async (req:Request, res:Response, next:NextFunction) => {
-    let session = n4j.session();
-    try {
-        let result = await session.run(`
-            MATCH (blockee:User)<-[:BLOCKS]-(u:User {_id:$uid})
-            RETURN blockee
-        `, {
-            uid: req.params.uid
-        })
-
-        let blockees = result.records.map((record:any) => filterUserFields(record.get('blockee').properties));
-        res.json(blockees)
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    } finally {
-        session.close();
-    }
 }

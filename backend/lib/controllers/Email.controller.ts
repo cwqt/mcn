@@ -5,7 +5,7 @@ import nodemailer            from 'nodemailer';
 import config           from '../config';
 import { ErrorHandler } from '../common/errorHandler';
 import { HTTP }         from '../common/http';
-import { n4j }          from '../common/neo4j';
+import { n4j, cypher }          from '../common/neo4j';
 
 const generateEmailHash  = (email:string) => {
     const hash = generateVerificationHash(email, config.PRIVATE_KEY, 60)
@@ -60,21 +60,14 @@ export const verifyUserEmail = async (req:Request, res:Response) => {
     let isVerified = verifyEmail(email, hash);
     if(!isVerified) throw new ErrorHandler(HTTP.BadRequest, 'Not a valid hash')
 
-    let session = n4j.session();
-    let result;
-    try {
-        result = await session.run(`
-            MATCH (u:User {email: $email})
-            SET u.verified = TRUE
-            RETURN u`
-        , {
-            email: email
-        })
-    } catch(e) {
-        throw new ErrorHandler(HTTP.ServerError, e)
-    } finally {
-        session.close();
-    }
+    let result = await cypher(`
+        MATCH (u:User {email: $email})
+        SET u.verified = TRUE
+        RETURN u`
+    , {
+        email: email
+    })
+
     let u = result.records[0].get('u').properties;
     if(!u.verified) return res.redirect(HTTP.Moved, `${config.FE_URL}/verified?state=false`)
 
