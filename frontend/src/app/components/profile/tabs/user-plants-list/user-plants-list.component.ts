@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./user-plants-list.component.scss']
 })
 export class UserPlantsListComponent implements OnInit {
-  @Input() user:IUser;
+  @Input() authorUser:IUser;
   @Input() currentUser:IUser;
   @Input() canLoad:BehaviorSubject<boolean>;
   @Input() currentIndex:number;

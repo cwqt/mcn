@@ -1,4 +1,8 @@
-<app-thumb-wrapper [thumbItem]="plant" [type]="'plant'" [user]="user" [currentUser]="currentUser">
+<app-thumb-wrapper
+    [recordable]="plant"
+    [type]="'plant'"
+    [authorUser]="authorUser"
+    [currentUser]="currentUser">
     <div class="title">
         <h1>{{plant.name}}</h1>
         <h3>{{plant._id}}</h3>
@@ -7,44 +11,23 @@
     <br />
 
     <mat-accordion class="object-meta">
-        <mat-expansion-panel (click)="getPlantMeta()">
-            <mat-expansion-panel-header>
-                <mat-panel-title>
-                    Plant information
-                </mat-panel-title>
-            </mat-expansion-panel-header>
-            <div *ngIf="cache.plant.data && !cache.plant.error">
-                <p><b>Plant id:</b>{{cache.plant.data._id}}</p>
-                <p><b>Species:</b>{{cache.plant.data.species}}</p>
-
-                <p>
-                    <b>Parameters:</b>
-                    <span>
-                        <span *ngFor="let parameter of cache.plant.data.parameters | keyvalue" class="parameter-item">{{parameter.key}} ({{parameter.value}})</span>
-                    </span>
-                </p> 
-            </div>
-            <mat-spinner *ngIf="!cache.plant.data && !cache.plant.error"></mat-spinner>
-            <p *ngIf="cache.plant.error">{{cache.plant.error}}</p>
-        </mat-expansion-panel>
-
-        <!-- <mat-expansion-panel (click)="getLatestData()">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-                Latest data
-            </mat-panel-title>
-            <mat-panel-description>
-                {{ device.last_ping | amTimeAgo }}
-            </mat-panel-description>
-          </mat-expansion-panel-header>
-            <div *ngIf="cache.latest_data.data && !cache.latest_data.error">
-                <p *ngFor="let field of cache.latest_data.data.data | keyvalue">
-                    <b>{{field.key}}:</b> {{field.value}} {{deviceInfo.recording[field.key]}}
-                </p>
-            </div>
-            <mat-spinner *ngIf="!cache.latest_data.data && !cache.latest_data.error"></mat-spinner>
-            <p *ngIf="cache.latest_data.error">{{cache.latest_data.error}}</p>
-        </mat-expansion-panel> -->
+        <app-loadable-panel
+            [title]="'Plant information'"
+            [loading]="cache.plant.loading"
+            [hasData]="cache.plant.data != undefined"
+            (onClick)="getPlantMeta()">
+                <div *ngIf="cache.plant.data">
+                    <p><b>Plant id:</b>{{cache.plant.data._id}}</p>
+                    <p><b>Species:</b>{{cache.plant.data.species}}</p>
+    
+                    <p>
+                        <b>Parameters:</b>
+                        <span>
+                            <span *ngFor="let parameter of cache.plant.data.parameters | keyvalue" class="parameter-item">{{parameter.key}} ({{parameter.value}})</span>
+                        </span>
+                    </p>     
+                </div>
+        </app-loadable-panel>        
       </mat-accordion>
 </app-thumb-wrapper>
 

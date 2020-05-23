@@ -9,16 +9,16 @@
         </div>
 
         <div class="profile-body-container">
-            <app-profile-sidebar [profileUser]="profileUser" [currentUser]="currentUser"></app-profile-sidebar>
+            <app-profile-sidebar [profileUser]="authorUser" [currentUser]="currentUser"></app-profile-sidebar>
 
-            <div class="profile-body-scroll" *ngIf="profileUser">
+            <div class="profile-body-scroll" *ngIf="authorUser">
                 <mat-card class="profile-body">
                     
                     <div *ngIf="showOutlet" class="tab-body-header">
                         <button mat-icon-button (click)="goBackToProfile()">
                             <mat-icon>keyboard_backspace</mat-icon>
                         </button>
-                        <h1>{{pretty(tabs[tabIndex].label)}}</h1>
+                        <h1>{{outletTitle}}</h1>
                     </div>
 
                     <div class="children">
@@ -39,7 +39,7 @@
                                 <ndc-dynamic
                                     [ndcDynamicComponent]="tab.component"
                                     [ndcDynamicInputs]="{
-                                        profileUser:profileUser,
+                                        authorUser:authorUser,
                                         currentUser:currentUser,
                                         selfIndex:index,
                                         currentIndex:tabIndex,

@@ -11,7 +11,7 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./user-posts-list.component.scss']
 })
 export class UserPostsListComponent implements OnInit {
-  @Input() profileUser:IUser;
+  @Input() authorUser:IUser;
   @Input() currentUser:IUser;
   @Input() canLoad:BehaviorSubject<boolean>;
   @Input() currentIndex:number;

@@ -12,8 +12,8 @@ import { DynamicComponentModule, DynamicIoModule } from 'ng-dynamic-component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { ClickOutsideModule } from 'ng-click-outside';
 import { ChartjsModule } from '@ctrl/ngx-chartjs';
-import { CrystalLightboxModule} from '@crystalui/angular-lightbox';
-import { PopoverModule} from '../assets/popover';
+import { CrystalLightboxModule } from '@crystalui/angular-lightbox';
+import { PopoverModule } from '../assets/popover';
 
 import { IndexComponent }           from './routes/index/index.component';
 import { LoginComponent }           from './components/landing/login/login.component';
@@ -27,13 +27,22 @@ import { NotFoundComponent }        from './components/pages/not-found/not-found
 import { WrapperComponent }         from './components/app/wrapper/wrapper.component';
 import { HeaderBarComponent }       from './components/app/header-bar/header-bar.component';
 import { SidebarComponent }         from './components/app/sidebar/sidebar.component';
+import { RepostDialogComponent } from './components/app/repost-dialog/repost-dialog.component';
 
 import { LoadButtonComponent }      from './components/_helpers/load-button/load-button.component';
+import { RoundedButtonComponent } from './components/_helpers/rounded-button/rounded-button.component';
+import { LoadablePanelComponent } from './components/_helpers/loadable-panel/loadable-panel.component';
+
+
+import { PostableRepostMenuPopoverComponent } from './components/app/postable/postable-repost-menu-popover/postable-repost-menu-popover.component';
+import { PostableSocialActionsComponent } from './components/app/postable/postable-social-actions/postable-social-actions.component';
 
 import { FeedComponent }            from './routes/feed/feed.component';
 import { CreatePostFormComponent }  from './routes/feed/create-post-form/create-post-form.component';
 
 import { DeviceComponent }          from './routes/device/device.component';
+import { ScheduledTasksComponent } from './routes/device/scheduled-tasks/scheduled-tasks.component';
+import { DeviceControlComponent } from './routes/device/device-control/device-control.component';
 
 import { ProfileComponent }         from './routes/profile/profile.component';
 import { ProfileSidebarComponent }  from './components/profile/profile-sidebar/profile-sidebar.component';
@@ -57,27 +66,25 @@ import { MatInputModule }         from '@angular/material/input';
 import { MatDividerModule }       from '@angular/material/divider';
 import { MatCheckboxModule }      from '@angular/material/checkbox';
 import { MatStepperModule }       from '@angular/material/stepper';
-import { MatIconModule, MatIcon } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule }          from '@angular/material/tabs';
-import {MatCardModule}            from '@angular/material/card';
-import {MatDialogModule}          from '@angular/material/dialog';
+import { MatCardModule }            from '@angular/material/card';
+import { MatDialogModule }          from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {MatExpansionModule} from '@angular/material/expansion';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
-import {MatTableModule} from '@angular/material/table';
-import {MatSelectModule} from '@angular/material/select';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
+
+
 import { MeasurementsGraphsComponent } from './components/measurements-graphs/measurements-graphs.component';
-import { RoundedButtonComponent } from './components/_helpers/rounded-button/rounded-button.component';
 import { PlantComponent } from './routes/plant/plant.component';
 import { DocumentationComponent } from './routes/documentation/documentation.component';
 import { ThumbWrapperComponent } from './components/profile/tabs/thumb-wrapper/thumb-wrapper.component';
-import { RepostDialogComponent } from './components/app/repost-dialog/repost-dialog.component';
 import { HeaderBarUserMenuComponent } from './components/app/header-bar/header-bar-user-menu/header-bar-user-menu.component';
-
-import { PostableRepostMenuPopoverComponent } from './components/app/postable/postable-repost-menu-popover/postable-repost-menu-popover.component';
-import { LoadablePanelComponent } from './components/_helpers/loadable-panel/loadable-panel.component';
-import { PostableSocialActionsComponent } from './components/app/postable/postable-social-actions/postable-social-actions.component';
+import { PostableRepliesComponent } from './components/app/postable/postable-replies/postable-replies.component';
 
 @NgModule({
   declarations: [
@@ -120,7 +127,10 @@ import { PostableSocialActionsComponent } from './components/app/postable/postab
     HeaderBarUserMenuComponent,
     PostableRepostMenuPopoverComponent,
     LoadablePanelComponent,
-    PostableSocialActionsComponent
+    PostableSocialActionsComponent,
+    ScheduledTasksComponent,
+    DeviceControlComponent,
+    PostableRepliesComponent
   ],
   imports: [
     BrowserModule,
@@ -153,7 +163,8 @@ import { PostableSocialActionsComponent } from './components/app/postable/postab
     MatExpansionModule,
     MatSlideToggleModule,
     MatTableModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatChipsModule
 
   ],
   providers: [

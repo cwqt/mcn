@@ -22,6 +22,8 @@ import { RecordableType } from '../models/Recordable.model';
 import { readAllRecordables } from '../controllers/Recordable.controller';
 import { heartPostable, unheartPostable, repostPostable } from '../controllers/Postable.controller';
 
+import tasks    from './tasks.routes';
+
 const router = AsyncRouter({mergeParams: true});
 router.use((req:Request, res:Response, next:NextFunction) => {
     res.locals.type = RecordableType.Device
@@ -70,6 +72,8 @@ deviceRouter.post('/keys', validate([
         .isIn(Object.values(RecordableType)).withMessage(`must be of type: ${Object.values(RecordableType)}`),
     body('key_name').not().isEmpty().trim().withMessage('device name must be named'),
 ]), createApiKey)
+
+deviceRouter.use(tasks, '/tasks')
 
 // API KEYS =======================================================================================
 const keyRouter = AsyncRouter({mergeParams:true});

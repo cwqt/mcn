@@ -22,9 +22,9 @@ const routes: Routes = [
     path: ':username',
     component: ProfileComponent, canActivate: [AuthGuard],
     children: [
-      { path: 'posts/:pid', component: PostComponent },
+      { path: 'posts/:pid',   component: PostComponent },
       { path: 'devices/:did', component: DeviceComponent },
-      { path: 'plants/:rid', component: PlantComponent },
+      { path: 'plants/:rid',  component: PlantComponent },
       // { path: 'gardens/:gid', component: PostComponent },
     ]
   },

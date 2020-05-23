@@ -77,11 +77,19 @@ export const assignDeviceToRecordable = async (req:Request, res:Response) => {
 export const readDevice = async (req:Request, res:Response) => {
     let result = await cypher(`
         MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
-        WHERE r:Plant OR r:GARDEN
+        WHERE r:Plant OR r:Garden
+        WITH d, r,
+            SIZE((d)<-[:REPOST_OF]-(:Post)) AS reposts,
+            SIZE((d)<-[:REPLY_TO]-(:Post)) AS replies,
+            SIZE((d)<-[:HEARTS]-(:User)) AS hearts
+
         OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
-        RETURN d, r, k
+        RETURN d,r,k, hearts, replies, reposts,
+            EXISTS ((:User {_id:$selfid})-[:HEARTS]->(d)) AS isHearting,
+            EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(d)) AS hasReposted
     `, {
-        did: req.params.did
+        did: req.params.did,
+        selfid: req.session.user.id
     })
 
     let device = result.records[0].get('d')?.properties;
@@ -94,8 +102,16 @@ export const readDevice = async (req:Request, res:Response) => {
         ...device,
         state: getDeviceState(device),
         assigned_to: recordable || undefined,
-        api_key: key as IApiKey || undefined
+        api_key: key as IApiKey || undefined,
+        meta: {
+            isHearting:  result.records[0].get('isHearting') ? true : false,
+            hasReposted: result.records[0].get('hasReposted') ? true : false,
+            hearts:      result.records[0].get('hearts').toNumber(),
+            reposts:     result.records[0].get('reposts').toNumber(),
+            replies:     result.records[0].get('replies').toNumber(),    
+        }    
     };
+
 
     if(recordable) {
         data.assigned_to = {

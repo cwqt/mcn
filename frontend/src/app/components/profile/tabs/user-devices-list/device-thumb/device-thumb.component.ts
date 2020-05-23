@@ -25,7 +25,7 @@ interface IDeviceState {
   styleUrls: ['./device-thumb.component.scss']
 })
 export class DeviceThumbComponent implements OnInit {
-  @Input() profileUser:IUser;
+  @Input() authorUser:IUser;
   @Input() currentUser:IUser;
   @Input() device:IDeviceStub;
   @Input() mini:boolean;
@@ -81,7 +81,7 @@ export class DeviceThumbComponent implements OnInit {
       this.cache.device.loading = true;
       this.cache.device.error = "";
 
-      this.deviceService.getDevice(this.profileUser._id, this.device._id)
+      this.deviceService.getDevice(this.authorUser._id, this.device._id)
       .then((device:IDevice) => {
         this.cache.device.data = device;
       })
@@ -94,7 +94,7 @@ export class DeviceThumbComponent implements OnInit {
     if(!this.cache.latest_data.data) {
       this.cache.latest_data.loading = true;
 
-      this.deviceService.getLatestMeasurement(this.profileUser._id, this.device._id)
+      this.deviceService.getLatestMeasurement(this.authorUser._id, this.device._id)
         .then((measurement:IMeasurementModel) => this.cache.latest_data.data = measurement[0])
         .catch(e => this.cache.latest_data.error = e)
         .finally(() => this.cache.latest_data.loading = false)
@@ -103,7 +103,7 @@ export class DeviceThumbComponent implements OnInit {
 
   requestLatestData() {
     // TODO: backend stuff for requesting data from devices
-    // this.deviceService.requestMeasurementsUpdate(this.profileUser._id, this.device._id)
+    // this.deviceService.requestMeasurementsUpdate(this.authorUser._id, this.device._id)
     //   .then((measurement:IMeasurementModel) => this.cache.latest_data.data = measurement[0])
     //   .catch(e => this.cache.latest_data.error = e)
     //   .finally(() => this.cache.latest_data.loading = false)

@@ -1,6 +1,11 @@
 <div class="header">
     <h1>plants ({{plants.length}})</h1>
-    <app-rounded-button [color]="'primary'" [icon]="'add'" (onClick)="openCreatePlantDialog()">add plant</app-rounded-button>
+    <app-rounded-button
+        [color]="'primary'"
+        [icon]="'add'"
+        (onClick)="openCreatePlantDialog()">
+        add plant
+    </app-rounded-button>
 </div>
 
 <mat-divider></mat-divider>
@@ -8,7 +13,11 @@
 
 <div *ngIf="plants && !loading">
     <div *ngFor="let plant of plants">
-        <app-plant-thumb [plant]="plant" [user]="user" [currentUser]="currentUser"></app-plant-thumb>
+        <app-plant-thumb
+            [plant]="plant"
+            [authorUser]="authorUser"
+            [currentUser]="currentUser">
+        </app-plant-thumb>
     </div>
 </div>
 

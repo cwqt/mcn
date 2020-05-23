@@ -1,10 +1,11 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { IUser } from '../../../../../../../../backend/lib/models/User.model';
+import { IUser, IUserStub } from '../../../../../../../../backend/lib/models/User.model';
 import { Router } from '@angular/router';
 import { PostService } from 'src/app/services/post.service';
 import { Popover, PopoverProperties } from 'src/assets/popover';
 import { MatButton } from '@angular/material/button';
 import { PostableRepostMenuPopoverComponent } from 'src/app/components/app/postable/postable-repost-menu-popover/postable-repost-menu-popover.component';
+import { RepostType } from '../../../../../../../../backend/lib/models/Post.model';
 
 @Component({
   selector: 'app-post-thumb',
@@ -13,13 +14,13 @@ import { PostableRepostMenuPopoverComponent } from 'src/app/components/app/posta
 })
 export class PostThumbComponent implements OnInit {
   @Input() post:any;
-  @Input() author:IUser;
+  @Input() authorUser:IUser;
   @Input() currentUser:IUser;
   @Input() mini:boolean = false;
 
   //reposts ["repost", "repost-comment"]
-  @Input() parentAuthor:any;
-  @Input() repostType:string;
+  @Input() parentAuthorUser:IUserStub;
+  @Input() repostType:RepostType | 'repost';
 
   @ViewChild('repostMenuHitbox') repostMenuHitbox:MatButton;
 

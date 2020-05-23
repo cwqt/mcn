@@ -2,12 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DeviceService } from 'src/app/services/device.service';
 import { UserService } from 'src/app/services/user.service';
-import { IDevice } from '../../../../../backend/lib/models/Device.model';
+import { IDevice, IDeviceStub } from '../../../../../backend/lib/models/Device.model';
 import { IMeasurementModel, IMeasurement } from '../../../../../backend/lib/models/Measurement.model';
 import { PlantService } from 'src/app/services/plant.service';
 import {
   HardwareInformation,
   HardwareDevice } from '../../../../../backend/lib/common/types/hardware.types';
+import { IUser } from '../../../../../backend/lib/models/User.model';
+
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-device',
@@ -15,66 +18,79 @@ import {
   styleUrls: ['./device.component.scss']
 })
 export class DeviceComponent implements OnInit {
-  user_id:string;
-  device_id:string;
   deviceInfo:HardwareDevice;
+  currentUser:IUser;
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   cache = {
     device: {
-      data: {} as IDevice,
+      data: undefined,
       loading: true,
       error: ""
     },
     measurements: {
-      data: [] as IMeasurementModel[],
+      data: undefined,
+      loading: true,
+      error: ""
+    },
+    user: {
+      data: undefined,
       loading: true,
       error: ""
     }
   }
   
   constructor(private route:ActivatedRoute,
+    private userService:UserService,
     private router:Router,
     private plantService:PlantService,
     private deviceService:DeviceService) {
   }
 
-  get device():IDevice {
-    return this.cache.device.data;
+  get user():IUser { return this.cache.user.data }
+  get device():IDevice { return this.cache.device.data }
+  get measurements():IMeasurementModel[] { return this.cache.measurements.data }
+
+  async ngOnInit() {
+    this.currentUser = this.userService.currentUserValue;
+
+    this.route.params.subscribe(async (params) => {
+      await this.getUser(params.username),
+      await this.getDevice(params.did)
+      this.getDeviceMeasurements();
+    }).unsubscribe();
   }
 
-  get measurements():IMeasurementModel[] {
-    return this.cache.measurements.data;
+  getUser(username:string):Promise<IUser> {
+    this.cache.user.loading = true;
+    return this.userService.getUserByUsername(username)
+      .then(user => this.cache.user.data = user)
+      .catch(e => this.cache.user.error = e)
+      .finally(() => this.cache.user.loading = false)
   }
 
-  ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.user_id = params.username
-      this.device_id = params.did
-      this.getDevice().then(() => {
-        this.deviceInfo = HardwareInformation[this.cache.device.data.hardware_model];
-        console.log(this.cache.device.data, this.deviceInfo)
-        this.getDeviceMeasurements();
-      })
-    });
-  }
-
-  getDevice() {
+  getDevice(device_id:string):Promise<IDevice> {
     this.cache.device.loading = true;
-    return this.deviceService.getDevice(this.device_id, this.device_id)
+    return this.deviceService.getDevice(this.cache.user.data._id, device_id)
       .then((device:IDevice) => this.cache.device.data = device)
       .catch(e => this.cache.device.error = e)
       .finally(() => this.cache.device.loading = false)
   }
 
-  getDeviceMeasurements() {
+  getDeviceMeasurements():Promise<IMeasurementModel[]> {
     this.cache.measurements.loading = true;
-    this.deviceService.getMeasurements(this.user_id, this.cache.device.data._id)
+    return this.deviceService.getMeasurements(this.cache.user.data._id, this.cache.device.data._id)
       .then((measurements:IMeasurementModel[]) => this.cache.measurements.data = measurements)
       .catch(e => this.cache.measurements.error = e)
       .finally(() => this.cache.measurements.loading = false)
   }
 
   goToAssignedRecordable() {
-    this.router.navigate([`/${this.device.assigned_to._id}/${this.device.assigned_to.type}s/${this.device.assigned_to._id}`]);
+    this.router.navigate([`/${this.cache.user.data.username}/${this.device.assigned_to.type}s/${this.device.assigned_to._id}`]);
   }
+
+  tags = ["Device", "I<3Plants", "Wemos D1 Mini"];
+
+  addTag(tag:string) {}
+  removeTag(tag:string) {}
 }

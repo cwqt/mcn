@@ -1,15 +1,11 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { IPlant } from '../../../../../../../backend/lib/models/Plant.model';
-import { IDevice, IDeviceStub } from '../../../../../../../backend/lib/models/Device.model';
-import { IRecordableStub, RecordableType } from '../../../../../../../backend/lib/models/Recordable.model';
-import { MatDialog } from '@angular/material/dialog';
-import { RepostDialogComponent } from 'src/app/components/app/repost-dialog/repost-dialog.component';
+import { IRecordableStub, RecordableType, IRecordable } from '../../../../../../../backend/lib/models/Recordable.model';
 import { IUser } from '../../../../../../../backend/lib/models/User.model';
 import { Router } from '@angular/router';
 import { RecordableService } from 'src/app/services/recordable.service';
 import { Popover, PopoverProperties } from 'src/assets/popover';
-import { PostableRepostMenuPopoverComponent, IPostableMenuData } from 'src/app/components/app/postable/postable-repost-menu-popover/postable-repost-menu-popover.component';
-import { MatButton } from '@angular/material/button';
+import { Postable } from '../../../../../../../backend/lib/models/Post.model';
+import { IDeviceStub } from '../../../../../../../backend/lib/models/Device.model';
 
 @Component({
   selector: 'app-thumb-wrapper',
@@ -17,12 +13,12 @@ import { MatButton } from '@angular/material/button';
   styleUrls: ['./thumb-wrapper.component.scss']
 })
 export class ThumbWrapperComponent implements OnInit {
-  @Input() thumbItem:IRecordableStub | IDeviceStub;
+  @Input() recordable:IRecordableStub | IDeviceStub;
   @Input() type:RecordableType;
   @Input() mini:boolean = false;
   
   @Input() currentUser:IUser;
-  @Input() user:IUser;
+  @Input() authorUser:IUser;
   
   thumbPlaceholderIcon:string;
 
@@ -52,6 +48,6 @@ export class ThumbWrapperComponent implements OnInit {
   }
 
   gotoItem() {
-    this.router.navigate([`${this.user.username}/${this.type}s/${this.thumbItem._id}`])
+    this.router.navigate([`${this.authorUser.username}/${this.type}s/${this.recordable._id}`])
   }
 }

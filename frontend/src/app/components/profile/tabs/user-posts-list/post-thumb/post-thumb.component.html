@@ -9,15 +9,15 @@
         </button>
         
         <p *ngIf="repostType == 'repost'" class="repost-line">
-            <mat-icon>repeat</mat-icon> {{parentAuthor.name}} Reposted 
+            <mat-icon>repeat</mat-icon> {{parentAuthorUser.name}} Reposted 
         </p>
 
         <div class="post-thumb-content">
             <div class="left">
-                <img src="{{author.avatar}}">
+                <img src="{{authorUser.avatar}}">
             </div>
             <div class="right">
-                <p><b>{{author.name}}</b> <span>@{{author.username}} · {{ post.created_at | amTimeAgo}}</span></p>
+                <p><b>{{authorUser.name}}</b> <span>@{{authorUser.username}} · {{ post.created_at | amTimeAgo}}</span></p>
                 
                 <div *ngIf="!post.repostType">
                     <p>{{post.content}}</p>
@@ -28,7 +28,7 @@
                     <app-post-thumb *ngIf="post.repost.type == 'repost-post'"
                         [mini]="true"
                         [post]="post.repost.content"
-                        [author]="post.repost.author"
+                        [authorUser]="post.repost.author"
                         [currentUser]="currentUser"
                         [repostType]="'repost-comment'">
                     </app-post-thumb>                        
@@ -43,7 +43,7 @@
                         <app-device-thumb
                             [mini]="true"
                             [device]="post.repost.content"
-                            [profileUser]="post.repost.author"
+                            [authorUser]="post.repost.author"
                             [currentUser]="currentUser">
                         </app-device-thumb>    
                     </div>
@@ -53,7 +53,7 @@
                     [justify]="true"
                     [postable]="post"
                     [type]="'post'"
-                    [authorUser]="author"
+                    [authorUser]="authorUser"
                     [currentUser]="currentUser">
                 </app-postable-social-actions>
             </div>    
@@ -64,9 +64,9 @@
     <div *ngIf="post.repost && !post.content">
         <app-post-thumb
             [post]="post.repost.content"
-            [author]="post.repost.author"
+            [authorUser]="post.repost.author"
             [currentUser]="currentUser"
-            [parentAuthor]="author"
+            [parentAuthorUser]="authorUser"
             [repostType]="'repost'"
         ></app-post-thumb>    
     </div>

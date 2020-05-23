@@ -3,13 +3,16 @@
         <h1>{{device.name}}</h1>
         <div class="manage-device-buttons">
             <div class="assigned-to" (click)="goToAssignedRecordable()">
-                <img src="https://66.media.tumblr.com/ee4132c368e0b77e664365f29694dc5c/88d8f262f55f0a79-5f/s640x960/07138e9e9d089ef7d9a6565d6bd547d97be6eef5.jpg"/>
+                <div class="assigned-to-image">
+                    <img *ngIf="device.assigned_to.thumbnail" [src]="device.assigned_to?.thumbnail"/>
+                    <mat-icon *ngIf="!device.assigned_to.thumbnail">{{device.assigned_to.type == 'plant' ? 'eco' : 'group_work'}}</mat-icon>    
+                </div>
+                
                 <div class="right">
                     <span>ASSIGNED TO</span>
                     {{device.assigned_to?.name}}    
                 </div>
             </div>    
-    
             <app-rounded-button [icon]="'edit'" [color]="'primary'">edit</app-rounded-button>    
         </div>
     </div>    
@@ -21,28 +24,38 @@
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>information</mat-icon>
-            information
+            Information
         </ng-template>
         <div class="device-container device-info">
                 <div class="description">
                     <div class="body">
-                        This device is the <i>mcn Wemos D1 Mini hat</i>, it's recording my succulent :)
+                        <div *ngIf="cache.device.data.short_desc">
+                            <h2>description</h2>
+                            <p>{{cache.device.data.short_desc}}</p>
+                        </div>
                     </div>
                 </div>
 
                 <div lightbox-group id="gallery">
-                    <img src="https://media.discordapp.net/attachments/264522461943562244/704820132312252426/IMG_0028.JPG?width=2152&height=2152" lightbox [fullImage]="{path: 'https://media.discordapp.net/attachments/264522461943562244/704820132312252426/IMG_0028.JPG?width=2152&height=2152'}" />
                     <img src="" lightbox [fullImage]="{path: 'path_to_fullimage'}" />
                     <img src="" lightbox [fullImage]="{path: 'path_to_fullimage'}" />
                     <img src="" lightbox [fullImage]="{path: 'path_to_fullimage'}" />
-                </div>             
+                </div>    
+                
+            <br/>
+            <mat-chip-list aria-label="Fish selection">
+                <mat-chip>One fish</mat-chip>
+                <mat-chip>Two fish</mat-chip>
+                <mat-chip color="primary" selected>Primary fish</mat-chip>
+                <mat-chip color="accent" selected>Accent fish</mat-chip>
+            </mat-chip-list>
         </div>
     </mat-tab>
 
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>bar_chart</mat-icon>
-            measurements
+            Measurements
         </ng-template>
         <div class="plant-container">
             <div class="device-container" *ngIf="!cache.device.loading">
@@ -52,8 +65,50 @@
             </div>
         </div>
     </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>play_for_work</mat-icon>
+            Scheduled tasks
+        </ng-template>
+        <div class="device-container">
+            <app-scheduled-tasks
+                [device]="cache.device.data"
+                [authorUser]="cache.user.data"
+                [currentUser]="currentUser">
+            </app-scheduled-tasks>
+        </div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>toggle_on</mat-icon>
+            Control
+        </ng-template>
+        <div class="device-container">
+            <app-device-control
+                [device]="cache.device.data"
+                [authorUser]="cache.user.data"
+                [currentUser]="currentUser">
+            </app-device-control>
+        </div>
+    </mat-tab>
 </mat-tab-group>
 
+<mat-divider></mat-divider>
+<div class="device-container">
+    <app-postable-social-actions *ngIf="cache.device.data != undefined"
+        [postable]="cache.device.data"
+        [type]="'device'"
+        [authorUser]="cache.user.data"
+        [currentUser]="currentUser"
+        [justify]="true">
+    </app-postable-social-actions>
+</div>
 
+<!-- <mat-divider></mat-divider>
+<div class="device-container">
+    <app-postable-replies></app-postable-replies>
+</div> -->
 
 <mat-spinner *ngIf="cache.device.loading"></mat-spinner>

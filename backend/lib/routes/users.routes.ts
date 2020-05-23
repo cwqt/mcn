@@ -23,7 +23,7 @@ import {
     readBlockedUsers} from "../controllers/User.controller";
 
 import posts    from './posts.routes';
-import devices  from './device.routes';
+import devices  from './devices.routes';
 import plants   from './plants.routes';
 import gardens  from './gardens.routes';
 

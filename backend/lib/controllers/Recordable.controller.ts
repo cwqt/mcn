@@ -84,7 +84,8 @@ export const readAllRecordables = async (req:Request, res:Response) => {
                     thumbnail: r.thumbnail
                 } as IDeviceStub
                 break;
-            case RecordableType.Garden || RecordableType.Plant:
+            case RecordableType.Plant:
+            case RecordableType.Garden:
                 recordable = {
                     _id:          r._id,
                     name:         r.name,

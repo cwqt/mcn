@@ -19,10 +19,10 @@ export class HeaderBarComponent implements OnInit {
 
   openUserMenu() {
     this.popover.load({
-      refComponent: this.hitBox,
+      targetElement: this.hitBox.nativeElement,
       component: HeaderBarUserMenuComponent,
       offset: 16,
-      width: '400px',
+      width: '500px',
       placement: 'bottom-left',
     } as PopoverProperties)
   }

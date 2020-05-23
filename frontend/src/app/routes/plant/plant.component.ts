@@ -1,14 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DeviceService } from 'src/app/services/device.service';
 import { UserService } from 'src/app/services/user.service';
-import { IDevice } from '../../../../../backend/lib/models/Device.model';
 import { IMeasurementModel, IMeasurement } from '../../../../../backend/lib/models/Measurement.model';
 import { PlantService } from 'src/app/services/plant.service';
-import {
-  HardwareInformation,
-  HardwareDevice } from '../../../../../backend/lib/common/types/hardware.types';
 import { IPlant } from '../../../../../backend/lib/models/Plant.model';
+import { IUser } from '../../../../../backend/lib/models/User.model';
 
 
 @Component({
@@ -17,17 +13,19 @@ import { IPlant } from '../../../../../backend/lib/models/Plant.model';
   styleUrls: ['./plant.component.scss']
 })
 export class PlantComponent implements OnInit {
-  user_id:string;
-  plant_id:string;
-
   cache = {
+    user: {
+      data: undefined,
+      loading: false,
+      error: ""
+    },
     plant: {
-      data: {} as IPlant,
+      data: undefined,
       loading: true,
       error: ""
     },
     measurements: {
-      data: [] as IMeasurementModel[],
+      data: undefined,
       loading: true,
       error: ""
     }
@@ -35,23 +33,33 @@ export class PlantComponent implements OnInit {
 
   constructor(private route:ActivatedRoute,
     private router:Router,
+    private userService:UserService,
     private plantService:PlantService) {
   }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.user_id = params.username
-      this.plant_id = params.rid
-      this.getPlant().then(() => {
-        this.getPlantMeasurements();
-        console.log(this.cache)
-      })
+      this.getUser(params.username)
+        .then(user => {
+          this.getPlant(params.rid)
+            .then(plant => {
+              this.getPlantMeasurements()
+            })
+        })
     });
   }
 
-  getPlant() {
+  getUser(username:string):Promise<IUser> {
+    this.cache.user.loading = true;
+    return this.userService.getUserByUsername(username)
+      .then(user => this.cache.user.data = user)
+      .catch(e => this.cache.user.error = e)
+      .finally(() => this.cache.user.loading = false)
+  }
+
+  getPlant(plant_id:string) {
     this.cache.plant.loading = true;
-    return this.plantService.getPlant(this.user_id, this.plant_id)
+    return this.plantService.getPlant(this.cache.user.data._id, plant_id)
       .then((plant:IPlant) => this.cache.plant.data = plant)
       .catch(e => this.cache.plant.error = e)
       .finally(() => this.cache.plant.loading = false)
@@ -59,7 +67,7 @@ export class PlantComponent implements OnInit {
   
   getPlantMeasurements() {
     this.cache.measurements.loading = true;
-    this.plantService.getMeasurements(this.user_id, this.plant_id)
+    this.plantService.getMeasurements(this.cache.user.data._id, this.cache.plant.data._id)
       .then((measurements:IMeasurementModel[]) => this.cache.measurements.data = measurements)
       .catch(e => this.cache.measurements.error = e)
       .finally(() => this.cache.measurements.loading = false)

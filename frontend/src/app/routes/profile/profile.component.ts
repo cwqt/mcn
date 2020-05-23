@@ -24,9 +24,10 @@ export class ProfileComponent implements OnInit {
   loading:boolean = true;
   tabIndex:number = 0;
   showOutlet:boolean = false;
+  outletTitle:string = "Post";
   canLoadTabContents:BehaviorSubject<boolean> = new BehaviorSubject(false);
 
-  profileUser:IUser | undefined;
+  authorUser:IUser | undefined;
   currentUser:IUser; //the current logged in user
 
   plants:IRecordableStub[] | undefined;
@@ -50,8 +51,10 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     //route param change request different user
     this.route.params.subscribe(params => {
+      console.log(params)
+
       this.profileService.getUserByUsername(params.username)
-        .then(user => this.profileUser = user)
+        .then(user => this.authorUser = user)
         .then(() => this.loading = false)
         .catch(e => {
           console.log(e);
@@ -64,6 +67,7 @@ export class ProfileComponent implements OnInit {
         this.tabIndex = this.tabs.findIndex(tab => tab.label == queries.tab);
         this.profileService.selectedTab.next(queries['tab']);
       }
+      console.log(this.route)
     });
 
     this.userService.currentUser.subscribe(user => this.currentUser = user );
@@ -71,7 +75,7 @@ export class ProfileComponent implements OnInit {
 
   setActiveTab(tab:MatTabChangeEvent) {
     this.canLoadTabContents.next(false);
-    this.router.navigateByUrl(`${this.profileUser.username}?tab=${this.tabs[tab.index].label}`)
+    this.router.navigateByUrl(`${this.authorUser.username}?tab=${this.tabs[tab.index].label}`)
   }
 
   setCanLoadTabContent() {

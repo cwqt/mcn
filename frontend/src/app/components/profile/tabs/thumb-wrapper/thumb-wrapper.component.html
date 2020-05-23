@@ -1,30 +1,30 @@
 <mat-card class="thumb-wrapper-container" [class.mini]="mini">
     <div class="left">
-        <img *ngIf="thumbItem.thumbnail && mini" class="blur-bg" [src]="thumbItem.thumbnail" />
-        <img *ngIf="thumbItem.thumbnail" [src]="thumbItem.thumbnail" />
-        <div *ngIf="!thumbItem.thumbnail" class="placeholder"><mat-icon>{{thumbPlaceholderIcon}}</mat-icon></div>
+        <img *ngIf="recordable.thumbnail && mini" class="blur-bg" [src]="recordable.thumbnail" />
+        <img *ngIf="recordable.thumbnail" [src]="recordable.thumbnail" />
+        <div *ngIf="!recordable.thumbnail" class="placeholder"><mat-icon>{{thumbPlaceholderIcon}}</mat-icon></div>
     </div>
     <div class="right" *ngIf="!mini">
         <ng-content class="thumb-wrapper-content"></ng-content>
         <br />
         <mat-card-actions>
             <app-postable-social-actions
-                [postable]="thumbItem"
+                [postable]="recordable"
                 [type]="type"
-                [authorUser]="user"
+                [authorUser]="authorUser"
                 [currentUser]="currentUser">
             </app-postable-social-actions>
 
-            <button mat-button class="view-comments-button">view comments</button>
+            <!-- <button mat-button class="view-comments-button">view comments</button> -->
             <button mat-button color="primary" (click)="gotoItem()">inspect</button>
         </mat-card-actions>
     </div>
 
     <div class="mini-footer" *ngIf="mini">
-        <p>{{thumbItem.name}}</p>
+        <p>{{recordable.name}}</p>
         <button mat-button [color]="'primary'">
             <mat-icon inline>device_hub</mat-icon>
-            &nbsp;view {{user.username}}'s {{type}}s
+            &nbsp;view {{authorUser.username}}'s {{type}}s
         </button>
     </div>
 </mat-card>

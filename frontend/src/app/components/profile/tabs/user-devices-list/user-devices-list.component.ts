@@ -12,7 +12,7 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./user-devices-list.component.scss']
 })
 export class UserDevicesListComponent implements OnInit {
-  @Input() profileUser:IUser;
+  @Input() authorUser:IUser;
   @Input() currentUser:IUser;
   @Input() canLoad:BehaviorSubject<boolean>;
   @Input() currentIndex:number;
