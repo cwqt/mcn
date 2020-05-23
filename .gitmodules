@@ -1,0 +1,3 @@
+[submodule "mcnlang"]
+	path = mcnlang
+	url = https://gitlab.com/cxss/mcnlang.git
