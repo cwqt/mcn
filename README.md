@@ -4,10 +4,10 @@ A social network and management system for gardeners, plant growers and hobbyist
 
 * Manage IoT devices to monitor your gardens/plants & add your own custom hardware
 * Monitor entire gardens/farms constituted of sub-plants
-* Event based system notifies when an action needs completing e.g. watering, re-seeding
 * Create custom event queues for carrying out tasks at certain intervals
-* Compile timelines of posts of plants growing over time
 * Remotely trigger events on micro-controllers, e.g. turn on light, open watering valve
+* * Event based system notifies when an action needs completing e.g. watering, re-seeding
+* Compile timelines of posts to show off plant growth from seedling to flower
 * Monitor all metrics on a front-end dashboard
 * Code support for ESP-32, Wemos D1 Mini & Raspberry Pi
 
@@ -18,10 +18,9 @@ Previously written in Python & React, now moving over to TypeScript & Angular.
 Express.js TypeScript REST API with polyglot persistence.
 
 * __Neo4j__: Social networking data, highly relational data
-* __MongoDB__: IoT data, low relation - high read/write throughput
+* __InfluxDB__: IoT data, low relation - high read/write throughput
+* __MongoDB__: Agenda Task  queue
 * __Redis__: Session store, very high r/w
-
-May possibly move IoT over to InfluxDB at some point.
 
 ## frontend
 
