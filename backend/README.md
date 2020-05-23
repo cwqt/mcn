@@ -200,6 +200,24 @@ or instead of an array for `message`, a string.
 * __POST__: create & assign key to device
 * __DELETE__: revoke key from device
 
+### `/users/:uid/devices/:did/routines`
+
+* __GET__: get all task routines for a device
+* __POST__: create new task routine
+
+### `/users/:uid/devices/:did/routines/:rtid`
+
+* __GET__: get routine & all tasks
+* __POST__: add new tasks to routine
+* __PUT__: edit routine / task ordering
+* __DELETE__: delete routine & all tasks
+
+### `/user/:uid/devices/:did/routines/:rtid/tasks/:tid`
+
+* __GET__: execute task directly
+* __PUT__: edit task details
+* __DELETE__: delete task
+
 ---
 
 ## auth

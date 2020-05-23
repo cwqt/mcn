@@ -73,7 +73,7 @@ deviceRouter.post('/keys', validate([
     body('key_name').not().isEmpty().trim().withMessage('device name must be named'),
 ]), createApiKey)
 
-deviceRouter.use(tasks, '/tasks')
+deviceRouter.use('/tasks', tasks)
 
 // API KEYS =======================================================================================
 const keyRouter = AsyncRouter({mergeParams:true});
