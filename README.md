@@ -6,7 +6,7 @@ A social network and management system for gardeners, plant growers and hobbyist
 * Monitor entire gardens/farms constituted of sub-plants
 * Create custom event queues for carrying out tasks at certain intervals
 * Remotely trigger events on micro-controllers, e.g. turn on light, open watering valve
-* * Event based system notifies when an action needs completing e.g. watering, re-seeding
+* Event based system notifies when an action needs completing e.g. watering, re-seeding
 * Compile timelines of posts to show off plant growth from seedling to flower
 * Monitor all metrics on a front-end dashboard
 * Code support for ESP-32, Wemos D1 Mini & Raspberry Pi
@@ -32,5 +32,7 @@ Angular w/ material-angular.
 * __Wemos D1 Mini__: for single plants
 * __Pi Zero W__: NoIR camera to monitor active photosynthesis and stream to frontend.
 
+
+![](https://ftp.cass.si/9952g6rSa.png)
 
 CC BY-NC-ND 4.0 — copyright daughter.systems (2020)
