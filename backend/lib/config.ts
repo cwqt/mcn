@@ -17,6 +17,7 @@ interface IEnv {
     SITE_TITLE: string,
     API_URL: string,
     FE_URL: string,
+    RUNNER_URL: string,
     PRODUCTION: boolean,
     DEVELOPMENT: boolean,
     TESTING: boolean,
@@ -45,25 +46,28 @@ const base = {
 const prod:IEnv = {
     ...base,
     SITE_TITLE: 'my.corrhizal.net',
-    API_URL: 'https://api.corrhizal.net',
-    FE_URL: 'https://my.corrhizal.net',
+    API_URL:    'https://api.corrhizal.net',
+    RUNNER_URL: 'https://runner.corrhizal.net',
+    FE_URL:     'https://my.corrhizal.net',
     PRODUCTION: true
 }
 
 const dev:IEnv = {
     ...base,
     SITE_TITLE: 'dev.corrhizal.net',
-    API_URL: 'http://localhost:3000',
-    FE_URL: 'http://localhost:4200',
+    API_URL:    'http://localhost:3000',
+    RUNNER_URL: 'http://localhost:3001',
+    FE_URL:     'http://localhost:4200',
     DEVELOPMENT: true
 }
 
 const test:IEnv = {
     ...base,
     SITE_TITLE: 'dev.corrhizal.net',
-    API_URL: 'http://localhost:3000',
-    FE_URL: 'http://localhost:4200',
-    TESTING: true
+    API_URL:    'http://localhost:3000',
+    RUNNER_URL: 'http://localhost:3001',
+    FE_URL:     'http://localhost:4200',
+    TESTING:    true
 }
 
 let env:IEnv;
