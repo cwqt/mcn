@@ -32,6 +32,10 @@ Angular w/ material-angular.
 * __Wemos D1 Mini__: for single plants
 * __Pi Zero W__: NoIR camera to monitor active photosynthesis and stream to frontend.
 
+## runner
+
+TypeScript/Express & Agenda Task scheduler/runner for task routines.
+
 
 ![](https://ftp.cass.si/9952g6rSa.png)
 
