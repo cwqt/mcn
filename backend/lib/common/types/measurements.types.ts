@@ -18,6 +18,9 @@ export enum IoTMeasurement {
     Current            = "current",
     Power              = "power",
     SignalStrength     = "signal_strength",
+}
+
+export enum IoTState {
     LightState         = "light_state",
     CameraState        = "camera_state",
     PumpState          = "pump_state",
@@ -55,7 +58,7 @@ export enum Unit {
 }
 
 // available units for each measurement type are described: 
-export const MeasurementUnits:{[index in (Measurement | IoTMeasurement)]:Array<Unit>} = {
+export const MeasurementUnits:{[index in (Measurement | IoTMeasurement | IoTState)]:Array<Unit>} = {
     [Measurement.PAR]:               [Unit.PAR],
     [Measurement.EC]:                [Unit.EC],
     [Measurement.AirTemperature]:    [Unit.Celcius, Unit.Fahrenheit, Unit.Kelvin],
@@ -67,16 +70,18 @@ export const MeasurementUnits:{[index in (Measurement | IoTMeasurement)]:Array<U
     [Measurement.Height]:            [Unit.Meters, Unit.Centimeters, Unit.Feet, Unit.Inches],
     [Measurement.pH]:                [Unit.pH],
     [Measurement.AirPressure]:       [Unit.Pascal],
+    
     [IoTMeasurement.Voltage]:        [Unit.Volts, Unit.MilliVolts],
     [IoTMeasurement.Current]:        [Unit.Amps, Unit.MilliAmps],
     [IoTMeasurement.Power]:          [Unit.Watts, Unit.MilliWatts],
     [IoTMeasurement.SignalStrength]: [Unit.DecibelMilliWatts],
-    [IoTMeasurement.LightState]:     [Unit.Boolean], //on or off,
-    [IoTMeasurement.CameraState]:    [Unit.Boolean],
-    [IoTMeasurement.PumpState]:      [Unit.Boolean],
-    [IoTMeasurement.HeaterState]:    [Unit.Boolean],
-    [IoTMeasurement.FanState]:       [Unit.Boolean],
-    [IoTMeasurement.AireatorState]:  [Unit.Boolean],
+
+    [IoTState.LightState]:     [Unit.Boolean], //on or off,
+    [IoTState.CameraState]:    [Unit.Boolean],
+    [IoTState.PumpState]:      [Unit.Boolean],
+    [IoTState.HeaterState]:    [Unit.Boolean],
+    [IoTState.FanState]:       [Unit.Boolean],
+    [IoTState.AireatorState]:  [Unit.Boolean],
 
 }
 

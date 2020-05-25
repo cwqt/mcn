@@ -17,6 +17,7 @@ import {
 import {
     IApiKey,
     IApiKeyPrivate }         from '../models/ApiKey.model';
+import { ISensor } from "../models/Sensor.model";
 
 
 export const getDeviceState = (device:IDevice):DeviceState => {
@@ -41,7 +42,7 @@ export const createDevice = async (req:Request, res:Response) => {
         created_at: Date.now(),
         state:      DeviceState.UnVerified,
         measurement_count: 0,
-        hardware_model: req.body.hardware_model
+        hardware_model: req.body.hardware_model,
     }
 
     let result = await cypher(`
@@ -83,8 +84,9 @@ export const readDevice = async (req:Request, res:Response) => {
             SIZE((d)<-[:REPLY_TO]-(:Post)) AS replies,
             SIZE((d)<-[:HEARTS]-(:User)) AS hearts
 
+        MATCH (d)-[:HAS_SENSOR]->(s:Sensor)
         OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
-        RETURN d,r,k, hearts, replies, reposts,
+        RETURN d,r,k,s, hearts, replies, reposts,
             EXISTS ((:User {_id:$selfid})-[:HEARTS]->(d)) AS isHearting,
             EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(d)) AS hasReposted
     `, {
@@ -96,6 +98,8 @@ export const readDevice = async (req:Request, res:Response) => {
     device.measurement_count = device.measurement_count.toNumber();
     let recordable:IPlant | IGarden = result.records[0].get('r')?.properties;
     let key:IApiKeyPrivate = result.records[0].get('k')?.properties;
+    let sensors:ISensor[] = result.records[0].map((record:any) => record.get('s').properties);
+
     if(key) delete key.key;
 
     let data:IDevice = {

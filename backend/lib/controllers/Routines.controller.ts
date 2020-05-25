@@ -8,7 +8,7 @@ import { HTTP } from '../common/http';
 
 export const getTaskRoutines = async (req:Request, res:Response) => {
     let result = await cypher(`
-        MATCH (d:Device {_id:$did})<-[:HAS_ROUTINE]-(t:TaskRoutine)
+        MATCH (d:Device {_id:$did})-[:HAS_ROUTINE]->(t:TaskRoutine)
         RETURN t
     `, {
         did: req.params.did

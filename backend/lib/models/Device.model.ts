@@ -6,6 +6,7 @@ import { IMeasurementModel } from './Measurement.model';
 import { IPostableMeta }         from './Post.model';
 
 import * as IpAddress from 'ip-address';
+import { ISensor } from './Sensor.model';
 
 export enum DeviceState {
     Active = "active",
@@ -35,4 +36,5 @@ export interface IDevice extends IDeviceStub {
     device_ip?:         IpAddress.Address4 | IpAddress.Address6,
     api_key?:           IApiKey,
     assigned_to?:       IRecordableStub,
+    sensors?:           ISensor[]
 }

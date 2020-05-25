@@ -1,20 +1,14 @@
 import { Measurement, Unit, IoTMeasurement } from './measurements.types';
 
-enum MicroController {
+export enum MicroController {
     ESP8266 = "ESP-8266",
     ESP32 = "ESP-32"
 }
 
-enum DeviceCapability {
+export enum DeviceCapability {
     Bluetooth = "Bluetooth",
     UPnP = "UPnP",
     WiFi = "WiFi",
-    LightState = "LightState"
-}
-
-export enum SupportedHardware {
-    MCNWemosD1Mini = "mcn_wemos_d1_mini",
-    MCNEsp32 = "mcn_esp32",
 }
 
 export interface HardwareDevice {
@@ -23,48 +17,38 @@ export interface HardwareDevice {
     recording:       {[index in (Measurement | IoTMeasurement)]?:Unit},
     capabilities:    DeviceCapability[],
     mcnEnabled:      boolean,
-    supportsPlants:  boolean,
-    maxPlantsSupported?:     number
+    plantsSupported: number,
+    api?:            {[index:string]: {[index in HttpMethod]?:IDeviceEndpoint}}
 }
 
-export const HardwareInformation:{[index in SupportedHardware]:HardwareDevice} = {
-    [SupportedHardware.MCNWemosD1Mini]: {
-        model_name: "MCN Wemos D1 Mini",
-        microcontroller: MicroController.ESP8266,
-        recording: {
-            [Measurement.AirTemperature]:    Unit.Celcius,
-            [Measurement.Humidity]:          Unit.RelativeHumidity,
-            [Measurement.Light]:             Unit.Lux,
-            [Measurement.Moisture]:          Unit.CapacitiveMoisture,
-            [IoTMeasurement.Voltage]:        Unit.Volts,
-            [IoTMeasurement.SignalStrength]: Unit.DecibelMilliWatts
-        },
-        capabilities: [
-            DeviceCapability.WiFi,
-            DeviceCapability.UPnP,
-            DeviceCapability.LightState
-        ],
-        mcnEnabled: true,
-        supportsPlants: false
-    },
-    [SupportedHardware.MCNEsp32]: {
-        model_name: "MCN ESP32 Garden",
-        microcontroller: MicroController.ESP32,
-        recording: {
-            [Measurement.AirTemperature]:   Unit.Celcius,
-            [Measurement.Humidity]:         Unit.RelativeHumidity,
-            [Measurement.Light]:            Unit.Lux,
-            [Measurement.Moisture]:         Unit.CapacitiveMoisture,
-            [Measurement.WaterLevel]:       Unit.Percentage,
-            [Measurement.Humidity]:         Unit.RelativeHumidity,
-            [IoTMeasurement.LightState]:    Unit.Boolean,
-            [IoTMeasurement.CameraState]:   Unit.Boolean,
-        },
-        capabilities: [
-            DeviceCapability.WiFi
-        ],
-        mcnEnabled: false,
-        supportsPlants: true,
-        maxPlantsSupported: 8
+
+export enum HttpMethod {
+    Get     = "GET",
+    Post    = "POST",
+    Put     = "PUT",
+    Delete  = "DELETE"
+}
+
+export interface IDeviceEndpoint {
+    description: string,
+    icon?:       string,
+    body?:       {[index:string]: { type:Type, required:boolean }}
+    api?:        {[index:string]: {[index in HttpMethod]?:IDeviceEndpoint}}
     }
+
+export enum SupportedHardware {
+    MCNWemosD1Mini = "mcn_wemos_d1_mini",
+}
+
+export enum Type {
+    Boolean = "boolean",
+    Integer = "integer",
+    Float   = "float",
+    String  = "string"
+}
+
+import MCNWemosD1Mini from './devices/mcn_wemos_d1_mini.device';
+
+export const HardwareInformation:{[index in SupportedHardware]:HardwareDevice} = {
+    [SupportedHardware.MCNWemosD1Mini]: MCNWemosD1Mini, 
 }

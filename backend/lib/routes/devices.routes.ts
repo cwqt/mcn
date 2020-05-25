@@ -12,17 +12,23 @@ import {
     // updateDevice,
     // deleteDevice,
 } from "../controllers/Device.controller";
-
 import {
     createApiKey,
     readApiKey,
     deleteApiKey
 } from '../controllers/ApiKeys.controller';
+import {
+    createSensor,
+    updateSensor,
+    deleteSensor
+} from '../controllers/Sensor.controller';
+
 import { RecordableType } from '../models/Recordable.model';
 import { readAllRecordables } from '../controllers/Recordable.controller';
 import { heartPostable, unheartPostable, repostPostable } from '../controllers/Postable.controller';
 
 import routines    from './routines.routes';
+import { Measurement, MeasurementUnits, IoTMeasurement, IoTState, Unit } from '../common/types/measurements.types';
 
 const router = AsyncRouter({mergeParams: true});
 router.use((req:Request, res:Response, next:NextFunction) => {
@@ -73,7 +79,23 @@ deviceRouter.post('/keys', validate([
     body('key_name').not().isEmpty().trim().withMessage('device name must be named'),
 ]), createApiKey)
 
-deviceRouter.use('/routines', routines)
+deviceRouter.post('/sensors', validate([
+    body('name').not().isEmpty().withMessage('Sensor requires a name'),
+    body('measures')
+        .not().isEmpty().withMessage('Must have measurement type')
+        .isIn(Object.values(Measurement)).withMessage(`Must be valid measurement type: ${Object.values(Measurement)}`),
+    body('unit')
+        .not().isEmpty().withMessage('Must have measurement unit')
+        .custom((value:Unit, { req }:any) => {
+            let type = req.body.measures as Measurement | IoTMeasurement | IoTState;
+            let isValidUnitForType =  MeasurementUnits[type].includes(value);
+            if(!isValidUnitForType) throw new Error(`'${value}' is not a valid unit for '${req.body.measures}', should be of value: ${MeasurementUnits[type]}`);
+            return true;
+        })
+
+]), createSensor);
+
+deviceRouter.use('/routines', routines);
 
 // API KEYS =======================================================================================
 const keyRouter = AsyncRouter({mergeParams:true});
@@ -85,5 +107,12 @@ keyRouter.use(validate([
 
 keyRouter.get('/',      readApiKey)
 keyRouter.delete('/',   deleteApiKey)
+
+// SENSORS ========================================================================================
+const sensorRouter = AsyncRouter({mergeParams:true})
+deviceRouter.use('/sensors/:sid', sensorRouter);
+
+sensorRouter.put('/', updateSensor);
+sensorRouter.delete('/', deleteSensor);
 
 export default router;
