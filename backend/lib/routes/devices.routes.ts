@@ -22,7 +22,7 @@ import { RecordableType } from '../models/Recordable.model';
 import { readAllRecordables } from '../controllers/Recordable.controller';
 import { heartPostable, unheartPostable, repostPostable } from '../controllers/Postable.controller';
 
-import tasks    from './tasks.routes';
+import routines    from './routines.routes';
 
 const router = AsyncRouter({mergeParams: true});
 router.use((req:Request, res:Response, next:NextFunction) => {
@@ -73,7 +73,7 @@ deviceRouter.post('/keys', validate([
     body('key_name').not().isEmpty().trim().withMessage('device name must be named'),
 ]), createApiKey)
 
-deviceRouter.use('/tasks', tasks)
+deviceRouter.use('/routines', routines)
 
 // API KEYS =======================================================================================
 const keyRouter = AsyncRouter({mergeParams:true});

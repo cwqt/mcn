@@ -21,7 +21,7 @@ const base = {
     N4J_PROTOCOL: process.env.NEO4J_PROTOCOL,
     MONGO_URL: process.env.MONGO_URL,
     PRIVATE_KEY: process.env.PRIVATE_KEY,
-    EXPRESS_PORT: 3000,
+    EXPRESS_PORT: 3001,
     PRODUCTION: false,
     DEVELOPMENT: false,
 } as IEnv

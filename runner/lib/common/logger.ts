@@ -1,7 +1,7 @@
 const winston = require('winston');
 import config from '../config';
 
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
   level: 'silly',
   format: winston.format.json(),
   defaultMeta: { service: 'user-service' },
@@ -25,4 +25,28 @@ if (config.DEVELOPMENT) {
     }));
 }
 
-export default logger;
+class Logger {
+  debug = (message:string) => this.log(message, 'debug')
+  info = (message:string) => this.log(message, 'info')
+  error = (message:string) => this.log(message, 'error')
+  agenda = (message:string) => this.log(message, 'agenda')
+
+  log = (message:string, level:string) => {
+    switch(level) {
+      case 'info':
+        logger.info(message);
+        break;
+      case 'debug':
+        logger.debug(message)
+        break;
+      case 'error':
+        logger.error(message);
+        break;
+      case 'agenda':
+        console.log(`[\x1b[35magenda\x1b[0m]: ${message}`);
+        break;
+    }
+  }
+}
+
+export const log = new Logger();

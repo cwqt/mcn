@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import log          from './logger';
+import { log }      from './logger';
 
 interface ErrorResponse {
     [key: string]: any
