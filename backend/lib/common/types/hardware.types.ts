@@ -8,7 +8,8 @@ enum MicroController {
 enum DeviceCapability {
     Bluetooth = "Bluetooth",
     UPnP = "UPnP",
-    WiFi = "WiFi"
+    WiFi = "WiFi",
+    LightState = "LightState"
 }
 
 export enum SupportedHardware {
@@ -40,7 +41,8 @@ export const HardwareInformation:{[index in SupportedHardware]:HardwareDevice} =
         },
         capabilities: [
             DeviceCapability.WiFi,
-            DeviceCapability.UPnP
+            DeviceCapability.UPnP,
+            DeviceCapability.LightState
         ],
         mcnEnabled: true,
         supportsPlants: false

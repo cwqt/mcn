@@ -75,10 +75,7 @@ router.delete('/block/:uid2', validate([
 // USER ===========================================================================================
 const userRouter = AsyncRouter({mergeParams: true});
 router.use('/:uid', userRouter);
-
-userRouter.use(validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id'),
-]))
+userRouter.use(validate([ param('uid').isMongoId().trim().withMessage('invalid user id') ]))
 
 userRouter.put('/avatar', storage.single('avatar'), updateUserAvatar)
 userRouter.put('/cover_image', storage.single('cover_image'), updateUserCoverImage)

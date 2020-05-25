@@ -5,9 +5,8 @@ import { Types }                    from 'mongoose';
 import { ITaskRoutine, ITask, TaskState } from '../../../runner/lib/models/Tasks.model'
 import { ErrorHandler } from '../common/errorHandler';
 import { HTTP } from '../common/http';
-import { start } from 'repl';
 
-export const getDeviceRoutines = async (req:Request, res:Response) => {
+export const getTaskRoutines = async (req:Request, res:Response) => {
     let result = await cypher(`
         MATCH (d:Device {_id:$did})<-[:HAS_ROUTINE]-(t:TaskRoutine)
         RETURN t
@@ -22,16 +21,15 @@ export const getDeviceRoutines = async (req:Request, res:Response) => {
     res.json(routines);
 }
 
-export const createDeviceRoutine = async (req:Request, res:Response) => {
+export const createTaskRoutine = async (req:Request, res:Response) => {
     let routine:ITaskRoutine = {
         _id: Types.ObjectId().toHexString(),
         name: req.body.name,
         cron: req.body.cron,
         timezone: req.body.interval,
         execution_count: 0,
-        last_ran: null,
-        locked: false,
-        created_at: Date.now()
+        created_at: Date.now(),
+        state: TaskState.Inactive
     }
 
     let result = await cypher(`
@@ -48,6 +46,15 @@ export const createDeviceRoutine = async (req:Request, res:Response) => {
 }
 
 export const readRoutine = async (req:Request, res:Response) => {}
+
+export const updateRoutine = async (req:Request, res:Response) => {}
+
+export const deleteRoutine = async (req:Request, res:Response) => {}
+
+export const executeRoutine = async (req:Request, res:Response) => {}
+
+
+// TASKS ==========================================================================================
 
 export const createTaskInRoutine = async (req:Request, res:Response) => {
     let task:ITask = {
@@ -102,13 +109,8 @@ export const createTaskInRoutine = async (req:Request, res:Response) => {
     res.status(HTTP.Created).json(result.records[0].get('t').properties);
 }
 
-export const updateRoutine = async (req:Request, res:Response) => {}
-
-export const deleteRoutine = async (req:Request, res:Response) => {}
-
-export const executeTask = async (req:Request, res:Response) => {}
-
 export const updateTask = async (req:Request, res:Response) => {}
 
 export const deleteTask = async (req:Request, res:Response) => {}
 
+export const executeTask = async (req:Request, res:Response) => {}

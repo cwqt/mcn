@@ -12,7 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "agenda": "^3.1.0",
-    "agendash": "^1.0.0",
     "bcrypt": "^4.0.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -38,6 +37,7 @@
     "@types/node": "^13.9.0",
     "@types/nodemailer": "^6.4.0",
     "@types/redis": "^2.8.20",
+    "agendash": "^1.0.0",
     "nodemon": "^2.0.2",
     "ts-node": "^8.6.2",
     "tsc-watch": "^4.2.3",

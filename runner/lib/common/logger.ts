@@ -13,7 +13,7 @@ export const logger = winston.createLogger({
 
 logger.stream = {
     write: function(message:any, encoding:any){
-        logger.http(message);
+        logger.http(message ?? "");
     }
 };
 
@@ -32,6 +32,7 @@ class Logger {
   agenda = (message:string) => this.log(message, 'agenda')
 
   log = (message:string, level:string) => {
+    message = message ?? "";
     switch(level) {
       case 'info':
         logger.info(message);
