@@ -24,7 +24,7 @@ agenda.on('fail',       (err, job) => log.error(`Job ${job.attrs.name} failed wi
 
 const collectTaskRoutines = async () => {
     let result = await cypher(`
-        MATCH (d:Device)<-[:HAS_ROUTINE]-(t:TaskRoutine)-[:START]->(:Task)
+        MATCH (d:Device)-[:HAS_ROUTINE]->(t:TaskRoutine)-[:START]->(:Task)
         SET t.locked = false
         RETURN d, t
     `, {});

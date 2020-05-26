@@ -19,15 +19,18 @@ export const runRoutine = async (job:Job) => {
 
     await cypher(`
         MATCH (tr:TaskRoutine {_id:$trid})
-        SET tr.locked = true
         SET tr.state = $state
     `, {
         trid: job.attrs.data._id,
         state: TaskState.Pending
     })
 
-    const task = await agenda.instance.create(Jobs.Task, result.records[0].get('t').properties)
+
+    console.log(result.records[0].get('t').properties)
+
+    const task = agenda.instance.create(Jobs.Task, result.records[0].get('t').properties)
     task.save();
 }
 
 export const runSubRoutine = async (job:Job) => {}
+

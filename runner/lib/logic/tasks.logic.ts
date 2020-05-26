@@ -3,6 +3,8 @@ import { cypher } from "../common/neo4j";
 import { TaskState } from "../models/Tasks.model";
 
 export const runTask = async (job:Job) => {
+    console.log('hello world')
+
     //*0.. - task could be last in routine
     let result =  await cypher(`
         MATCH (t:Task {_id:$tid})-[:NEXT*0..]-(:Task)-[:END]->(tr:TaskRoutine)
@@ -34,13 +36,16 @@ export const runTask = async (job:Job) => {
         state: TaskState.Pending
     })
     
-    //do the task
+    // do the task
     await executeTaskCommand(task.command);
 }
 
 
 const executeTaskCommand = async (command:string) => {
-    await setTimeout(() => {
-        console.log(command);
-    }, 100)
+    await timeout(1000);
+    console.log(command);
+}
+
+function timeout(ms:number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
