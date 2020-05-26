@@ -82,7 +82,6 @@ export const MeasurementUnits:{[index in (Measurement | IoTMeasurement | IoTStat
     [IoTState.HeaterState]:    [Unit.Boolean],
     [IoTState.FanState]:       [Unit.Boolean],
     [IoTState.AireatorState]:  [Unit.Boolean],
-
 }
 
 export const MeasurementConversions:{[index:string]:((input:number) => number)} =  {

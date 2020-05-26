@@ -1,12 +1,11 @@
 import { SupportedHardware } from '../common/types/hardware.types';
-import { Measurement, Unit } from '../common/types/measurements.types';
+import { Measurement, Unit, IoTState } from '../common/types/measurements.types';
 import { IApiKey }           from './ApiKey.model';
 import { IRecordableStub }   from './Recordable.model';
 import { IMeasurementModel } from './Measurement.model';
 import { IPostableMeta }         from './Post.model';
 
 import * as IpAddress from 'ip-address';
-import { ISensor } from './Sensor.model';
 
 export enum DeviceState {
     Active = "active",
@@ -36,5 +35,22 @@ export interface IDevice extends IDeviceStub {
     device_ip?:         IpAddress.Address4 | IpAddress.Address6,
     api_key?:           IApiKey,
     assigned_to?:       IRecordableStub,
-    sensors?:           ISensor[]
+    sensors?:           IDeviceSensor[],
+    states?:            IDeviceState[]
+}
+
+export interface IDeviceSensor {
+    _id:            string,
+    measures:       Measurement,
+    unit:           Unit
+    name:           string,
+    description?:   string,
+}
+
+export interface IDeviceState {
+    _id:            string,
+    sets:           IoTState,
+    state:          string | number | boolean,
+    name:           string,
+    description?:   string,
 }

@@ -1,4 +1,4 @@
-import { Measurement, Unit, IoTMeasurement } from './measurements.types';
+import { Measurement, Unit, IoTMeasurement, IoTState } from './measurements.types';
 
 export enum MicroController {
     ESP8266 = "ESP-8266",
@@ -14,10 +14,11 @@ export enum DeviceCapability {
 export interface HardwareDevice {
     model_name:      string,
     microcontroller: MicroController,
-    recording:       {[index in (Measurement | IoTMeasurement)]?:Unit},
     capabilities:    DeviceCapability[],
     mcnEnabled:      boolean,
     plantsSupported: number,
+    states:          {[index in IoTState]?:string},
+    sensors:         {[index in (Measurement | IoTMeasurement)]?:Unit},
     api?:            {[index:string]: {[index in HttpMethod]?:IDeviceEndpoint}}
 }
 
