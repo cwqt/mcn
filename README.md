@@ -32,6 +32,8 @@ Angular w/ material-angular.
 * __Wemos D1 Mini__: for single plants
 * __Pi Zero W__: NoIR camera to monitor active photosynthesis and stream to frontend.
 
+See the [Device specification](https://gitlab.com/cxss/mcn/-/blob/master/backend/lib/common/types/devices/device-api-spec.md) for creating and using your own hardware on _mcn_.
+
 ## runner
 
 TypeScript/Express & Agenda Task scheduler/runner for task routines.
