@@ -36,7 +36,6 @@ Angular w/ material-angular.
 
 TypeScript/Express & Agenda Task scheduler/runner for task routines.
 
-
 ![](https://ftp.cass.si/9952g6rSa.png)
 ![](https://ftp.cass.si/05k95y00d.png)
 

@@ -29,8 +29,8 @@ A device is described as:
         [Measurement.Moisture]:          { id: "capsoilsensor", unit: Unit.CapacitiveMoisture },
     },
     states: {
-        [IoTState.LightState]:           { id: "main_light" },
-        [IoTState.LightState]:           { id: "backup_light" },
+        [IoTState.LightState]:           { id: "light_1" },
+        [IoTState.LightState]:           { id: "light_2" },
     },
     metrics: {
         [IoTMeasurement.Voltage]:        { id: "batteryvoltage", unit: Unit.Volts },
@@ -68,8 +68,8 @@ For all sensors, states & metrics:
     },
     "states": {
         "light_state": { // IoTState.LightState
-            "main_light": true,
-            "backup_light": false
+            "light_1": true,
+            "light_2": false
         }
     },
     "metrics": {
@@ -115,7 +115,7 @@ And the same as above for: `http://host_url/states` & `http://host_url/metrics`.
 
 Use the `IoTState` and state `id` to reference which state to toggle, e.g. turning on the main light on a device:
 
-`POST http://host.ip/light_state/main_light`
+`POST http://host.ip/light_state/light_1`
 
 ```json
 {
