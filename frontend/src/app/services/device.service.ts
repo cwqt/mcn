@@ -6,6 +6,7 @@ import { UserService } from './user.service';
 import { MeasurementUnits } from '../../../../backend/lib/common/types/measurements.types';
 import { IDevice } from '../../../../backend/lib/models/Device.model';
 import { IMeasurementModel } from '../../../../backend/lib/models/Measurement.model';
+import { ITaskRoutine } from '../../../../runner/lib/models/Tasks.model';
 
 @Injectable({
   providedIn: 'root'
@@ -40,5 +41,9 @@ export class DeviceService {
 
   requestMeasurementsUpdate(user_id:string, device_id:string) {
 
+  }
+
+  getTaskRoutines(user_id:string, device_id:string):Promise<ITaskRoutine[]> {
+    return this.http.get<ITaskRoutine[]>(`/api/users/${user_id}/devices/${device_id}/routines`).toPromise();
   }
 }

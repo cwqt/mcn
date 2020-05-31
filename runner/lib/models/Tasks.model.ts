@@ -30,6 +30,8 @@ export interface ITaskRoutine {
     short_desc?:    string,
     last_started?:  number,
     last_finished?: number,
+    
+    tasks?:         ITask[]
 }
 
 export interface ITask {

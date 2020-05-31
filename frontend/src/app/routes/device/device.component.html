@@ -2,17 +2,6 @@
     <div class="title">
         <h1>{{device.name}}</h1>
         <div class="manage-device-buttons">
-            <div class="assigned-to" (click)="goToAssignedRecordable()">
-                <div class="assigned-to-image">
-                    <img *ngIf="device.assigned_to.thumbnail" [src]="device.assigned_to?.thumbnail"/>
-                    <mat-icon *ngIf="!device.assigned_to.thumbnail">{{device.assigned_to.type == 'plant' ? 'eco' : 'group_work'}}</mat-icon>    
-                </div>
-                
-                <div class="right">
-                    <span>ASSIGNED TO</span>
-                    {{device.assigned_to?.name}}    
-                </div>
-            </div>    
             <app-rounded-button [icon]="'edit'" [color]="'primary'">edit</app-rounded-button>    
         </div>
     </div>    
@@ -20,7 +9,36 @@
 
 <mat-divider></mat-divider>
 
-<mat-tab-group>
+<mat-tab-group *ngIf="cache.device.data">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>toggle_on</mat-icon>
+            Control
+        </ng-template>
+        <div class="device-container">
+            <app-device-control
+                [device]="cache.device.data"
+                [authorUser]="cache.user.data"
+                [currentUser]="currentUser">
+            </app-device-control>
+        </div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon>play_for_work</mat-icon>
+            Task routines
+        </ng-template>
+        <div class="device-container">
+            <app-scheduled-tasks
+                [device]="cache.device.data"
+                [authorUser]="cache.user.data"
+                [currentUser]="currentUser">
+            </app-scheduled-tasks>
+        </div>
+    </mat-tab>
+
+
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>information</mat-icon>
@@ -43,12 +61,27 @@
                 </div>    
                 
             <br/>
-            <mat-chip-list aria-label="Fish selection">
-                <mat-chip>One fish</mat-chip>
-                <mat-chip>Two fish</mat-chip>
-                <mat-chip color="primary" selected>Primary fish</mat-chip>
-                <mat-chip color="accent" selected>Accent fish</mat-chip>
-            </mat-chip-list>
+
+            <div class="device-info-footer">
+                <mat-chip-list>
+                    <mat-chip>One fish</mat-chip>
+                    <mat-chip>Two fish</mat-chip>
+                    <mat-chip color="primary" selected>Primary fish</mat-chip>
+                    <mat-chip color="accent" selected>Accent fish</mat-chip>
+                </mat-chip-list>
+    
+                <mat-chip class="assigned-to no-hash" (click)="goToAssignedRecordable()">
+                    <div class="assigned-to-image">
+                        <img *ngIf="device.assigned_to.thumbnail" [src]="device.assigned_to?.thumbnail"/>
+                        <mat-icon *ngIf="!device.assigned_to.thumbnail">{{device.assigned_to.type == 'plant' ? 'eco' : 'group_work'}}</mat-icon>    
+                    </div>
+                    
+                    <div class="right">
+                        {{device.assigned_to?.name}}    
+                    </div>
+                </mat-chip>        
+            </div>
+
         </div>
     </mat-tab>
 
@@ -63,34 +96,6 @@
                     <app-measurements-graphs [data]="measurements" [device]="cache.device.data"></app-measurements-graphs>
                 </div>
             </div>
-        </div>
-    </mat-tab>
-
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon>play_for_work</mat-icon>
-            Scheduled tasks
-        </ng-template>
-        <div class="device-container">
-            <app-scheduled-tasks
-                [device]="cache.device.data"
-                [authorUser]="cache.user.data"
-                [currentUser]="currentUser">
-            </app-scheduled-tasks>
-        </div>
-    </mat-tab>
-
-    <mat-tab>
-        <ng-template mat-tab-label>
-            <mat-icon>toggle_on</mat-icon>
-            Control
-        </ng-template>
-        <div class="device-container">
-            <app-device-control
-                [device]="cache.device.data"
-                [authorUser]="cache.user.data"
-                [currentUser]="currentUser">
-            </app-device-control>
         </div>
     </mat-tab>
 </mat-tab-group>

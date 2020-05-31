@@ -1,7 +1,5 @@
 import { Measurement, IoTMeasurement, Unit, IoTState } from "../measurements.types"
-import { DeviceCapability, MicroController, HardwareDevice, HttpMethod } from '../hardware.types';
-import { Type } from "../hardware.types";
-import { IoTSecureTunneling } from "aws-sdk";
+import { DeviceCapability, MicroController, HardwareDevice, Type } from '../../../models/Hardware.model';
 
 const info:HardwareDevice = {
     model_name: "MCN Wemos D1 Mini",
@@ -11,17 +9,23 @@ const info:HardwareDevice = {
         DeviceCapability.UPnP,
     ],
     sensors: {
-        [Measurement.AirTemperature]:    Unit.Celcius,
-        [Measurement.Humidity]:          Unit.RelativeHumidity,
-        [Measurement.Light]:             Unit.Lux,
-        [Measurement.Moisture]:          Unit.CapacitiveMoisture,
-        [IoTMeasurement.Voltage]:        Unit.Volts,
-        [IoTMeasurement.SignalStrength]: Unit.DecibelMilliWatts
+        [Measurement.AirTemperature]:    { ref: "dht22temp",     unit: Unit.Celcius },
+        [Measurement.Humidity]:          { ref: "dht22humidity", unit: Unit.RelativeHumidity },
+        [Measurement.Light]:             { ref: "photocell",     unit: Unit.Lux },
+        [Measurement.Moisture]:          { ref: "capsoilsensor", unit: Unit.CapacitiveMoisture },
     },
     states: {
-        [IoTState.LightState]: "main_light",
-        [IoTState.LightState]: "backup_light",
+        [IoTState.LightState]:           { ref: "light_1",       type: Type.Boolean },
+        [IoTState.LightState]:           { ref: "light_2",       type: Type.Boolean },
     },
+    metrics: {
+        [IoTMeasurement.Voltage]:        { ref: "batteryvoltage", unit: Unit.Volts },
+        [IoTMeasurement.SignalStrength]: { ref: "antenna",        unit: Unit.DecibelMilliWatts },
+        [IoTMeasurement.Uptime]:         { ref: "uptime",         unit: Unit.Seconds }
+    },
+    mcnEnabled: true,
+    plantsSupported: 0,
+
     // e.g. http://81.3.12.443/light_state
     // api: {
     //     [IoTMeasurement.LightState]: {
@@ -46,8 +50,6 @@ const info:HardwareDevice = {
     //         // }
     //     }
     // },
-    mcnEnabled: true,
-    plantsSupported: 0,
 } 
 
 export default info;

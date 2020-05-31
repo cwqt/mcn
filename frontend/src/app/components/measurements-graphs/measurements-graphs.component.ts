@@ -1,10 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IMeasurementModel, IMeasurement } from '../../../../../backend/lib/models/Measurement.model';
-import { Measurement, IoTMeasurement } from '../../../../../backend/lib/common/types/measurements.types';
+import { Measurement, IoTMeasurement, IoTState } from '../../../../../backend/lib/common/types/measurements.types';
 import { IDevice } from '../../../../../backend/lib/models/Device.model';
-import {
-  HardwareInformation,
-  HardwareDevice } from '../../../../../backend/lib/common/types/hardware.types';
+import { HardwareInformation } from '../../../../../backend/lib/common/types/hardware.types';
 import moment from 'moment';
 
 import ChartjsPluginAnnotation from 'chartjs-plugin-annotation';
@@ -31,10 +29,10 @@ export class MeasurementsGraphsComponent implements OnInit {
     [Measurement.WaterLevel]:      ["Water level",   "opacity",  "#aab6fe", false],
     [Measurement.Moisture]:        ["Soil moisture", "grain",    "#8bf6ff", false],
     [Measurement.Height]:          ["Plant height",  "height",   "#82e9de", false],
-    [IoTMeasurement.LightState]:   ["Light state",   "wb_incandescent", "#e1ffb1", false],
-    [IoTMeasurement.CameraState]:  ["Camera state",  "linked_camera", "#ffe97d", false],
-    [IoTMeasurement.PumpState]:    ["Pump state",    "blur_linear", "#d3b8ae", false],
-    [IoTMeasurement.HeaterState]:  ["Heater state",  "toggle_on", "#c1d5e0", false],
+    [IoTState.LightState]:         ["Light state",   "wb_incandescent", "#e1ffb1", false],
+    [IoTState.CameraState]:        ["Camera state",  "linked_camera", "#ffe97d", false],
+    [IoTState.PumpState]:          ["Pump state",    "blur_linear", "#d3b8ae", false],
+    [IoTState.HeaterState]:        ["Heater state",  "toggle_on", "#c1d5e0", false],
     [IoTMeasurement.Voltage]:      ["Voltage",       "flash_on", "#ffb74d", false],
     [IoTMeasurement.Current]:      ["Current",       "show_chart", "#c1d5e0", false],
     [IoTMeasurement.Power]:        ["Power",         "power_input", "#e6ceff", false],

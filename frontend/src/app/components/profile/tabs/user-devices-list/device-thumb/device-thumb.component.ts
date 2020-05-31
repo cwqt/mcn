@@ -8,8 +8,9 @@ import { IUser } from '../../../../../../../../backend/lib/models/User.model';
 import { IDeviceStub, IDevice, DeviceState } from '../../../../../../../../backend/lib/models/Device.model';
 import { IMeasurementModel } from '../../../../../../../../backend/lib/models/Measurement.model';
 import {
-  HardwareInformation,
-  HardwareDevice } from '../../../../../../../../backend/lib/common/types/hardware.types';
+  HardwareDevice } from '../../../../../../../../backend/lib/models/Hardware.model';
+import {
+  HardwareInformation } from '../../../../../../../../backend/lib/common/types/hardware.types';
 import { MatExpansionPanel } from '@angular/material/expansion';
 
 interface IDeviceState {

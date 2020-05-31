@@ -1,1 +1,57 @@
-<p>scheduled-tasks works!</p>
+<div class="task-routines-controller">
+    <div class="task-routines-header">
+        <h1>Task routines ({{routines.length}})</h1>
+        <app-rounded-button [icon]="'add'" [color]="'primary'">create routine</app-rounded-button>    
+    </div>
+
+    <mat-divider></mat-divider>
+    <br/>
+
+    <div *ngIf="routines.length">
+        <mat-expansion-panel *ngFor="let routine of routines" class="routine-item">
+            <button mat-icon-button class="routine-menu-button">
+                <mat-icon>more_horiz</mat-icon>
+            </button>
+    
+            <mat-expansion-panel-header class="routine-header">
+                <div class="task-indicator" [class]="routine.state">
+                    <mat-icon>{{stateMap[routine.state]}}</mat-icon>
+                </div>
+                <div class="routine-header-text">
+                    <h1>{{routine.name}}</h1>    
+                    <span><b>Active Task:</b>{{routine.activeTask.name}}</span>
+                    <!-- <span><b>interval: </b>{{cronstrue(routine.cron)}}</span> -->
+                </div>
+            </mat-expansion-panel-header>
+    
+            <mat-divider></mat-divider>
+    
+            <div class="tasks-container">
+                <div *ngFor="let task of routine.tasks">
+                    <div class="task-progress-container" [class.in_progress]="task.state == 'pending'">
+                        <!-- <span class="task-time" *ngIf="task.state == 'pending'">what the heck</span> -->
+                        <mat-progress-bar
+                            [value]="task.state != 'pending' ? 0 : 100"
+                            [mode]="task.state == 'pending' ? 'indeterminate' : 'determinate'"
+                            class="task-progress-indicator"></mat-progress-bar>
+                    </div>
+        
+                    <mat-card class="task-item">
+                        <button mat-icon-button class="task-menu-button">
+                            <mat-icon>more_horiz</mat-icon>
+                        </button>
+                
+                        <div class="task-indicator" [class]="task.state">
+                            <mat-icon>{{stateMap[task.state]}}</mat-icon>
+                        </div>
+                        <div class="task-header">
+                            <h2>{{task.name}} <span>({{task.state}})</span></h2>
+                            <span>{{task.command}}</span>
+                        </div>
+                    </mat-card>    
+                </div>    
+            </div>
+
+        </mat-expansion-panel>    
+    </div>
+</div>

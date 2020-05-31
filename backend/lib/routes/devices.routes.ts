@@ -9,6 +9,9 @@ import {
     assignDeviceToRecordable,
     readDevice,
     pingDevice,
+    readDeviceSensors,
+    readDeviceStates,
+    readDeviceMetrics,
     // updateDevice,
     // deleteDevice,
 } from "../controllers/Device.controller";
@@ -29,6 +32,7 @@ import { heartPostable, unheartPostable, repostPostable } from '../controllers/P
 
 import routines    from './routines.routes';
 import { Measurement, MeasurementUnits, IoTMeasurement, IoTState, Unit } from '../common/types/measurements.types';
+import { HardwareInformation } from '../common/types/hardware.types';
 
 const router = AsyncRouter({mergeParams: true});
 router.use((req:Request, res:Response, next:NextFunction) => {
@@ -39,6 +43,12 @@ router.use((req:Request, res:Response, next:NextFunction) => {
 router.get('/', readAllRecordables);
 router.post('/', validate([
     body('name').not().isEmpty().trim().withMessage('device must have friendly name'),
+    body('hardware_model')
+        .not().isEmpty().withMessage('Must have hardware model')
+        .custom((model:string, { req }:any) => {
+            if(!Object.keys(HardwareInformation).includes(model)) throw new Error('Un-supported hardware model')
+            return true;
+        })
 ]), createDevice);
 
 // DEVICES ========================================================================================
@@ -92,8 +102,11 @@ deviceRouter.post('/sensors', validate([
             if(!isValidUnitForType) throw new Error(`'${value}' is not a valid unit for '${req.body.measures}', should be of value: ${MeasurementUnits[type]}`);
             return true;
         })
-
 ]), createSensor);
+
+deviceRouter.get('/sensors', readDeviceSensors);
+deviceRouter.get('/states',  readDeviceStates);
+deviceRouter.get('/metrics', readDeviceMetrics);
 
 deviceRouter.use('/routines', routines);
 

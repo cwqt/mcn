@@ -1,16 +1,15 @@
 import { Request, Response } from "express";
 import { cypher } from "../common/neo4j";
-import { ISensor } from "../models/Sensor.model";
+import { IDeviceSensor } from "../models/Device.model";
 import { Types } from "mongoose";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 
 export const createSensor = async (req:Request, res:Response) => {
-    let sensor:ISensor = {
+    let sensor:IDeviceSensor = {
         name: req.body.name,
         measures: req.body.measures,
         unit: req.body.unit,
-        created_at: Date.now(),
         _id: Types.ObjectId().toHexString()
     }
 

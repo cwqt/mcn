@@ -5,10 +5,9 @@ import { UserService } from 'src/app/services/user.service';
 import { IDevice, IDeviceStub } from '../../../../../backend/lib/models/Device.model';
 import { IMeasurementModel, IMeasurement } from '../../../../../backend/lib/models/Measurement.model';
 import { PlantService } from 'src/app/services/plant.service';
-import {
-  HardwareInformation,
-  HardwareDevice } from '../../../../../backend/lib/common/types/hardware.types';
+import { HardwareDevice } from '../../../../../backend/lib/models/Hardware.model';
 import { IUser } from '../../../../../backend/lib/models/User.model';
+import { HardwareInformation } from '../../../../../backend/lib/common/types/hardware.types';
 
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 

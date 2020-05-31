@@ -23,6 +23,7 @@
     "@ivylab/overlay-angular": "0.0.6",
     "chart.js": "^2.9.3",
     "chartjs-plugin-annotation": "^0.5.7",
+    "cronstrue": "^1.94.0",
     "moment": "^2.24.0",
     "ng-click-outside": "^6.0.0",
     "ng-dynamic-component": "^6.1.0",

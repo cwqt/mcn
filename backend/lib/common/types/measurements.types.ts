@@ -1,3 +1,5 @@
+import { Type } from "../../models/Hardware.model";
+
 //types of things that can be recorded
 export enum Measurement {
     AirTemperature     = "air_temperature",
@@ -18,6 +20,8 @@ export enum IoTMeasurement {
     Current            = "current",
     Power              = "power",
     SignalStrength     = "signal_strength",
+    Uptime             = "uptime",
+    ClockSpeed         = "clock_speed",
 }
 
 export enum IoTState {
@@ -26,7 +30,9 @@ export enum IoTState {
     PumpState          = "pump_state",
     HeaterState        = "heater_state",
     FanState           = "fan_state",
-    AireatorState      = "aireator_state"
+    AireatorState      = "aireator_state",
+    ScreenText         = "screen_text",
+    ActiveChildren     = "active_children"
 }
 
 export enum Unit {
@@ -54,11 +60,20 @@ export enum Unit {
     DecibelMilliWatts  = "dBm", //wifi strength,
     Pascal             = "Pa",
     EC                 = "mS/cm",
-    PAR                = "mEinstein"
+    PAR                = "mEinstein",
+    Seconds            = "s",
+    Minutes            = "mins",
+    Hour               = "hrs",
+    Days               = "days",
+    Weeks              = "weeks",
+    Months             = "months",
+    Hz                 = "Hz",
+    MHz                = "MHz",
+    GHz                = "GHz"
 }
 
 // available units for each measurement type are described: 
-export const MeasurementUnits:{[index in (Measurement | IoTMeasurement | IoTState)]:Array<Unit>} = {
+export const MeasurementUnits:{[index in (Measurement | IoTMeasurement | IoTState)]:Array<Unit | Type>} = {
     [Measurement.PAR]:               [Unit.PAR],
     [Measurement.EC]:                [Unit.EC],
     [Measurement.AirTemperature]:    [Unit.Celcius, Unit.Fahrenheit, Unit.Kelvin],
@@ -75,13 +90,17 @@ export const MeasurementUnits:{[index in (Measurement | IoTMeasurement | IoTStat
     [IoTMeasurement.Current]:        [Unit.Amps, Unit.MilliAmps],
     [IoTMeasurement.Power]:          [Unit.Watts, Unit.MilliWatts],
     [IoTMeasurement.SignalStrength]: [Unit.DecibelMilliWatts],
+    [IoTMeasurement.Uptime]:         [Unit.Seconds],//seconds since unix epoch
+    [IoTMeasurement.ClockSpeed]:     [Unit.Hz, Unit.MHz, Unit.GHz],
 
-    [IoTState.LightState]:     [Unit.Boolean], //on or off,
-    [IoTState.CameraState]:    [Unit.Boolean],
-    [IoTState.PumpState]:      [Unit.Boolean],
-    [IoTState.HeaterState]:    [Unit.Boolean],
-    [IoTState.FanState]:       [Unit.Boolean],
-    [IoTState.AireatorState]:  [Unit.Boolean],
+    [IoTState.LightState]:     [Type.Boolean], //on or off,
+    [IoTState.CameraState]:    [Type.Boolean],
+    [IoTState.PumpState]:      [Type.Boolean],
+    [IoTState.HeaterState]:    [Type.Boolean],
+    [IoTState.FanState]:       [Type.Boolean],
+    [IoTState.AireatorState]:  [Type.Boolean],
+    [IoTState.ScreenText]:     [Type.String],
+    [IoTState.ActiveChildren]: [Type.Number]
 }
 
 export const MeasurementConversions:{[index:string]:((input:number) => number)} =  {

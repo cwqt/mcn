@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Types }             from "mongoose";
+import { Types, STATES }             from "mongoose";
 
 import { HTTP }              from '../common/http';
 import { ErrorHandler }      from "../common/errorHandler";
@@ -12,12 +12,13 @@ import { IRecordableStub, RecordableType }   from "../models/Recordable.model";
 import { IMeasurementModel, RecorderType } from "../models/Measurement.model";
 import {
     IDeviceStub,
+    IDeviceSensor,
     IDevice,
-    DeviceState }            from "../models/Device.model";
+    DeviceState, 
+    IDeviceState}            from "../models/Device.model";
 import {
     IApiKey,
     IApiKeyPrivate }         from '../models/ApiKey.model';
-import { ISensor } from "../models/Sensor.model";
 
 
 export const getDeviceState = (device:IDevice):DeviceState => {
@@ -84,9 +85,14 @@ export const readDevice = async (req:Request, res:Response) => {
             SIZE((d)<-[:REPLY_TO]-(:Post)) AS replies,
             SIZE((d)<-[:HEARTS]-(:User)) AS hearts
 
-        MATCH (d)-[:HAS_SENSOR]->(s:Sensor)
+
+        OPTIONAL MATCH (d)-[:HAS_SENSOR]->(sensor:Sensor)
+        WITH d,r,reposts,replies,hearts, collect(sensor) AS sensor
+        OPTIONAL MATCH (d)-[:HAS_STATE]->(state:State)
+        WITH d,r,reposts,replies,hearts, sensor, collect(state) AS state
+
         OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
-        RETURN d,r,k,s, hearts, replies, reposts,
+        RETURN d, r, k, sensor, state, hearts, replies, reposts,
             EXISTS ((:User {_id:$selfid})-[:HEARTS]->(d)) AS isHearting,
             EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(d)) AS hasReposted
     `, {
@@ -98,7 +104,6 @@ export const readDevice = async (req:Request, res:Response) => {
     device.measurement_count = device.measurement_count.toNumber();
     let recordable:IPlant | IGarden = result.records[0].get('r')?.properties;
     let key:IApiKeyPrivate = result.records[0].get('k')?.properties;
-    let sensors:ISensor[] = result.records[0].map((record:any) => record.get('s').properties);
 
     if(key) delete key.key;
 
@@ -113,7 +118,9 @@ export const readDevice = async (req:Request, res:Response) => {
             hearts:      result.records[0].get('hearts').toNumber(),
             reposts:     result.records[0].get('reposts').toNumber(),
             replies:     result.records[0].get('replies').toNumber(),    
-        }    
+        },
+        sensors: result.records[0].get('sensor').map((n:any) => n.properties),
+        states: result.records[0].get('state').map((n:any) => n.properties)
     };
 
 
@@ -186,4 +193,39 @@ const getAssignedRecordable = async (device_id:string):Promise<IPlant | IGarden>
 
     if(!result.records.length) throw new Error('Not recordable assigned to this device')
     return result.records[0].get('r').properties;
+}
+
+export const createState = async (req:Request, res:Response) => {
+    let state:IDeviceState = {
+        _id: Types.ObjectId().toHexString(),
+        sets: req.body.sets,
+        state: req.body.state,
+        name: req.body.name,
+        ref: req.body.ref,
+        type: req.body.type,
+        description: req.body.description ?? ""
+    }
+
+    let result = await cypher(`
+        MATCH (d:Device {_id:$did})
+        CREATE (d)-[:HAS_STATE]->(s:State $body)
+        RETURN s
+    `, {
+        did: req.params.did,
+        body: state
+    })
+
+    res.json(result.records[0]?.get('s')?.properties);
+}
+
+export const readDeviceSensors = async (req:Request, res:Response) => {
+
+}
+
+export const readDeviceStates = async (req:Request, res:Response) => {
+    
+}
+
+export const readDeviceMetrics = async (req:Request, res:Response) => {
+    
 }

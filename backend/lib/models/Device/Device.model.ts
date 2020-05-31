@@ -1,8 +1,7 @@
-import { SupportedHardware } from '../common/types/hardware.types';
+import { SupportedHardware, Type } from './Hardware.model';
 import { Measurement, Unit, IoTState } from '../common/types/measurements.types';
 import { IApiKey }           from './ApiKey.model';
 import { IRecordableStub }   from './Recordable.model';
-import { IMeasurementModel } from './Measurement.model';
 import { IPostableMeta }         from './Post.model';
 
 import * as IpAddress from 'ip-address';
@@ -35,8 +34,6 @@ export interface IDevice extends IDeviceStub {
     device_ip?:         IpAddress.Address4 | IpAddress.Address6,
     api_key?:           IApiKey,
     assigned_to?:       IRecordableStub,
-    sensors?:           IDeviceSensor[],
-    states?:            IDeviceState[]
 }
 
 export interface IDeviceSensor {
@@ -50,7 +47,9 @@ export interface IDeviceSensor {
 export interface IDeviceState {
     _id:            string,
     sets:           IoTState,
+    type:           Type,
     state:          string | number | boolean,
+    ref:            string,
     name:           string,
     description?:   string,
 }

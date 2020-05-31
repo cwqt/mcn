@@ -5,17 +5,23 @@ import { Types }                    from 'mongoose';
 import { ITaskRoutine, ITask, TaskState } from '../../../runner/lib/models/Tasks.model'
 import { ErrorHandler } from '../common/errorHandler';
 import { HTTP } from '../common/http';
+import { IDeviceSensor } from '../models/Device.model';
 
 export const getTaskRoutines = async (req:Request, res:Response) => {
     let result = await cypher(`
-        MATCH (d:Device {_id:$did})-[:HAS_ROUTINE]->(t:TaskRoutine)
-        RETURN t
+        MATCH (d:Device {_id:$did})-[:HAS_ROUTINE]->(tr:TaskRoutine)
+        MATCH (tr)-[:START]->(start:Task)
+        OPTIONAL MATCH (start)-[:NEXT*0..]->(t)
+        RETURN tr, start, collect(t) AS t
     `, {
         did: req.params.did
     })
 
-    let routines:ITaskRoutine[] = result.records.map((record:any) => {
-        return record.get('t').properties;
+    let routines:ITaskRoutine[] = result.records.map((record:any) => {    
+        return {
+            ...record.get('tr').properties,
+            tasks: record.get('t')?.map((x:any) => x.properties)
+        }
     })
 
     res.json(routines);

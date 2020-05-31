@@ -10,7 +10,7 @@ Devices can have many sensors for the same measurement, as well as states & metr
 
 ## Device definition
 
-Devices are internally reflected as `HardwareDevices`, see `/Users/cass/Code/Projects/Sites/hydroponics/backend/lib/common/types/hardware.types.ts` for information:
+Devices are internally reflected as `HardwareDevices`, see `/lib/common/types/hardware.types.ts` for information:
 
 A device is described as:
 
@@ -23,19 +23,19 @@ A device is described as:
         DeviceCapability.UPnP,
     ],
     sensors: {
-        [Measurement.AirTemperature]:    { id: "dht22temp",     unit: Unit.Celcius },
-        [Measurement.Humidity]:          { id: "dht22humidity", unit: Unit.RelativeHumidity },
-        [Measurement.Light]:             { id: "photocell",     unit: Unit.Lux },
-        [Measurement.Moisture]:          { id: "capsoilsensor", unit: Unit.CapacitiveMoisture },
+        [Measurement.AirTemperature]:    { ref: "dht22temp",     unit: Unit.Celcius },
+        [Measurement.Humidity]:          { ref: "dht22humidity", unit: Unit.RelativeHumidity },
+        [Measurement.Light]:             { ref: "photocell",     unit: Unit.Lux },
+        [Measurement.Moisture]:          { ref: "capsoilsensor", unit: Unit.CapacitiveMoisture },
     },
     states: {
-        [IoTState.LightState]:           { id: "light_1" },
-        [IoTState.LightState]:           { id: "light_2" },
+        [IoTState.LightState]:           { ref: "light_1",       type: Type.Boolean },
+        [IoTState.LightState]:           { ref: "light_2",       type: Type.Boolean },
     },
     metrics: {
-        [IoTMeasurement.Voltage]:        { id: "batteryvoltage", unit: Unit.Volts },
-        [IoTMeasurement.SignalStrength]: { id: "antenna",        unit: Unit.DecibelMilliWatts },
-        [IoTMeasurement.Uptime]:         { id: "uptime",         unit: Unit.Seconds }
+        [IoTMeasurement.Voltage]:        { ref: "batteryvoltage", unit: Unit.Volts },
+        [IoTMeasurement.SignalStrength]: { ref: "antenna",        unit: Unit.DecibelMilliWatts },
+        [IoTMeasurement.Uptime]:         { ref: "uptime",         unit: Unit.Seconds }
     }
     mcnEnabled: true,
     plantsSupported: 0,
@@ -86,7 +86,7 @@ For all sensors, states & metrics:
 }
 ```
 
-The string mapping of `_id` in the device spec. should be consistent in your devices response so that the measurements can be correctly matched.
+The string mapping of `ref` in the device spec. should be consistent in your devices response so that the measurements can be correctly matched.
 
 ## For specific types of measurements
 
