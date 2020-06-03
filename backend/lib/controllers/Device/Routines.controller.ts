@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { cypher } from '../common/neo4j';
+import { cypher } from '../../common/neo4j';
 import { Types }                    from 'mongoose';
 
-import { ITaskRoutine, ITask, TaskState } from '../../../runner/lib/models/Tasks.model'
-import { ErrorHandler } from '../common/errorHandler';
-import { HTTP } from '../common/http';
-import { IDeviceSensor } from '../models/Device.model';
+import { ITaskRoutine, ITask, TaskState } from '../../../../runner/lib/models/Tasks.model'
+import { ErrorHandler } from '../../common/errorHandler';
+import { HTTP } from '../../common/http';
+import { IDeviceSensor } from '../../models/Device/Device.model';
 
 export const getTaskRoutines = async (req:Request, res:Response) => {
     let result = await cypher(`

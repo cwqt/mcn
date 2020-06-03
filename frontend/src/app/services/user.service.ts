@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { IUser, IUserStub } from '../../../../backend/lib/models/User.model';
 import { IPost, IPostStub } from '../../../../backend/lib/models/Post.model';
-import { IDeviceStub } from '../../../../backend/lib/models/Device.model';
+import { IDeviceStub } from '../../../../backend/lib/models/Device/Device.model';
 
 @Injectable({
   providedIn: 'root'

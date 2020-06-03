@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DeviceService } from 'src/app/services/device.service';
 import { UserService } from 'src/app/services/user.service';
-import { IDevice, IDeviceStub } from '../../../../../backend/lib/models/Device.model';
+import { IDevice, IDeviceStub } from '../../../../../backend/lib/models/Device/Device.model';
 import { IMeasurementModel, IMeasurement } from '../../../../../backend/lib/models/Measurement.model';
 import { PlantService } from 'src/app/services/plant.service';
 import { HardwareDevice } from '../../../../../backend/lib/models/Hardware.model';

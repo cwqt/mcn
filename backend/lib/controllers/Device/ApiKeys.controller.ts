@@ -2,11 +2,11 @@ import jwt                    from "jsonwebtoken";
 import { Request, Response, } from 'express';
 import { Types }              from 'mongoose';
 
-import config           from '../config';
-import { ErrorHandler } from "../common/errorHandler";
-import { n4j, cypher }          from '../common/neo4j';
-import { HTTP }         from "../common/http";
-import { IApiKeyPrivate } from '../models/ApiKey.model';
+import config           from '../../config';
+import { ErrorHandler } from "../../common/errorHandler";
+import { n4j, cypher }          from '../../common/neo4j';
+import { HTTP }         from "../../common/http";
+import { IApiKeyPrivate } from '../../models/Device/ApiKey.model';
 
 const filterFields = (key:any) => {
   let hiddenFields = ["key"];

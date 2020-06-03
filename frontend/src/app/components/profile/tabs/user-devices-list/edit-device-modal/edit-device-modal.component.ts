@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from 'src/app/services/user.service';
-import { IDevice, IDeviceStub } from '../../../../../../../../backend/lib/models/Device.model';
+import { IDevice, IDeviceStub } from '../../../../../../../../backend/lib/models/Device/Device.model';
 
 @Component({
   selector: 'app-edit-device-modal',

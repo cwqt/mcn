@@ -2,15 +2,15 @@ import { Request, Response, NextFunction } from "express"
 import { Types }    from "mongoose";
 import { body }     from 'express-validator';
 
-import { RecordableType }   from "../models/Recordable.model"
-import { IDeviceStub }      from '../models/Device.model';
-import { IRecordableStub }  from '../models/Recordable.model';
-import { validate }         from "../common/validate";
-import { ErrorHandler }     from "../common/errorHandler";
-import { HTTP }             from "../common/http";
-import { n4j, cypher }              from '../common/neo4j';
-import { getDeviceState }   from '../controllers/Device.controller';
-import { getN4jNodeName }   from './Postable.controller'
+import { RecordableType }   from "../../models/Recordable.model"
+import { IDeviceStub }      from '../../models/Device/Device.model';
+import { IRecordableStub }  from '../../models/Recordable.model';
+import { validate }         from "../../common/validate";
+import { ErrorHandler }     from "../../common/errorHandler";
+import { HTTP }             from "../../common/http";
+import { n4j, cypher }              from '../../common/neo4j';
+import { getDeviceState }   from '../Device/Device.controller';
+import { getN4jNodeName }   from '../Postable.controller'
 
 
 export const createRecordable = async (req:Request, res:Response, next:NextFunction) => {

@@ -1,5 +1,5 @@
 import { IRecordableStub, RecordableType } from "./Recordable.model";
-import { IDeviceStub, IDevice } from "./Device.model";
+import { IDeviceStub, IDevice } from "./Device/Device.model";
 import { IUserStub } from './User.model';
 import { RecorderType } from "./Measurement.model";
 

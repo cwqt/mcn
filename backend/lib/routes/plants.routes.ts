@@ -7,7 +7,7 @@ import { validate } from '../common/validate';
 import { 
     createPlant,
     updatePlant
-} from '../controllers/Plants.controller';
+} from '../controllers/Recordables/Plants.controller';
 
 import {
     createRecordable,
@@ -16,13 +16,13 @@ import {
     updateRecordable,
     readAllRecordables,
     readRecordable,
-} from '../controllers/Recordable.controller';
+} from '../controllers/Recordables/Recordable.controller';
 
 import { RecordableType } from '../models/Recordable.model';
 import {
     readAllMeasurements,
     deleteMeasurements
-} from "../controllers/Measurements.controller";
+} from "../controllers/Device/Measurements.controller";
 import { repostPostable, heartPostable, unheartPostable } from "../controllers/Postable.controller";
 
 

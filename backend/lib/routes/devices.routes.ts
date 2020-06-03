@@ -3,7 +3,7 @@ const { body, param, query } = require('express-validator');
 import { validate } from '../common/validate'; 
 var AsyncRouter = require("express-async-router").AsyncRouter;
 
-import { readAllMeasurements } from '../controllers/Measurements.controller';
+import { readAllMeasurements } from '../controllers/Device/Measurements.controller';
 import {
     createDevice,
     assignDeviceToRecordable,
@@ -14,20 +14,20 @@ import {
     readDeviceMetrics,
     // updateDevice,
     // deleteDevice,
-} from "../controllers/Device.controller";
+} from "../controllers/Device/Device.controller";
 import {
     createApiKey,
     readApiKey,
     deleteApiKey
-} from '../controllers/ApiKeys.controller';
+} from '../controllers/Device/ApiKeys.controller';
 import {
     createSensor,
     updateSensor,
     deleteSensor
-} from '../controllers/Sensor.controller';
+} from '../controllers/Device/Sensor.controller';
 
 import { RecordableType } from '../models/Recordable.model';
-import { readAllRecordables } from '../controllers/Recordable.controller';
+import { readAllRecordables } from '../controllers/Recordables/Recordable.controller';
 import { heartPostable, unheartPostable, repostPostable } from '../controllers/Postable.controller';
 
 import routines    from './routines.routes';

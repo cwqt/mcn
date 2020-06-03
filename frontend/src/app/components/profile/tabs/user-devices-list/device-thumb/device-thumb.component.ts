@@ -5,7 +5,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog
 import { EditDeviceModalComponent } from '../edit-device-modal/edit-device-modal.component';
 
 import { IUser } from '../../../../../../../../backend/lib/models/User.model';
-import { IDeviceStub, IDevice, DeviceState } from '../../../../../../../../backend/lib/models/Device.model';
+import { IDeviceStub, IDevice, DeviceState } from '../../../../../../../../backend/lib/models/Device/Device.model';
 import { IMeasurementModel } from '../../../../../../../../backend/lib/models/Measurement.model';
 import {
   HardwareDevice } from '../../../../../../../../backend/lib/models/Hardware.model';

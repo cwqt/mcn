@@ -1,4 +1,4 @@
-import { RecordableType } from "./Recordable.model";
+import { RecordableType } from "../Recordable.model";
 
 export interface IApiKey {
     _id:        string,

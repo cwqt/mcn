@@ -4,7 +4,7 @@ import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 
 import { MeasurementUnits } from '../../../../backend/lib/common/types/measurements.types';
-import { IDevice } from '../../../../backend/lib/models/Device.model';
+import { IDevice } from '../../../../backend/lib/models/Device/Device.model';
 import { IMeasurementModel } from '../../../../backend/lib/models/Measurement.model';
 import { ITaskRoutine } from '../../../../runner/lib/models/Tasks.model';
 

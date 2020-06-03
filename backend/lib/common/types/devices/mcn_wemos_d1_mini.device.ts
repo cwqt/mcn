@@ -8,21 +8,21 @@ const info:HardwareDevice = {
         DeviceCapability.WiFi,
         DeviceCapability.UPnP,
     ],
-    sensors: {
-        [Measurement.AirTemperature]:    { ref: "dht22temp",     unit: Unit.Celcius },
-        [Measurement.Humidity]:          { ref: "dht22humidity", unit: Unit.RelativeHumidity },
-        [Measurement.Light]:             { ref: "photocell",     unit: Unit.Lux },
-        [Measurement.Moisture]:          { ref: "capsoilsensor", unit: Unit.CapacitiveMoisture },
-    },
-    states: {
-        [IoTState.LightState]:           { ref: "light_1",       type: Type.Boolean },
-        [IoTState.LightState]:           { ref: "light_2",       type: Type.Boolean },
-    },
-    metrics: {
-        [IoTMeasurement.Voltage]:        { ref: "batteryvoltage", unit: Unit.Volts },
-        [IoTMeasurement.SignalStrength]: { ref: "antenna",        unit: Unit.DecibelMilliWatts },
-        [IoTMeasurement.Uptime]:         { ref: "uptime",         unit: Unit.Seconds }
-    },
+    sensors: [
+        { type: Measurement.AirTemperature,   ref: "dht22temp",     unit: Unit.Celcius },
+        { type: Measurement.Humidity,         ref: "dht22humidity", unit: Unit.RelativeHumidity },
+        { type: Measurement.Light,            ref: "photocell",     unit: Unit.Lux },
+        { type: Measurement.Moisture,         ref: "capsoilsensor", unit: Unit.CapacitiveMoisture },        
+    ],
+    states: [
+        { type: IoTState.LightState,          ref: "light_1",        unit: Type.Boolean },
+        { type: IoTState.LightState,          ref: "light_2",        unit: Type.Boolean }
+    ],
+    metrics: [
+        { type:IoTMeasurement.Voltage,        ref: "batteryvoltage", unit: Unit.Volts },
+        { type:IoTMeasurement.SignalStrength, ref: "antenna",        unit: Unit.DecibelMilliWatts },
+        { type:IoTMeasurement.Uptime,         ref: "uptime",         unit: Unit.Seconds }        
+    ],
     mcnEnabled: true,
     plantsSupported: 0,
 

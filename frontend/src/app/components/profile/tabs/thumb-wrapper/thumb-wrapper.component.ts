@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { RecordableService } from 'src/app/services/recordable.service';
 import { Popover, PopoverProperties } from 'src/assets/popover';
 import { Postable } from '../../../../../../../backend/lib/models/Post.model';
-import { IDeviceStub } from '../../../../../../../backend/lib/models/Device.model';
+import { IDeviceStub } from '../../../../../../../backend/lib/models/Device/Device.model';
 
 @Component({
   selector: 'app-thumb-wrapper',

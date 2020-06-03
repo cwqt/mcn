@@ -6,8 +6,8 @@ import { HTTP }             from "../common/http";
 import { n4j, cypher }              from '../common/neo4j';
 import { filterUserFields } from './User.controller'
 import { RecordableType }   from "../models/Recordable.model";
-import { IDeviceStub }      from '../models/Device.model';
-import { getDeviceState }   from "./Device.controller";
+import { IDeviceStub }      from '../models/Device/Device.model';
+import { getDeviceState }   from "./Device/Device.controller";
 import { IRecordableStub }   from '../models/Recordable.model'
 import {
     IPost,

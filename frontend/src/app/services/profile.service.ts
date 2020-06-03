@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { IUser } from '../../../../backend/lib/models/User.model';
 import { IPostStub } from '../../../../backend/lib/models/Post.model';
-import { IDeviceStub } from '../../../../backend/lib/models/Device.model';
+import { IDeviceStub } from '../../../../backend/lib/models/Device/Device.model';
 import { IRecordableStub } from '../../../../backend/lib/models/Recordable.model';
 
 @Injectable({

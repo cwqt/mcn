@@ -1,9 +1,9 @@
 import { Request, Response }    from "express"
 
-import { IPlant }       from '../models/Plant.model'
-import { ErrorHandler } from "../common/errorHandler";
-import { HTTP }         from "../common/http";
-import { n4j, cypher }          from '../common/neo4j';
+import { IPlant }       from '../../models/Plant.model'
+import { ErrorHandler } from "../../common/errorHandler";
+import { HTTP }         from "../../common/http";
+import { n4j, cypher }          from '../../common/neo4j';
 
 export const createPlant = async (req:Request, res:Response) => {
     let result = await cypher(`

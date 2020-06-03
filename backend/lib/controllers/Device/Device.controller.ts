@@ -1,25 +1,26 @@
 import { Request, Response } from "express";
-import { Types, STATES }             from "mongoose";
+import { Types }             from "mongoose";
 
-import { HTTP }              from '../common/http';
-import { ErrorHandler }      from "../common/errorHandler";
-import { n4j, cypher }               from '../common/neo4j';
-
-import { IPlant }            from '../models/Plant.model';
-import { IGarden }           from '../models/Garden.model';
-import { getModel }          from './Measurements.controller';
-import { IRecordableStub, RecordableType }   from "../models/Recordable.model";
-import { IMeasurementModel, RecorderType } from "../models/Measurement.model";
+import { HardwareInformation } from "../../common/types/hardware.types";
+import { HTTP }              from '../../common/http';
+import { n4j, cypher }       from '../../common/neo4j';
+import { HardwareDevice }    from "../../models/Hardware.model";
+import { IPlant }            from '../../models/Plant.model';
+import { IGarden }           from '../../models/Garden.model';
+import { IRecordableStub }   from "../../models/Recordable.model";
+import { ErrorHandler }      from "../../common/errorHandler";
 import {
-    IDeviceStub,
     IDeviceSensor,
     IDevice,
     DeviceState, 
-    IDeviceState}            from "../models/Device.model";
+    IDeviceState}            from "../../models/Device/Device.model";
 import {
     IApiKey,
-    IApiKeyPrivate }         from '../models/ApiKey.model';
-
+    IApiKeyPrivate }         from '../../models/Device/ApiKey.model';
+import { 
+    Measurement,
+    IoTState,
+    IoTMeasurement }         from "../../common/types/measurements.types";
 
 export const getDeviceState = (device:IDevice):DeviceState => {
     if(device.last_ping == undefined) return DeviceState.UnVerified
@@ -46,21 +47,89 @@ export const createDevice = async (req:Request, res:Response) => {
         hardware_model: req.body.hardware_model,
     }
 
-    let result = await cypher(`
-        MATCH (u:User {_id:$uid})
-        CREATE (d:Device $body)<-[:CREATED]-(u)
-        return d
-    `, {
-        uid: req.params.uid,
-        body: device
+    const hwInfo:HardwareDevice = HardwareInformation[device.hardware_model];
+    let sensors:IDeviceSensor[] = [];
+    let metrics:IDeviceSensor[] = [];
+    let states:IDeviceState[]   = [];
+
+    sensors = Object.keys(hwInfo.sensors).map((s:Measurement) => {
+        return {
+            _id: Types.ObjectId().toHexString(),
+            measures: s,
+            unit: hwInfo.sensors[s].unit,
+            name: s + " sensor",
+            description: "",
+            ref: hwInfo.sensors[s].ref,
+            value: undefined,
+        } as IDeviceSensor
     })
+
+    metrics = Object.keys(hwInfo.metrics).map((s:IoTMeasurement) => {
+        return {
+            _id: Types.ObjectId().toHexString(),
+            measures: s,
+            unit: hwInfo.metrics[s].unit,
+            name: s + " metric",
+            description: "",
+            ref: hwInfo.metrics[s].ref,
+            value: undefined,
+        } as IDeviceSensor
+    })
+
+    states = Object.keys(hwInfo.states).map((s:IoTState) => {
+        return {
+            _id: Types.ObjectId().toHexString(),
+            state: s,
+            type: hwInfo.states[s].unit,
+            name: s + " state",
+            description: "",
+            ref: hwInfo.states[s].ref,
+            value: undefined,
+        } as IDeviceState
+    })
+
+    console.log(sensors, states, metrics);
+
+    let session = n4j.session();
+    let result;
+    try {
+        const txc = session.beginTransaction();
+        result = await txc.run(`
+            MATCH (u:User {_id:$uid})
+            CREATE (d:Device $body)<-[:CREATED]-(u)
+            return d
+        `, {
+            uid: req.params.uid,
+            body: device,
+        })
+
+        await txc.run(`
+            MATCH (d:Device {_id:$did})
+            FOREACH (sensor in $sensors | CREATE (s:Sensor)-[:HAS_SENSOR]->(d) SET s=sensor)
+        `, { did: device._id, sensors: sensors })
+
+        await txc.run(`
+            MATCH (d:Device {_id:$did})
+            FOREACH (metric in $metrics | CREATE (m:Metric)-[:HAS_METRIC]->(d) SET m=metric);
+        `, { did: device._id, metrics: metrics })
+
+        await txc.run(`
+            MATCH (d:Device {_id:$did})
+            FOREACH (state in $states | CREATE (s:State)-[:HAS_STATE]->(d) SET s=state);
+        `, { did: device._id, states: states })
+
+        await txc.commit()
+    } catch (e) {
+        throw new ErrorHandler(HTTP.ServerError, e)
+    } finally {
+        session.close();
+    }
 
     if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
     let d = result.records[0].get('d').properties;
-    d.measurement_count = d.measurement_count.toNumber();
+    // d.measurement_count = d.measurement_count.toNumber();
     res.status(HTTP.Created).json(d);
 }
-
 
 export const assignDeviceToRecordable = async (req:Request, res:Response) => {
     let result = await cypher(`
@@ -195,28 +264,28 @@ const getAssignedRecordable = async (device_id:string):Promise<IPlant | IGarden>
     return result.records[0].get('r').properties;
 }
 
-export const createState = async (req:Request, res:Response) => {
-    let state:IDeviceState = {
-        _id: Types.ObjectId().toHexString(),
-        sets: req.body.sets,
-        state: req.body.state,
-        name: req.body.name,
-        ref: req.body.ref,
-        type: req.body.type,
-        description: req.body.description ?? ""
-    }
+// export const createState = async (req:Request, res:Response) => {
+//     let state:IDeviceState = {
+//         _id: Types.ObjectId().toHexString(),
+//         sets: req.body.sets,
+//         state: req.body.state,
+//         name: req.body.name,
+//         ref: req.body.ref,
+//         type: req.body.type,
+//         description: req.body.description ?? ""
+//     }
 
-    let result = await cypher(`
-        MATCH (d:Device {_id:$did})
-        CREATE (d)-[:HAS_STATE]->(s:State $body)
-        RETURN s
-    `, {
-        did: req.params.did,
-        body: state
-    })
+//     let result = await cypher(`
+//         MATCH (d:Device {_id:$did})
+//         CREATE (d)-[:HAS_STATE]->(s:State $body)
+//         RETURN s
+//     `, {
+//         did: req.params.did,
+//         body: state
+//     })
 
-    res.json(result.records[0]?.get('s')?.properties);
-}
+//     res.json(result.records[0]?.get('s')?.properties);
+// }
 
 export const readDeviceSensors = async (req:Request, res:Response) => {
 

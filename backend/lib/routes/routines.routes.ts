@@ -13,7 +13,7 @@ import {
     updateTask,
     deleteTask,
     executeRoutine,
-} from '../controllers/Routines.controller';
+} from '../controllers/Device/Routines.controller';
 
 const router = AsyncRouter({mergeParams: true});
 

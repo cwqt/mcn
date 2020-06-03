@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IMeasurementModel, IMeasurement } from '../../../../../backend/lib/models/Measurement.model';
 import { Measurement, IoTMeasurement, IoTState } from '../../../../../backend/lib/common/types/measurements.types';
-import { IDevice } from '../../../../../backend/lib/models/Device.model';
+import { IDevice } from '../../../../../backend/lib/models/Device/Device.model';
 import { HardwareInformation } from '../../../../../backend/lib/common/types/hardware.types';
 import moment from 'moment';
 

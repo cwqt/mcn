@@ -4,7 +4,7 @@ import { UserService } from 'src/app/services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { IRecordableStub } from '../../../../../backend/lib/models/Recordable.model';
-import { IDeviceStub } from '../../../../../backend/lib/models/Device.model';
+import { IDeviceStub } from '../../../../../backend/lib/models/Device/Device.model';
 
 import { UserPostsListComponent } from '../../components/profile/tabs/user-posts-list/user-posts-list.component';
 import { UserPlantsListComponent } from '../../components/profile/tabs/user-plants-list/user-plants-list.component';

@@ -2,21 +2,21 @@ import { Request, Response } from "express";
 import { Model, model }      from "mongoose";
 import mongoose              from 'mongoose';
 
-import { IDevice }           from "../models/Device.model";
-import { HTTP }              from '../common/http';
-import { ErrorHandler }      from "../common/errorHandler";
-import { n4j, cypher }               from '../common/neo4j';
-import { MeasurementUnits }  from '../common/types/measurements.types';
-import { IGarden }           from "../models/Garden.model";
-import { IPlant }            from "../models/Plant.model";
+import { IDevice }           from "../../models/Device/Device.model";
+import { HTTP }              from '../../common/http';
+import { ErrorHandler }      from "../../common/errorHandler";
+import { n4j, cypher }               from '../../common/neo4j';
+import { MeasurementUnits }  from '../../common/types/measurements.types';
+import { IGarden }           from "../../models/Garden.model";
+import { IPlant }            from "../../models/Plant.model";
 import {
     IMeasurementModel,
     IoTDataPacket,
     IMeasurement,
     RecorderType,
-    MeasurementSchema } from "../models/Measurement.model";
+    MeasurementSchema } from "../../models/Measurement.model";
 
-import { RecordableType } from '../models/Recordable.model';
+import { RecordableType } from '../../models/Recordable.model';
 
 //each recordable/device has it's own collection denoted by it's type-_id
 // e.g. device-8asvda87213..., plant-oqbdb30dhal...

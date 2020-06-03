@@ -1,9 +1,9 @@
 import { Request, Response, }    from "express"
 
-import { IGarden }      from '../models/Garden.model';
-import { IPlant }       from '../models/Plant.model';
-import { ErrorHandler } from "../common/errorHandler";
-import { HTTP }         from "../common/http";
+import { IGarden }      from '../../models/Garden.model';
+import { IPlant }       from '../../models/Plant.model';
+import { ErrorHandler } from "../../common/errorHandler";
+import { HTTP }         from "../../common/http";
 
 export const createGarden = (req:Request, res:Response) => {
     // Garden.create(req.body, (error:any, garden:IGardenModel) => {

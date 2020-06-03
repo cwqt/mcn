@@ -18,12 +18,11 @@ export interface HardwareDevice {
     capabilities:    DeviceCapability[],
     mcnEnabled:      boolean,
     plantsSupported: number,
-    states:          {[index in IoTState]?:{ref:string, type:Type}},
-    sensors:         {[index in Measurement]?:{ref:string, unit:Unit}},
-    metrics:         {[index in IoTMeasurement]?:{ref:string, unit:Unit}},
+    states:          Array<{type:IoTState,       ref:string, unit:Type}>,
+    sensors:         Array<{type:Measurement,    ref:string, unit:Unit}>,
+    metrics:         Array<{type:IoTMeasurement, ref:string, unit:Unit}>,
     api?:            {[index:string]: {[index in HttpMethod]?:IDeviceEndpoint}}
 }
-
 
 export enum HttpMethod {
     Get     = "GET",

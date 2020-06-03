@@ -10,7 +10,7 @@ import {
     createMeasurementAsDevice,
     createMeasurementAsUser,
     getMeasurementTypes,
-} from '../controllers/Measurements.controller';
+} from '../controllers/Device/Measurements.controller';
 import { RecorderType } from '../models/Measurement.model';
 import { RecordableType } from '../models/Recordable.model';
 import { ErrorHandler } from '../common/errorHandler';

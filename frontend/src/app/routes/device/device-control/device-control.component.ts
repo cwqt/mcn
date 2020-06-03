@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IUser } from '../../../../../../backend/lib/models/User.model';
-import { IDevice } from '../../../../../../backend/lib/models/Device.model';
+import { IDevice } from '../../../../../../backend/lib/models/Device/Device.model';
 
 @Component({
   selector: 'app-device-control',

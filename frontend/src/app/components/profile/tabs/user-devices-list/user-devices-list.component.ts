@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ProfileService } from 'src/app/services/profile.service';
-import { IDevice, IDeviceStub } from '../../../../../../../backend/lib/models/Device.model';
+import { IDevice, IDeviceStub } from '../../../../../../../backend/lib/models/Device/Device.model';
 import { IUser } from '../../../../../../../backend/lib/models/User.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { CreateDeviceGuideComponent } from './create-device-guide/create-device-guide.component';

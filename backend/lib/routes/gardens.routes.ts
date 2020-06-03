@@ -7,7 +7,7 @@ import { validate } from '../common/validate';
 import { 
     createGarden,
     updateGarden,
-} from '../controllers/Gardens.controller';
+} from '../controllers/Recordables/Gardens.controller';
 
 // import {
 //     createRecordable,
