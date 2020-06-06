@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { IUser } from '../../../../backend/lib/models/User.model';
 import { IPostStub } from '../../../../backend/lib/models/Post.model';
 import { IDeviceStub } from '../../../../backend/lib/models/Device/Device.model';
-import { IRecordableStub } from '../../../../backend/lib/models/Recordable.model';
+import { IRecordableStub, IPaginator } from '../../../../backend/lib/models/Recordable.model';
 
 @Injectable({
   providedIn: 'root'
@@ -56,10 +56,13 @@ export class ProfileService {
       })).toPromise();
   }
 
-  getDevices() {
-    return this.http.get(`/api/users/${this.currentProfileValue._id}/devices`)
-      .pipe(map((devices:IDeviceStub[]) => {
-        return devices;
+  getDevices(page?:number, per_page?:number) {
+    let query = "";
+    if(page != undefined && per_page) query = `?page=${page}&per_page=${per_page}`;
+
+    return this.http.get(`/api/users/${this.currentProfileValue._id}/devices${query}`)
+      .pipe(map((response:{data:IDeviceStub[], pagination:IPaginator}) => {
+        return response;
       })).toPromise();
   }
 }

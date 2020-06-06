@@ -5,6 +5,7 @@ import { IUser } from '../../../../../../../backend/lib/models/User.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { CreateDeviceGuideComponent } from './create-device-guide/create-device-guide.component';
 import { BehaviorSubject } from 'rxjs';
+import { IPaginator } from '../../../../../../../backend/lib/models/Recordable.model';
 
 @Component({
   selector: 'app-user-devices-list',
@@ -22,6 +23,7 @@ export class UserDevicesListComponent implements OnInit {
   loading:boolean = false;
   error:string;
   devices:IDeviceStub[] = [];
+  pagination:IPaginator;
   
   constructor(private profileService:ProfileService, public dialog:MatDialog) {}
 
@@ -36,9 +38,14 @@ export class UserDevicesListComponent implements OnInit {
 
   initialise() {
     this.initialised = true;
-    this.profileService.getDevices()
-      .then((devices:IDeviceStub[]) => {
-        this.devices = devices;
+    this.getDevices(0, 1);
+  }
+
+  getDevices(page:number, per_page:number) {
+    this.profileService.getDevices(page, per_page)
+      .then((response:{data:IDeviceStub[], pagination:IPaginator}) => {
+        this.devices = response.data;
+        this.pagination = response.pagination;
       })
       .catch(e => this.error = e)
       .finally(() => this.loading = false);

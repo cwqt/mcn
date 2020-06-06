@@ -54,21 +54,24 @@ export const deleteRecordable = async (req:Request, res:Response, next:NextFunct
 }
 
 export const readAllRecordables = async (req:Request, res:Response) => {
-    let page = parseInt(<string>req.query.page) ?? 0;
-    let per_page = parseInt(<string>req.query.per_page) ?? 10 as number;
+    let page = req.query.page ? parseInt(<string>req.query.page) : 1;
+    let per_page = req.query.per_page ? parseInt(<string>req.query.per_page) : 10;
 
     let result = await cypher(`
         MATCH (r:${getN4jNodeName(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
         WITH r,
             SIZE((r)<-[:REPOST_OF]-(:Post)) AS reposts,
             SIZE((r)<-[:REPLY_TO]-(:Post)) AS replies,
-            SIZE((r)<-[:HEARTS]-(:User)) AS hearts,
+            SIZE((r)<-[:HEARTS]-(:User)) AS hearts
         RETURN r, hearts, replies, reposts,
             EXISTS ((:User {_id:$selfid})-[:HEARTS]->(r)) AS isHearting,
             EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(r)) AS hasReposted
+        ORDER BY r.created_at SKIP toInteger($skip) LIMIT toInteger($per_page)
     `, {
         uid: req.params.uid,
-        selfid: req.session.user.id
+        selfid: req.session.user.id,
+        per_page: per_page,
+        skip: (page+1)*per_page
     })
 
     let recordables:IDeviceStub[] | IRecordableStub[] = result.records.map((record:any) => {
@@ -115,7 +118,7 @@ export const readAllRecordables = async (req:Request, res:Response) => {
 
     let paginatedResults = {
         data: recordables,
-        pagination: createPaginator(`${config.API_URL}/${res.locals.type}s`, page, per_page, recordables.length)
+        pagination: createPaginator(`${config.API_URL}/${res.locals.type}s`, page, per_page, 1)
     }
 
     res.json(paginatedResults);
@@ -130,8 +133,10 @@ export const createPaginator = (base_url:string, page:number, per_page:number, t
         total_results: total_elements
     }
 
-    if ((page-1)*per_page > 0)          paginator.prev = base_url + `?page=${page-1}&per_page=${per_page}`
+    console.log(page*per_page, total_elements)
+
     if (page*per_page < total_elements) paginator.next = base_url + `?page=${page+1}&per_page=${per_page}`
+    if ((page-1)*per_page > 0)          paginator.prev = base_url + `?page=${page-1}&per_page=${per_page}`
 
     return paginator;
 }

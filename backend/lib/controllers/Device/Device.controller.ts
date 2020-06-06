@@ -154,7 +154,6 @@ export const readDevice = async (req:Request, res:Response) => {
             SIZE((d)<-[:REPLY_TO]-(:Post)) AS replies,
             SIZE((d)<-[:HEARTS]-(:User)) AS hearts
 
-
         OPTIONAL MATCH (d)-[:HAS_SENSOR]->(sensor:Sensor)
         WITH d,r,reposts,replies,hearts, collect(sensor) AS sensor
         OPTIONAL MATCH (d)-[:HAS_STATE]->(state:State)
