@@ -7,12 +7,12 @@ const { body, param, query }    = require('express-validator');
 
 const router = AsyncRouter({mergeParams: true});
 
-router.get(`/:jid/${TaskResolutionStates.Success}`,
+router.post(`/:jid/${TaskResolutionStates.Success}`,
     (req:Request, res:Response, next:NextFunction) => {
         res.locals.state = TaskResolutionStates.Success
 }, markTaskComplete);
 
-router.get(`/:jid/${TaskResolutionStates.Fail}`,
+router.post(`/:jid/${TaskResolutionStates.Fail}`,
     (req:Request, res:Response, next:NextFunction) => {
         res.locals.state = TaskResolutionStates.Fail
 }, validate([

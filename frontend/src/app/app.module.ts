@@ -77,6 +77,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
+import {MatPaginatorModule} from '@angular/material/paginator';
+
 
 
 import { MeasurementsGraphsComponent } from './components/measurements-graphs/measurements-graphs.component';
@@ -164,7 +166,8 @@ import { PostableRepliesComponent } from './components/app/postable/postable-rep
     MatSlideToggleModule,
     MatTableModule,
     MatProgressBarModule,
-    MatChipsModule
+    MatChipsModule,
+    MatPaginatorModule
 
   ],
   providers: [

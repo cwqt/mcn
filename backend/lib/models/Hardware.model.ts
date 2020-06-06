@@ -18,9 +18,9 @@ export interface HardwareDevice {
     capabilities:    DeviceCapability[],
     mcnEnabled:      boolean,
     plantsSupported: number,
-    states:          Array<{type:IoTState,       ref:string, unit:Type}>,
-    sensors:         Array<{type:Measurement,    ref:string, unit:Unit}>,
-    metrics:         Array<{type:IoTMeasurement, ref:string, unit:Unit}>,
+    states:          {[index:string]: {type:IoTState, unit:Type}},
+    sensors:         {[index:string]: {type:Measurement, unit:Unit}},
+    metrics:         {[index:string]: {type:IoTMeasurement, unit:Unit}},  
     api?:            {[index:string]: {[index in HttpMethod]?:IDeviceEndpoint}}
 }
 

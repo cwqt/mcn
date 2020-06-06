@@ -25,3 +25,11 @@ export interface IRecordable extends IRecordableStub {
   parameters?:    Map<Measurement, [number, number, number]>, //lower, avg, upper bounds
   full_desc?:     string
 }
+
+export interface IPaginator {
+  first:          string,
+  last:           string,
+  next:           string,
+  prev:           string,
+  total_results:  number
+}

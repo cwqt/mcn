@@ -55,11 +55,11 @@ export const createDevice = async (req:Request, res:Response) => {
     sensors = Object.keys(hwInfo.sensors).map((s:Measurement) => {
         return {
             _id: Types.ObjectId().toHexString(),
-            measures: s,
+            measures: hwInfo.sensors[s].type,
             unit: hwInfo.sensors[s].unit,
-            name: s + " sensor",
+            name: hwInfo.states[s].type + " sensor",
             description: "",
-            ref: hwInfo.sensors[s].ref,
+            ref: s,
             value: undefined,
         } as IDeviceSensor
     })
@@ -67,11 +67,11 @@ export const createDevice = async (req:Request, res:Response) => {
     metrics = Object.keys(hwInfo.metrics).map((s:IoTMeasurement) => {
         return {
             _id: Types.ObjectId().toHexString(),
-            measures: s,
+            measures: hwInfo.metrics[s].type,
             unit: hwInfo.metrics[s].unit,
-            name: s + " metric",
+            name: hwInfo.states[s].type + " metric",
             description: "",
-            ref: hwInfo.metrics[s].ref,
+            ref: s,
             value: undefined,
         } as IDeviceSensor
     })
@@ -79,11 +79,11 @@ export const createDevice = async (req:Request, res:Response) => {
     states = Object.keys(hwInfo.states).map((s:IoTState) => {
         return {
             _id: Types.ObjectId().toHexString(),
-            state: s,
+            state: hwInfo.states[s].type,
             type: hwInfo.states[s].unit,
-            name: s + " state",
+            name: hwInfo.states[s].type + " state",
             description: "",
-            ref: hwInfo.states[s].ref,
+            ref: s,
             value: undefined,
         } as IDeviceState
     })

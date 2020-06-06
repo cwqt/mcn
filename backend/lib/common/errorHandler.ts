@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import log          from './logger';
+import { HTTP } from './http';
 
 interface ErrorResponse {
     [key: string]: any
@@ -20,7 +21,7 @@ export const handleError = (err:ErrorHandler, res:Response) => {
 };
 
 class IError extends Error {
-    statusCode:number;
+    statusCode:HTTP;
     isOperational:boolean;
     constructor(message?:string) {
         super(message || '')
@@ -28,9 +29,9 @@ class IError extends Error {
 }
 
 export class ErrorHandler extends IError {
-    constructor(statusCode:number, message?:any) {
+    constructor(statusCode:HTTP, message?:any) {
         super(message);
-        this.statusCode = statusCode || 500;
+        this.statusCode = statusCode || HTTP.ServerError;
         this.message = message;
 
         IError.captureStackTrace(this, this.constructor)

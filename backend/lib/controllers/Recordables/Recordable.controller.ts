@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express"
 import { Types }    from "mongoose";
 import { body }     from 'express-validator';
 
-import { RecordableType }   from "../../models/Recordable.model"
+import config               from "../../config";
+import { RecordableType, IPaginator }   from "../../models/Recordable.model"
 import { IDeviceStub }      from '../../models/Device/Device.model';
 import { IRecordableStub }  from '../../models/Recordable.model';
 import { validate }         from "../../common/validate";
@@ -11,6 +12,7 @@ import { HTTP }             from "../../common/http";
 import { n4j, cypher }              from '../../common/neo4j';
 import { getDeviceState }   from '../Device/Device.controller';
 import { getN4jNodeName }   from '../Postable.controller'
+
 
 
 export const createRecordable = async (req:Request, res:Response, next:NextFunction) => {
@@ -52,12 +54,15 @@ export const deleteRecordable = async (req:Request, res:Response, next:NextFunct
 }
 
 export const readAllRecordables = async (req:Request, res:Response) => {
+    let page = parseInt(<string>req.query.page) ?? 0;
+    let per_page = parseInt(<string>req.query.per_page) ?? 10 as number;
+
     let result = await cypher(`
         MATCH (r:${getN4jNodeName(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
         WITH r,
             SIZE((r)<-[:REPOST_OF]-(:Post)) AS reposts,
             SIZE((r)<-[:REPLY_TO]-(:Post)) AS replies,
-            SIZE((r)<-[:HEARTS]-(:User)) AS hearts                
+            SIZE((r)<-[:HEARTS]-(:User)) AS hearts,
         RETURN r, hearts, replies, reposts,
             EXISTS ((:User {_id:$selfid})-[:HEARTS]->(r)) AS isHearting,
             EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(r)) AS hasReposted
@@ -79,7 +84,7 @@ export const readAllRecordables = async (req:Request, res:Response) => {
                     created_at: r.created_at,
                     last_ping: r.last_ping,
                     hardware_model: r.hardware_model,
-                    measurement_count: r.measurement_count.toNumber(),
+                    // measurement_count: r.measurement_count.toNumber(),
                     state: getDeviceState(r),
                     thumbnail: r.thumbnail
                 } as IDeviceStub
@@ -108,5 +113,25 @@ export const readAllRecordables = async (req:Request, res:Response) => {
         return recordable;
     })
 
-    res.json(recordables);
+    let paginatedResults = {
+        data: recordables,
+        pagination: createPaginator(`${config.API_URL}/${res.locals.type}s`, page, per_page, recordables.length)
+    }
+
+    res.json(paginatedResults);
+}
+
+export const createPaginator = (base_url:string, page:number, per_page:number, total_elements:number):IPaginator => {
+    let paginator:IPaginator = {
+        first: base_url + `?page=1&per_page=${per_page}`,
+        last: base_url + `?page=${Math.ceil(total_elements/per_page)}&per_page=${per_page}`,
+        next: null,
+        prev: null,
+        total_results: total_elements
+    }
+
+    if ((page-1)*per_page > 0)          paginator.prev = base_url + `?page=${page-1}&per_page=${per_page}`
+    if (page*per_page < total_elements) paginator.next = base_url + `?page=${page+1}&per_page=${per_page}`
+
+    return paginator;
 }

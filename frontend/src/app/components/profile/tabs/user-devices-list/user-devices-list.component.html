@@ -6,6 +6,30 @@
 <mat-divider></mat-divider>
 <br />
 
+<div class="sort-list">
+    <p>
+        <mat-icon>sort</mat-icon>
+        <span>Sort by</span>
+    </p>
+
+    <div class="sort-list-items">
+        <button mat-button>
+            <span>Name</span>
+            <mat-icon inline>arrow_drop_down</mat-icon>
+        </button>
+
+        <button mat-button>
+            <span>Created</span>
+            <mat-icon inline>arrow_drop_down</mat-icon>
+        </button>
+
+        <button mat-button>
+            <span>Device state</span>
+            <mat-icon inline>arrow_drop_down</mat-icon>
+        </button>
+    </div>
+</div>
+
 <div *ngIf="devices && !loading">
     <div *ngFor="let device of devices">
         <app-device-thumb
@@ -16,5 +40,5 @@
     </div>
 </div>
 
-
+<mat-paginator [length]="100" [pageSize]="10" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
 <mat-spinner *ngIf="loading"></mat-spinner>

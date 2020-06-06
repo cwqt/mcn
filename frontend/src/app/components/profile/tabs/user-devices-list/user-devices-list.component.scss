@@ -11,3 +11,26 @@
 .a {
     display: block
 }
+
+
+.sort-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    p {
+        margin: none;
+        display: flex;
+        align-items: center;
+        font-size: 15px;
+        font-weight: bold;
+        span {
+            padding-left: 10px;       
+        }
+    }
+
+    .sort-list-items {
+        display: flex;
+        align-items: center;
+    }
+}
