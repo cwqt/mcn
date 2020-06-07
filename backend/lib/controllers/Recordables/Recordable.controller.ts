@@ -54,8 +54,9 @@ export const deleteRecordable = async (req:Request, res:Response, next:NextFunct
 }
 
 export const readAllRecordables = async (req:Request, res:Response) => {
-    let page = req.query.page ? parseInt(<string>req.query.page) : 1;
-    let per_page = req.query.per_page ? parseInt(<string>req.query.per_page) : 10;
+    //pagination starts from page 1
+    let page = req.query.hasOwnProperty('page') ? parseInt(<string>req.query.page) : 1;
+    let per_page = req.query.hasOwnProperty('per_page') ? parseInt(<string>req.query.per_page) : 10;
 
     let result = await cypher(`
         MATCH (r:${getN4jNodeName(res.locals.type)})<-[:CREATED]-(:User {_id:$uid})
@@ -71,7 +72,7 @@ export const readAllRecordables = async (req:Request, res:Response) => {
         uid: req.params.uid,
         selfid: req.session.user.id,
         per_page: per_page,
-        skip: (page+1)*per_page
+        skip: (page)*per_page
     })
 
     let recordables:IDeviceStub[] | IRecordableStub[] = result.records.map((record:any) => {
