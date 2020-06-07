@@ -11,6 +11,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class IndexComponent implements OnInit {
   currentUser:IUser;
+  ui:string = "login"
   constructor(private router:Router, private userService:UserService) { }
 
   ngOnInit(): void {
@@ -25,5 +26,13 @@ export class IndexComponent implements OnInit {
         }
       }
     });
+  }
+
+  toggleUiStateRegister() {
+    if(this.ui == "login") {
+      this.ui = 'register'
+    } else if(this.ui == 'register') {
+      this.ui = 'login'
+    }
   }
 }

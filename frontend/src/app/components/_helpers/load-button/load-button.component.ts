@@ -10,7 +10,7 @@ export class LoadButtonComponent implements OnInit {
   @Input()  disabled:boolean = false;
   @Input()  color:string;
   @Input()  icon:string;
-  @Input()  raised:boolean = true;
+  @Input()  raised?:boolean = true;
 
   @Output() onClick = new EventEmitter();
 

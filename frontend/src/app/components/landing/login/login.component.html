@@ -27,7 +27,9 @@
 
     <br />
 
-    <app-load-button [disabled]="loginForm.invalid || loading" [loading]="loading">log in</app-load-button>
+    <app-load-button [disabled]="loginForm.invalid || loading" [loading]="loading">
+      <span>log in</span>
+    </app-load-button>
 
     <mat-error class="form" *ngIf="errors.form">{{errors.form}}</mat-error>
   </form>

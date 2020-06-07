@@ -105,20 +105,20 @@ export const createDevice = async (req:Request, res:Response) => {
 
         await txc.run(`
             MATCH (d:Device {_id:$did})
-            FOREACH (sensor in $sensors | CREATE (s:Sensor)-[:HAS_SENSOR]->(d) SET s=sensor)
+            FOREACH (sensor in $sensors | CREATE (s:Sensor)<-[:HAS_SENSOR]-(d) SET s=sensor)
         `, { did: device._id, sensors: sensors })
 
         await txc.run(`
             MATCH (d:Device {_id:$did})
-            FOREACH (metric in $metrics | CREATE (m:Metric)-[:HAS_METRIC]->(d) SET m=metric);
+            FOREACH (metric in $metrics | CREATE (m:Metric)<-[:HAS_METRIC]-(d) SET m=metric);
         `, { did: device._id, metrics: metrics })
 
         await txc.run(`
             MATCH (d:Device {_id:$did})
-            FOREACH (state in $states | CREATE (s:State)-[:HAS_STATE]->(d) SET s=state);
+            FOREACH (state in $states | CREATE (s:State)<-[:HAS_STATE]-(d) SET s=state);
         `, { did: device._id, states: states })
 
-        await txc.commit()
+        await txc.commit();
     } catch (e) {
         throw new ErrorHandler(HTTP.ServerError, e)
     } finally {
@@ -260,37 +260,33 @@ const getAssignedRecordable = async (device_id:string):Promise<IPlant | IGarden>
     return result.records[0].get('r').properties;
 }
 
-// export const createState = async (req:Request, res:Response) => {
-//     let state:IDeviceState = {
-//         _id: Types.ObjectId().toHexString(),
-//         sets: req.body.sets,
-//         state: req.body.state,
-//         name: req.body.name,
-//         ref: req.body.ref,
-//         type: req.body.type,
-//         description: req.body.description ?? ""
-//     }
-
-//     let result = await cypher(`
-//         MATCH (d:Device {_id:$did})
-//         CREATE (d)-[:HAS_STATE]->(s:State $body)
-//         RETURN s
-//     `, {
-//         did: req.params.did,
-//         body: state
-//     })
-
-//     res.json(result.records[0]?.get('s')?.properties);
-// }
-
 export const readDeviceSensors = async (req:Request, res:Response) => {
 
 }
 
 export const readDeviceStates = async (req:Request, res:Response) => {
-    
+    let result = await cypher(`
+        MATCH (d:Device {_id:$did})
+        OPTIONAL MATCH (d)-[:HAS_STATE]-(s:State)
+        RETURN d, collect(s) AS s
+    `, {
+        did: req.params.did
+    })
+
+    let states = result.records[0]?.get('s')?.map((x:any) => x.properties);
+    return res.json(states ?? []);
 }
 
 export const readDeviceMetrics = async (req:Request, res:Response) => {
+    let result = await cypher(`
+        MATCH (d:Device {_id:$did})
+        OPTIONAL MATCH (d)-[:HAS_METRIC]->(m:Metric)
+        RETURN d, collect(m) AS m
+    `, {
+        did: req.params.did
+    })
+
+    let metrics = result.records[0]?.get('m')?.map((x:any) => x.properties);
+    return res.json(metrics ?? []);
     
 }

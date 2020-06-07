@@ -4,7 +4,7 @@ import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 
 import { MeasurementUnits } from '../../../../backend/lib/common/types/measurements.types';
-import { IDevice } from '../../../../backend/lib/models/Device/Device.model';
+import { IDevice, IDeviceStub, IDeviceState } from '../../../../backend/lib/models/Device/Device.model';
 import { IMeasurementModel } from '../../../../backend/lib/models/Measurement.model';
 import { ITaskRoutine } from '../../../../runner/lib/models/Tasks.model';
 
@@ -23,19 +23,19 @@ export class DeviceService {
     return this.availableMeasurements;
   }
 
-  createDevice(user_id, content) {
+  createDevice(user_id:string, content) {
     return this.http.post(`/api/users/${user_id}/devices`, content)
   }
 
-  getDevice(user_id, device_id):Promise<IDevice> {
+  getDevice(user_id:string, device_id:string):Promise<IDevice> {
     return this.http.get<IDevice>(`/api/users/${user_id}/devices/${device_id}`).toPromise();
   }
 
-  getLatestMeasurement(user_id, device_id):Promise<IMeasurementModel> {
+  getLatestMeasurement(user_id:string, device_id:string):Promise<IMeasurementModel> {
     return this.http.get<IMeasurementModel>(`/api/users/${user_id}/devices/${device_id}/measurements?page=1&per_page=1`).toPromise();
   }
 
-  getMeasurements(user_id, device_id) {
+  getMeasurements(user_id:string, device_id:string) {
     return this.http.get(`/api/users/${user_id}/devices/${device_id}/measurements`).toPromise();
   }
 
@@ -45,5 +45,9 @@ export class DeviceService {
 
   getTaskRoutines(user_id:string, device_id:string):Promise<ITaskRoutine[]> {
     return this.http.get<ITaskRoutine[]>(`/api/users/${user_id}/devices/${device_id}/routines`).toPromise();
+  }
+
+  getDeviceStates(user_id:string, device_id:string):Promise<IDeviceState[]> {
+    return this.http.get<IDeviceState[]>(`/api/users/${user_id}/devices/${device_id}/states`).toPromise();
   }
 }

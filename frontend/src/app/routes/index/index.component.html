@@ -7,7 +7,7 @@
                 <div class="information">
                     <h1 class="mat-display-2">mcn</h1>
                     <p>a social network and management system for gardeners, plant growers and hobbyists alike.</p>
-                    <app-rounded-button [color]="'primary'">create account</app-rounded-button>
+                    <app-rounded-button [color]="'primary'" (click)="toggleUiStateRegister()">{{this.ui != 'login' ? 'login' : 'create account'}}</app-rounded-button>
                 </div>
             </div>
         </div>
@@ -20,8 +20,8 @@
         <div class="content-wrapper">
             <div *ngIf="!currentUser">
                 <div class="content">
-                    <app-login></app-login>
-                    <!-- <app-register *ngIf="group.value == 'register'"></app-register> -->
+                    <app-login *ngIf="ui != 'register'"></app-login>
+                    <app-register *ngIf="ui == 'register'"></app-register>
                 </div>
             </div>
 

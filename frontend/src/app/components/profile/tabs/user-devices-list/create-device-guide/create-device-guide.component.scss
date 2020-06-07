@@ -26,3 +26,8 @@ app-load-button {
         margin: 20px 0 !important;
     }
 }
+
+mat-option.models .mat-option-text {
+    display: flex;
+    flex-flow: column;
+}

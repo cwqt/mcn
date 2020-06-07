@@ -2,6 +2,8 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from 'src/app/services/user.service';
+import { HardwareInformation } from '../../../../../../../../backend/lib/common/types/hardware.types';
+
 
 @Component({
   selector: 'app-create-device-guide',
@@ -11,12 +13,7 @@ import { UserService } from 'src/app/services/user.service';
 export class CreateDeviceGuideComponent implements OnInit {
   deviceCreated:boolean = false
   createDeviceFormGroup: FormGroup;
-  devices = [
-    { model:"mcn-wd1m" },
-    { model:"mcn-garden" },
-    { model:"mcn-esp32" },
-    { model:"mcn-rpi3" },
-  ]
+  supportedDevices = HardwareInformation;
 
   constructor(
     public dialogRef: MatDialogRef<CreateDeviceGuideComponent>,

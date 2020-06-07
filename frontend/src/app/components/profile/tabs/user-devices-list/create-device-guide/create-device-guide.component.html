@@ -17,9 +17,10 @@
                 <mat-form-field>
                     <mat-label>device model</mat-label>
                     <mat-select matInput formControlName="device_model" required>
-                      <mat-option *ngFor="let device of devices" [value]="device.model">
-                        {{device.model}}
-                      </mat-option>
+                        <mat-option class="models" *ngFor="let device of supportedDevices | keyvalue" [value]="device.key">
+                            <span>{{device.value.model_name}}</span>
+                            <span>{{device.key}}</span>
+                        </mat-option>
                     </mat-select>
                     <mat-error>must select device model</mat-error>  
                 </mat-form-field>
@@ -81,8 +82,8 @@
             <mat-form-field>
                 <mat-label>recordable name</mat-label>
                 <mat-select formControlName="device_model">
-                  <mat-option *ngFor="let device of devices" [value]="device.model">
-                    {{device.model}}
+                  <mat-option *ngFor="let device of supportedDevices | keyvalue" [value]="device.key">
+                    {{device.key}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>

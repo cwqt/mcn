@@ -70,7 +70,7 @@
                     <mat-chip color="accent" selected>Accent fish</mat-chip>
                 </mat-chip-list>
     
-                <mat-chip class="assigned-to no-hash" (click)="goToAssignedRecordable()">
+                <mat-chip *ngIf="device.assigned_to" class="assigned-to no-hash" (click)="goToAssignedRecordable()">
                     <div class="assigned-to-image">
                         <img *ngIf="device.assigned_to.thumbnail" [src]="device.assigned_to?.thumbnail"/>
                         <mat-icon *ngIf="!device.assigned_to.thumbnail">{{device.assigned_to.type == 'plant' ? 'eco' : 'group_work'}}</mat-icon>    
