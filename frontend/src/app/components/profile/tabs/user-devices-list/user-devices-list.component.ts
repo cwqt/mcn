@@ -39,7 +39,10 @@ export class UserDevicesListComponent implements OnInit {
   ngOnInit(): void {
     this.canLoad.subscribe((canLoad:boolean) => {
       if(canLoad && this.currentIndex == this.selfIndex) {
-        if(!this.initialised) this.initialise();
+        if(!this.initialised) {
+          this.initialised = true;
+          this.getDevices(0, 5);      
+        }
       }
     })
   }
@@ -50,25 +53,15 @@ export class UserDevicesListComponent implements OnInit {
     })
   }
 
-  initialise() {
-    this.initialised = true;
-    this.getDevices(1, 1);
-  }
-
   getDevices(page:number, per_page:number) {
     this.loading = true;
-
-    setTimeout(() => {
-      this.profileService.getDevices(page, per_page)
-      .then((response:{data:IDeviceStub[], pagination:IPaginator}) => {
-        this.devices = response.data;
-        this.pagination = response.pagination;
-      })
-      .catch(e => this.error = e)
-      .finally(() => this.loading = false);
-
-    }, 500)
-
+    this.profileService.getDevices(page, per_page)
+    .then((response:{data:IDeviceStub[], pagination:IPaginator}) => {
+      this.devices = response.data;
+      this.pagination = response.pagination;
+    })
+    .catch(e => this.error = e)
+    .finally(() => this.loading = false);
   }
 
   openCreateDeviceDialog():void {

@@ -147,20 +147,20 @@ export const assignDeviceToRecordable = async (req:Request, res:Response) => {
 
 export const readDevice = async (req:Request, res:Response) => {
     let result = await cypher(`
-        MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
-        WHERE r:Plant OR r:Garden
-        WITH d, r,
+        MATCH (d:Device {_id:$did})
+        WITH d,
             SIZE((d)<-[:REPOST_OF]-(:Post)) AS reposts,
             SIZE((d)<-[:REPLY_TO]-(:Post)) AS replies,
             SIZE((d)<-[:HEARTS]-(:User)) AS hearts
 
-        OPTIONAL MATCH (d)-[:HAS_SENSOR]->(sensor:Sensor)
-        WITH d,r,reposts,replies,hearts, collect(sensor) AS sensor
-        OPTIONAL MATCH (d)-[:HAS_STATE]->(state:State)
-        WITH d,r,reposts,replies,hearts, sensor, collect(state) AS state
-
+        WITH d, reposts, replies, hearts
         OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
-        RETURN d, r, k, sensor, state, hearts, replies, reposts,
+
+        WITH d, reposts, replies, hearts, k
+        OPTIONAL MATCH (d)-[:MONITORS]->(r)
+        WHERE r:Plant OR r:Garden
+
+        RETURN d, r, k, hearts, replies, reposts,
             EXISTS ((:User {_id:$selfid})-[:HEARTS]->(d)) AS isHearting,
             EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(d)) AS hasReposted
     `, {
@@ -169,7 +169,7 @@ export const readDevice = async (req:Request, res:Response) => {
     })
 
     let device = result.records[0].get('d')?.properties;
-    device.measurement_count = device.measurement_count.toNumber();
+    device.measurement_count = device.measurement_count ? device.measurement_count.toNumber() : 0;
     let recordable:IPlant | IGarden = result.records[0].get('r')?.properties;
     let key:IApiKeyPrivate = result.records[0].get('k')?.properties;
 
@@ -178,8 +178,8 @@ export const readDevice = async (req:Request, res:Response) => {
     let data:IDevice = {
         ...device,
         state: getDeviceState(device),
-        assigned_to: recordable || undefined,
-        api_key: key as IApiKey || undefined,
+        assigned_to: recordable || null,
+        api_key: key as IApiKey || null,
         meta: {
             isHearting:  result.records[0].get('isHearting') ? true : false,
             hasReposted: result.records[0].get('hasReposted') ? true : false,
@@ -187,10 +187,7 @@ export const readDevice = async (req:Request, res:Response) => {
             reposts:     result.records[0].get('reposts').toNumber(),
             replies:     result.records[0].get('replies').toNumber(),    
         },
-        sensors: result.records[0].get('sensor').map((n:any) => n.properties),
-        states: result.records[0].get('state').map((n:any) => n.properties)
     };
-
 
     if(recordable) {
         data.assigned_to = {

@@ -31,8 +31,9 @@ export class LoadablePanelComponent implements OnInit {
   click(event):void {
     if(!this.loading) {
       if(!this.hasData) {
-        this.panelRef.toggle() 
+        this.panelRef.toggle();
         this.loading = true;
+        this.description = "No data";
         setTimeout(() => {
           this.onClick.emit();
           console.log('emeit')

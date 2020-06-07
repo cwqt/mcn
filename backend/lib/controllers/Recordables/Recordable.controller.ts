@@ -119,7 +119,7 @@ export const readAllRecordables = async (req:Request, res:Response) => {
 
     let paginatedResults = {
         data: recordables,
-        pagination: createPaginator(`${config.API_URL}/${res.locals.type}s`, page, per_page, 1)
+        pagination: createPaginator(`${config.API_URL}/${res.locals.type}s`, page, per_page, (await getRecordableCount(req.params.uid, res.locals.type)))
     }
 
     res.json(paginatedResults);
@@ -140,4 +140,16 @@ export const createPaginator = (base_url:string, page:number, per_page:number, t
     if ((page-1)*per_page > 0)          paginator.prev = base_url + `?page=${page-1}&per_page=${per_page}`
 
     return paginator;
+}
+
+const getRecordableCount = async (user_id:string, type:RecordableType):Promise<number> => {
+    let result = await cypher(`
+        MATCH (u:User {_id:$uid})-[:CREATED]->(r:${getN4jNodeName(type)})
+        WHERE r:Plant OR r:Garden or r:Device
+        RETURN SIZE(collect(r)) AS count
+    `, {
+        uid: user_id,
+    })
+
+    return result.records[0]?.get('count')?.toNumber() ?? 0;
 }

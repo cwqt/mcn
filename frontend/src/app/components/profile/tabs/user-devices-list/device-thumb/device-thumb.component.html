@@ -24,34 +24,30 @@
             (onClick)="getDeviceMeta()">
             <div *ngIf="cache.device.data && !cache.device.error">
                 <p><b>Device id:</b>{{cache.device.data._id || '—'}}</p>
-                <p><b>Api key id:</b>{{cache.device.data.api_key._id || '—'}}</p>
-                <p><b>Assigned to:</b>{{cache.device.data.assigned_to.type}}: {{cache.device.data.assigned_to.name}}</p>
+                <p><b>Api key id:</b>{{cache.device.data.api_key?._id || '—'}}</p>
+                <p><b>Assigned to:</b>{{cache.device.data.assigned_to?.type || 'none'}}: {{cache.device.data.assigned_to?.name || 'not assigned to any recordable'}}</p>
                 <p><b>Last ping: </b>{{cache.device.data.last_ping | amTimeAgo}} </p>
                 <p><b>Created:</b>{{(cache.device.data.created_at | amTimeAgo) || '—'}}</p>
                 <p><b>Software version:</b>{{cache.device.data.software_version || '—'}}</p>
                 <p><b>Hardware model:</b>{{deviceInfo.model_name || '—'}}</p>
                 <p><b>Total data points:</b>{{cache.device.data.measurement_count || 0}}</p>
-                <!-- <p>
-                    <b>Recording:</b>
-                    <span>
-                        <span *ngFor="let measurement of deviceInfo.recording | keyvalue" class="recording-item">{{measurement.key}} ({{measurement.value}})</span>
-                    </span>
-                </p> -->
             </div>
         </app-loadable-panel>
 
         <app-loadable-panel
             [loading]="cache.latest_data.loading"
             [title]="'Latest data'"
-            [description]="cache.latest_data.error ? cache.latest_data.error : device.last_ping | amTimeAgo"
+            [description]="cache.latest_data.error ? cache.latest_data.error : ( device.last_ping ? (device.last_ping | amTimeAgo) : '')"
             [hasData]="cache.latest_data.data != undefined"
             (onClick)="getLatestData()">
 
-            <!-- <div *ngIf="cache.latest_data.data && !cache.latest_data.error">
+            <h1>hello</h1>
+
+            <div *ngIf="cache.latest_data.data && !cache.latest_data.error">
                 <p *ngFor="let field of cache.latest_data.data.data | keyvalue">
-                    <b>{{field.key}}:</b> {{field.value}} {{deviceInfo.recording[field.key]}}
+                    <b>{{field.key}}:</b> {{field.value}} {{deviceInfo}}
                 </p>
-            </div> -->
+            </div>
 
             <mat-action-row>
                 <app-load-button
