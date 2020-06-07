@@ -6,7 +6,7 @@
 <mat-divider></mat-divider>
 <br />
 
-<div class="sort-list">
+<div class="sort-list" [class.hidden]="!loading && devices.length == 0">
     <p>
         <mat-icon>sort</mat-icon>
         <span>Sort by</span>
@@ -42,7 +42,13 @@
 
 <mat-spinner *ngIf="loading"></mat-spinner>
 
-<mat-paginator #paginator
+    
+<div *ngIf="devices.length == 0">
+    <h1 class="light">no devices</h1>
+</div>
+
+
+<mat-paginator #paginator [class.hidden]="!loading && devices.length == 0"
     [showFirstLastButtons]="true"
     [length]="pagination.total_results"
     [pageSize]="5"

@@ -72,8 +72,12 @@ export class UserDevicesListComponent implements OnInit {
       }
     });
 
+    let sub = dialogRef.componentInstance.onAdd.subscribe((device:IDevice) => {
+      this.devices.unshift(device);
+    })
+
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      sub.unsubscribe();
     });
   }
 }

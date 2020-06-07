@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, EventEmitter } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { HardwareInformation } from '../../../../../../../../backend/lib/common/types/hardware.types';
@@ -19,6 +19,7 @@ export class CreateDeviceGuideComponent implements OnInit {
   deviceCreated:boolean = false
   createDeviceFormGroup: FormGroup;
   supportedDevices = HardwareInformation;
+  onAdd:EventEmitter<IDevice> = new EventEmitter();
 
   cache = {
     device: {
@@ -67,6 +68,7 @@ export class CreateDeviceGuideComponent implements OnInit {
     this.cache.device.loading = true;
     return this.deviceService.createDevice(this.data.authorUser._id, data)
       .then((device:IDevice) => {
+        this.onAdd.emit(device);
         this.cache.device.data = device;
         this.matStepper.next();
       })

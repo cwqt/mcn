@@ -34,3 +34,13 @@
         align-items: center;
     }
 }
+
+.hidden {
+    display: none;
+}
+
+h1.light {
+    text-align: center;
+    opacity: 0.6;
+    margin: 16px 0;
+}

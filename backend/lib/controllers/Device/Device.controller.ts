@@ -126,7 +126,10 @@ export const createDevice = async (req:Request, res:Response) => {
     }
 
     if(!result.records.length) throw new ErrorHandler(HTTP.ServerError);
-    let d = result.records[0].get('d').properties;
+    let d = {
+        ...result.records[0].get('d').properties,
+        ...createDefaultMeta()
+    }
     // d.measurement_count = d.measurement_count.toNumber();
     res.status(HTTP.Created).json(d);
 }
@@ -289,4 +292,16 @@ export const readDeviceMetrics = async (req:Request, res:Response) => {
     let metrics = result.records[0]?.get('m')?.map((x:any) => x.properties);
     return res.json(metrics ?? []);
     
+}
+
+const createDefaultMeta = () => {
+    return {
+        meta: {
+            isHearting:  false,
+            hasReposted: false,
+            hearts:      0,
+            reposts:     0,
+            replies:     0 ,
+        }
+    }
 }
