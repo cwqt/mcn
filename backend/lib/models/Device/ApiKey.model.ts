@@ -3,7 +3,6 @@ import { RecordableType } from "../Recordable.model";
 export interface IApiKey {
     _id:        string,
     key_name:   string,
-    type:       RecordableType,
     created_at: number;
 }
 

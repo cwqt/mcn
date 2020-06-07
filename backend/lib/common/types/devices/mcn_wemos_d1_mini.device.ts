@@ -3,6 +3,7 @@ import { DeviceCapability, MicroController, HardwareDevice, Type } from '../../.
 
 const info:HardwareDevice = {
     model_name: "MCN Wemos D1 Mini",
+    network_name: "mcn-wd1m",
     microcontroller: MicroController.ESP8266,
     capabilities: [
         DeviceCapability.WiFi,

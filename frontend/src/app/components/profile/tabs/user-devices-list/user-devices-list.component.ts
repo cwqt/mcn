@@ -67,7 +67,9 @@ export class UserDevicesListComponent implements OnInit {
   openCreateDeviceDialog():void {
     const dialogRef = this.dialog.open(CreateDeviceGuideComponent, {
       width: '50%',
-      data: {}
+      data: {
+        authorUser: this.authorUser,
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {

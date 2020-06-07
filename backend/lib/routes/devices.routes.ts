@@ -83,9 +83,6 @@ deviceRouter.post('/assign/:rid', validate([
 // ]), deleteDevice);
 
 deviceRouter.post('/keys', validate([
-    body('recordable_type')
-        .not().isEmpty().trim()
-        .isIn(Object.values(RecordableType)).withMessage(`must be of type: ${Object.values(RecordableType)}`),
     body('key_name').not().isEmpty().trim().withMessage('device name must be named'),
 ]), createApiKey)
 

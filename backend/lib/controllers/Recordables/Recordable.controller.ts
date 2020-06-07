@@ -90,7 +90,8 @@ export const readAllRecordables = async (req:Request, res:Response) => {
                     hardware_model: r.hardware_model,
                     // measurement_count: r.measurement_count.toNumber(),
                     state: getDeviceState(r),
-                    thumbnail: r.thumbnail
+                    thumbnail: r.thumbnail,
+                    network_name: r.network_name
                 } as IDeviceStub
                 break;
             case RecordableType.Plant:

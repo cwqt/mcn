@@ -49,7 +49,7 @@ export class UserService {
   }
 
   createDevice(content:any) {
-    return this.http.post<IDeviceStub>(`/api/users/${this.currentUserValue._id}/devices`, content)
+    return this.http.post<IDeviceStub>(`/api/users/${this.currentUserValue._id}/devices`, content).toPromise()
   }
 
   getUserByUsername(username:string):Promise<IUser> {

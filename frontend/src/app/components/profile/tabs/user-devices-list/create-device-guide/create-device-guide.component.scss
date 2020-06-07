@@ -27,7 +27,20 @@ app-load-button {
     }
 }
 
-mat-option.models .mat-option-text {
-    display: flex;
-    flex-flow: column;
+mat-option.models {
+    height: auto !important;
+
+    ::ng-deep span.mat-option-text {
+        height: auto !important;
+        padding: 15px 0px !important;
+        p {
+            line-height: 1 !important;
+            margin: 0 !important;
+            &:nth-child(2) {
+                margin-top: 4px !important;
+                opacity: 0.7;
+            }
+        }
+    }
 }
+

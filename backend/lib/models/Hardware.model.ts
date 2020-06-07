@@ -14,6 +14,7 @@ export enum DeviceCapability {
 
 export interface HardwareDevice {
     model_name:      string,
+    network_name:    string,
     microcontroller: MicroController,
     capabilities:    DeviceCapability[],
     mcnEnabled:      boolean,

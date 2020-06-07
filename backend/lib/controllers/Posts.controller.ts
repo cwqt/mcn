@@ -91,6 +91,7 @@ export const readAllPosts = async (req:Request, res:Response) => {
                             last_ping:      o.properties.last_ping,
                             created_at:     o.properties.created_at,
                             hardware_model: o.properties.hardware_model,
+                            network_name:   o.properties.network_name
                         } as IDeviceStub
                     } as IRepost                    
                     break;

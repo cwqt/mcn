@@ -4,7 +4,7 @@ import { Types }             from "mongoose";
 import { HardwareInformation } from "../../common/types/hardware.types";
 import { HTTP }              from '../../common/http';
 import { n4j, cypher }       from '../../common/neo4j';
-import { HardwareDevice }    from "../../models/Hardware.model";
+import { HardwareDevice, SupportedHardware }    from "../../models/Hardware.model";
 import { IPlant }            from '../../models/Plant.model';
 import { IGarden }           from '../../models/Garden.model';
 import { IRecordableStub }   from "../../models/Recordable.model";
@@ -36,18 +36,18 @@ export const getDeviceState = (device:IDevice):DeviceState => {
 }
 
 export const createDevice = async (req:Request, res:Response) => {
+    const hwInfo:HardwareDevice = HardwareInformation[<SupportedHardware>req.body.hardware_model];
     let device:IDevice = {
         _id:        Types.ObjectId().toHexString(),
         name:       req.body.name,
         images:     [],
-        verified:   false,
         created_at: Date.now(),
         state:      DeviceState.UnVerified,
         measurement_count: 0,
         hardware_model: req.body.hardware_model,
+        network_name: hwInfo.network_name
     }
 
-    const hwInfo:HardwareDevice = HardwareInformation[device.hardware_model];
     let sensors:IDeviceSensor[] = [];
     let metrics:IDeviceSensor[] = [];
     let states:IDeviceState[]   = [];
@@ -57,7 +57,7 @@ export const createDevice = async (req:Request, res:Response) => {
             _id: Types.ObjectId().toHexString(),
             measures: hwInfo.sensors[s].type,
             unit: hwInfo.sensors[s].unit,
-            name: hwInfo.states[s].type + " sensor",
+            name: hwInfo.sensors[s].type + " sensor",
             description: "",
             ref: s,
             value: undefined,
@@ -69,7 +69,7 @@ export const createDevice = async (req:Request, res:Response) => {
             _id: Types.ObjectId().toHexString(),
             measures: hwInfo.metrics[s].type,
             unit: hwInfo.metrics[s].unit,
-            name: hwInfo.states[s].type + " metric",
+            name: hwInfo.metrics[s].type + " metric",
             description: "",
             ref: s,
             value: undefined,

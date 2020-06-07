@@ -7,6 +7,7 @@ import { MeasurementUnits } from '../../../../backend/lib/common/types/measureme
 import { IDevice, IDeviceStub, IDeviceState } from '../../../../backend/lib/models/Device/Device.model';
 import { IMeasurementModel } from '../../../../backend/lib/models/Measurement.model';
 import { ITaskRoutine } from '../../../../runner/lib/models/Tasks.model';
+import { IApiKey, IApiKeyPrivate } from '../../../../backend/lib/models/Device/ApiKey.model';
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +24,12 @@ export class DeviceService {
     return this.availableMeasurements;
   }
 
-  createDevice(user_id:string, content) {
-    return this.http.post(`/api/users/${user_id}/devices`, content)
+  createDevice(user_id:string, content):Promise<IDevice> {
+    return this.http.post<IDevice>(`/api/users/${user_id}/devices`, content).toPromise()
+  }
+
+  createApiKey(user_id:string, device_id:string, data:any):Promise<IApiKeyPrivate> {
+    return this.http.post<IApiKeyPrivate>(`/api/users/${user_id}/devices/${device_id}/keys`, data).toPromise()
   }
 
   getDevice(user_id:string, device_id:string):Promise<IDevice> {

@@ -18,11 +18,11 @@ export interface IDeviceStub {
     name:           string,
     short_desc?:    string,
     thumbnail?:     string,
-    verified:       boolean,
     last_ping?:     number, //seconds since epoch device sent message
     created_at?:    number,
     state:          DeviceState,
     hardware_model: SupportedHardware,
+    network_name:   string,
     meta?:          IPostableMeta,
 }
 
