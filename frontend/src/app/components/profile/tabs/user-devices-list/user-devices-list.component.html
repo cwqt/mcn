@@ -42,11 +42,9 @@
 
 <mat-spinner *ngIf="loading"></mat-spinner>
 
-    
-<div *ngIf="devices.length == 0">
+<div *ngIf="!loading && devices.length == 0">
     <h1 class="light">no devices</h1>
 </div>
-
 
 <mat-paginator #paginator [class.hidden]="!loading && devices.length == 0"
     [showFirstLastButtons]="true"
