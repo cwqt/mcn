@@ -1,6 +1,9 @@
 @import '~@ctrl/ngx-emoji-mart/picker';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+// @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+
+@import "~carbon-components/scss/globals/scss/styles.scss";
+
 
 * {
     box-sizing: border-box;

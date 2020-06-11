@@ -79,7 +79,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import {MatPaginatorModule} from '@angular/material/paginator';
 
-
+import {InputModule} from 'carbon-components-angular'
 
 import { MeasurementsGraphsComponent } from './components/measurements-graphs/measurements-graphs.component';
 import { PlantComponent } from './routes/plant/plant.component';
@@ -167,7 +167,9 @@ import { PostableRepliesComponent } from './components/app/postable/postable-rep
     MatTableModule,
     MatProgressBarModule,
     MatChipsModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+
+    InputModule
 
   ],
   providers: [

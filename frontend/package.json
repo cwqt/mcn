@@ -2,8 +2,8 @@
   "name": "fe",
   "version": "0.0.0",
   "scripts": {
-    "start": "ng serve --watch --proxy-config proxy.conf.json",
-    "build": "ng build"
+    "start": "node --max_old_space_size=8048 ./node_modules/@angular/cli/bin/ng serve --aot --watch --proxy-config proxy.conf.json",
+    "build": "node --max_old_space_size=8048 ./node_modules/@angular/cli/bin/ng build --aot --prod"
   },
   "private": true,
   "dependencies": {
@@ -17,10 +17,13 @@
     "@angular/platform-browser": "~9.0.1",
     "@angular/platform-browser-dynamic": "~9.0.1",
     "@angular/router": "~9.0.1",
+    "@carbon/icons-angular": "^11.0.1",
     "@crystalui/angular-lightbox": "^1.1.8",
     "@ctrl/ngx-chartjs": "^3.0.1",
     "@ctrl/ngx-emoji-mart": "^3.1.0",
     "@ivylab/overlay-angular": "0.0.6",
+    "carbon-components": "^10.13.0",
+    "carbon-components-angular": "^4.7.3",
     "chart.js": "^2.9.3",
     "chartjs-plugin-annotation": "^0.5.7",
     "cronstrue": "^1.94.0",
