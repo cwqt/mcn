@@ -44,3 +44,25 @@ h1.light {
     opacity: 0.6;
     margin: 16px 0;
 }
+
+
+ibm-tile.header {
+    background-color: transparent;
+    color: #161616;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    height: 48px !important;
+    min-height: 48px !important;
+    h4 {
+        margin-left: 20px;
+    }
+    .right {
+        display: flex;
+        align-items: center;
+        #add {
+            min-width: 0px !important;
+            padding: 0 20px;
+        }
+    }
+}

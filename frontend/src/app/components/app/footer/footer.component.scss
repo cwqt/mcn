@@ -1,0 +1,39 @@
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+
+.top, .bottom {
+    padding-left: 100px;
+    padding-right: 100px;
+    color: white;
+}
+
+.top {
+    background-color: #262626;
+}
+.bottom {
+    background-color: #000;
+    padding: 20px 100px;
+    #ds {
+        filter: invert(1);
+        width: 80px;
+        margin-left: -20px;
+    }
+    .bottom-content {
+        margin-bottom: 60px;
+        display: flex;
+        div {
+            width: 200px;
+            display: flex;
+            flex-flow: column;
+            a {
+                color: white;
+                line-height: 1.5;
+                text-decoration: none;
+            }
+        }
+    }
+}

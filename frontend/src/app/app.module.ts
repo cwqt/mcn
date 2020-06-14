@@ -100,6 +100,7 @@ import { DocumentationComponent } from './routes/documentation/documentation.com
 import { ThumbWrapperComponent } from './components/profile/tabs/thumb-wrapper/thumb-wrapper.component';
 import { HeaderBarUserMenuComponent } from './components/app/header-bar/header-bar-user-menu/header-bar-user-menu.component';
 import { PostableRepliesComponent } from './components/app/postable/postable-replies/postable-replies.component';
+import { FooterComponent } from './components/app/footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -144,6 +145,7 @@ import { PostableRepliesComponent } from './components/app/postable/postable-rep
     ScheduledTasksComponent,
     DeviceControlComponent,
     PostableRepliesComponent,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,

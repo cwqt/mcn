@@ -2,33 +2,34 @@
     <h5>devices ({{devices.length}})</h5>
     <app-rounded-button (onClick)="openCreateDeviceDialog()">add device</app-rounded-button>
 </div>
+ -->
 
-<mat-divider></mat-divider>
-<br />
 
-<div class="sort-list" [class.hidden]="!loading && devices.length == 0">
-    <p>
-        <mat-icon>sort</mat-icon>
-        <span>Sort by</span>
-    </p>
+<ibm-tile class="header">
+    <h4>Devices ({{devices.length}})</h4>
+    <div class="right">
+        <div class="sort-list-items">
+            <button [ibmButton]="'secondary'">
+                <span>Name</span>
+                <mat-icon inline>arrow_drop_down</mat-icon>
+            </button>
+    
+            <button [ibmButton]="'secondary'">
+                <span>Created</span>
+                <mat-icon inline>arrow_drop_down</mat-icon>
+            </button>
+    
+            <button [ibmButton]="'secondary'">
+                <span>Device state</span>
+                <mat-icon inline>arrow_drop_down</mat-icon>
+            </button>
+        </div>
 
-    <div class="sort-list-items">
-        <button mat-button>
-            <span>Name</span>
-            <mat-icon inline>arrow_drop_down</mat-icon>
-        </button>
-
-        <button mat-button>
-            <span>Created</span>
-            <mat-icon inline>arrow_drop_down</mat-icon>
-        </button>
-
-        <button mat-button>
-            <span>Device state</span>
-            <mat-icon inline>arrow_drop_down</mat-icon>
+        <button ibmButton id="add">
+            <mat-icon>add</mat-icon>
         </button>
     </div>
-</div> -->
+</ibm-tile>
 
 <div *ngIf="devices && !loading">
     <div *ngFor="let device of devices">
