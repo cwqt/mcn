@@ -1,6 +1,6 @@
-<div class="header">
-    <h1>devices ({{devices.length}})</h1>
-    <app-rounded-button [color]="'primary'" [icon]="'add'" (onClick)="openCreateDeviceDialog()">add device</app-rounded-button>
+<!-- <div class="header">
+    <h5>devices ({{devices.length}})</h5>
+    <app-rounded-button (onClick)="openCreateDeviceDialog()">add device</app-rounded-button>
 </div>
 
 <mat-divider></mat-divider>
@@ -28,7 +28,7 @@
             <mat-icon inline>arrow_drop_down</mat-icon>
         </button>
     </div>
-</div>
+</div> -->
 
 <div *ngIf="devices && !loading">
     <div *ngFor="let device of devices">

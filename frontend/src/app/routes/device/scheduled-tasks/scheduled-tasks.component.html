@@ -1,10 +1,26 @@
 <div class="task-routines-controller">
     <div class="task-routines-header">
-        <h1>Task routines ({{routines.length}})</h1>
-        <app-rounded-button [icon]="'add'" [color]="'primary'">create routine</app-rounded-button>    
+
+        <ibm-table-container>
+            <ibm-table-header>
+                <h4 ibmTableHeaderTitle>Task routines</h4>
+                <p ibmTableHeaderDescription>Write tasks to be executed on your devices</p>
+            </ibm-table-header>
+
+			<ibm-table-toolbar [batchText]="'batchText'">
+				<ibm-table-toolbar-content>
+					<ibm-table-toolbar-search [expandable]="true"></ibm-table-toolbar-search>
+					<button ibmButton="primary" size="sm">
+                        Create routine
+                        <mat-icon>add</mat-icon>
+					</button>
+				</ibm-table-toolbar-content>
+			</ibm-table-toolbar>
+            
+        </ibm-table-container>
+      
     </div>
 
-    <mat-divider></mat-divider>
     <br/>
 
     <div *ngIf="routines.length">
@@ -18,13 +34,12 @@
                     <mat-icon>{{stateMap[routine.state]}}</mat-icon>
                 </div>
                 <div class="routine-header-text">
-                    <h1>{{routine.name}}</h1>    
-                    <span><b>Active Task:</b>{{routine.activeTask.name}}</span>
-                    <!-- <span><b>interval: </b>{{cronstrue(routine.cron)}}</span> -->
+                    <h2>{{routine.name}}</h2>    
+                    <!-- <span><b>Active Task:</b>{{routine?.activeTask.name}}</span> -->
+                    <span><b>interval: </b>{{cronstrue(routine.cron)}}</span>
                 </div>
             </mat-expansion-panel-header>
     
-            <mat-divider></mat-divider>
     
             <div class="tasks-container">
                 <div *ngFor="let task of routine.tasks">

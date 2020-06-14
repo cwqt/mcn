@@ -1,9 +1,10 @@
 @import '~@ctrl/ngx-emoji-mart/picker';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-// @import '@angular/material/prebuilt-themes/deeppurple-amber.css';
 
-@import "~carbon-components/scss/globals/scss/styles.scss";
+@import '@carbon/themes/scss/themes';
+@include carbon--theme();
 
+@import 'carbon-components/scss/globals/scss/styles.scss';
 
 * {
     box-sizing: border-box;
@@ -36,18 +37,18 @@ mat-form-field.ng-invalid.ng-touched {
 }
 
 
-button,
-a {
-    &.mat-button,
-    &.mat-raised-button,
-    &.mat-flat-button,
-    &.mat-stroked-button {
-        .mat-icon {
-            vertical-align: top;
-            font-size: 1.25em;
-        }
-    }
-}
+// button,
+// a {
+//     &.mat-button,
+//     &.mat-raised-button,
+//     &.mat-flat-button,
+//     &.mat-stroked-button {
+//         .mat-icon {
+//             vertical-align: top;
+//             font-size: 1.25em;
+//         }
+//     }
+// }
 
 .mat-tab-group{
     height: 100%;
@@ -79,4 +80,8 @@ popover-container {
     height: auto !important;
     box-shadow: none !important;
     width: auto !important;
+}
+
+b {
+    font-weight: bold;
 }

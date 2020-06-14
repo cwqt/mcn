@@ -4,9 +4,10 @@
     padding: 0;
     min-height: 15vh;
     align-items: stretch;
-    overflow: hidden;
     margin-bottom: 20px;
     width: 100%;
+    box-shadow: 0 10px 20px rgba(32, 34, 37, 0.1);
+    border-radius: 4px;
     .left {
         position: relative;
         width: 30%;
@@ -37,9 +38,11 @@
     }
     .right {
         flex: 1 1;
-        margin: 20px;
         display: inline-flex;
         flex-flow: column;
+        .thumb-wrapper-content {
+            padding: 20px;
+        }
     }
 }
 
@@ -47,14 +50,22 @@ mat-spinner {
     margin: 0 auto;
 }
 
-mat-card-actions {
+.actions {
     margin: 0;
     margin-top: auto;
     padding-bottom: 0;
     display: flex;
     justify-content: space-between;
+    background-color: white;
+    padding-left: 10px;
     button {
         margin-right: 0;
+    }
+    app-postable-social-actions {
+        margin-top: 4px;
+    }
+    ::ng-deep .mat-icon-button {
+        background-color: transparent;
     }
     .view-comments-button {
         opacity: .8;
@@ -70,7 +81,7 @@ mat-card-actions {
     position: relative;
     display: flex;
     flex-flow: column;
-    mat-card-actions {
+    .actions {
         display: none;
     }
     .left {
@@ -108,4 +119,21 @@ mat-card-actions {
             margin: 0
         }
     }
+}
+
+
+::ng-deep mat-expansion-panel {
+    background-color: white;
+}
+
+::ng-deep .mat-progress-bar-fill::after {
+    background-color: #1E457C;
+}
+
+::ng-deep .mat-progress-bar-buffer {
+    background: #E4E8EB;
+}
+
+::ng-deep .mat-progress-bar {
+    border-radius: 2px;
 }

@@ -10,7 +10,6 @@
         formControlName="email"
 				ibmText
 				[invalid]="false"
-				[placeholder]="'e-mail'"
 				[autocomplete]="false">
 		</ibm-label>
     
@@ -25,38 +24,12 @@
         ibmText
         type="password"
 				[invalid]="false"
-				[placeholder]="'password'"
 				[autocomplete]="false">
 		</ibm-label>
 
-    
-
-    <!-- <mat-form-field>
-      <mat-label type="email">e-mail</mat-label>
-      <input matInput type="text" >
-      <mat-error *ngIf="!errors.email && email.invalid && email.touched">E-mail is required</mat-error>
-      <mat-error *ngIf="errors.email">{{errors.email}}</mat-error>
-    </mat-form-field>
-    
     <br />
 
-    <mat-form-field>
-        <mat-label type="password">password</mat-label>
-        <input matInput type="password" formControlName="password">
-        <mat-error *ngIf="!errors.password && password.invalid && password.touched">Password is required</mat-error>
-        <mat-error *ngIf="errors.password">{{errors.password}}</mat-error>
-    </mat-form-field>
-    
-    <br />
-
-    <mat-form-field floatPlaceholder="always" class="app-input-no-underline">
-        <input matInput style="display: none !important">
-        <mat-checkbox formControlName="rememberMe">remember me?</mat-checkbox>
-    </mat-form-field> -->
-
-    <br />
-
-    <app-load-button [disabled]="loginForm.invalid || loading" [loading]="loading">
+    <app-load-button [loading]="loading">
       <span>log in</span>
     </app-load-button>
 

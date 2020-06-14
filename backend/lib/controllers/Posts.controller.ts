@@ -140,8 +140,10 @@ export const readPost = async (req:Request, res:Response) => {
         WITH p,
             size((p)<-[:REPOST_OF]-(:Post)) AS reposts,
             size((p)<-[:REPLY_TO]-(:Post)) AS replies,
-            size((p)<-[:HEARTS]-(:User)) AS hearts,                
-        RETURN p, reposts, replies, hearts, isHearting, hasReposted
+            size((p)<-[:HEARTS]-(:User)) AS hearts        
+        RETURN p, reposts, replies, hearts,
+            EXISTS ((:User {_id:$selfid})-[:HEARTS]->(p)) AS isHearting,
+            EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(p)) AS hasReposted
     `, {
         pid: req.params.pid,
         selfid: req.session.user.id

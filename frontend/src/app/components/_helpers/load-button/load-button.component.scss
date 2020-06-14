@@ -1,8 +1,16 @@
 .loader {
-    .mat-spinner {
-        display: inline-block;
-        margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 48px;
+    overflow: hidden;
+
+    ibm-loading {
+        ::ng-deep .bx--loading__stroke {
+            stroke: #fff !important;
+        }    
     }
+
     mat-icon {
         margin-right: 10px
     }

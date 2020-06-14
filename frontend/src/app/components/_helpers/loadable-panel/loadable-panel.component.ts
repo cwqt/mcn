@@ -18,7 +18,8 @@ export class LoadablePanelComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit():void {}
+  ngOnInit():void {
+  }
 
   ngOnChanges(changes:SimpleChanges):void {
     if('hasData' in changes) {

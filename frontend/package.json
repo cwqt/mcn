@@ -18,6 +18,7 @@
     "@angular/platform-browser-dynamic": "~9.0.1",
     "@angular/router": "~9.0.1",
     "@carbon/icons-angular": "^11.0.1",
+    "@carbon/themes": "^10.13.0",
     "@crystalui/angular-lightbox": "^1.1.8",
     "@ctrl/ngx-chartjs": "^3.0.1",
     "@ctrl/ngx-emoji-mart": "^3.1.0",

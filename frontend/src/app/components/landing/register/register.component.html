@@ -2,52 +2,80 @@
     <h1 class="mat-display-1">register a new account</h1>
 
     <form [formGroup]="registerForm" [hidden]="success" (ngSubmit)="submitHandler()">
-        <mat-form-field>
-            <mat-label type="email">username</mat-label>
-            <input
-                matInput
-                type="text"
-                formControlName="username"
-                minLength="4"
-                maxlength="{{field_max_len}}"
-                autocomplete="off" />
-            <mat-hint align="end">{{username.value?.length || 0}}/{{field_max_len}}</mat-hint>
+
+        <ibm-label [invalid]="errors.username || (username.invalid && username.dirty)">
+            username
+        <mat-hint align="end">({{username.value?.length || 0}}/{{field_max_len}})</mat-hint>
+        <input
+            ibmText
+            type="text"
+            formControlName="username"
+            minLength="4"
+            maxlength="{{field_max_len}}"
+            autocomplete="off"/>
+        </ibm-label>        
+        <div *ngIf="errors.username || (username.invalid && username.dirty)">
             <mat-error *ngIf="!errors.username && !username.value">username is required</mat-error>
             <mat-error *ngIf="!errors.username && registerForm.hasError('usernameForbidden')">username must only contain letters and numbers</mat-error>
             <mat-error *ngIf="errors.username">{{errors.username}}</mat-error>
-        </mat-form-field>
+            <br />
+        </div>
 
         <br />
 
-        <mat-form-field>
-            <mat-label type="email">e-mail</mat-label>
-            <input matInput type="text" formControlName="email"  autocomplete="off" />
+		<ibm-label [invalid]="errors.password || (email.invalid && email.dirty)">
+            email
+        <input
+            formControlName="email"
+            ibmText
+            type="text"
+            [invalid]="false"
+            [autocomplete]="false">
+        </ibm-label>
+        <div *ngIf="errors.email || (email.invalid && email.dirty)">
             <mat-error *ngIf="!errors.email && email.invalid && email.touched">e-mail is required</mat-error>
             <mat-error *ngIf="errors.email">{{errors.email}}</mat-error>
-        </mat-form-field>
+            <br/>
+        </div>
+
+        
+        <br />
+		<ibm-label [invalid]="errors.password">
+        password
+        <mat-hint align="end">({{password.value?.length || 0}}/{{field_max_len}})</mat-hint>
+        <input
+            formControlName="password"
+            ibmText
+            type="password"
+            maxlength="{{field_max_len}}"
+            minLength="{{pw_min_len}}"
+            [invalid]="false"
+            [autocomplete]="false">
+        </ibm-label>
+        <!-- <mat-error *ngIf="!errors.password && password.value.length < pw_min_len && password.touched">password must be greater than {{pw_min_len}} characters</mat-error>
+        <mat-error *ngIf="errors.password">{{errors.password}}</mat-error> -->
         
         <br />
 
-        <mat-form-field>
-            <mat-label type="password">password</mat-label>
-            <input matInput type="password" formControlName="password" maxlength="{{field_max_len}}" minLength="{{pw_min_len}}" (input)="onPasswordInput()"  autocomplete="off" />
-            <mat-hint align="end">{{password.value?.length || 0}}/{{field_max_len}}</mat-hint>
-            <mat-error *ngIf="!errors.password && password.value.length < pw_min_len && password.touched">password must be greater than {{pw_min_len}} characters</mat-error>
-            <mat-error *ngIf="errors.password">{{errors.password}}</mat-error>
-        </mat-form-field>
-        
+		<ibm-label
+            [invalid]="confirmation.touched && password.touched && confirmation.invalid"
+            [invalidText]="'passwords do not match'">
+        confirm password
+        <input
+            formControlName="confirmation"
+            ibmText
+            type="password"
+            maxlength="{{field_max_len}}"
+            minLength="{{pw_min_len}}"
+            (input)="onPasswordInput()"
+            [invalid]="false"
+            [autocomplete]="false">
+        </ibm-label>
+
+        <br />
         <br />
 
-        <mat-form-field>
-            <mat-label type="password">confirm password</mat-label>
-            <input matInput type="password" formControlName="confirmation" (input)="onPasswordInput()"  autocomplete="off" />
-            <mat-error *ngIf="confirmation.touched && password.touched && confirmation.invalid">passwords do not match</mat-error>
-        </mat-form-field>
-
-        <br />
-        <br />
-
-        <app-load-button [disabled]="registerForm.invalid || loading" [loading]="loading">{{register_button_text}}</app-load-button>
+        <app-load-button [disabled]="loading" [loading]="loading">{{register_button_text}}</app-load-button>
     </form>
 </div>
 

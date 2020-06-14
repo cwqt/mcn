@@ -5,9 +5,11 @@
     justify-content: space-between;
     height: 100%;
     background-color: white;
-    padding: 10px;
+    // padding: 10px;
+    padding-bottom: 10px;
     z-index: 9;
     position: relative;
+    font-family: "Poppins", sans-serif;
     .sidebar-header {
         display: flex;
         justify-content: space-between;
@@ -30,6 +32,8 @@
             h1 {
                 margin: 0;
                 margin-left: 20px;
+                font-size: 24px;
+                font-weight: bold;
             }
         }
     }
@@ -60,6 +64,7 @@
                 font-weight: normal;
                 letter-spacing: 1px;
                 margin-left: 20px;
+                font-size: 20px;
             }
             mat-icon {
                 font-size: 25px;
@@ -67,7 +72,7 @@
         }
     }
     &.closed {
-        width: 100px;
+        width: 80px;
         overflow: hidden;
         padding-right: 0;
         h2, h1 {

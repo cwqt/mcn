@@ -5,14 +5,19 @@
     [currentUser]="currentUser"
     [authorUser]="authorUser">
     <div class="title">
-        <h1>{{device.name}}</h1>
+        <h2>{{device.name}}</h2>
 
         <div class="state-indicator" id={{device.state}}>
             <mat-icon inline>{{deviceState.icon}}</mat-icon>
             <span>{{deviceState.text}}</span>
         </div>
     </div>
-    <mat-divider></mat-divider>
+
+    <div class="subheading">
+        <p>@{{device.network_name}}:<b>{{device.hardware_model}}</b></p>
+        <ibm-tag type="blue">Jade plant</ibm-tag>
+    </div>
+
     <br />
 
     <mat-accordion class="object-meta">
@@ -60,4 +65,5 @@
         </app-loadable-panel>
 
       </mat-accordion>
+
 </app-thumb-wrapper>

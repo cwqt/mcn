@@ -2,14 +2,17 @@
     <div class="title">
         <h1>{{device.name}}</h1>
         <div class="manage-device-buttons">
-            <app-rounded-button [icon]="'edit'" [color]="'primary'">edit</app-rounded-button>    
+            <ibm-overflow-menu [flip]="true" [offset]="0">
+                <ibm-overflow-menu-option>Edit details</ibm-overflow-menu-option>
+                <ibm-overflow-menu-option>Change API key</ibm-overflow-menu-option>
+                <ibm-overflow-menu-option>Re-assign</ibm-overflow-menu-option>
+                <ibm-overflow-menu-option type="danger">Delete device</ibm-overflow-menu-option>
+            </ibm-overflow-menu>
         </div>
     </div>    
 </div>
 
-<mat-divider></mat-divider>
-
-<mat-tab-group *ngIf="cache.device.data">
+<mat-tab-group *ngIf="cache.device.data" class="light">
     <mat-tab>
         <ng-template mat-tab-label>
             <mat-icon>toggle_on</mat-icon>
@@ -100,7 +103,8 @@
     </mat-tab>
 </mat-tab-group>
 
-<mat-divider></mat-divider>
+<br />
+
 <div class="device-container">
     <app-postable-social-actions *ngIf="cache.device.data != undefined"
         [postable]="cache.device.data"

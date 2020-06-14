@@ -11,7 +11,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class IndexComponent implements OnInit {
   currentUser:IUser;
-  ui:string = "login"
+  ui:string = "register"
   constructor(private router:Router, private userService:UserService) { }
 
   ngOnInit(): void {

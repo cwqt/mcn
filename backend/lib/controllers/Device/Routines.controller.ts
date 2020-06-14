@@ -40,7 +40,7 @@ export const createTaskRoutine = async (req:Request, res:Response) => {
 
     let result = await cypher(`
         MATCH (d:Device {_id:$did})
-        CREATE (t:TaskRoutine $body)-[:HAS_ROUTINE]->(d)
+        CREATE (t:TaskRoutine $body)<-[:HAS_ROUTINE]-(d)
         RETURN t
     `, {
         did: req.params.did,

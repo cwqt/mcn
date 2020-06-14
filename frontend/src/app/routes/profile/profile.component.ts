@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { IUser } from '../../../../../backend/lib/models/User.model';
 import { UserService } from 'src/app/services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -71,7 +71,9 @@ export class ProfileComponent implements OnInit {
     });
 
     this.userService.currentUser.subscribe(user => this.currentUser = user );
+    console.log()
   }
+
 
   setActiveTab(tab:MatTabChangeEvent) {
     this.canLoadTabContents.next(false);

@@ -45,7 +45,6 @@ import { ScheduledTasksComponent } from './routes/device/scheduled-tasks/schedul
 import { DeviceControlComponent } from './routes/device/device-control/device-control.component';
 
 import { ProfileComponent }         from './routes/profile/profile.component';
-import { ProfileSidebarComponent }  from './components/profile/profile-sidebar/profile-sidebar.component';
 import { RecordableCountComponent } from './components/profile/recordable-count/recordable-count.component';
 import { UserPostsListComponent }   from './components/profile/tabs/user-posts-list/user-posts-list.component';
 import { UserPlantsListComponent }  from './components/profile/tabs/user-plants-list/user-plants-list.component';
@@ -54,7 +53,6 @@ import { UserDevicesListComponent } from './components/profile/tabs/user-devices
 import { PlantThumbComponent }       from './components/profile/tabs/user-plants-list/plant-thumb/plant-thumb.component';
 import { PostComponent }            from './routes/post/post.component';
 import { PostThumbComponent }       from './components/profile/tabs/user-posts-list/post-thumb/post-thumb.component';
-import { ProfileSidebarQuadComponent } from './components/profile/profile-sidebar/profile-sidebar-quad/profile-sidebar-quad.component';
 import { CreateDeviceGuideComponent } from './components/profile/tabs/user-devices-list/create-device-guide/create-device-guide.component';
 import { SupportedDevicesComponent } from './components/pages/supported-devices/supported-devices.component';
 import { DeviceThumbComponent }     from './components/profile/tabs/user-devices-list/device-thumb/device-thumb.component';
@@ -79,7 +77,22 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import {MatPaginatorModule} from '@angular/material/paginator';
 
-import {InputModule} from 'carbon-components-angular'
+import {
+  InputModule,
+  LoadingModule,
+  InlineLoadingModule,
+  ButtonModule,
+  TabsModule,
+  TilesModule,
+  TagModule,
+  ToggleModule,
+  NumberModule,
+	Table,
+	TableModule,
+  DialogModule
+
+} from 'carbon-components-angular'
+
 
 import { MeasurementsGraphsComponent } from './components/measurements-graphs/measurements-graphs.component';
 import { PlantComponent } from './routes/plant/plant.component';
@@ -99,7 +112,6 @@ import { PostableRepliesComponent } from './components/app/postable/postable-rep
     VerifiedComponent,
     LoginHelpComponent,
     FirstTimeSetupComponent,
-    ProfileSidebarComponent,
     HeaderBarComponent,
     LoadButtonComponent,
     WrapperComponent,
@@ -114,7 +126,6 @@ import { PostableRepliesComponent } from './components/app/postable/postable-rep
     PostThumbComponent,
     SidebarComponent,
     CreatePostFormComponent,
-    ProfileSidebarQuadComponent,
     CreateDeviceGuideComponent,
     SupportedDevicesComponent,
     DeviceThumbComponent,
@@ -132,7 +143,7 @@ import { PostableRepliesComponent } from './components/app/postable/postable-rep
     PostableSocialActionsComponent,
     ScheduledTasksComponent,
     DeviceControlComponent,
-    PostableRepliesComponent
+    PostableRepliesComponent,
   ],
   imports: [
     BrowserModule,
@@ -169,13 +180,25 @@ import { PostableRepliesComponent } from './components/app/postable/postable-rep
     MatChipsModule,
     MatPaginatorModule,
 
-    InputModule
+    InputModule,
+    LoadingModule,
+    InlineLoadingModule,
+    ButtonModule,
+    TabsModule,
+    TilesModule,
+    TagModule,
+    ToggleModule,
+    NumberModule,
+    TableModule,
+    DialogModule
+
 
   ],
   providers: [
     CookieService
   ],
   entryComponents: [
+    Table,
     UserPostsListComponent,
     UserPlantsListComponent,
     UserGardensListComponent,

@@ -1,13 +1,17 @@
-<mat-card class="thumb-wrapper-container" [class.mini]="mini">
+<ibm-tile class="thumb-wrapper-container" [class.mini]="mini">
     <div class="left">
         <img *ngIf="recordable.thumbnail && mini" class="blur-bg" [src]="recordable.thumbnail" />
         <img *ngIf="recordable.thumbnail" [src]="recordable.thumbnail" />
         <div *ngIf="!recordable.thumbnail" class="placeholder"><mat-icon>{{thumbPlaceholderIcon}}</mat-icon></div>
+        <div *ngIf="recordable.thumbnail" class="profile-cover-gradient"></div>     
+
     </div>
     <div class="right" *ngIf="!mini">
-        <ng-content class="thumb-wrapper-content"></ng-content>
+        <div class="thumb-wrapper-content">
+            <ng-content></ng-content>
+        </div>
         <br />
-        <mat-card-actions>
+        <div class="actions">
             <app-postable-social-actions
                 [postable]="recordable"
                 [type]="type"
@@ -16,8 +20,8 @@
             </app-postable-social-actions>
 
             <!-- <button mat-button class="view-comments-button">view comments</button> -->
-            <button mat-button color="primary" (click)="gotoItem()">inspect</button>
-        </mat-card-actions>
+            <button ibmButton (click)="gotoItem()">inspect</button>
+        </div>
     </div>
 
     <div class="mini-footer" *ngIf="mini">
@@ -27,4 +31,4 @@
             &nbsp;view {{authorUser.username}}'s {{type}}s
         </button>
     </div>
-</mat-card>
+</ibm-tile>

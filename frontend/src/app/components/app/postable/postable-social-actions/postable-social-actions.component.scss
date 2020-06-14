@@ -4,8 +4,8 @@
     &.justify {
         justify-content: space-between;
     }
-    .isHearting { color: rgb(224, 36, 94); }
-    .hasReposted { color: rgb(23, 191, 99); }
+    .isHearting { color: rgb(224, 36, 94) !important; }
+    .hasReposted { color: rgb(23, 191, 99) !important; }
     button {
         margin-right: 10px;
     }

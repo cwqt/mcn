@@ -21,7 +21,7 @@ export class RegisterComponent implements OnInit {
   registerForm:FormGroup;
   loading:boolean = false;
   success:boolean = false;
-  register_button_text:string = 'sign up :)'
+  register_button_text:string = 'create account'
   errors = {
     'username': "",
     'email': "",

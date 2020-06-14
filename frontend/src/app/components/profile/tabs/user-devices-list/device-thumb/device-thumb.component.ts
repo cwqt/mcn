@@ -65,6 +65,8 @@ export class DeviceThumbComponent implements OnInit {
       icon:""
     } as IDeviceState
 
+    console.log(this.device)
+
     this.deviceInfo = HardwareInformation[this.device.hardware_model];
     this.deviceState.text = this.device.state;
     this.deviceState.icon = this.iconMap[this.deviceState.text]
