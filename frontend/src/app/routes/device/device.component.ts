@@ -62,7 +62,21 @@ export class DeviceComponent implements OnInit {
       await this.getUser(params.username)
       await this.getDevice(params.did)
       this.getDeviceMeasurements();
-      this.getDeviceSensors().then(data => console.log(data));
+      this.getDeviceSensors()
+        .then((data:IDeviceSensor[]) => {
+          let res = {};
+          
+          data.forEach((d:IDeviceSensor) => {
+            if(!res[d.measures]) {
+              res[d.measures] = [d];
+            } else {
+              res[d.measures].push(d)
+            }
+          })
+
+          console.log(res)
+
+        });
     }).unsubscribe();
   }
 

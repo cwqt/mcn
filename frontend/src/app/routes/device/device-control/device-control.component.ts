@@ -34,8 +34,7 @@ export class DeviceControlComponent implements OnInit {
   constructor(private deviceService:DeviceService) { }
 
   ngOnInit(): void {
-    this.getDeviceStates(this.authorUser._id, this.device._id)
-      .then(() => console.log(this.cache.states));
+    this.getDeviceStates(this.authorUser._id, this.device._id);
   }
 
   getDeviceStates(user_id:string, device_id:string):Promise<IDeviceState[]> {

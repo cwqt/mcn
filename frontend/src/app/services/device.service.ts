@@ -57,7 +57,7 @@ export class DeviceService {
   }
 
   getDeviceSensors(user_id:string, device_id:string):Promise<IDeviceSensor[]> {
-    return this.http.get<IDeviceSensor[]>(`/api/users/${user_id}/devices/${device_id}/sensor`).toPromise();
+    return this.http.get<IDeviceSensor[]>(`/api/users/${user_id}/devices/${device_id}/sensors`).toPromise();
   }
 
 
