@@ -101,6 +101,8 @@ import { ThumbWrapperComponent } from './components/profile/tabs/thumb-wrapper/t
 import { HeaderBarUserMenuComponent } from './components/app/header-bar/header-bar-user-menu/header-bar-user-menu.component';
 import { PostableRepliesComponent } from './components/app/postable/postable-replies/postable-replies.component';
 import { FooterComponent } from './components/app/footer/footer.component';
+import { StickyHeaderComponent } from './components/_helpers/sticky-header/sticky-header.component';
+import { SensorListComponent } from './routes/device/sensor-list/sensor-list.component';
 
 @NgModule({
   declarations: [
@@ -146,6 +148,8 @@ import { FooterComponent } from './components/app/footer/footer.component';
     DeviceControlComponent,
     PostableRepliesComponent,
     FooterComponent,
+    StickyHeaderComponent,
+    SensorListComponent,
   ],
   imports: [
     BrowserModule,

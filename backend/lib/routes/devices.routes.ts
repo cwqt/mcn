@@ -6,14 +6,14 @@ var AsyncRouter = require("express-async-router").AsyncRouter;
 import { readAllMeasurements } from '../controllers/Device/Measurements.controller';
 import {
     createDevice,
-    assignDeviceToRecordable,
     readDevice,
-    pingDevice,
+    updateDevice,
+    deleteDevice,
+    assignDeviceToRecordable,
     readDeviceSensors,
     readDeviceStates,
     readDeviceMetrics,
-    // updateDevice,
-    // deleteDevice,
+    pingDevice,
 } from "../controllers/Device/Device.controller";
 import {
     createApiKey,
@@ -21,7 +21,6 @@ import {
     deleteApiKey
 } from '../controllers/Device/ApiKeys.controller';
 import {
-    createSensor,
     updateSensor,
     deleteSensor
 } from '../controllers/Device/Sensor.controller';
@@ -70,36 +69,17 @@ deviceRouter.post('/assign/:rid', validate([
     param('rid').isMongoId().trim().withMessage('invalid recordable id to assign to')
 ]), assignDeviceToRecordable);
 
-// router.post('/:pid/reply', validate([
-//     body('content').not().isEmpty().trim().withMessage('reply must have some content'),
-// ]), replyToRecordable);
+router.put('/:did', validate([
+    param('did').isMongoId().trim().withMessage('invalid device id')
+]), updateDevice);
 
-// router.put('/:did', validate([
-//     param('did').isMongoId().trim().withMessage('invalid device id')
-// ]), updateDevice);
-
-// router.delete('/:did', validate([
-//     param('did').isMongoId().trim().withMessage('invalid device id')
-// ]), deleteDevice);
+router.delete('/:did', validate([
+    param('did').isMongoId().trim().withMessage('invalid device id')
+]), deleteDevice);
 
 deviceRouter.post('/keys', validate([
     body('key_name').not().isEmpty().trim().withMessage('device name must be named'),
 ]), createApiKey)
-
-deviceRouter.post('/sensors', validate([
-    body('name').not().isEmpty().withMessage('Sensor requires a name'),
-    body('measures')
-        .not().isEmpty().withMessage('Must have measurement type')
-        .isIn(Object.values(Measurement)).withMessage(`Must be valid measurement type: ${Object.values(Measurement)}`),
-    body('unit')
-        .not().isEmpty().withMessage('Must have measurement unit')
-        .custom((value:Unit, { req }:any) => {
-            let type = req.body.measures as Measurement | IoTMeasurement | IoTState;
-            let isValidUnitForType =  MeasurementUnits[type].includes(value);
-            if(!isValidUnitForType) throw new Error(`'${value}' is not a valid unit for '${req.body.measures}', should be of value: ${MeasurementUnits[type]}`);
-            return true;
-        })
-]), createSensor);
 
 deviceRouter.get('/sensors', readDeviceSensors);
 deviceRouter.get('/states',  readDeviceStates);

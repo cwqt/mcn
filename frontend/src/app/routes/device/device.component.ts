@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DeviceService } from 'src/app/services/device.service';
 import { UserService } from 'src/app/services/user.service';
-import { IDevice, IDeviceStub, IDeviceState } from '../../../../../backend/lib/models/Device/Device.model';
+import { IDevice, IDeviceStub, IDeviceState, IDeviceSensor } from '../../../../../backend/lib/models/Device/Device.model';
 import { IMeasurementModel, IMeasurement } from '../../../../../backend/lib/models/Measurement.model';
 import { PlantService } from 'src/app/services/plant.service';
 import { HardwareDevice } from '../../../../../backend/lib/models/Hardware.model';
@@ -32,6 +32,11 @@ export class DeviceComponent implements OnInit {
       loading: true,
       error: ""
     },
+    sensors: {
+      data: undefined,
+      loading: true,
+      error: ""
+    },
     user: {
       data: undefined,
       loading: true,
@@ -57,6 +62,7 @@ export class DeviceComponent implements OnInit {
       await this.getUser(params.username)
       await this.getDevice(params.did)
       this.getDeviceMeasurements();
+      this.getDeviceSensors().then(data => console.log(data));
     }).unsubscribe();
   }
 
@@ -71,7 +77,10 @@ export class DeviceComponent implements OnInit {
   getDevice(device_id:string):Promise<IDevice> {
     this.cache.device.loading = true;
     return this.deviceService.getDevice(this.cache.user.data._id, device_id)
-      .then((device:IDevice) => this.cache.device.data = device)
+      .then((device:IDevice) => {
+        this.deviceInfo = HardwareInformation[device.hardware_model];
+        this.cache.device.data = device;
+      })
       .catch(e => this.cache.device.error = e)
       .finally(() => this.cache.device.loading = false)
   }
@@ -82,6 +91,14 @@ export class DeviceComponent implements OnInit {
       .then((measurements:IMeasurementModel[]) => this.cache.measurements.data = measurements)
       .catch(e => this.cache.measurements.error = e)
       .finally(() => this.cache.measurements.loading = false)
+  }
+
+  getDeviceSensors():Promise<IDeviceSensor[]> {
+    this.cache.sensors.loading = true;
+    return this.deviceService.getDeviceSensors(this.cache.user.data._id, this.cache.device.data._id)
+      .then((sensors:IDeviceSensor[]) => this.cache.sensors.data = sensors)
+      .catch(e => this.cache.sensors.error = e)
+      .finally(() => this.cache.sensors.loading = false)
   }
 
   goToAssignedRecordable() {

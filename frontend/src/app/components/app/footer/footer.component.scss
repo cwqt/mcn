@@ -1,9 +1,6 @@
 .footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
+    margin-top: auto;
 }
-
 
 .top, .bottom {
     padding-left: 100px;
@@ -20,7 +17,7 @@
     #ds {
         filter: invert(1);
         width: 80px;
-        margin-left: -20px;
+        margin-left: 20px;
     }
     .bottom-content {
         margin-bottom: 60px;

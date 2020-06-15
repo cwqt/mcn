@@ -134,9 +134,18 @@ export const createDevice = async (req:Request, res:Response) => {
     res.status(HTTP.Created).json(d);
 }
 
+export const updateDevice = async (req:Request, res:Response) => {
+
+}
+
+export const deleteDevice = async (req:Request, res:Response) => {
+    
+}
+
 export const assignDeviceToRecordable = async (req:Request, res:Response) => {
     let result = await cypher(`
-        MATCH (r {_id:$rid}) WHERE r:Plant OR r:Garden
+        MATCH (r {_id:$rid})
+        WHERE r:Plant OR r:Garden
         MATCH (d:Device {_id:$did})
         MERGE (d)-[m:MONITORS]->(r)
         RETURN m
@@ -264,7 +273,16 @@ const getAssignedRecordable = async (device_id:string):Promise<IPlant | IGarden>
 }
 
 export const readDeviceSensors = async (req:Request, res:Response) => {
+    let result = await cypher(`
+        MATCH (d:Device {_id:$did})
+        OPTIONAL MATCH (d)-[:HAS_SENSOR]-(s:Sensor)
+        RETURN d, collect(s) AS s
+    `, {
+        did: req.params.did
+    })
 
+    let states = result.records[0]?.get('s')?.map((x:any) => x.properties);
+    return res.json(states ?? []);
 }
 
 export const readDeviceStates = async (req:Request, res:Response) => {
@@ -290,8 +308,7 @@ export const readDeviceMetrics = async (req:Request, res:Response) => {
     })
 
     let metrics = result.records[0]?.get('m')?.map((x:any) => x.properties);
-    return res.json(metrics ?? []);
-    
+    return res.json(metrics ?? []);    
 }
 
 const createDefaultMeta = () => {

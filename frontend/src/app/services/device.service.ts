@@ -4,7 +4,7 @@ import { ProfileService } from './profile.service';
 import { UserService } from './user.service';
 
 import { MeasurementUnits } from '../../../../backend/lib/common/types/measurements.types';
-import { IDevice, IDeviceStub, IDeviceState } from '../../../../backend/lib/models/Device/Device.model';
+import { IDevice, IDeviceStub, IDeviceState, IDeviceSensor } from '../../../../backend/lib/models/Device/Device.model';
 import { IMeasurementModel } from '../../../../backend/lib/models/Measurement.model';
 import { ITaskRoutine } from '../../../../runner/lib/models/Tasks.model';
 import { IApiKey, IApiKeyPrivate } from '../../../../backend/lib/models/Device/ApiKey.model';
@@ -55,4 +55,10 @@ export class DeviceService {
   getDeviceStates(user_id:string, device_id:string):Promise<IDeviceState[]> {
     return this.http.get<IDeviceState[]>(`/api/users/${user_id}/devices/${device_id}/states`).toPromise();
   }
+
+  getDeviceSensors(user_id:string, device_id:string):Promise<IDeviceSensor[]> {
+    return this.http.get<IDeviceSensor[]>(`/api/users/${user_id}/devices/${device_id}/sensor`).toPromise();
+  }
+
+
 }

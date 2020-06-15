@@ -156,6 +156,7 @@ mat-tab-group {
     &.light {
         .mat-tab-labels {
             color: #161616;
+            background-color: white !important;
         }
         .mat-tab-label {
             border-top: 0px solid transparent;
