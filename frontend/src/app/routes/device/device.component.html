@@ -18,6 +18,30 @@
     <mat-tab-group *ngIf="cache.device.data" class="light">
         <mat-tab>
             <ng-template mat-tab-label>
+                <mat-icon>bar_chart</mat-icon>
+                Measurements
+            </ng-template>
+            <div class="plant-container">
+                <div class="device-container" *ngIf="!cache.device.loading">
+                    
+                    <div *ngIf="!cache.sensors.loading">
+                        <app-sensor-list
+                            [sensors]="cache.sensors.data"
+                            [authorUser]="cache.user.data"
+                            [currentUser]="currentUser">
+                        </app-sensor-list>
+
+                    </div>
+
+                    <div *ngIf="!cache.measurements.loading">
+                        <app-measurements-graphs [data]="measurements" [device]="cache.device.data"></app-measurements-graphs>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+
+        <mat-tab>
+            <ng-template mat-tab-label>
                 <mat-icon>information</mat-icon>
                 Information
             </ng-template>
@@ -48,20 +72,6 @@
                     </mat-chip-list>
                 </div>
 
-            </div>
-        </mat-tab>
-
-        <mat-tab>
-            <ng-template mat-tab-label>
-                <mat-icon>bar_chart</mat-icon>
-                Measurements
-            </ng-template>
-            <div class="plant-container">
-                <div class="device-container" *ngIf="!cache.device.loading">
-                    <div *ngIf="!cache.measurements.loading">
-                        <app-measurements-graphs [data]="measurements" [device]="cache.device.data"></app-measurements-graphs>
-                    </div>
-                </div>
             </div>
         </mat-tab>
 

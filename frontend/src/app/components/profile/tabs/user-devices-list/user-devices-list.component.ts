@@ -47,11 +47,11 @@ export class UserDevicesListComponent implements OnInit {
     })
   }
 
-  ngAfterViewInit() {
-    this.paginator.page.subscribe((pageEvent:PageEvent) => {
-      this.getDevices(pageEvent.pageIndex, pageEvent.pageSize)
-    })
-  }
+  // ngAfterViewInit() {
+  //   this.paginator.page.subscribe((pageEvent:PageEvent) => {
+  //     this.getDevices(pageEvent.pageIndex, pageEvent.pageSize)
+  //   })
+  // }
 
   getDevices(page:number, per_page:number) {
     this.loading = true;

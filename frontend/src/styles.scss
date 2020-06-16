@@ -5,6 +5,8 @@
 @include carbon--theme();
 
 @import 'carbon-components/scss/globals/scss/styles.scss';
+@import "@carbon/charts/styles.css";
+
 
 * {
     box-sizing: border-box;

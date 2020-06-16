@@ -77,6 +77,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import {MatPaginatorModule} from '@angular/material/paginator';
 
+import { ChartsModule } from "@carbon/charts-angular";
 import {
   InputModule,
   LoadingModule,
@@ -89,10 +90,10 @@ import {
   NumberModule,
 	Table,
 	TableModule,
-  DialogModule
+  DialogModule,
+  StructuredListModule
 
 } from 'carbon-components-angular'
-
 
 import { MeasurementsGraphsComponent } from './components/measurements-graphs/measurements-graphs.component';
 import { PlantComponent } from './routes/plant/plant.component';
@@ -101,7 +102,6 @@ import { ThumbWrapperComponent } from './components/profile/tabs/thumb-wrapper/t
 import { HeaderBarUserMenuComponent } from './components/app/header-bar/header-bar-user-menu/header-bar-user-menu.component';
 import { PostableRepliesComponent } from './components/app/postable/postable-replies/postable-replies.component';
 import { FooterComponent } from './components/app/footer/footer.component';
-import { StickyHeaderComponent } from './components/_helpers/sticky-header/sticky-header.component';
 import { SensorListComponent } from './routes/device/sensor-list/sensor-list.component';
 
 @NgModule({
@@ -148,7 +148,6 @@ import { SensorListComponent } from './routes/device/sensor-list/sensor-list.com
     DeviceControlComponent,
     PostableRepliesComponent,
     FooterComponent,
-    StickyHeaderComponent,
     SensorListComponent,
   ],
   imports: [
@@ -186,6 +185,7 @@ import { SensorListComponent } from './routes/device/sensor-list/sensor-list.com
     MatChipsModule,
     MatPaginatorModule,
 
+    ChartsModule,
     InputModule,
     LoadingModule,
     InlineLoadingModule,
@@ -196,7 +196,8 @@ import { SensorListComponent } from './routes/device/sensor-list/sensor-list.com
     ToggleModule,
     NumberModule,
     TableModule,
-    DialogModule
+    DialogModule,
+    StructuredListModule
 
 
   ],

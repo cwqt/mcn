@@ -1,1 +1,64 @@
-<p>sensor-list works!</p>
+<!-- <ibm-structured-list *ngFor="let group of sensors | keyvalue">
+    <ibm-list-header>
+        <ibm-list-column>{{group.key}}</ibm-list-column>
+        <ibm-list-column>Sensor</ibm-list-column>
+        <ibm-list-column>Ref</ibm-list-column>
+        <ibm-list-column>Current value</ibm-list-column>
+    </ibm-list-header>
+
+    <ibm-list-row *ngFor="let sensor of group.value">
+        <ibm-list-column></ibm-list-column>
+        <ibm-list-column>{{sensor.name}}</ibm-list-column>
+        <ibm-list-column>{{sensor.ref}}</ibm-list-column>
+        <ibm-list-column>{{sensor.value}}</ibm-list-column>
+    </ibm-list-row>
+
+</ibm-structured-list>
+ -->
+
+ <ibm-table-container>
+    <ibm-table-header>
+        <h4 ibmTableHeaderTitle>Sensor data & Metrics</h4>
+        <p ibmTableHeaderDescription>Readings from device sensors</p>
+    </ibm-table-header>
+
+    <ibm-table-toolbar>
+        <ibm-table-toolbar-content>
+            <ibm-table-toolbar-search [expandable]="true"></ibm-table-toolbar-search>
+            <button ibmButton="primary" size="sm">
+                Compare data
+            </button>
+        </ibm-table-toolbar-content>
+    </ibm-table-toolbar>
+    
+
+    <div class="table" *ngFor="let group of sensors | keyvalue">
+        <div class="thead">
+            <div class="th"><b>{{group.key}}</b></div>
+            <div class="th">Sensor</div>
+            <div class="th">Ref</div>
+            <div class="th">Current value</div>
+        </div>
+        <ibm-expandable-tile *ngFor="let sensor of group.value">
+            <span class="bx--tile-content__above-the-fold">
+                <div class="td"></div>
+                <div class="td">{{sensor.name}}</div>
+                <div class="td">{{sensor.ref}}</div>
+                <div class="td">{{sensor.value}}</div>
+            </span>
+            <span class="bx--tile-content__below-the-fold">
+
+                <ibm-area-chart class="n-chart"
+                    [data]="data"
+                    [options]="options">
+                </ibm-area-chart>
+
+
+            </span>
+        </ibm-expandable-tile>
+    </div>
+
+
+
+
+</ibm-table-container>

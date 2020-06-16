@@ -62,21 +62,7 @@ export class DeviceComponent implements OnInit {
       await this.getUser(params.username)
       await this.getDevice(params.did)
       this.getDeviceMeasurements();
-      this.getDeviceSensors()
-        .then((data:IDeviceSensor[]) => {
-          let res = {};
-          
-          data.forEach((d:IDeviceSensor) => {
-            if(!res[d.measures]) {
-              res[d.measures] = [d];
-            } else {
-              res[d.measures].push(d)
-            }
-          })
-
-          console.log(res)
-
-        });
+      this.getDeviceSensors();
     }).unsubscribe();
   }
 
@@ -110,7 +96,19 @@ export class DeviceComponent implements OnInit {
   getDeviceSensors():Promise<IDeviceSensor[]> {
     this.cache.sensors.loading = true;
     return this.deviceService.getDeviceSensors(this.cache.user.data._id, this.cache.device.data._id)
-      .then((sensors:IDeviceSensor[]) => this.cache.sensors.data = sensors)
+      .then((sensors:IDeviceSensor[]) => {
+        //group by measurement type
+        let res = {};          
+        sensors.forEach((s:IDeviceSensor) => {
+          if(!res[s.measures]) {
+            res[s.measures] = [s];
+          } else {
+            res[s.measures].push(s)
+          }
+        })
+
+        this.cache.sensors.data = res;
+      })
       .catch(e => this.cache.sensors.error = e)
       .finally(() => this.cache.sensors.loading = false)
   }

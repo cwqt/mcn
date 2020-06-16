@@ -1,0 +1,29 @@
+.table {
+    text-align: left;
+    position: relative;
+    border-collapse: collapse; 
+    width: 100%;
+    .thead {
+        width: 100%;
+        background: white;
+        height: 48px;
+        display: flex;
+        align-items: center;
+    }
+    
+}
+
+.th, .td {
+    padding: 0 16px;
+    width: 25%;
+    display: inline-block;
+}
+.tr {
+    background-color: #f4f4f4;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+ibm-expandable-tile {
+    width: 100%;
+    padding: 0 !important;
+}
