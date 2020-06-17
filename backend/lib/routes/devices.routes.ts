@@ -3,7 +3,7 @@ const { body, param, query } = require('express-validator');
 import { validate } from '../common/validate'; 
 var AsyncRouter = require("express-async-router").AsyncRouter;
 
-import { readAllMeasurements } from '../controllers/Device/Measurements.controller';
+// import { readAllMeasurements } from '../controllers/Device/Measurements.controller';
 import {
     createDevice,
     readDevice,
@@ -59,7 +59,7 @@ deviceRouter.use(validate([
 ]));
 
 deviceRouter.get('/',               readDevice);
-deviceRouter.get('/measurements',   readAllMeasurements);
+// deviceRouter.get('/measurements',   readAllMeasurements);
 deviceRouter.get('/ping',           pingDevice);
 deviceRouter.post('/repost',        repostPostable);
 deviceRouter.post('/heart',         heartPostable);
@@ -84,6 +84,11 @@ deviceRouter.post('/keys', validate([
 deviceRouter.get('/sensors', readDeviceSensors);
 deviceRouter.get('/states',  readDeviceStates);
 deviceRouter.get('/metrics', readDeviceMetrics);
+
+// deviceRouter.get('/sensors/:pid', readDevicePropertyData);
+// deviceRouter.get('/states/:pid',  readDevicePropertyData);
+// deviceRouter.get('/metrics/:pid', readDevicePropertyData);
+
 
 deviceRouter.use('/routines', routines);
 

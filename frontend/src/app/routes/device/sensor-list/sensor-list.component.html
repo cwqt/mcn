@@ -28,11 +28,11 @@
                     <div class="th">Current value</div>
                 </div>
                 <ibm-expandable-tile *ngFor="let sensor of group.value">
-                    <span class="bx--tile-content__above-the-fold">
+                    <span class="bx--tile-content__above-the-fold tbody">
                         <div class="td"></div>
                         <div class="td">{{sensor.name}}</div>
                         <div class="td">{{sensor.ref}}</div>
-                        <div class="td">{{sensor.value}}</div>
+                        <div class="td">{{sensor.value ? (sensor.value + '('+sensor.unit+')') : 'no data'}}</div>
                     </span>
                     <span class="bx--tile-content__below-the-fold">
         
@@ -44,6 +44,7 @@
         
                     </span>
                 </ibm-expandable-tile>
+                <mat-progress-bar mode="indeterminate" color="accent"></mat-progress-bar>
             </div>
         
 

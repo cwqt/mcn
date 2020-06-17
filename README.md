@@ -19,7 +19,7 @@ Express.js TypeScript REST API with polyglot persistence.
 
 * __Neo4j__: Social networking data, highly relational data
 * __InfluxDB__: IoT data, low relation - high read/write throughput
-* __MongoDB__: Agenda Task  queue
+* __MongoDB__: Agenda, mcnlang Task Routine queue
 * __Redis__: Session store, very high r/w
 
 ## frontend

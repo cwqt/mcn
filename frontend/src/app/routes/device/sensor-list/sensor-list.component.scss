@@ -30,3 +30,17 @@ ibm-expandable-tile {
 .mat-icon {
     margin-right: 10px !important;
 }
+
+.table ::ng-deep .bx--tile {
+    padding: 0;
+    min-height: 48px;
+    .tbody {
+        display: flex;
+        align-items: center;
+        height: 48px;
+    }
+    .bx--chart-holder {
+        background-color: transparent;
+        padding: 0px 20px 10px 10px;
+    }
+}

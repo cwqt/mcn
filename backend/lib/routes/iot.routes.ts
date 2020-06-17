@@ -6,11 +6,11 @@ import { Request, Response, NextFunction } from 'express';
 
 import { Measurement as AcceptedMeasurement, IoTMeasurement } from '../common/types/measurements.types';
 import { authenticateApiKey } from '../controllers/Auth.controller';
-import {
-    createMeasurementAsDevice,
-    createMeasurementAsUser,
-    getMeasurementTypes,
-} from '../controllers/Device/Measurements.controller';
+// import {
+//     createMeasurementAsDevice,
+//     createMeasurementAsUser,
+//     getMeasurementTypes,
+// } from '../controllers/Device/Measurements.controller';
 import { RecorderType } from '../models/Measurement.model';
 import { RecordableType } from '../models/Recordable.model';
 import { ErrorHandler } from '../common/errorHandler';
@@ -44,41 +44,41 @@ const validateDeviceMeasurementTypes = () => {
     })
 }
 
-//users have no link to a recordable & require an explict link in the route param
-router.post('/users/:uid/:rtype/:rid', validate([
-    param('uid').isMongoId().trim().withMessage('invalid user id'),
-    param('rid').isMongoId().trim().withMessage('invalid recordable id'),
-    validateRecordableMeasurementTypes()
-]), ((req:Request, res:Response, next:NextFunction) => {
-    res.locals["recorder_type"] = RecorderType.User
-    //de-pluralise
-    switch(req.params.rtype.slice(0, req.params.rtype.length - 1)) {
-        case RecordableType.Plant:
-            res.locals["recordable_type"] = RecordableType.Plant
-            break;
-        case RecordableType.Garden:
-            res.locals["recordable_type"] = RecordableType.Garden
-            break;
-        default:
-            throw new ErrorHandler(HTTP.BadRequest, `Invalid recordable type: ${req.params.rtype}`);
-    }
-    next();
-}), createMeasurementAsUser)
+// //users have no link to a recordable & require an explict link in the route param
+// router.post('/users/:uid/:rtype/:rid', validate([
+//     param('uid').isMongoId().trim().withMessage('invalid user id'),
+//     param('rid').isMongoId().trim().withMessage('invalid recordable id'),
+//     validateRecordableMeasurementTypes()
+// ]), ((req:Request, res:Response, next:NextFunction) => {
+//     res.locals["recorder_type"] = RecorderType.User
+//     //de-pluralise
+//     switch(req.params.rtype.slice(0, req.params.rtype.length - 1)) {
+//         case RecordableType.Plant:
+//             res.locals["recordable_type"] = RecordableType.Plant
+//             break;
+//         case RecordableType.Garden:
+//             res.locals["recordable_type"] = RecordableType.Garden
+//             break;
+//         default:
+//             throw new ErrorHandler(HTTP.BadRequest, `Invalid recordable type: ${req.params.rtype}`);
+//     }
+//     next();
+// }), createMeasurementAsUser)
 
 
-//devices are assigned to a specific device, whereas users are not
-// & can create measurements on any recordable
-router.post('/devices/:did', validate([
-    param('did').isMongoId().trim().withMessage('invalid device id'),
-    validateRecordableMeasurementTypes(),
-    validateDeviceMeasurementTypes()
-]), ((req:Request, res:Response, next:NextFunction) => {
-    res.locals["recorder_type"] = RecorderType.Device;
-    next();
-}), authenticateApiKey, createMeasurementAsDevice)
+// //devices are assigned to a specific device, whereas users are not
+// // & can create measurements on any recordable
+// router.post('/devices/:did', validate([
+//     param('did').isMongoId().trim().withMessage('invalid device id'),
+//     validateRecordableMeasurementTypes(),
+//     validateDeviceMeasurementTypes()
+// ]), ((req:Request, res:Response, next:NextFunction) => {
+//     res.locals["recorder_type"] = RecorderType.Device;
+//     next();
+// }), authenticateApiKey, createMeasurementAsDevice)
 
 
-router.get('/types', getMeasurementTypes);
+// router.get('/types', getMeasurementTypes);
 
 //seconds since unix epoch
 router.get('/time', (req:Request, res:Response) => {

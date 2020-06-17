@@ -64,7 +64,7 @@ import { MatInputModule }         from '@angular/material/input';
 import { MatDividerModule }       from '@angular/material/divider';
 import { MatCheckboxModule }      from '@angular/material/checkbox';
 import { MatStepperModule }       from '@angular/material/stepper';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule }          from '@angular/material/icon';
 import { MatTabsModule }          from '@angular/material/tabs';
 import { MatCardModule }            from '@angular/material/card';
 import { MatDialogModule }          from '@angular/material/dialog';

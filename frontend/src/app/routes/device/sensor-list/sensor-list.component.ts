@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { IUser } from '../../../../../../backend/lib/models/User.model';
 import { IDevice, IDeviceStub, IDeviceState, IDeviceSensor } from '../../../../../../backend/lib/models/Device/Device.model';
+import { DeviceService } from 'src/app/services/device.service';
 
 @Component({
   selector: 'app-sensor-list',
@@ -10,60 +11,9 @@ import { IDevice, IDeviceStub, IDeviceState, IDeviceSensor } from '../../../../.
 export class SensorListComponent implements OnInit {
   @Input() currentUser:IUser;
   @Input() authorUser:IUser;
-  @Input() sensors:{[index:string]:IDeviceSensor}
+  @Input() sensors:{[index:string]:IDeviceSensor[]}
 
-  data = [
-    {
-      "group": "Dataset 1",
-      "date": "2019-01-01T00:00:00.000Z",
-      "value": 0
-    },
-    {
-      "group": "Dataset 1",
-      "date": "2019-01-06T00:00:00.000Z",
-      "value": -37312
-    },
-    {
-      "group": "Dataset 1",
-      "date": "2019-01-08T00:00:00.000Z",
-      "value": -22392
-    },
-    {
-      "group": "Dataset 1",
-      "date": "2019-01-15T00:00:00.000Z",
-      "value": -52576
-    },
-    {
-      "group": "Dataset 1",
-      "date": "2019-01-19T00:00:00.000Z",
-      "value": 20135
-    },
-    {
-      "group": "Dataset 2",
-      "date": "2019-01-01T00:00:00.000Z",
-      "value": 47263
-    },
-    {
-      "group": "Dataset 2",
-      "date": "2019-01-05T00:00:00.000Z",
-      "value": 14178
-    },
-    {
-      "group": "Dataset 2",
-      "date": "2019-01-08T00:00:00.000Z",
-      "value": 23094
-    },
-    {
-      "group": "Dataset 2",
-      "date": "2019-01-13T00:00:00.000Z",
-      "value": 45281
-    },
-    {
-      "group": "Dataset 2",
-      "date": "2019-01-19T00:00:00.000Z",
-      "value": -63954
-    }
-  ]
+  cachedSensorData:{[index:string]:any}//ref: data
 
   options = {
     "axes": {
@@ -80,12 +30,27 @@ export class SensorListComponent implements OnInit {
     "height": "400px"
   }
 
-  constructor() { }
+  constructor(private deviceService:DeviceService) { }
 
   ngOnInit(): void {
-    console.log(this.sensors);
+    Object.values(this.sensors).forEach(type => {
+      type.forEach((sensor:IDeviceSensor) => {
+        this.cachedSensorData[sensor.ref] = {
+          loading: false,
+          error: "",
+          data: {}
+        }
+      })
+    })
   }
 
-
-  log(x:any) { console.log(x) }
+  getSensorData(ref:string):Promise<IDevicePropertyData> {
+    this.cachedSensorData[ref].loading = true;
+    return this.deviceService.getPropertyData(this.authorUser._id, this.device._id, ref)
+      .then(() => {})
+      .catch(e => {
+        this.cachedSensorData[ref].error = e;
+      })
+      .finally(() => this.cachedSensorData[ref].loading = false);
+  }
 }

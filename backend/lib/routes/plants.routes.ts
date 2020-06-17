@@ -19,10 +19,10 @@ import {
 } from '../controllers/Recordables/Recordable.controller';
 
 import { RecordableType } from '../models/Recordable.model';
-import {
-    readAllMeasurements,
-    deleteMeasurements
-} from "../controllers/Device/Measurements.controller";
+// import {
+//     // readAllMeasurements,
+//     // deleteMeasurements
+// } from "../controllers/Device/Measurements.controller";
 import { repostPostable, heartPostable, unheartPostable } from "../controllers/Postable.controller";
 
 
@@ -57,7 +57,7 @@ plantRouter.post('/repost',  repostPostable);
 plantRouter.post('/heart',   heartPostable);
 plantRouter.delete('/heart', unheartPostable);
 
-plantRouter.get('/measurements', readAllMeasurements);
-plantRouter.delete('/measurements', deleteMeasurements);
+// plantRouter.get('/measurements', readAllMeasurements);
+// plantRouter.delete('/measurements', deleteMeasurements);
 
 export default router;
