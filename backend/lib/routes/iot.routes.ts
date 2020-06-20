@@ -1,59 +1,59 @@
-import { validate } from '../common/validate';
-const { body, param } = require('express-validator');
+import { validate } from "../common/validate";
+const { body, param } = require("express-validator");
 const AsyncRouter = require("express-async-router").AsyncRouter;
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 
-import { Measurement as AcceptedMeasurement, IoTMeasurement } from '../common/types/measurements.types';
-import { authenticateApiKey } from '../controllers/Auth.controller';
 import {
-    createMeasurementAsDevice,
-    createMeasurementAsUser,
-} from '../controllers/Device/Measurements.controller';
-import { RecorderType } from '../models/Measurement.model';
-import { RecordableType } from '../models/Recordable.model';
-import { ErrorHandler } from '../common/errorHandler';
-import { HTTP } from '../common/http';
+  Measurement as AcceptedMeasurement,
+  IoTMeasurement,
+} from "../common/types/measurements.types";
+import { authenticateApiKey } from "../controllers/Auth.controller";
+import {
+  createMeasurementAsDevice,
+  createMeasurementAsUser,
+} from "../controllers/Device/Measurements.controller";
+import { RecorderType } from "../models/Measurement.model";
+import { RecordableType } from "../models/Recordable.model";
+import { ErrorHandler } from "../common/errorHandler";
+import { HTTP } from "../common/http";
 
-import { HardwareInformation } from '../common/types/hardware.types';
+import { HardwareInformation } from "../common/types/hardware.types";
 
-const router = AsyncRouter({mergeParams: true});
+const router = AsyncRouter({ mergeParams: true });
 
+const validateIoTDataPacket = (device: IDevice) => {
+  return body().custom((data: any) => {});
+};
 
+import { cypher } from "../common/dbs";
+import { IDevice } from "../models/Device/Device.model";
 
-const validateIoTDataPacket = (device:IDevice) => {
-    return body()
-        .custom((data:any) => {
+const setLocalsFlag = (key: string, value: string) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    res.locals[key] = value;
+    next();
+  };
+};
 
-        })
-}
-
-import { cypher } from '../common/dbs';
-import { IDevice } from '../models/Device/Device.model';
-
-const setLocalsFlag = (key:string, value:string) => {
-    return (req:Request, res:Response, next:NextFunction) => {
-        res.locals[key] = value;
-        next();
-    }
-} 
-
-const getNode = (node_type:string, parameter:string) => {
-    return (req:Request, res:Response, next:NextFunction) => {
-        cypher(`
+const getNode = (node_type: string, parameter: string) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    cypher(
+      `
         MATCH (n:${node_type} {_id:$id})
         RETURN n
-    `, {id: req.params[parameter]})
-        .then((res) => {
-            if(res.records[0]?.get('n')) {
-                res.locals.node = res.records[0].get('n');
-            } else {
-                throw new Error('no node')
-            }
-            next();
-        })
-    }
-}
+    `,
+      { id: req.params[parameter] }
+    ).then((res) => {
+      if (res.records[0]?.get("n")) {
+        res.locals.node = res.records[0].get("n");
+      } else {
+        throw new Error("no node");
+      }
+      next();
+    });
+  };
+};
 
 // //users have no link to a recordable & require an explict link in the route param
 // router.post('/users/:uid/:rtype/:rid', validate([
@@ -76,27 +76,38 @@ const getNode = (node_type:string, parameter:string) => {
 //     next();
 // }), createMeasurementAsUser)
 
-router.use('/devices/:did', validate([
-    param('did').isMongoId().trim().withMessage('Not a valid _id')
-]), setLocalsFlag('recorder_type', RecordableType.Device), getNode('Device', 'did'))
+router.use(
+  "/devices/:did",
+  validate([param("did").isMongoId().trim().withMessage("Not a valid _id")]),
+  setLocalsFlag("recorder_type", RecordableType.Device),
+  getNode("Device", "did")
+);
 
-router.post('/devices/:did', (req:Request, res:Response, next:NextFunction) => {
+router.post(
+  "/devices/:did",
+  (req: Request, res: Response, next: NextFunction) => {
     let d = HardwareInformation[(<IDevice>res.locals.node).hardware_model];
-    let validRefs = [...Object.values(d.sensors), ...Object.values(d.states), ...Object.values(d.metrics)];
-    if(req.body.sort().toString() != validRefs.sort().toString()) {
-        res.status(HTTP.BadRequest).json({
-            "msg": "IoTDataPacket not equal to hardware definition",
-            "location": "body",                  
-        })
+    let validRefs = [
+      ...Object.values(d.sensors),
+      ...Object.values(d.states),
+      ...Object.values(d.metrics),
+    ];
+    if (req.body.sort().toString() != validRefs.sort().toString()) {
+      res.status(HTTP.BadRequest).json({
+        msg: "IoTDataPacket not equal to hardware definition",
+        location: "body",
+      });
     } else {
-        next();
+      next();
     }
-}, createMeasurementAsDevice);
+  },
+  createMeasurementAsDevice
+);
 
 //seconds since unix epoch
-router.get('/time', (req:Request, res:Response) => {
-    const now = new Date()
-    return res.status(HTTP.OK).send(Math.round(now.getTime() / 1000));
-})
+router.get("/time", (req: Request, res: Response) => {
+  const now = new Date();
+  return res.status(HTTP.OK).send(Math.round(now.getTime() / 1000));
+});
 
 export default router;

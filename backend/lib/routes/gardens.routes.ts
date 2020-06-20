@@ -1,13 +1,13 @@
-import { Router, NextFunction }               from 'express';
-import { Request, Response }    from "express"
-const { body } = require('express-validator');
+import { Router, NextFunction } from "express";
+import { Request, Response } from "express";
+const { body } = require("express-validator");
 
-import { validate } from '../common/validate';
+import { validate } from "../common/validate";
 
-import { 
-    createGarden,
-    updateGarden,
-} from '../controllers/Recordables/Gardens.controller';
+import {
+  createGarden,
+  updateGarden,
+} from "../controllers/Recordables/Gardens.controller";
 
 // import {
 //     createRecordable,
@@ -17,9 +17,9 @@ import {
 //     readAllRecordables
 // } from '../controllers/Recordable.controller';
 
-import { RecordableType } from '../models/Recordable.model';
+import { RecordableType } from "../models/Recordable.model";
 
-const router = Router({mergeParams: true});
+const router = Router({ mergeParams: true });
 // router.use((req:Request, res:Response, next:NextFunction) => {
 //     res.locals.type = RecordableTypes.Garden
 //     next();
@@ -39,6 +39,5 @@ const router = Router({mergeParams: true});
 // router.put('/:rid', updateRecordable, updateGarden);
 
 // router.delete('/:rid', deleteRecordable);
-
 
 export default router;

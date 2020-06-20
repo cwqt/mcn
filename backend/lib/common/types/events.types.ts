@@ -1,4 +1,4 @@
 export enum EventType {
-    Watered = 'watered',
-    FilledTank = 'filled_tank'
+  Watered = "watered",
+  FilledTank = "filled_tank",
 }

@@ -1,113 +1,152 @@
-import { Router, NextFunction, Request, Response } from 'express';
-const { body, param, query } = require('express-validator');
-import { validate } from '../common/validate'; 
+import { Router, NextFunction, Request, Response } from "express";
+const { body, param, query } = require("express-validator");
+import { validate } from "../common/validate";
 var AsyncRouter = require("express-async-router").AsyncRouter;
 
 // import { readAllMeasurements } from '../controllers/Device/Measurements.controller';
 import {
-    createDevice,
-    readDevice,
-    updateDevice,
-    deleteDevice,
-    assignDeviceToRecordable,
-    readDeviceSensors,
-    readDeviceStates,
-    readDeviceMetrics,
-    pingDevice,
+  createDevice,
+  readDevice,
+  updateDevice,
+  deleteDevice,
+  assignDeviceToRecordable,
+  readDeviceSensors,
+  readDeviceStates,
+  readDeviceMetrics,
+  pingDevice,
 } from "../controllers/Device/Device.controller";
 import {
-    createApiKey,
-    readApiKey,
-    deleteApiKey
-} from '../controllers/Device/ApiKeys.controller';
+  createApiKey,
+  readApiKey,
+  deleteApiKey,
+} from "../controllers/Device/ApiKeys.controller";
 import {
-    updateSensor,
-    deleteSensor
-} from '../controllers/Device/Sensor.controller';
+  updateSensor,
+  deleteSensor,
+} from "../controllers/Device/Sensor.controller";
 
-import { RecordableType } from '../models/Recordable.model';
-import { readAllRecordables } from '../controllers/Recordables/Recordable.controller';
-import { heartPostable, unheartPostable, repostPostable } from '../controllers/Postable.controller';
+import { RecordableType } from "../models/Recordable.model";
+import { readAllRecordables } from "../controllers/Recordables/Recordable.controller";
+import {
+  heartPostable,
+  unheartPostable,
+  repostPostable,
+} from "../controllers/Postable.controller";
 
-import routines    from './routines.routes';
-import { Measurement, MeasurementUnits, IoTMeasurement, IoTState, Unit } from '../common/types/measurements.types';
-import { HardwareInformation } from '../common/types/hardware.types';
+import routines from "./routines.routes";
+import {
+  Measurement,
+  MeasurementUnits,
+  IoTMeasurement,
+  IoTState,
+  Unit,
+} from "../common/types/measurements.types";
+import { HardwareInformation } from "../common/types/hardware.types";
 
-const router = AsyncRouter({mergeParams: true});
-router.use((req:Request, res:Response, next:NextFunction) => {
-    res.locals.type = RecordableType.Device
-    next();
-})
+const router = AsyncRouter({ mergeParams: true });
+router.use((req: Request, res: Response, next: NextFunction) => {
+  res.locals.type = RecordableType.Device;
+  next();
+});
 
-router.get('/', readAllRecordables);
-router.post('/', validate([
-    body('name').not().isEmpty().trim().withMessage('device must have friendly name'),
-    body('hardware_model')
-        .not().isEmpty().withMessage('Must have hardware model')
-        .custom((model:string, { req }:any) => {
-            if(!Object.keys(HardwareInformation).includes(model)) throw new Error('Un-supported hardware model')
-            return true;
-        })
-]), createDevice);
+router.get("/", readAllRecordables);
+router.post(
+  "/",
+  validate([
+    body("name")
+      .not()
+      .isEmpty()
+      .trim()
+      .withMessage("device must have friendly name"),
+    body("hardware_model")
+      .not()
+      .isEmpty()
+      .withMessage("Must have hardware model")
+      .custom((model: string, { req }: any) => {
+        if (!Object.keys(HardwareInformation).includes(model))
+          throw new Error("Un-supported hardware model");
+        return true;
+      }),
+  ]),
+  createDevice
+);
 
 // DEVICES ========================================================================================
-const deviceRouter = AsyncRouter({mergeParams: true});
-router.use('/:did', deviceRouter);
+const deviceRouter = AsyncRouter({ mergeParams: true });
+router.use("/:did", deviceRouter);
 
-deviceRouter.use(validate([
-    param('did').isMongoId().trim().withMessage('invalid device id'),
-]));
+deviceRouter.use(
+  validate([param("did").isMongoId().trim().withMessage("invalid device id")])
+);
 
-deviceRouter.get('/',               readDevice);
+deviceRouter.get("/", readDevice);
 // deviceRouter.get('/measurements',   readAllMeasurements);
-deviceRouter.get('/ping',           pingDevice);
-deviceRouter.post('/repost',        repostPostable);
-deviceRouter.post('/heart',         heartPostable);
-deviceRouter.delete('/heart',       unheartPostable);
+deviceRouter.get("/ping", pingDevice);
+deviceRouter.post("/repost", repostPostable);
+deviceRouter.post("/heart", heartPostable);
+deviceRouter.delete("/heart", unheartPostable);
 
-deviceRouter.post('/assign/:rid', validate([
-    param('rid').isMongoId().trim().withMessage('invalid recordable id to assign to')
-]), assignDeviceToRecordable);
+deviceRouter.post(
+  "/assign/:rid",
+  validate([
+    param("rid")
+      .isMongoId()
+      .trim()
+      .withMessage("invalid recordable id to assign to"),
+  ]),
+  assignDeviceToRecordable
+);
 
-router.put('/:did', validate([
-    param('did').isMongoId().trim().withMessage('invalid device id')
-]), updateDevice);
+router.put(
+  "/:did",
+  validate([param("did").isMongoId().trim().withMessage("invalid device id")]),
+  updateDevice
+);
 
-router.delete('/:did', validate([
-    param('did').isMongoId().trim().withMessage('invalid device id')
-]), deleteDevice);
+router.delete(
+  "/:did",
+  validate([param("did").isMongoId().trim().withMessage("invalid device id")]),
+  deleteDevice
+);
 
-deviceRouter.post('/keys', validate([
-    body('key_name').not().isEmpty().trim().withMessage('device name must be named'),
-]), createApiKey)
+deviceRouter.post(
+  "/keys",
+  validate([
+    body("key_name")
+      .not()
+      .isEmpty()
+      .trim()
+      .withMessage("device name must be named"),
+  ]),
+  createApiKey
+);
 
-deviceRouter.get('/sensors', readDeviceSensors);
-deviceRouter.get('/states',  readDeviceStates);
-deviceRouter.get('/metrics', readDeviceMetrics);
+deviceRouter.get("/sensors", readDeviceSensors);
+deviceRouter.get("/states", readDeviceStates);
+deviceRouter.get("/metrics", readDeviceMetrics);
 
 // deviceRouter.get('/sensors/:pid', readDevicePropertyData);
 // deviceRouter.get('/states/:pid',  readDevicePropertyData);
 // deviceRouter.get('/metrics/:pid', readDevicePropertyData);
 
-
-deviceRouter.use('/routines', routines);
+deviceRouter.use("/routines", routines);
 
 // API KEYS =======================================================================================
-const keyRouter = AsyncRouter({mergeParams:true});
-deviceRouter.use('/keys/:kid', keyRouter);
+const keyRouter = AsyncRouter({ mergeParams: true });
+deviceRouter.use("/keys/:kid", keyRouter);
 
-keyRouter.use(validate([
-    param('kid').isMongoId().trim().withMessage('invalid key id'),
-]));
+keyRouter.use(
+  validate([param("kid").isMongoId().trim().withMessage("invalid key id")])
+);
 
-keyRouter.get('/',      readApiKey)
-keyRouter.delete('/',   deleteApiKey)
+keyRouter.get("/", readApiKey);
+keyRouter.delete("/", deleteApiKey);
 
 // SENSORS ========================================================================================
-const sensorRouter = AsyncRouter({mergeParams:true})
-deviceRouter.use('/sensors/:sid', sensorRouter);
+const sensorRouter = AsyncRouter({ mergeParams: true });
+deviceRouter.use("/sensors/:sid", sensorRouter);
 
-sensorRouter.put('/', updateSensor);
-sensorRouter.delete('/', deleteSensor);
+sensorRouter.put("/", updateSensor);
+sensorRouter.delete("/", deleteSensor);
 
 export default router;

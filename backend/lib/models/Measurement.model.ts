@@ -1,16 +1,20 @@
-import { Measurement as RecordableMeasurement, IoTMeasurement, IoTState } from "../common/types/measurements.types";
-import { Document, Schema, Model, model, Types} from "mongoose";
+import {
+  Measurement as RecordableMeasurement,
+  IoTMeasurement,
+  IoTState,
+} from "../common/types/measurements.types";
+import { Document, Schema, Model, model, Types } from "mongoose";
 
 export enum RecorderType {
-    User = 'user',
-    Device = 'device'
+  User = "user",
+  Device = "device",
 }
 
 //sent from device
 export interface IoTDataPacket {
-    sensors: {[index:string]: number | string | boolean},
-    states:  {[index:string]: number | string | boolean},
-    metrics: {[index:string]: number | string | boolean}
+  sensors: { [index: string]: number | string | boolean };
+  states: { [index: string]: number | string | boolean };
+  metrics: { [index: string]: number | string | boolean };
 }
 // e.g.
 // {
@@ -28,18 +32,15 @@ export interface IoTDataPacket {
 //     }
 // }
 
-
 // --> influx
 
-
-
 export interface IMeasurement {
-    recorder_id?:     string, // which device/user made this measurement
-    recorder_type?:   RecorderType.User | RecorderType.Device,
-    created_at:       number,
-    data?:            IoTDataPacket,
+  recorder_id?: string; // which device/user made this measurement
+  recorder_type?: RecorderType.User | RecorderType.Device;
+  created_at: number;
+  data?: IoTDataPacket;
 }
 
 export interface IMeasurementModel extends IMeasurement, Document {
-    _id:            string,
+  _id: string;
 }
