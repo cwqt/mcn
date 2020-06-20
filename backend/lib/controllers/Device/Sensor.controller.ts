@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { cypher } from "../../common/neo4j";
+import { cypher } from "../../common/dbs";
 import { IDeviceSensor } from "../../models/Device/Device.model";
 import { Types } from "mongoose";
 import { ErrorHandler } from "../../common/errorHandler";

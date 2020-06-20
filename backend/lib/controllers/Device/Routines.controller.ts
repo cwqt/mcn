@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { cypher } from '../../common/neo4j';
+import { cypher } from '../../common/dbs';
 import { Types }                    from 'mongoose';
 
 import { ITaskRoutine, ITask, TaskState } from '../../../../runner/lib/models/Tasks.model'

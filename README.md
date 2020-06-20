@@ -6,10 +6,10 @@ A social network and management system for gardeners, plant growers and hobbyist
 * Monitor entire gardens/farms constituted of sub-plants
 * Create custom event queues for carrying out tasks at certain intervals
 * Remotely trigger events on micro-controllers, e.g. turn on light, open watering valve
-* Event based system notifies when an action needs completing e.g. watering, re-seeding
+* Alert based system notifies when an action needs completing e.g. watering, re-seeding
 * Compile timelines of posts to show off plant growth from seedling to flower
 * Monitor all metrics on a front-end dashboard
-* Code support for ESP-32, Wemos D1 Mini & Raspberry Pi
+* Code support for ESP-32, Wemos D1 Mini & Raspberry Pi with option to create & add your own
 
 Previously written in Python & React, now moving over to TypeScript & Angular.
 

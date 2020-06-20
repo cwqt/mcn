@@ -3,7 +3,7 @@ import { Types }                from 'mongoose'
 
 import { ErrorHandler }     from "../common/errorHandler";
 import { HTTP }             from "../common/http";
-import { n4j, cypher }              from '../common/neo4j';
+import { cypher }              from '../common/dbs';
 import { filterUserFields } from './User.controller'
 import { RecordableType }   from "../models/Recordable.model";
 import { IDeviceStub }      from '../models/Device/Device.model';

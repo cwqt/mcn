@@ -9,7 +9,7 @@ import { IRecordableStub }  from '../../models/Recordable.model';
 import { validate }         from "../../common/validate";
 import { ErrorHandler }     from "../../common/errorHandler";
 import { HTTP }             from "../../common/http";
-import { n4j, cypher }              from '../../common/neo4j';
+import { cypher }              from '../../common/dbs';
 import { getDeviceState }   from '../Device/Device.controller';
 import { getN4jNodeName }   from '../Postable.controller'
 

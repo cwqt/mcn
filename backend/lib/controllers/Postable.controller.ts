@@ -2,7 +2,7 @@
 import { Request, Response, NextFunction } from "express"
 import { ErrorHandler }     from "../common/errorHandler";
 import { HTTP }             from "../common/http";
-import { n4j, cypher }              from '../common/neo4j';
+import { cypher }              from '../common/dbs';
 
 import { makePost } from './Posts.controller';
 import { PostableType } from "../models/Post.model";

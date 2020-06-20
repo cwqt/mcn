@@ -3,7 +3,7 @@ import { Types }             from "mongoose";
 
 import { HardwareInformation } from "../../common/types/hardware.types";
 import { HTTP }              from '../../common/http';
-import { n4j, cypher }       from '../../common/neo4j';
+import dbs, { cypher }       from '../../common/dbs';
 import { HardwareDevice, SupportedHardware }    from "../../models/Hardware.model";
 import { IPlant }            from '../../models/Plant.model';
 import { IGarden }           from '../../models/Garden.model';
@@ -90,7 +90,7 @@ export const createDevice = async (req:Request, res:Response) => {
 
     console.log(sensors, states, metrics);
 
-    let session = n4j.session();
+    let session = dbs.neo4j.session();
     let result;
     try {
         const txc = session.beginTransaction();
@@ -254,7 +254,7 @@ export const pingDevice = async (req:Request, res:Response) => {
 }
 
 const getAssignedRecordable = async (device_id:string):Promise<IPlant | IGarden> => {
-    let session = n4j.session();
+    let session = dbs.neo4j.session();
     let result;
     try {
         result = await session.run(`

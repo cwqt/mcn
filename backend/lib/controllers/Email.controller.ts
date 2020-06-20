@@ -5,7 +5,7 @@ import nodemailer            from 'nodemailer';
 import config           from '../config';
 import { ErrorHandler } from '../common/errorHandler';
 import { HTTP }         from '../common/http';
-import { n4j, cypher }          from '../common/neo4j';
+import { cypher }          from '../common/dbs';
 
 const generateEmailHash  = (email:string) => {
     const hash = generateVerificationHash(email, config.PRIVATE_KEY, 60)

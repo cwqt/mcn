@@ -19,7 +19,7 @@ const info:HardwareDevice = {
         ["light_1"]:        { type: IoTState.LightState,           unit: Type.Boolean },
         ["light_2"]:        { type: IoTState.LightState,           unit: Type.Boolean },
         ["screen_display"]: { type: IoTState.ScreenText,           unit: Type.String },
-        ["pumps"]:          { type: IoTState.FanState,           unit: Type.Number },
+        ["pumps"]:          { type: IoTState.FanState,             unit: Type.Number },
     },
     metrics: {
         ["batteryvoltage"]: { type:IoTMeasurement.Voltage,         unit: Unit.Volts },

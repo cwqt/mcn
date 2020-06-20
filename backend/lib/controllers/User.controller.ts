@@ -6,7 +6,7 @@ import { ErrorHandler }             from '../common/errorHandler';
 import { HTTP }                     from '../common/http';
 import config                       from '../config';
 import { uploadImageToS3, S3Image } from '../common/storage';
-import { n4j, cypher }                      from '../common/neo4j';
+import dbs, { cypher }                      from '../common/dbs';
 import { Types }                    from 'mongoose';
 
 import {
@@ -294,7 +294,7 @@ export const readBlockedUsers = async (req:Request, res:Response) => {
 // HELPER FUNCTIONS ===============================================================================
 
 export const getUserById = async (_id:string):Promise<IUser> => {
-    let session = n4j.session();
+    let session = dbs.neo4j.session();
     let result;
     try {
         result = await session.run(`
@@ -336,7 +336,7 @@ const updateImage = async (user_id:string, file:Express.Multer.File, field:strin
         throw new ErrorHandler(HTTP.ServerError, e);
     }
 
-    let session = n4j.session();
+    let session = dbs.neo4j.session();
     let result;
     try {
         result = await session.run(`

@@ -1,3 +1,14 @@
+
+# influxdb
+
+```
+    measurements: Measurement, IoTMeasurement, IoTState
+    tags: device=:did / user=:uid, recordable=:rid
+    fields: lightsensor1=231.4, lightsensor2=429.9
+```
+
+![](https://image.slidesharecdn.com/1influxdb-150819175653-lva1-app6891/95/paul-dix-influxdb-opensource-time-series-database-41-638.jpg?cb=1440007116)
+
 # api
 
 my.corrhizal.net api documentation, v2 - previously written in python flask.
@@ -5,7 +16,7 @@ my.corrhizal.net api documentation, v2 - previously written in python flask.
 * __body__: meaning a json body
 * __params__: url fields, `/api/:MY_PARAM/something`
 * __query__: `/api/something?MY_KEY=VALUE`
-* __form-data__: for sending images; ` enctype="multipart/form-data"`
+* __form-data__: for sending images; `enctype="multipart/form-data"`
 
 ## errors
 

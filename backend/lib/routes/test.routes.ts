@@ -1,13 +1,10 @@
 import { Router } from "express";
-import { n4j } from '../common/neo4j';
+import { cypher } from '../common/dbs';
 const router = Router({mergeParams: true});
 
-
-router.post('/drop', (req,res) => {
-    let session = n4j.session()
-    session.run(`
-        MATCH (n) DETACH DELETE n
-    `, {}).then(() => res.status(200).end())
+router.post('/drop', (req, res) => {
+    cypher(`MATCH (n) DETACH DELETE n`, {})
+        .then(() => res.status(200).end())
 })
 
 export default router;

@@ -4,7 +4,7 @@ import { Types }              from 'mongoose';
 
 import config           from '../../config';
 import { ErrorHandler } from "../../common/errorHandler";
-import { n4j, cypher }          from '../../common/neo4j';
+import { cypher }          from '../../common/dbs';
 import { HTTP }         from "../../common/http";
 import { IApiKeyPrivate } from '../../models/Device/ApiKey.model';
 
