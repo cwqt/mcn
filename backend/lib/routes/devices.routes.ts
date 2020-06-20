@@ -10,9 +10,7 @@ import {
   updateDevice,
   deleteDevice,
   assignDeviceToRecordable,
-  readDeviceSensors,
-  readDeviceStates,
-  readDeviceMetrics,
+  readDeviceProperties,
   pingDevice,
 } from "../controllers/Device/Device.controller";
 import {
@@ -32,6 +30,8 @@ import {
   unheartPostable,
   repostPostable,
 } from "../controllers/Postable.controller";
+
+import { setLocalsFlag } from "./iot.routes";
 
 import routines from "./routines.routes";
 import {
@@ -121,13 +121,25 @@ deviceRouter.post(
   createApiKey
 );
 
-deviceRouter.get("/sensors", readDeviceSensors);
-deviceRouter.get("/states", readDeviceStates);
-deviceRouter.get("/metrics", readDeviceMetrics);
+deviceRouter.get(
+  "/sensors",
+  setLocalsFlag({ relationship: "HAS_SENSOR", node_type: "Sensor" }),
+  readDeviceProperties
+);
+deviceRouter.get(
+  "/states",
+  setLocalsFlag({ relationship: "HAS_STATE", node_type: "State" }),
+  readDeviceProperties
+);
+deviceRouter.get(
+  "/metrics",
+  setLocalsFlag({ relationship: "HAS_METRIC", node_type: "Metric" }),
+  readDeviceProperties
+);
 
-// deviceRouter.get('/sensors/:pid', readDevicePropertyData);
-// deviceRouter.get('/states/:pid',  readDevicePropertyData);
-// deviceRouter.get('/metrics/:pid', readDevicePropertyData);
+deviceRouter.get("/sensors/:pid", setLocalsFlag({ node_type: "Sensor" }));
+deviceRouter.get("/states/:pid", setLocalsFlag({ node_type: "State" }));
+deviceRouter.get("/metrics/:pid", setLocalsFlag({ node_type: "Metric" }));
 
 deviceRouter.use("/routines", routines);
 

@@ -300,52 +300,19 @@ const getAssignedRecordable = async (
   return result.records[0].get("r").properties;
 };
 
-export const readDeviceSensors = async (req: Request, res: Response) => {
+export const readDeviceProperties = async (req: Request, res: Response) => {
   let result = await cypher(
     `
-        MATCH (d:Device {_id:$did})
-        OPTIONAL MATCH (d)-[:HAS_SENSOR]-(s:Sensor)
-        RETURN d, collect(s) AS s
+        MATCH (d:Device {_id:$$did})
+        OPTIONAL MATCH (d)-[:${res.locals.relationship}]-(x:${res.locals.node_type})
     `,
     {
-      did: req.params.did,
+      _id: req.params.did,
     }
   );
 
-  let states = result.records[0]?.get("s")?.map((x: any) => x.properties);
-  return res.json(states ?? []);
-};
-
-export const readDeviceStates = async (req: Request, res: Response) => {
-  let result = await cypher(
-    `
-        MATCH (d:Device {_id:$did})
-        OPTIONAL MATCH (d)-[:HAS_STATE]-(s:State)
-        RETURN d, collect(s) AS s
-    `,
-    {
-      did: req.params.did,
-    }
-  );
-
-  let states = result.records[0]?.get("s")?.map((x: any) => x.properties);
-  return res.json(states ?? []);
-};
-
-export const readDeviceMetrics = async (req: Request, res: Response) => {
-  let result = await cypher(
-    `
-        MATCH (d:Device {_id:$did})
-        OPTIONAL MATCH (d)-[:HAS_METRIC]->(m:Metric)
-        RETURN d, collect(m) AS m
-    `,
-    {
-      did: req.params.did,
-    }
-  );
-
-  let metrics = result.records[0]?.get("m")?.map((x: any) => x.properties);
-  return res.json(metrics ?? []);
+  let props = result.records[0]?.get("x")?.map((x: any) => x.properties);
+  return res.json(props ?? []);
 };
 
 const createDefaultMeta = () => {

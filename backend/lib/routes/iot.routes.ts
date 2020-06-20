@@ -13,7 +13,7 @@ import {
   createMeasurementAsDevice,
   createMeasurementAsUser,
 } from "../controllers/Device/Measurements.controller";
-import { RecorderType } from "../models/Measurement.model";
+import { RecorderType, IoTDataPacket } from "../models/Measurement.model";
 import { RecordableType } from "../models/Recordable.model";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
@@ -29,9 +29,9 @@ const validateIoTDataPacket = (device: IDevice) => {
 import { cypher } from "../common/dbs";
 import { IDevice } from "../models/Device/Device.model";
 
-const setLocalsFlag = (key: string, value: string) => {
+export const setLocalsFlag = (object: { [index: string]: string }) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    res.locals[key] = value;
+    Object.keys(object).forEach((k) => (res.locals[k] = object[k]));
     next();
   };
 };
@@ -44,9 +44,9 @@ const getNode = (node_type: string, parameter: string) => {
         RETURN n
     `,
       { id: req.params[parameter] }
-    ).then((res) => {
-      if (res.records[0]?.get("n")) {
-        res.locals.node = res.records[0].get("n");
+    ).then((result) => {
+      if (result.records[0]?.get("n")) {
+        res.locals.node = result.records[0].get("n").properties;
       } else {
         throw new Error("no node");
       }
@@ -79,7 +79,7 @@ const getNode = (node_type: string, parameter: string) => {
 router.use(
   "/devices/:did",
   validate([param("did").isMongoId().trim().withMessage("Not a valid _id")]),
-  setLocalsFlag("recorder_type", RecordableType.Device),
+  setLocalsFlag({ recorder_type: RecordableType.Device }),
   getNode("Device", "did")
 );
 
@@ -88,16 +88,42 @@ router.post(
   (req: Request, res: Response, next: NextFunction) => {
     let d = HardwareInformation[(<IDevice>res.locals.node).hardware_model];
     let validRefs = [
-      ...Object.values(d.sensors),
-      ...Object.values(d.states),
-      ...Object.values(d.metrics),
+      ...Object.keys(d.sensors),
+      ...Object.keys(d.states),
+      ...Object.keys(d.metrics),
     ];
-    if (req.body.sort().toString() != validRefs.sort().toString()) {
-      res.status(HTTP.BadRequest).json({
+    if (
+      Object.keys(req.body).sort().toString() != validRefs.sort().toString()
+    ) {
+      console.log(validRefs, Object.keys(req.body));
+      res.status(HTTP.DataInvalid).json({
         msg: "IoTDataPacket not equal to hardware definition",
         location: "body",
       });
     } else {
+      let iotData: IoTDataPacket = {
+        sensors: {},
+        states: {},
+        metrics: {},
+      };
+
+      let keys = Object.keys(req.body);
+      for (let i = 0; i < keys.length; i++) {
+        if (d.sensors.hasOwnProperty(keys[i])) {
+          iotData.sensors[keys[i]] = req.body[keys[i]];
+          continue;
+        }
+        if (d.states.hasOwnProperty(keys[i])) {
+          iotData.states[keys[i]] = req.body[keys[i]];
+          continue;
+        }
+        if (d.metrics.hasOwnProperty(keys[i])) {
+          iotData.metrics[keys[i]] = req.body[keys[i]];
+          continue;
+        }
+      }
+
+      req.body = iotData;
       next();
     }
   },
