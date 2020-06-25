@@ -14,7 +14,6 @@ import { ClickOutsideModule } from "ng-click-outside";
 import { CrystalLightboxModule } from "@crystalui/angular-lightbox";
 import { PopoverModule } from "../assets/popover";
 
-import { IndexComponent } from "./routes/index/index.component";
 import { LoginComponent } from "./components/landing/login/login.component";
 import { RegisterComponent } from "./components/landing/register/register.component";
 import { LoginHelpComponent } from "./components/landing/login-help/login-help.component";
@@ -46,7 +45,6 @@ import { UserPlantsListComponent } from "./components/profile/tabs/user-plants-l
 import { UserGardensListComponent } from "./components/profile/tabs/user-gardens-list/user-gardens-list.component";
 import { UserDevicesListComponent } from "./components/profile/tabs/user-devices-list/user-devices-list.component";
 import { PlantThumbComponent } from "./components/profile/tabs/user-plants-list/plant-thumb/plant-thumb.component";
-import { PostComponent } from "./routes/post/post.component";
 import { PostThumbComponent } from "./components/profile/tabs/user-posts-list/post-thumb/post-thumb.component";
 import { CreateDeviceGuideComponent } from "./components/profile/tabs/user-devices-list/create-device-guide/create-device-guide.component";
 import { SupportedDevicesComponent } from "./components/pages/supported-devices/supported-devices.component";
@@ -97,13 +95,13 @@ import { HeaderBarUserMenuComponent } from "./components/app/header-bar/header-b
 import { PostableRepliesComponent } from "./components/app/postable/postable-replies/postable-replies.component";
 import { FooterComponent } from "./components/app/footer/footer.component";
 import { SensorListComponent } from "./routes/device/sensor-list/sensor-list.component";
-import { SidebarNavComponent } from './components/app/sidebar/sidebar-nav/sidebar-nav.component';
-import { TreeNodeComponent } from './components/app/sidebar/sidebar-nav/tree-node/tree-node.component';
+import { SidebarNavComponent } from "./components/app/sidebar/sidebar-nav/sidebar-nav.component";
+import { TreeNodeComponent } from "./components/app/sidebar/sidebar-nav/tree-node/tree-node.component";
+import { IndexComponent } from './routes/index/index.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    IndexComponent,
     LoginComponent,
     RegisterComponent,
     ProfileComponent,
@@ -120,7 +118,6 @@ import { TreeNodeComponent } from './components/app/sidebar/sidebar-nav/tree-nod
     UserGardensListComponent,
     UserDevicesListComponent,
     PlantThumbComponent,
-    PostComponent,
     PostThumbComponent,
     SidebarComponent,
     CreateDeviceGuideComponent,
@@ -144,6 +141,7 @@ import { TreeNodeComponent } from './components/app/sidebar/sidebar-nav/tree-nod
     SensorListComponent,
     SidebarNavComponent,
     TreeNodeComponent,
+    IndexComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,1 +1,46 @@
-<router-outlet></router-outlet>
+<div class="wrapper" *ngIf="!currentUser || currentUser.new_user">
+  <div class="left side">
+    <div class="content-wrapper">
+      <div class="content">
+        <img src="/assets/leaf.png" />
+
+        <div class="information">
+          <h1 class="mat-display-2">mcn</h1>
+          <p>
+            a social network and management system for gardeners, plant growers
+            and hobbyists alike.
+          </p>
+          <app-rounded-button
+            [color]="'primary'"
+            (click)="toggleUiStateRegister()"
+            >{{
+              this.ui != "login" ? "login" : "create account"
+            }}</app-rounded-button
+          >
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <p>copyright <b>daughter.systems</b> (2020)</p>
+    </div>
+  </div>
+
+  <div class="right side">
+    <div class="content-wrapper">
+      <div *ngIf="!currentUser">
+        <div class="content">
+          <app-login *ngIf="ui != 'register'"></app-login>
+          <app-register *ngIf="ui == 'register'"></app-register>
+        </div>
+      </div>
+
+      <div *ngIf="currentUser && currentUser.new_user">
+        <app-first-time-setup></app-first-time-setup>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-wrapper *ngIf="currentUser && !currentUser.new_user">
+  <router-outlet></router-outlet>
+</app-wrapper>
