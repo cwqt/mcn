@@ -1,82 +1,25 @@
 .sidebar {
-    box-shadow: 0 10px 20px rgba(32,34,37,.10);
+    box-shadow: 0 10px 20px rgba(32, 34, 37, .10);
     display: flex;
     flex-flow: column;
-    justify-content: space-between;
     height: 100%;
     background-color: white;
-    // padding: 10px;
-    padding-bottom: 10px;
-    z-index: 9;
+    z-index: 9999;
     position: relative;
     font-family: "Poppins", sans-serif;
-    .sidebar-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-left:18px;
-        margin-top: 20px;
-        button {
-            margin-right: 10px;
-        }
-        .icon {
-            height: 40px;
-            display: flex;
-            align-items: center;
-            img {
-        
-                max-height: 100%;
-                object-fit: contain;
-                filter: brightness(0.1);
-            }    
-            h1 {
-                margin: 0;
-                margin-left: 20px;
-                font-size: 24px;
-                font-weight: bold;
-            }
-        }
-    }
-    .button-container .sidebar-button {
-        background: white;
-        &:hover {
-            background-color: rgba(103,58,183, 0.1);
-            h2, mat-icon {
-                color: rgba(103,58,183, 0.8) !important;
-            }
-        }
-        .contents mat-icon {
-            color: grey;
-        }
-    }
-    .sidebar-button {
-        display: block;
-        width: 250px;
-        border-radius: 50px;
-        transition: 0.2s;
-        // &:last-child {}
-        .contents {
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            h2 {
-                margin: 0;
-                font-weight: normal;
-                letter-spacing: 1px;
-                margin-left: 20px;
-                font-size: 20px;
-            }
-            mat-icon {
-                font-size: 25px;
-            }
-        }
-    }
-    &.closed {
-        width: 80px;
+    width: 48px;
+    position: relative;
+
+    .sidebar-buttons {
+        max-width: 48px;
         overflow: hidden;
-        padding-right: 0;
-        h2, h1 {
-            opacity: 0;
+        background: #262626;
+        z-index: 999;
+        height: 100%;
+        border-left: 1px solid transparent;
+
+        &.open {
+            border-right: 1px solid rgb(141, 139, 139);
         }
     }
 }
@@ -84,9 +27,35 @@
 .active {
     overflow: hidden;
     z-index: 999;
-    border-right: 2px solid rgba(103,58,183, 0.8) !important;
+    border-right: 2px solid rgba(103, 58, 183, 0.8) !important;
 }
 
-.button-container {
-    margin-bottom: 10px;
+
+button {
+    width: 48px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #262626;
+
+    mat-icon {
+        opacity: .7;
+    }
+}
+
+.sidebar .nav {
+    width: 300px;
+    position: absolute;
+    background: #262626;
+    height: 100%;
+    color: white;
+    transform: translateX(-300px);
+    transition: .5s;
+    will-change: transform;
+    user-select: none;
+
+    &.open {
+        transform: translateX(48px);
+    }
 }

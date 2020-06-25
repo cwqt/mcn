@@ -1,13 +1,22 @@
-<div class="header-bar">
-    <div class="search-bar">
-        <mat-icon>search</mat-icon>
-        <input matInput placeholder="Search mcn...">
-    </div>
-
-    <div class="header-bar-control" #hitBox (click)="openUserMenu()">
-        <div class="header-bar-thumb" >
-            <img [src]="currentUser.avatar" />
-            <p>{{currentUser.name}}</p>    
-        </div>
-    </div>
-</div>
+<ibm-header name="daughter.systems">
+  <img class="icon" src="/assets/leaf.png" />
+  <ibm-header-navigation>
+    <ibm-header-item>Catalog</ibm-header-item>
+    <ibm-header-item>Docs</ibm-header-item>
+    <ibm-header-item>Support</ibm-header-item>
+    <ibm-header-menu title="Manage">
+      <ibm-header-item>Link 1</ibm-header-item>
+      <ibm-header-item>Link 2</ibm-header-item>
+      <ibm-header-item>Link 3</ibm-header-item>
+    </ibm-header-menu>
+  </ibm-header-navigation>
+  <ibm-header-global>
+    <ibm-header-action>
+      <mat-icon>notifications_none</mat-icon>
+    </ibm-header-action>
+    <ibm-header-action class="header-bar-thumb">
+      <img [src]="currentUser.avatar" />
+      <span>{{ currentUser.name }}</span>
+    </ibm-header-action>
+  </ibm-header-global>
+</ibm-header>

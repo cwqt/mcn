@@ -1,0 +1,20 @@
+<div [style]="'padding-left: ' + depth * 20 + 'px'">
+  <div
+    [id]="'depth-' + depth"
+    class="item"
+    (click)="toggleOpened()"
+    [class.singular]="!node.children"
+    [class.opened]="opened"
+  >
+    <mat-icon *ngIf="node.children">{{
+      opened ? "expand_less" : "expand_more"
+    }}</mat-icon>
+    <p [class.singular]="!node.children">{{ node.item }}</p>
+  </div>
+
+  <ul *ngIf="opened">
+    <li *ngFor="let n of node.children">
+      <app-tree-node [node]="n" [depth]="depth + 1"></app-tree-node>
+    </li>
+  </ul>
+</div>

@@ -1,31 +1,19 @@
-<div class="sidebar" [class.closed]="!sidebarOpen" (click)="openSidebar()" (clickOutside)="hideSidebar()" [exclude]="'.sidebar-buttons'">
-    <div class="sidebar-header">
-        <div class="icon" (click)="toggleSidebar()">
-            <img src="/assets/leaf.png">
-            <h1>mcn</h1>    
-        </div>    
-        <button mat-icon-button>
-            <mat-icon [class.inverted]="sidebarOpen">navigate_before</mat-icon>
-        </button>    
+<div class="sidebar">
+  <div class="sidebar-buttons" [class.open]="sidebarMenuOpen">
+    <ibm-hamburger
+      [active]="sidebarMenuOpen"
+      (selected)="toggleSidebarMenu()"
+    ></ibm-hamburger>
+    <div *ngFor="let item of sidebarItems; let i = index">
+      <button [ibmButton]="'secondary'" (click)="changeRoute(i)">
+        <mat-icon fontSet="material-icons-outlined">{{ item[0] }}</mat-icon>
+      </button>
     </div>
+  </div>
 
-    <div class="sidebar-buttons">
-        <div *ngFor="let item of feedSidebar; let i = index" class="button-container">
-            <div class="button-highlighter" [class.active]="isActiveRoute(i)">
-                <button mat-button (click)="changeRoute(i)" class="sidebar-button">
-                    <div class="contents">
-                        <mat-icon [inline]="true" fontSet="material-icons-outlined">{{item[0]}}</mat-icon>
-                        <h2>{{item[1]}}</h2>    
-                    </div>
-                </button>     
-            </div>
-        </div>
-    </div>
-
-    <button mat-flat-button color="primary" class="sidebar-button">
-        <div class="contents">
-            <mat-icon [inline]="true" fontSet="material-icons-outlined">add_circle</mat-icon>
-            <h2>Create</h2>    
-        </div>
-    </button>
+  <app-sidebar-nav
+    #nav
+    class="nav"
+    [class.open]="sidebarMenuOpen"
+  ></app-sidebar-nav>
 </div>

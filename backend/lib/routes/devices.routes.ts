@@ -12,16 +12,13 @@ import {
   assignDeviceToRecordable,
   readDeviceProperties,
   pingDevice,
+  readDevicePropertyData,
 } from "../controllers/Device/Device.controller";
 import {
   createApiKey,
   readApiKey,
   deleteApiKey,
 } from "../controllers/Device/ApiKeys.controller";
-import {
-  updateSensor,
-  deleteSensor,
-} from "../controllers/Device/Sensor.controller";
 
 import { RecordableType } from "../models/Recordable.model";
 import { readAllRecordables } from "../controllers/Recordables/Recordable.controller";
@@ -34,13 +31,6 @@ import {
 import { setLocalsFlag } from "./iot.routes";
 
 import routines from "./routines.routes";
-import {
-  Measurement,
-  MeasurementUnits,
-  IoTMeasurement,
-  IoTState,
-  Unit,
-} from "../common/types/measurements.types";
 import { HardwareInformation } from "../common/types/hardware.types";
 
 const router = AsyncRouter({ mergeParams: true });
@@ -80,7 +70,9 @@ deviceRouter.use(
 );
 
 deviceRouter.get("/", readDevice);
-// deviceRouter.get('/measurements',   readAllMeasurements);
+deviceRouter.put("/", updateDevice);
+deviceRouter.delete("/", deleteDevice);
+
 deviceRouter.get("/ping", pingDevice);
 deviceRouter.post("/repost", repostPostable);
 deviceRouter.post("/heart", heartPostable);
@@ -97,18 +89,6 @@ deviceRouter.post(
   assignDeviceToRecordable
 );
 
-router.put(
-  "/:did",
-  validate([param("did").isMongoId().trim().withMessage("invalid device id")]),
-  updateDevice
-);
-
-router.delete(
-  "/:did",
-  validate([param("did").isMongoId().trim().withMessage("invalid device id")]),
-  deleteDevice
-);
-
 deviceRouter.post(
   "/keys",
   validate([
@@ -123,23 +103,35 @@ deviceRouter.post(
 
 deviceRouter.get(
   "/sensors",
-  setLocalsFlag({ relationship: "HAS_SENSOR", node_type: "Sensor" }),
+  setLocalsFlag({ node_type: "Sensor" }),
   readDeviceProperties
 );
 deviceRouter.get(
   "/states",
-  setLocalsFlag({ relationship: "HAS_STATE", node_type: "State" }),
+  setLocalsFlag({ node_type: "State" }),
   readDeviceProperties
 );
 deviceRouter.get(
   "/metrics",
-  setLocalsFlag({ relationship: "HAS_METRIC", node_type: "Metric" }),
+  setLocalsFlag({ node_type: "Metric" }),
   readDeviceProperties
 );
 
-deviceRouter.get("/sensors/:pid", setLocalsFlag({ node_type: "Sensor" }));
-deviceRouter.get("/states/:pid", setLocalsFlag({ node_type: "State" }));
-deviceRouter.get("/metrics/:pid", setLocalsFlag({ node_type: "Metric" }));
+deviceRouter.get(
+  "/sensors/:pid",
+  setLocalsFlag({ node_type: "Sensor" }),
+  readDevicePropertyData
+);
+deviceRouter.get(
+  "/states/:pid",
+  setLocalsFlag({ node_type: "State" }),
+  readDevicePropertyData
+);
+deviceRouter.get(
+  "/metrics/:pid",
+  setLocalsFlag({ node_type: "Metric" }),
+  readDevicePropertyData
+);
 
 deviceRouter.use("/routines", routines);
 
@@ -153,12 +145,5 @@ keyRouter.use(
 
 keyRouter.get("/", readApiKey);
 keyRouter.delete("/", deleteApiKey);
-
-// SENSORS ========================================================================================
-const sensorRouter = AsyncRouter({ mergeParams: true });
-deviceRouter.use("/sensors/:sid", sensorRouter);
-
-sensorRouter.put("/", updateSensor);
-sensorRouter.delete("/", deleteSensor);
 
 export default router;

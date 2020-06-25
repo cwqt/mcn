@@ -198,9 +198,11 @@ export const readDevice = async (req: Request, res: Response) => {
   );
 
   let device = result.records[0].get("d")?.properties;
-  device.measurement_count = device.measurement_count
-    ? device.measurement_count.toNumber()
-    : 0;
+  // device.measurement_count = device.measurement_count
+  //   ? device.measurement_count.toNumber()
+  //   : 0;
+
+  device.measurement_count = 0;
   let recordable: IPlant | IGarden = result.records[0].get("r")?.properties;
   let key: IApiKeyPrivate = result.records[0].get("k")?.properties;
 
@@ -303,15 +305,16 @@ const getAssignedRecordable = async (
 export const readDeviceProperties = async (req: Request, res: Response) => {
   let result = await cypher(
     `
-        MATCH (d:Device {_id:$$did})
-        OPTIONAL MATCH (d)-[:${res.locals.relationship}]-(x:${res.locals.node_type})
+        MATCH (d:Device {_id: $did})
+        OPTIONAL MATCH (d)-->(x:${res.locals.node_type})
+        RETURN x
     `,
     {
-      _id: req.params.did,
+      did: req.params.did,
     }
   );
 
-  let props = result.records[0]?.get("x")?.map((x: any) => x.properties);
+  let props = result.records.map((n: any) => n.get("x").properties);
   return res.json(props ?? []);
 };
 
@@ -325,4 +328,14 @@ const createDefaultMeta = () => {
       replies: 0,
     },
   };
+};
+
+export const readDevicePropertyData = async (req: Request, res: Response) => {
+  let results = await dbs.influx.query(`
+    select * from iot
+    order by time desc
+    limit 10
+  `);
+
+  res.json(results);
 };

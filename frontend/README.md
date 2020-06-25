@@ -1,27 +1,17 @@
-# Fe
-
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.0.2.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+// measurementMap = {
+// [Measurement.AirTemperature]: ["Air Temperature", "ac_unit", "#ffa4a2", false],
+// [Measurement.SoilTemperature]: ["Soil Temperature", "ac_unit", "#ffa4a2", false],
+// [Measurement.Light]: ["Light", "wb_sunny", "#ff94c2", false],
+// [Measurement.Humidity]: ["Humidity", "waves", "#ee98fb", false],
+// [Measurement.WaterLevel]: ["Water level", "opacity", "#aab6fe", false],
+// [Measurement.Moisture]: ["Soil moisture", "grain", "#8bf6ff", false],
+// [Measurement.Height]: ["Plant height", "height", "#82e9de", false],
+// [IoTState.LightState]: ["Light state", "wb_incandescent", "#e1ffb1", false],
+// [IoTState.CameraState]: ["Camera state", "linked_camera", "#ffe97d", false],
+// [IoTState.PumpState]: ["Pump state", "blur_linear", "#d3b8ae", false],
+// [IoTState.HeaterState]: ["Heater state", "toggle_on", "#c1d5e0", false],
+// [IoTMeasurement.Voltage]: ["Voltage", "flash_on", "#ffb74d", false],
+// [IoTMeasurement.Current]: ["Current", "show_chart", "#c1d5e0", false],
+// [IoTMeasurement.Power]: ["Power", "power_input", "#e6ceff", false],
+// [IoTMeasurement.SignalStrength]: ["Connection strength", "network_check", "#81c784", false],
+// }

@@ -1,21 +1,17 @@
 <div class="actions">
-    <button mat-icon-button>
-        <mat-icon>close</mat-icon>
-    </button>    
+  <button mat-icon-button>
+    <mat-icon>close</mat-icon>
+  </button>
 </div>
 <mat-divider></mat-divider>
 <br />
 
 <div class="repost-wrapper">
-    <div class="left">
-    </div>
+  <div class="left"></div>
 
-    <div class="right">
+  <div class="right">
+    {{ data }}
 
-        <app-create-post-form [user]="data.currentUser"></app-create-post-form>
-        
-        {{data}}
-
-        <app-rounded-button [color]="'primary'">Repost</app-rounded-button>
-    </div>
+    <app-rounded-button [color]="'primary'">Repost</app-rounded-button>
+  </div>
 </div>
