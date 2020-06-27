@@ -1,11 +1,13 @@
 import { Component, OnInit, Input } from "@angular/core";
-import { IUser } from "../../../../../../backend/lib/models/User.model";
+
 import {
   IDevice,
   IDeviceStub,
   IDeviceState,
   IDeviceSensor,
-} from "../../../../../../backend/lib/models/Device/Device.model";
+  IUser,
+} from "src/app/imports";
+
 import { DeviceService } from "src/app/services/device.service";
 
 @Component({

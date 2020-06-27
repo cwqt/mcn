@@ -1,15 +1,10 @@
-import {
-  Measurement,
-  IoTMeasurement,
-  Unit,
-  IoTState,
-} from "../measurements.types";
+import { Measurement, IoTMeasurement, Unit, IoTState } from "../measurements.types";
 import {
   DeviceCapability,
   MicroController,
   HardwareDevice,
   Type,
-} from "../../../models/Hardware.model";
+} from "../../../models/IoT/Hardware.model";
 
 const info: HardwareDevice = {
   model_name: "MCN Wemos D1 Mini",

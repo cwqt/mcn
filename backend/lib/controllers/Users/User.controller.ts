@@ -10,7 +10,7 @@ import dbs, { cypher } from "../../common/dbs";
 import { Types } from "mongoose";
 
 import { IUserStub, IUser, IUserPrivate } from "../../models/Users/User.model";
-// import { IOrgStub } from "../../models/Orgs.model";
+import { IOrgStub } from "../../models/Orgs.model";
 import { Node } from "../../models/Node.model";
 import { createNode, readNode } from "../Node.controller";
 
@@ -228,28 +228,28 @@ export const logoutUser = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-// export const readUserOrgs = async (req: Request, res: Response) => {
-//   let result = await cypher(
-//     `
-//         MATCH (u:User {_id:$uid})
-//         MATCH (o:Organisation)<-[:IN]-(u)
-//         RETURN o
-//     `,
-//     {
-//       uid: req.session.user.id,
-//     }
-//   );
+export const readUserOrgs = async (req: Request, res: Response) => {
+  let result = await cypher(
+    `
+        MATCH (u:User {_id:$uid})
+        MATCH (o:Organisation)<-[:IN]-(u)
+        RETURN o
+    `,
+    {
+      uid: req.session.user.id,
+    }
+  );
 
-//   let orgs: IOrgStub[] = result.records.map((r: any) => {
-//     return {
-//       _id: r.get("o").properties._id,
-//       name: r.get("o").properties.name,
-//       created_at: r.get("o").properties.created_at,
-//     } as IOrgStub;
-//   });
+  let orgs: IOrgStub[] = result.records.map((r: any) => {
+    return {
+      _id: r.get("o").properties._id,
+      name: r.get("o").properties.name,
+      created_at: r.get("o").properties.created_at,
+    } as IOrgStub;
+  });
 
-//   res.json(orgs);
-// };
+  res.json(orgs);
+};
 
 // HELPER FUNCTIONS ===============================================================================
 

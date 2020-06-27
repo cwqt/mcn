@@ -2,10 +2,8 @@ import { Injectable } from "@angular/core";
 import { of, Observable, BehaviorSubject } from "rxjs";
 import { tap, map } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
-import { IUser, IUserStub } from "../../../../backend/lib/models/User.model";
-import { IPost, IPostStub } from "../../../../backend/lib/models/Post.model";
-import { IDeviceStub } from "../../../../backend/lib/models/Device/Device.model";
-import { IOrgStub, IOrg } from "../../../../backend/lib/models/Orgs.model";
+
+import { IUser, IUserStub, IDeviceStub, IOrgStub } from "../imports";
 
 @Injectable({
   providedIn: "root",
@@ -56,13 +54,6 @@ export class UserService {
         })
       )
       .toPromise();
-  }
-
-  createPost(content: any) {
-    return this.http.post<IPostStub>(
-      `/api/users/${this.currentUserValue._id}/posts`,
-      content
-    );
   }
 
   createDevice(content: any) {

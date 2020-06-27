@@ -118,18 +118,6 @@
   </mat-tab-group>
 
   <br />
-
-  <div class="device-container bottom">
-    <app-postable-social-actions
-      *ngIf="cache.device.data != undefined"
-      [postable]="cache.device.data"
-      [type]="'device'"
-      [authorUser]="cache.user.data"
-      [currentUser]="currentUser"
-      [justify]="true"
-    >
-    </app-postable-social-actions>
-  </div>
 </ibm-tile>
 
 <!-- <mat-divider></mat-divider>

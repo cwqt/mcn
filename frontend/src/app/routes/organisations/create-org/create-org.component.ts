@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router, ActivatedRoute } from "@angular/router";
 import { OrganisationService } from "src/app/services/organisation.service";
-import { IOrgStub } from "../../../../../../backend/lib/models/Orgs.model";
+import { IOrgStub } from "src/app/imports";
 
 @Component({
   selector: "app-create-org",

@@ -1,4 +1,4 @@
-import { Type } from "../../models/Hardware.model";
+import { Type } from "../../models/IoT/Hardware.model";
 
 //types of things that can be recorded
 export enum Measurement {

@@ -1,13 +1,6 @@
-import { SupportedHardware, Type } from "../Hardware.model";
-import {
-  Measurement,
-  Unit,
-  IoTState,
-  IoTMeasurement,
-} from "../../common/types/measurements.types";
+import { SupportedHardware, Type } from "./Hardware.model";
+import { Measurement, Unit, IoTState, IoTMeasurement } from "../../common/types/measurements.types";
 import { IApiKey } from "./ApiKey.model";
-import { IRecordableStub } from "../Recordable.model";
-import { IPostableMeta } from "../Post.model";
 
 import * as IpAddress from "ip-address";
 
@@ -28,7 +21,6 @@ export interface IDeviceStub {
   state: DeviceState;
   hardware_model: SupportedHardware;
   network_name: string;
-  meta?: IPostableMeta;
 }
 
 export interface IDevice extends IDeviceStub {
@@ -38,7 +30,7 @@ export interface IDevice extends IDeviceStub {
   full_desc?: string;
   device_ip?: IpAddress.Address4 | IpAddress.Address6;
   api_key?: IApiKey;
-  assigned_to?: IRecordableStub;
+  // assigned_to?: IFlorableStub;
 }
 
 interface IDeviceProperty {

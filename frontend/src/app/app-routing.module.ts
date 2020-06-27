@@ -9,19 +9,18 @@ import { VerifiedComponent } from "./components/pages/verified/verified.componen
 import { NotFoundComponent } from "./components/pages/not-found/not-found.component";
 import { OrganisationsComponent } from "./routes/organisations/organisations.component";
 import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
-import { UserDevicesListComponent } from "./components/profile/tabs/user-devices-list/user-devices-list.component";
 
 const routes: Routes = [
   {
     path: "",
     component: IndexComponent,
     children: [
-      { path: "devices", component: UserDevicesListComponent },
-      { path: "alerts", component: UserDevicesListComponent },
-      { path: "farms", component: UserDevicesListComponent },
-      { path: "racks", component: UserDevicesListComponent },
-      { path: "crops", component: UserDevicesListComponent },
-      { path: "users", component: UserDevicesListComponent },
+      // { path: "devices", component: UserDevicesListComponent },
+      // { path: "alerts", component: UserDevicesListComponent },
+      // { path: "farms", component: UserDevicesListComponent },
+      // { path: "racks", component: UserDevicesListComponent },
+      // { path: "crops", component: UserDevicesListComponent },
+      // { path: "users", component: UserDevicesListComponent },
     ],
   },
 

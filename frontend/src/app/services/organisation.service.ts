@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { IOrg, IOrgStub } from "../../../../backend/lib/models/Orgs.model";
+import { IOrgStub, IOrg } from "../imports";
 import { BehaviorSubject } from "rxjs";
 import { tap } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
@@ -9,9 +9,7 @@ import { UserService } from "./user.service";
   providedIn: "root",
 })
 export class OrganisationService {
-  currentOrg: BehaviorSubject<IOrg | null> = new BehaviorSubject(<IOrg>{
-    name: "None",
-  });
+  currentOrg: BehaviorSubject<IOrg | null> = new BehaviorSubject(null);
 
   constructor(private userService: UserService, private http: HttpClient) {}
 

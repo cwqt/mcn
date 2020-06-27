@@ -14,7 +14,7 @@ import {
   logoutUser,
   updateUserAvatar,
   updateUserCoverImage,
-  // readUserOrgs,
+  readUserOrgs,
 } from "../../controllers/Users/User.controller";
 
 // import posts from "./posts.routes";
@@ -86,7 +86,7 @@ router.use("/:uid", userRouter);
 userRouter.use(validate([param("uid").isMongoId().trim().withMessage("Invalid user ID")]));
 
 userRouter.get("/", readNodeMiddleware(Node.User, "uid"));
-// userRouter.get("/orgs", readUserOrgs);
+userRouter.get("/orgs", readUserOrgs);
 
 userRouter.put("/avatar", storage.single("avatar"), updateUserAvatar);
 userRouter.put("/cover_image", storage.single("cover_image"), updateUserCoverImage);

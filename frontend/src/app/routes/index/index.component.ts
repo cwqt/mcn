@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { IOrgStub } from "../../../../../backend/lib/models/Orgs.model";
+import { IOrgStub } from "src/app/imports";
 import { UserService } from "src/app/services/user.service";
 import { Router } from "@angular/router";
 

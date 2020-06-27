@@ -7,15 +7,12 @@ import {
   IDeviceStub,
   IDeviceState,
   IDeviceSensor,
-} from "../../../../../backend/lib/models/Device/Device.model";
-import {
   IMeasurementModel,
   IMeasurement,
-} from "../../../../../backend/lib/models/Measurement.model";
-import { PlantService } from "src/app/services/plant.service";
-import { HardwareDevice } from "../../../../../backend/lib/models/Hardware.model";
-import { IUser } from "../../../../../backend/lib/models/User.model";
-import { HardwareInformation } from "../../../../../backend/lib/common/types/hardware.types";
+  HardwareDevice,
+  IUser,
+  HardwareInformation,
+} from "../../imports";
 
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 
@@ -56,7 +53,6 @@ export class DeviceComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private router: Router,
-    private plantService: PlantService,
     private deviceService: DeviceService
   ) {}
 
@@ -137,11 +133,11 @@ export class DeviceComponent implements OnInit {
       .finally(() => (this.cache.sensors.loading = false));
   }
 
-  goToAssignedRecordable() {
-    this.router.navigate([
-      `/${this.cache.user.data.username}/${this.device.assigned_to.type}s/${this.device.assigned_to._id}`,
-    ]);
-  }
+  // goToAssignedRecordable() {
+  //   this.router.navigate([
+  //     `/${this.cache.user.data.username}/${this.device.assigned_to.type}s/${this.device.assigned_to._id}`,
+  //   ]);
+  // }
 
   tags = ["Device", "I<3Plants", "Wemos D1 Mini"];
 
