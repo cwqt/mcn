@@ -14,13 +14,6 @@ import {
   logoutUser,
   updateUserAvatar,
   updateUserCoverImage,
-  followUser,
-  unfollowUser,
-  readFollowers,
-  readFollowing,
-  blockUser,
-  unblockUser,
-  readBlockedUsers,
   readUserOrgs,
 } from "../controllers/User.controller";
 
@@ -85,30 +78,6 @@ router.get(
 // uses req.session.user
 router.post("/logout", logoutUser);
 
-router.post(
-  "/follow/:uid2",
-  validate([param("uid2").isMongoId().trim().withMessage("invalid user id")]),
-  followUser
-);
-
-router.delete(
-  "/follow/:uid2",
-  validate([param("uid2").isMongoId().trim().withMessage("invalid user id")]),
-  unfollowUser
-);
-
-router.post(
-  "/block/:uid2",
-  validate([param("uid2").isMongoId().trim().withMessage("invalid user id")]),
-  blockUser
-);
-
-router.delete(
-  "/block/:uid2",
-  validate([param("uid2").isMongoId().trim().withMessage("invalid user id")]),
-  unblockUser
-);
-
 // USER ===========================================================================================
 const userRouter = AsyncRouter({ mergeParams: true });
 router.use("/:uid", userRouter);
@@ -127,12 +96,8 @@ userRouter.get("/", readUserById);
 userRouter.get("/orgs", readUserOrgs);
 userRouter.put("/", updateUser);
 userRouter.delete("/", deleteUser);
-userRouter.get("/following", readFollowing);
-userRouter.get("/followers", readFollowers);
-userRouter.get("/blocking", readBlockedUsers);
 
 userRouter.use("/posts", posts);
-userRouter.use("/plants", plants);
 userRouter.use("/devices", devices);
 
 export default router;

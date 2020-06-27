@@ -30,6 +30,7 @@ export class OrganisationService {
   }
 
   setActiveOrg(org: IOrgStub) {
+    localStorage.setItem("lastActiveOrg", org._id);
     this.currentOrg.next(org);
   }
 }

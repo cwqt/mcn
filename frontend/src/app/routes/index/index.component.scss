@@ -12,3 +12,58 @@
     margin: 20px 0 10px 0;
   }
 }
+
+.index-cover {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 30px 20px;
+  padding-top: 250px;
+  background: #457fca; /* fallback for old browsers */
+  background: -webkit-linear-gradient(
+    to bottom,
+    #5691c8,
+    #457fca
+  ); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(
+    to bottom,
+    #5691c8,
+    #457fca
+  ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background-image: url(https://hydroponics.com/wp-content/uploads/2014/05/cover1.jpg);
+  background-size: cover;
+  background-position: center;
+  .tile-container {
+    &:hover {
+      cursor: pointer !important;
+    }
+    ibm-tile {
+      transition: 0.2s;
+      border-radius: 4px;
+      &.selected {
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+      &:hover {
+        box-shadow: 0 8px 16px rgba(4, 4, 5, 0.2);
+        transform: scale(1.05);
+      }
+      overflow: hidden;
+      margin-right: 10px;
+      padding-right: 40px;
+      h2 {
+        margin-top: 20px;
+      }
+      mat-icon {
+        transform: scale(1.4);
+      }
+      h1 {
+        font-size: 100px;
+        position: absolute;
+        opacity: 0.05;
+        font-weight: bold;
+        right: -10px;
+        bottom: 0px;
+      }
+    }
+  }
+}

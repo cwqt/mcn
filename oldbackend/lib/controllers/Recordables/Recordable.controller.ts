@@ -119,17 +119,6 @@ export const readAllRecordables = async (req: Request, res: Response) => {
             network_name: r.network_name,
           } as IDeviceStub;
           break;
-        case RecordableType.Plant:
-        case RecordableType.Garden:
-          recordable = {
-            _id: r._id,
-            name: r.name,
-            thumbnail: r.thumbnail,
-            created_at: r.created_at,
-            type: r.type,
-            short_desc: r.short_desc,
-          } as IRecordableStub;
-          break;
       }
 
       recordable.meta = {
@@ -155,6 +144,20 @@ export const readAllRecordables = async (req: Request, res: Response) => {
   };
 
   res.json(paginatedResults);
+};
+
+export const addRecordableToOrg = async (req: Request, res: Response) => {
+  let result = await cypher(
+    `
+    MATCH (o:Organisation {_id:$oid})
+    MATCH (r {_id:$rid}) WHERE r:Device OR r:Farm OR r:Rack OR r:Crop
+    MERGE (r)-[added:IN]-(o)
+    RETURN added
+    `,
+    { oid: req.params.oid, rid: req.params.rid }
+  );
+
+  res.status(HTTP.OK).end();
 };
 
 export const createPaginator = (

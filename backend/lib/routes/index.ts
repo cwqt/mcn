@@ -1,13 +1,13 @@
-import users from "./users.routes";
+import users from "./Users/users.routes";
 import auth from "./auth.routes";
 import test from "./test.routes";
-import iot from "./iot/iot.routes";
-import orgs from "./orgs.routes";
+// import iot from "./iot/iot.routes";
+// import orgs from "./orgs.routes";
 
 export default {
-  orgs,
+  // orgs,
   users,
   auth,
   test,
-  iot,
+  // iot,
 };

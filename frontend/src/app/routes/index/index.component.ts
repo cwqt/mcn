@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { IOrgStub } from "../../../../../backend/lib/models/Orgs.model";
 import { UserService } from "src/app/services/user.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-index",
@@ -10,9 +11,26 @@ import { UserService } from "src/app/services/user.service";
 export class IndexComponent implements OnInit {
   userOrgs: IOrgStub[];
 
-  constructor(private userService: UserService) {}
+  coverCards = [
+    { title: "Devices", icon: "mediation" },
+    { title: "Alerts", icon: "notifications" },
+    { title: "Farms", icon: "account_tree" },
+    { title: "Racks", icon: "reorder" },
+    { title: "Crops", icon: "view_comfy" },
+    { title: "Users", icon: "group" },
+  ];
+
+  constructor(private userService: UserService, private router: Router) {}
 
   ngOnInit(): void {
     this.userService.userOrgs.subscribe((orgs) => (this.userOrgs = orgs));
+  }
+
+  navigate(route: string) {
+    this.router.navigate([route.toLowerCase()]);
+  }
+
+  random() {
+    return Math.floor(Math.random() * 100);
   }
 }

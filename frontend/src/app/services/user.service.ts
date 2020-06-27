@@ -78,7 +78,7 @@ export class UserService {
     return this.http.get<IUser>(`/api/users/u/${username}`).toPromise();
   }
 
-  getUserOrgs() {
+  getUserOrgs(): Promise<IOrgStub[]> {
     return this.http
       .get<IOrgStub[]>(`/api/users/${this.currentUserValue._id}/orgs`)
       .pipe(tap((orgs) => this.userOrgs.next(orgs)))

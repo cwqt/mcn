@@ -7,36 +7,34 @@ import { IndexComponent } from "./routes/index/index.component";
 import { ProfileComponent } from "./routes/profile/profile.component";
 import { VerifiedComponent } from "./components/pages/verified/verified.component";
 import { NotFoundComponent } from "./components/pages/not-found/not-found.component";
-import { SupportedDevicesComponent } from "./components/pages/supported-devices/supported-devices.component";
-import { DeviceComponent } from "./routes/device/device.component";
-import { PlantComponent } from "./routes/plant/plant.component";
-import { DocumentationComponent } from "./routes/documentation/documentation.component";
 import { OrganisationsComponent } from "./routes/organisations/organisations.component";
 import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
+import { UserDevicesListComponent } from "./components/profile/tabs/user-devices-list/user-devices-list.component";
 
 const routes: Routes = [
-  { path: "", component: IndexComponent },
-  { path: "verified", component: VerifiedComponent, canActivate: [AuthGuard] },
   {
-    path: "supported_devices",
-    component: SupportedDevicesComponent,
-    canActivate: [AuthGuard],
+    path: "",
+    component: IndexComponent,
+    children: [
+      { path: "devices", component: UserDevicesListComponent },
+      { path: "alerts", component: UserDevicesListComponent },
+      { path: "farms", component: UserDevicesListComponent },
+      { path: "racks", component: UserDevicesListComponent },
+      { path: "crops", component: UserDevicesListComponent },
+      { path: "users", component: UserDevicesListComponent },
+    ],
   },
+
+  { path: "verified", component: VerifiedComponent, canActivate: [AuthGuard] },
   {
     path: "orgs",
     component: OrganisationsComponent,
     children: [{ path: "create", component: CreateOrgComponent }],
   },
-  { path: "documentation", component: DocumentationComponent },
   {
     path: ":username",
     component: ProfileComponent,
     canActivate: [AuthGuard],
-    children: [
-      { path: "devices/:did", component: DeviceComponent },
-      { path: "plants/:rid", component: PlantComponent },
-      // { path: 'gardens/:gid', component: PostComponent },
-    ],
   },
   { path: "**", component: NotFoundComponent },
 ];

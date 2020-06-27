@@ -1,7 +1,23 @@
-<div *ngIf="userOrgs.length == 1" class="no-orgs">
+<div *ngIf="userOrgs.length == 0" class="no-orgs">
   <h1>No organisations found</h1>
   <p>
-    Looks like you're not in any organisations, <a href="">create</a> or
-    <a href="">join</a> one now.
+    Looks like you're not in any organisations,
+    <a href="/orgs/create">create</a> or <a href="">join</a> one now.
   </p>
 </div>
+
+<div class="index-cover">
+  <div
+    class="tile-container"
+    *ngFor="let item of coverCards"
+    (click)="navigate(item.title)"
+  >
+    <ibm-tile>
+      <mat-icon>{{ item.icon }}</mat-icon>
+      <h2>{{ item.title }}</h2>
+      <h1>{{ random() }}</h1>
+    </ibm-tile>
+  </div>
+</div>
+
+<router-outlet></router-outlet>

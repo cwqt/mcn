@@ -25,12 +25,19 @@ export class AppComponent implements OnInit {
       `Running in: ${environment.production ? "production" : "development"}`
     );
 
-    //upon start up, immediately get the new user
-    if (this.userService.currentUserValue) {
-      this.userService
-        .updateCurrentUser()
-        .then(() => this.userService.getUserOrgs());
-    }
+    (async () => {
+      //upon start up, immediately get the new user & set last active org
+      if (this.userService.currentUserValue) {
+        await this.userService.updateCurrentUser();
+        let orgs = await this.userService.getUserOrgs();
+        let lastActiveOrgId = localStorage.getItem("lastActiveOrg");
+        if (lastActiveOrgId) {
+          this.orgService.setActiveOrg(
+            orgs.find((o) => o._id == lastActiveOrgId)
+          );
+        }
+      }
+    })();
   }
 
   ngOnInit() {

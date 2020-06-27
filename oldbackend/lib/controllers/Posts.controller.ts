@@ -97,20 +97,6 @@ export const readAllPosts = async (req: Request, res: Response) => {
             } as IDeviceStub,
           } as IRepost;
           break;
-
-        case RecordableType.Plant || RecordableType.Garden:
-          repost = {
-            type: RepostType.Recordable,
-            author: filterUserFields(record.get("op").properties, true),
-            content: {
-              _id: o.properties._id,
-              name: o.properties.name,
-              thumbnail: o.properties.thumbnail,
-              created_at: o.properties.created_at,
-              type: o.properties.labels[0].toLowerCase(),
-            } as IRecordableStub,
-          } as IRepost;
-          break;
       }
     }
 

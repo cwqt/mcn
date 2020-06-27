@@ -1,11 +1,7 @@
 {
-    "customizeUI.activityBar": "bottom",
-    "customizeUI.titleBar": "frameless",
-    "spellright.language": [
-        "en"
-    ],
-    "spellright.documentTypes": [
-        "markdown",
-        "latex"
-    ]
+  "customizeUI.activityBar": "bottom",
+  "customizeUI.titleBar": "frameless",
+  "spellright.language": ["en"],
+  "spellright.documentTypes": ["markdown", "latex"],
+  "prettier.printWidth": 100
 }
