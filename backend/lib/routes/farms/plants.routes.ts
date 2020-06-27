@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from "express";
 const { body, param } = require("express-validator");
 const AsyncRouter = require("express-async-router").AsyncRouter;
 
-import { validate } from "../common/validate";
+import { validate } from "../../common/validate";
 
 import {
   createPlant,
   updatePlant,
-} from "../controllers/Recordables/Plants.controller";
+} from "../../controllers/Recordables/Plants.controller";
 
 import {
   createRecordable,
@@ -16,9 +16,9 @@ import {
   updateRecordable,
   readAllRecordables,
   readRecordable,
-} from "../controllers/Recordables/Recordable.controller";
+} from "../../controllers/Recordables/Recordable.controller";
 
-import { RecordableType } from "../models/Recordable.model";
+import { RecordableType } from "../../models/Recordable.model";
 // import {
 //     // readAllMeasurements,
 //     // deleteMeasurements
@@ -27,7 +27,7 @@ import {
   repostPostable,
   heartPostable,
   unheartPostable,
-} from "../controllers/Postable.controller";
+} from "../../controllers/Postable.controller";
 
 const router = AsyncRouter({ mergeParams: true });
 router.use((req: Request, res: Response, next: NextFunction) => {

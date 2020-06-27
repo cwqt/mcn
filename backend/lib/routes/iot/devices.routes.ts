@@ -1,6 +1,6 @@
 import { Router, NextFunction, Request, Response } from "express";
 const { body, param, query } = require("express-validator");
-import { validate } from "../common/validate";
+import { validate } from "../../common/validate";
 var AsyncRouter = require("express-async-router").AsyncRouter;
 
 // import { readAllMeasurements } from '../controllers/Device/Measurements.controller';
@@ -13,25 +13,25 @@ import {
   readDeviceProperties,
   pingDevice,
   readDevicePropertyData,
-} from "../controllers/Device/Device.controller";
+} from "../../controllers/Device/Device.controller";
 import {
   createApiKey,
   readApiKey,
   deleteApiKey,
-} from "../controllers/Device/ApiKeys.controller";
+} from "../../controllers/Device/ApiKeys.controller";
 
-import { RecordableType } from "../models/Recordable.model";
-import { readAllRecordables } from "../controllers/Recordables/Recordable.controller";
+import { RecordableType } from "../../models/Recordable.model";
+import { readAllRecordables } from "../../controllers/Recordables/Recordable.controller";
 import {
   heartPostable,
   unheartPostable,
   repostPostable,
-} from "../controllers/Postable.controller";
+} from "../../controllers/Postable.controller";
 
 import { setLocalsFlag } from "./iot.routes";
 
 import routines from "./routines.routes";
-import { HardwareInformation } from "../common/types/hardware.types";
+import { HardwareInformation } from "../../common/types/hardware.types";
 
 const router = AsyncRouter({ mergeParams: true });
 router.use((req: Request, res: Response, next: NextFunction) => {

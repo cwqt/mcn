@@ -1,0 +1,29 @@
+<div *ngIf="!success" class="form-container">
+  <h2>Create an organisation</h2>
+  <p>Manage and orchestrate your vertical farming through an organisation</p>
+  <br />
+
+  <form
+    [formGroup]="createOrgForm"
+    [hidden]="success"
+    (ngSubmit)="submitHandler()"
+  >
+    <ibm-label [invalid]="errors.name" [invalidText]="errors.name">
+      Name
+      <input
+        formControlName="name"
+        ibmText
+        [invalid]="false"
+        [autocomplete]="false"
+      />
+    </ibm-label>
+
+    <br />
+
+    <app-load-button [loading]="loading">
+      <span>Create</span>
+    </app-load-button>
+
+    <mat-error class="form" *ngIf="errors.form">{{ errors.form }}</mat-error>
+  </form>
+</div>

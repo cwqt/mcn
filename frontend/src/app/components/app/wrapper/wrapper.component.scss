@@ -3,17 +3,20 @@
     height: 100vh;
     overflow: hidden;
 }
+
 .app-content {
     height: 100vh;
     display: flex;
-    .left {
-    }
+
+    .left {}
+
     .right {
         width: 100%;
         overflow: scroll;
         min-height: 100vh;
+
         .app-body {
-            min-height: calc(100vh - 140px);
+            min-height: calc(100vh - 48px);
         }
     }
 }

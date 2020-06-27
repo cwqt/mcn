@@ -10,6 +10,7 @@ import dbs, { cypher } from "../common/dbs";
 import { Types } from "mongoose";
 
 import { IUserStub, IUser, IUserPrivate } from "../models/User.model";
+import { IOrgStub } from "../models/Orgs.model";
 
 export const filterUserFields = (
   user: any,
@@ -383,6 +384,29 @@ export const readBlockedUsers = async (req: Request, res: Response) => {
     filterUserFields(record.get("blockee").properties)
   );
   res.json(blockees);
+};
+
+export const readUserOrgs = async (req: Request, res: Response) => {
+  let result = await cypher(
+    `
+        MATCH (u:User {_id:$uid})
+        MATCH (o:Organisation)<-[:MEMBER_OF]-(u)
+        RETURN o
+    `,
+    {
+      uid: req.session.user.id,
+    }
+  );
+
+  let orgs: IOrgStub[] = result.records.map((r: any) => {
+    return {
+      _id: r.get("o").properties._id,
+      name: r.get("o").properties.name,
+      created_at: r.get("o").properties.created_at,
+    } as IOrgStub;
+  });
+
+  res.json(orgs);
 };
 
 // HELPER FUNCTIONS ===============================================================================

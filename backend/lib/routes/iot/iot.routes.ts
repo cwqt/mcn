@@ -1,4 +1,4 @@
-import { validate } from "../common/validate";
+import { validate } from "../../common/validate";
 const { body, param } = require("express-validator");
 const AsyncRouter = require("express-async-router").AsyncRouter;
 
@@ -7,18 +7,18 @@ import { Request, Response, NextFunction } from "express";
 import {
   Measurement as AcceptedMeasurement,
   IoTMeasurement,
-} from "../common/types/measurements.types";
-import { authenticateApiKey } from "../controllers/Auth.controller";
+} from "../../common/types/measurements.types";
+import { authenticateApiKey } from "../../controllers/Auth.controller";
 import {
   createMeasurementAsDevice,
   createMeasurementAsUser,
-} from "../controllers/Device/Measurements.controller";
-import { RecorderType, IoTDataPacket } from "../models/Measurement.model";
-import { RecordableType } from "../models/Recordable.model";
-import { ErrorHandler } from "../common/errorHandler";
-import { HTTP } from "../common/http";
+} from "../../controllers/Device/Measurements.controller";
+import { RecorderType, IoTDataPacket } from "../../models/Measurement.model";
+import { RecordableType } from "../../models/Recordable.model";
+import { ErrorHandler } from "../../common/errorHandler";
+import { HTTP } from "../../common/http";
 
-import { HardwareInformation } from "../common/types/hardware.types";
+import { HardwareInformation } from "../../common/types/hardware.types";
 
 const router = AsyncRouter({ mergeParams: true });
 
@@ -26,8 +26,8 @@ const validateIoTDataPacket = (device: IDevice) => {
   return body().custom((data: any) => {});
 };
 
-import { cypher } from "../common/dbs";
-import { IDevice } from "../models/Device/Device.model";
+import { cypher } from "../../common/dbs";
+import { IDevice } from "../../models/Device/Device.model";
 
 export const setLocalsFlag = (object: { [index: string]: string }) => {
   return (req: Request, res: Response, next: NextFunction) => {

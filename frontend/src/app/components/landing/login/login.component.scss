@@ -1,11 +1,8 @@
-h1 {
-    margin-bottom: 30px !important;
-}
-
 .help {
     color: grey;
     text-decoration: none;
     transition: 0.2s;
+
     &:hover {
         color: darken(grey, 20%)
     }

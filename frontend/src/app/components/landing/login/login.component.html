@@ -1,31 +1,31 @@
 <div *ngIf="!success">
-  <h1 class="mat-display-1">already have an account?</h1>
+  <h1>Log in</h1>
+  <p>Don't have an account? <a href="">Register now</a></p>
+  <br />
 
   <form [formGroup]="loginForm" [hidden]="success" (ngSubmit)="submitHandler()">
-		<ibm-label
-			[invalid]="errors.email"
-      [invalidText]="errors.email">
+    <ibm-label [invalid]="errors.email" [invalidText]="errors.email">
       e-mail
       <input
         formControlName="email"
-				ibmText
-				[invalid]="false"
-				[autocomplete]="false">
-		</ibm-label>
-    
+        ibmText
+        [invalid]="false"
+        [autocomplete]="false"
+      />
+    </ibm-label>
+
     <br />
 
-		<ibm-label
-			[invalid]="errors.password"
-      [invalidText]="errors.password">
+    <ibm-label [invalid]="errors.password" [invalidText]="errors.password">
       password
       <input
         formControlName="password"
         ibmText
         type="password"
-				[invalid]="false"
-				[autocomplete]="false">
-		</ibm-label>
+        [invalid]="false"
+        [autocomplete]="false"
+      />
+    </ibm-label>
 
     <br />
 
@@ -33,11 +33,11 @@
       <span>log in</span>
     </app-load-button>
 
-    <mat-error class="form" *ngIf="errors.form">{{errors.form}}</mat-error>
+    <mat-error class="form" *ngIf="errors.form">{{ errors.form }}</mat-error>
   </form>
 
-  <br/>
-  <a class="mat-small help" href="#">trouble logging in?</a>  
+  <br />
+  <a class="mat-small help" href="#">trouble logging in?</a>
 </div>
 
 <div *ngIf="success">

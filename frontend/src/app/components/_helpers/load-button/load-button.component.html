@@ -1,6 +1,13 @@
-<button [disabled]="disabled" type="submit" [ibmButton]="type" [size]="size" class="loader" (click)="click()">
-    <ibm-loading *ngIf="loading" [isActive]="true" [size]="'sm'"></ibm-loading>
-    <mat-icon inline *ngIf="icon && !loading">{{icon}}</mat-icon>
-    <ng-content></ng-content>
+<button
+  [disabled]="disabled"
+  type="submit"
+  [ibmButton]="type"
+  [size]="size"
+  class="loader"
+  (click)="click()"
+>
+  <ibm-loading *ngIf="loading" [isActive]="true" [size]="'sm'"></ibm-loading>
+  <mat-icon inline *ngIf="icon && !loading">{{ icon }}</mat-icon>
+  <ng-content></ng-content>
+  <mat-icon id="end" inline *ngIf="endIcon && !loading">{{ endIcon }}</mat-icon>
 </button>
-

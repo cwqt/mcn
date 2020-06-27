@@ -21,12 +21,12 @@ import {
   blockUser,
   unblockUser,
   readBlockedUsers,
+  readUserOrgs,
 } from "../controllers/User.controller";
 
 import posts from "./posts.routes";
-import devices from "./devices.routes";
-import plants from "./plants.routes";
-import gardens from "./gardens.routes";
+import devices from "./iot/devices.routes";
+import plants from "./farms/plants.routes";
 
 const storage = multer({
   storage: multer.memoryStorage(),
@@ -124,6 +124,7 @@ userRouter.put(
 );
 
 userRouter.get("/", readUserById);
+userRouter.get("/orgs", readUserOrgs);
 userRouter.put("/", updateUser);
 userRouter.delete("/", deleteUser);
 userRouter.get("/following", readFollowing);
@@ -132,7 +133,6 @@ userRouter.get("/blocking", readBlockedUsers);
 
 userRouter.use("/posts", posts);
 userRouter.use("/plants", plants);
-userRouter.use("/gardens", gardens);
 userRouter.use("/devices", devices);
 
 export default router;

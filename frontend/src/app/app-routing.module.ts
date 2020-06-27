@@ -11,6 +11,8 @@ import { SupportedDevicesComponent } from "./components/pages/supported-devices/
 import { DeviceComponent } from "./routes/device/device.component";
 import { PlantComponent } from "./routes/plant/plant.component";
 import { DocumentationComponent } from "./routes/documentation/documentation.component";
+import { OrganisationsComponent } from "./routes/organisations/organisations.component";
+import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
 
 const routes: Routes = [
   { path: "", component: IndexComponent },
@@ -19,6 +21,11 @@ const routes: Routes = [
     path: "supported_devices",
     component: SupportedDevicesComponent,
     canActivate: [AuthGuard],
+  },
+  {
+    path: "orgs",
+    component: OrganisationsComponent,
+    children: [{ path: "create", component: CreateOrgComponent }],
   },
   { path: "documentation", component: DocumentationComponent },
   {

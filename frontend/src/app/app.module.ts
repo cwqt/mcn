@@ -98,6 +98,9 @@ import { SensorListComponent } from "./routes/device/sensor-list/sensor-list.com
 import { SidebarNavComponent } from "./components/app/sidebar/sidebar-nav/sidebar-nav.component";
 import { TreeNodeComponent } from "./components/app/sidebar/sidebar-nav/tree-node/tree-node.component";
 import { IndexComponent } from './routes/index/index.component';
+import { OrganisationsComponent } from './routes/organisations/organisations.component';
+import { PageComponent } from './components/app/page/page.component';
+import { CreateOrgComponent } from './routes/organisations/create-org/create-org.component';
 
 @NgModule({
   declarations: [
@@ -142,6 +145,9 @@ import { IndexComponent } from './routes/index/index.component';
     SidebarNavComponent,
     TreeNodeComponent,
     IndexComponent,
+    OrganisationsComponent,
+    PageComponent,
+    CreateOrgComponent,
   ],
   imports: [
     BrowserModule,

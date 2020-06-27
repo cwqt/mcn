@@ -1,57 +1,73 @@
-::ng-deep {
-    .bx--header__name--prefix {
-        display: none !important
+.header-container {
+  width: 100%;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 999;
+  background: #171717;
+  max-height: 48px;
+  color: white;
+  .left,
+  .right {
+    img {
+      max-height: 100%;
+      max-width: 100%;
     }
+    height: 48px;
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+  }
 
-    .bx--header {
-        position: relative;
-
-        img {
-            &.icon {
-                position: absolute;
-                left: 12px;
-                padding: 10px;
-                padding-left: 0;
-            }
-
-            max-height: 100%;
-            max-width: 100%;
-        }
+  .left {
+    transition: 0.2s;
+    .icon {
+      width: 48px;
+      height: 48px;
+      padding: 10px;
     }
-
-    .bx--header__name {
-
+    ibm-header-menu {
+      list-style: none;
+      height: 48px;
+      font-weight: bold;
+      margin-right: 10px;
+      ::ng-deep a.bx--header__menu-title {
+        font-weight: bold;
+        color: white;
         &::before {
-            content: "mcn ·";
-            font-weight: normal;
-            padding-left: 50px !important;
-            margin-right: 4px;
+          content: "mcn ·";
+          margin-right: 4px;
+          font-weight: normal;
         }
+      }
     }
+  }
 }
 
 .header-bar-thumb {
-    ::ng-deep .bx--header__action {
-        width: auto;
-        display: flex;
-        align-items: center;
-        color: white;
-        padding: 5px 10px;
-    }
+  ::ng-deep .bx--header__action {
+    width: auto;
+    display: flex;
+    align-items: center;
+    color: white;
+    padding: 5px 10px;
+  }
 
-    img {
-        border-radius: 50%;
-        width: 34px;
-        height: 34px;
-    }
+  img {
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+  }
 
-    span {
-        margin-left: 10px;
-    }
+  span {
+    margin-left: 10px;
+  }
 
-    overflow: hidden;
+  overflow: hidden;
 }
 
 mat-icon {
-    color: white;
+  color: white;
 }

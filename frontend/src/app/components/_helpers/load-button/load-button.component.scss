@@ -8,10 +8,16 @@
     ibm-loading {
         ::ng-deep .bx--loading__stroke {
             stroke: #fff !important;
-        }    
+        }
     }
 
     mat-icon {
-        margin-right: 10px
+        margin-right: 10px;
+
+        &#end {
+            margin: 0;
+            margin-left: auto;
+        }
     }
+
 }

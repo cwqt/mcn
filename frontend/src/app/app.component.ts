@@ -4,6 +4,7 @@ import { environment } from "../environments/environment";
 import { IUser } from "../../../backend/lib/models/User.model";
 
 import { UserService } from "./services/user.service";
+import { OrganisationService } from "./services/organisation.service";
 
 @Component({
   selector: "app-root",
@@ -13,16 +14,22 @@ import { UserService } from "./services/user.service";
 export class AppComponent implements OnInit {
   title = "fe";
   currentUser: IUser;
-  ui: string = "register";
+  ui: string = "login";
 
-  constructor(private userService: UserService, private router: Router) {
+  constructor(
+    private userService: UserService,
+    private orgService: OrganisationService,
+    private router: Router
+  ) {
     console.log(
       `Running in: ${environment.production ? "production" : "development"}`
     );
 
     //upon start up, immediately get the new user
     if (this.userService.currentUserValue) {
-      this.userService.updateCurrentUser();
+      this.userService
+        .updateCurrentUser()
+        .then(() => this.userService.getUserOrgs());
     }
   }
 
@@ -34,7 +41,7 @@ export class AppComponent implements OnInit {
         if (this.currentUser.new_user) {
           console.log("needs to do first time stuff");
         } else {
-          this.router.navigate(["/"]);
+          // this.router.navigate(["/"]);
         }
       }
     });

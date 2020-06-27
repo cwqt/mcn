@@ -1,4 +1,4 @@
-import { validate } from "../common/validate";
+import { validate } from "../../common/validate";
 const AsyncRouter = require("express-async-router").AsyncRouter;
 const { body, param, query } = require("express-validator");
 
@@ -13,7 +13,7 @@ import {
   updateTask,
   deleteTask,
   executeRoutine,
-} from "../controllers/Device/Routines.controller";
+} from "../../controllers/Device/Routines.controller";
 
 const router = AsyncRouter({ mergeParams: true });
 

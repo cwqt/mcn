@@ -1,0 +1,15 @@
+.page-container {
+  display: flex;
+  padding: 20px;
+  margin-top: 50px;
+  .left {
+    h1 {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+  }
+  .right {
+    margin-left: 20px;
+    flex: 1;
+  }
+}

@@ -1,22 +1,31 @@
-<ibm-header name="daughter.systems">
-  <img class="icon" src="/assets/leaf.png" />
-  <ibm-header-navigation>
-    <ibm-header-item>Catalog</ibm-header-item>
-    <ibm-header-item>Docs</ibm-header-item>
-    <ibm-header-item>Support</ibm-header-item>
-    <ibm-header-menu title="Manage">
-      <ibm-header-item>Link 1</ibm-header-item>
-      <ibm-header-item>Link 2</ibm-header-item>
-      <ibm-header-item>Link 3</ibm-header-item>
+<div class="header-container">
+  <div class="left">
+    <img class="icon" src="/assets/leaf.png" />
+    <ibm-header-menu [title]="activeOrg.name">
+      <div *ngFor="let org of userOrgs" (click)="setActiveOrg(org)">
+        <ibm-header-item>{{ org.name }}</ibm-header-item>
+      </div>
     </ibm-header-menu>
-  </ibm-header-navigation>
-  <ibm-header-global>
-    <ibm-header-action>
-      <mat-icon>notifications_none</mat-icon>
-    </ibm-header-action>
-    <ibm-header-action class="header-bar-thumb">
-      <img [src]="currentUser.avatar" />
-      <span>{{ currentUser.name }}</span>
-    </ibm-header-action>
-  </ibm-header-global>
-</ibm-header>
+
+    <!-- <ibm-header-navigation>
+      <ibm-header-item>Catalog</ibm-header-item>
+      <ibm-header-item>Docs</ibm-header-item>
+      <ibm-header-item>Support</ibm-header-item>
+    </ibm-header-navigation> -->
+  </div>
+
+  <div class="right">
+    <ibm-header-global>
+      <ibm-header-action>
+        <mat-icon>notifications_none</mat-icon>
+      </ibm-header-action>
+      <ibm-header-action
+        class="header-bar-thumb"
+        (selected)="openUserMenu($event)"
+      >
+        <img [src]="currentUser.avatar" />
+        <span>{{ currentUser.name }}</span>
+      </ibm-header-action>
+    </ibm-header-global>
+  </div>
+</div>
