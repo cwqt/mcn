@@ -2,7 +2,7 @@ import {
   Measurement as RecordableMeasurement,
   IoTMeasurement,
   IoTState,
-} from "../../common/types/measurements.types";
+} from "../Types/measurements.types";
 import { Document, Schema, Model, model, Types } from "mongoose";
 
 export enum RecorderType {

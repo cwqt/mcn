@@ -1,20 +1,20 @@
-export * from "../../../backend/lib/models/Node.model";
-export * from "../../../backend/lib/models/Orgs.model";
+export * from "../../../interfaces/Node.model";
+export * from "../../../interfaces/Orgs.model";
 
-export * from "../../../backend/lib/models/Users/User.model";
+export * from "../../../interfaces/Users/User.model";
 
-export * from "../../../backend/lib/models/IoT/Device.model";
-export * from "../../../backend/lib/models/IoT/Hardware.model";
-export * from "../../../backend/lib/models/IoT/ApiKey.model";
-export * from "../../../backend/lib/models/IoT/Measurement.model";
-export * from "../../../backend/lib/models/IoT/DeviceProperty.model";
+export * from "../../../interfaces/IoT/Device.model";
+export * from "../../../interfaces/IoT/Hardware.model";
+export * from "../../../interfaces/IoT/ApiKey.model";
+export * from "../../../interfaces/IoT/Measurement.model";
+export * from "../../../interfaces/IoT/DeviceProperty.model";
 export * from "../../../runner/lib/models/Tasks.model";
 
-export * from "../../../backend/lib/models/Hydroponics/Crop.model";
-export * from "../../../backend/lib/models/Hydroponics/Rack.model";
-// export * from '../../../backend/lib/models/Hydroponics/Farm.model';
+export * from "../../../interfaces/Hydroponics/Crop.model";
+export * from "../../../interfaces/Hydroponics/Rack.model";
+// export * from "../../../interfaces/Hydroponics/Farm.model";
 
-export * from "../../../backend/lib/common/types/events.types";
-export * from "../../../backend/lib/common/types/hardware.types";
-export * from "../../../backend/lib/common/types/measurements.types";
-export * from "../../../backend/lib/common/types/phases.types";
+export * from "../../../interfaces/Types/events.types";
+export * from "../../../interfaces/Types/hardware.types";
+export * from "../../../interfaces/Types/measurements.types";
+export * from "../../../interfaces/Types/phases.types";

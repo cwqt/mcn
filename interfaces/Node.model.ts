@@ -1,4 +1,4 @@
-import { NodeType } from "../backend/lib/common/types/nodes.types";
+import { NodeType } from "./Types/nodes.types";
 
 export interface INode {
   _id: string;

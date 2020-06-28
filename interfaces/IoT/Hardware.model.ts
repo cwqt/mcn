@@ -1,4 +1,4 @@
-import { Measurement, Unit, IoTMeasurement, IoTState } from "../../common/types/measurements.types";
+import { Measurement, Unit, IoTMeasurement, IoTState } from "../Types/measurements.types";
 
 export enum MicroController {
   ESP8266 = "ESP-8266",

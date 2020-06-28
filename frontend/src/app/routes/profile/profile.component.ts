@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from "@angular/core";
-import { IUser } from "../../../../../backend/lib/models/Users/User.model";
+import { IUser } from "src/app/imports";
 import { UserService } from "src/app/services/user.service";
 import { ActivatedRoute, Router } from "@angular/router";
 
