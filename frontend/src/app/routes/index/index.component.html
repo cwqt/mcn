@@ -6,7 +6,7 @@
   </p>
 </div>
 
-<div class="index-cover">
+<div class="index-cover" *ngIf="userOrgs.length">
   <div
     class="tile-container"
     *ngFor="let item of coverCards"
@@ -15,7 +15,7 @@
     <ibm-tile>
       <mat-icon>{{ item.icon }}</mat-icon>
       <h2>{{ item.title }}</h2>
-      <h1>{{ random() }}</h1>
+      <h1>12</h1>
     </ibm-tile>
   </div>
 </div>

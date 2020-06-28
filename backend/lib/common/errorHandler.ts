@@ -41,3 +41,22 @@ export class ErrorHandler extends IError {
     IError.captureStackTrace(this, this.constructor);
   }
 }
+
+export interface IFormErrorField {
+  param: string;
+  msg: string;
+  value: any;
+}
+
+export class FormErrorResponse {
+  errors: IFormErrorField[];
+  constructor() {
+    this.errors = [];
+  }
+  push(param: string, message: string, value: any) {
+    this.errors.push({ param: param, msg: message, value: value });
+  }
+  get value() {
+    return this.errors;
+  }
+}

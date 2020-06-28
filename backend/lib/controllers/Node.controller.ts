@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { HTTP } from "../common/http";
 import { cypher } from "../common/dbs";
-import { Node } from "../models/Node.model";
+import { NodeType } from "../models/Node.model";
 
-const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
+export const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
 export const createNode = async (type: Node, body: any) => {
   let results = await cypher(
@@ -18,7 +18,7 @@ export const createNode = async (type: Node, body: any) => {
   return results.records[0].get("n").properties;
 };
 
-export const readNodes = async (type: Node, inOrg: boolean = false) => {
+export const readNodes = async (type: NodeType, inOrg: boolean = false) => {
   let results = await cypher(
     `
         MATCH (n:${capitalize(type)})${inOrg ? "-[:IN]->(:Organisation)" : ""}
@@ -30,7 +30,7 @@ export const readNodes = async (type: Node, inOrg: boolean = false) => {
   return results.records.map((r: any) => r.get("n").properties);
 };
 
-export const readNode = async (type: Node, _id: string) => {
+export const readNode = async (type: NodeType, _id: string) => {
   let results = await cypher(
     `
         MATCH (n:${capitalize(type)} {_id:$nid})
@@ -42,8 +42,8 @@ export const readNode = async (type: Node, _id: string) => {
   return results.records[0]?.get("n")?.properties ?? {};
 };
 
-export const deleteNode = async (type: Node, _id: string) => {};
-export const updateNode = async (type: Node, _id: string, body: any) => {
+export const deleteNode = async (type: NodeType, _id: string) => {};
+export const updateNode = async (type: NodeType, _id: string, body: any) => {
   let result = await cypher(
     `
     `,
@@ -55,14 +55,14 @@ export const updateNode = async (type: Node, _id: string, body: any) => {
 // export const addOrgItemToOrg = (type: OrgItemType, _id: string, orgId: string) => {};
 // export const removeOrgItemFromOrg = (type: OrgItemType, _id: string, orgId: string) => {};
 
-export const readNodeMiddleware = (type: Node, key: string) => {
+export const readNodeMiddleware = (type: NodeType, key: string) => {
   return async (req: Request, res: Response) => {
     let node = await readNode(type, req.params[key]);
     res.json(node);
   };
 };
 
-export const deleteNodeMiddleware = (type: Node, key: string) => {
+export const deleteNodeMiddleware = (type: NodeType, key: string) => {
   return async (req: Request, res: Response) => {
     await deleteNode(type, req.params[key]);
     res.status(HTTP.OK).end();

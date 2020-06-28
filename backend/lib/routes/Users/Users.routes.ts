@@ -29,7 +29,9 @@ import {
   readNodeMiddleware,
   deleteNodeMiddleware,
 } from "../../controllers/Node.controller";
-import { filterUserFields } from "../../controllers/Users/User.controller";
+// import { filterUserFields } from "../../controllers/Users/User.controller";
+import { User } from "../../models/Users/User.model";
+import { HTTP } from "../../common/http";
 
 const storage = multer({
   storage: multer.memoryStorage(),
@@ -39,10 +41,6 @@ const storage = multer({
 });
 
 const router = AsyncRouter({ mergeParams: true });
-
-router.get("/", async (req: Request, res: Response) => {
-  res.json(filterUserFields(await readNodes(Node.User)));
-});
 
 router.post(
   "/",
@@ -85,16 +83,13 @@ const userRouter = AsyncRouter({ mergeParams: true });
 router.use("/:uid", userRouter);
 userRouter.use(validate([param("uid").isMongoId().trim().withMessage("Invalid user ID")]));
 
-userRouter.get("/", readNodeMiddleware(Node.User, "uid"));
+userRouter.get("/", readUserById);
+userRouter.put("/", updateUser);
 userRouter.get("/orgs", readUserOrgs);
 
 userRouter.put("/avatar", storage.single("avatar"), updateUserAvatar);
 userRouter.put("/cover_image", storage.single("cover_image"), updateUserCoverImage);
-userRouter.put("/", async (req: Request, res: Response) => {
-  let user = await updateNode(Node.User, req.params.uid, req.body);
-  res.json(user);
-});
 
-userRouter.delete("/", deleteNodeMiddleware(Node.User, "uid"));
+userRouter.delete("/", deleteUser);
 
 export default router;

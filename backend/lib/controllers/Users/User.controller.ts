@@ -2,56 +2,14 @@ import bcrypt from "bcrypt";
 import { Request, Response, NextFunction } from "express";
 
 import { sendVerificationEmail } from "./Email.controller";
-import { ErrorHandler } from "../../common/errorHandler";
+import { ErrorHandler, FormErrorResponse } from "../../common/errorHandler";
 import { HTTP } from "../../common/http";
-import config from "../../config";
 import { uploadImageToS3, S3Image } from "../../common/storage";
 import dbs, { cypher } from "../../common/dbs";
-import { Types } from "mongoose";
 
-import { IUserStub, IUser, IUserPrivate } from "../../models/Users/User.model";
-import { IOrgStub } from "../../models/Orgs.model";
-import { Node } from "../../models/Node.model";
-import { createNode, readNode } from "../Node.controller";
-
-export const filterUserFields = (user: any, toStub?: boolean): IUser | IUserStub => {
-  let hiddenFields = ["_labels", "pw_hash", "salt"];
-  if (toStub)
-    hiddenFields = hiddenFields.concat([
-      "email",
-      "admin",
-      "new_user",
-      "created_at",
-      "verified",
-      "gardens",
-      "plants",
-      "devices",
-      "hearts",
-      "followers",
-      "following",
-      "location",
-      "posts",
-      "bio",
-    ]);
-
-  hiddenFields.forEach((field) => delete user[field]);
-  return user;
-};
-
-export const readAllUsers = async (req: Request, res: Response) => {
-  let result = await cypher(
-    `
-        MATCH (u:User)
-        RETURN u
-    `,
-    {}
-  );
-
-  let users: IUser[] = result.records.map((record: any) =>
-    filterUserFields(record.get("u").properties)
-  );
-  res.json(users);
-};
+import { IUserPrivate, User, IUser } from "../../models/Users/User.model";
+import { IOrgStub, Org } from "../../models/Orgs.model";
+import { Node, NodeType } from "../../models/Node.model";
 
 export const createUser = async (req: Request, res: Response) => {
   //see if username/email already taken
@@ -68,40 +26,30 @@ export const createUser = async (req: Request, res: Response) => {
   );
 
   if (result.records.length) {
-    let errors = [];
+    let errors = new FormErrorResponse();
     let user = result.records[0].get("u").properties;
     if (user.username == req.body.username)
-      errors.push({ param: "username", msg: "username is taken" });
-    if (user.email == req.body.email) errors.push({ param: "email", msg: "email already in use" });
-    throw new ErrorHandler(HTTP.Conflict, errors);
+      errors.push("username", "Username is already taken", req.body.username);
+    if (user.email == req.body.email) errors.push("email", "E-mail already in use", req.body.email);
+    throw new ErrorHandler(HTTP.Conflict, errors.value);
   }
 
   let emailSent = await sendVerificationEmail(req.body.email);
   if (!emailSent) throw new ErrorHandler(HTTP.ServerError, "Verification email could not be sent");
 
-  //generate password hash
-  let salt = await bcrypt.genSalt(10);
-  let pw_hash = await bcrypt.hash(req.body["password"], salt);
+  console.log(req.body);
 
-  let user: IUserPrivate = {
-    _id: Types.ObjectId().toHexString(),
-    name: "",
-    username: req.body.username,
-    email: req.body.email,
-    verified: false,
-    new_user: true,
-    salt: salt,
-    pw_hash: pw_hash,
-    admin: false,
-    created_at: Date.now(),
-  };
+  let user = new User(req.body.username, req.body.email);
+  user.generateCredentials(req.body.password);
+  await user.create();
 
-  let u = filterUserFields(await createNode(Node.User, user));
-  res.status(HTTP.Created).json(u);
+  res.status(HTTP.Created).json(user.toUser());
 };
 
 export const readUserById = async (req: Request, res: Response) => {
-  res.json(filterUserFields(await readNode(Node.User, req.params.uid)));
+  let user: User = await new Node(NodeType.User, req.params.uid).read();
+  console.log(user);
+  res.json(user.toUser());
 };
 
 export const readUserByUsername = async (req: Request, res: Response) => {
@@ -117,7 +65,10 @@ export const readUserByUsername = async (req: Request, res: Response) => {
 
   let r = result.records[0];
   if (!r || r.get("u") == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
-  res.json(filterUserFields(await readNode(Node.User, r.get("u").properties._id)));
+  console.log(r.get("u").properties._id);
+
+  let user: User = await new Node(NodeType.User, r.get("u").properties._id).read();
+  res.json(user.toUser());
 };
 
 export const updateUser = async (req: Request, res: Response) => {
@@ -129,20 +80,8 @@ export const updateUser = async (req: Request, res: Response) => {
     newData[reqKeys[i]] = req.body[reqKeys[i]];
   }
 
-  let result = await cypher(
-    `
-        MATCH (u:User {_id:$uid})
-        SET u += $body
-        RETURN u
-    `,
-    {
-      uid: req.params.uid,
-      body: newData,
-    }
-  );
-
-  let user = result.records[0].get("u").properties;
-  res.json(filterUserFields(user));
+  let user: User = await new Node(NodeType.User, req.params.uid).update(newData);
+  res.json(user.toUser());
 };
 
 export const updateUserAvatar = async (req: Request, res: Response) => {
@@ -164,17 +103,7 @@ export const updateUserCoverImage = async (req: Request, res: Response) => {
 };
 
 export const deleteUser = async (req: Request, res: Response) => {
-  await cypher(
-    `
-        MATCH (u:User {_id:$uid})
-        DETACH DELETE u
-    `,
-    {
-      uid: req.params.uid,
-    }
-  );
-
-  res.status(HTTP.OK).end();
+  await new Node(NodeType.User, req.params._id).delete();
 };
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -192,7 +121,11 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     }
   );
   if (!result.records.length)
-    next(new ErrorHandler(HTTP.NotFound, [{ param: "email", msg: "No such user for this email" }]));
+    next(
+      new ErrorHandler(HTTP.NotFound, [
+        { param: "email", msg: "No such user for this email", value: req.body.email },
+      ])
+    );
 
   let user: IUserPrivate = result.records[0].get("u").properties;
   if (!user.verified)
@@ -212,8 +145,8 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       admin: user.admin || false,
     };
 
-    user = (await readNode(Node.User, user._id)) as IUser;
-    res.json(filterUserFields(user));
+    let u: User = await new Node(NodeType.User, user._id).read();
+    res.json(u.toUser());
   } catch (e) {
     throw new ErrorHandler(HTTP.ServerError, e);
   }
@@ -241,11 +174,8 @@ export const readUserOrgs = async (req: Request, res: Response) => {
   );
 
   let orgs: IOrgStub[] = result.records.map((r: any) => {
-    return {
-      _id: r.get("o").properties._id,
-      name: r.get("o").properties.name,
-      created_at: r.get("o").properties.created_at,
-    } as IOrgStub;
+    let org = r.get("o").properties;
+    return new Org(org.name, org._id).toStub();
   });
 
   res.json(orgs);
@@ -253,7 +183,11 @@ export const readUserOrgs = async (req: Request, res: Response) => {
 
 // HELPER FUNCTIONS ===============================================================================
 
-const updateImage = async (user_id: string, file: Express.Multer.File, field: string) => {
+const updateImage = async (
+  user_id: string,
+  file: Express.Multer.File,
+  field: string
+): Promise<IUser> => {
   let image: S3Image;
   try {
     image = (await uploadImageToS3(user_id, file, field)) as S3Image;
@@ -261,22 +195,6 @@ const updateImage = async (user_id: string, file: Express.Multer.File, field: st
     throw new ErrorHandler(HTTP.ServerError, e);
   }
 
-  let session = dbs.neo4j.session();
-  let result;
-  try {
-    result = await session.run(
-      `
-            MATCH (u:User {_id: "${user_id}"})
-            SET u.${field} = '${image.data.Location}'
-            RETURN u
-        `,
-      {}
-    );
-  } catch (e) {
-    throw new ErrorHandler(HTTP.ServerError, e);
-  } finally {
-    session.close();
-  }
-
-  return filterUserFields(result.records[0].get("u").properties);
+  let user: User = await new Node(NodeType.User, user_id).update({ [field]: image.data.Location });
+  return user.toUser();
 };

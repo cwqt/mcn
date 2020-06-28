@@ -18,11 +18,11 @@
 
       <div class="profile-cover-body__content">
         <h1>{{ authorUser.name }}</h1>
-        <p>
+        <!-- <p>
           @{{ authorUser.username }} · Posts {{ authorUser.meta.posts }} ·
           Followers {{ authorUser.meta.followers }} · Following
           {{ authorUser.meta.following }}
-        </p>
+        </p> -->
         <p id="bio">{{ authorUser.bio }}</p>
       </div>
     </div>
@@ -36,18 +36,13 @@
   </div>
 
   <div class="profile-body-container">
-    <div class="profile-body" *ngIf="authorUser">
-      <div class="children">
-        <router-outlet
-          class="outlet"
-          [class.isOutletting]="showOutlet"
-          (activate)="onActivate()"
-          (deactivate)="onDeactivate()"
-        >
-        </router-outlet>
-      </div>
+    <div class="profile-body" *ngIf="authorUser"></div>
+  </div>
+</div>
 
-      <mat-tab-group
+<ibm-loading overlay *ngIf="loading"></ibm-loading>
+
+<!-- <mat-tab-group
         *ngIf="!showOutlet"
         class="tab-group container"
         (animationDone)="setCanLoadTabContent()"
@@ -72,9 +67,9 @@
             </ndc-dynamic>
           </div>
         </mat-tab>
-      </mat-tab-group>
+      </mat-tab-group> -->
 
-      <!-- <div class="tab-content">
+<!-- <div class="tab-content">
                 <div *ngFor="let tab of tabs; let index = index">
                     <div *ngIf="index == tabIndex">
                         <ndc-dynamic
@@ -90,8 +85,3 @@
                     </div>
                 </div>
             </div> -->
-    </div>
-  </div>
-</div>
-
-<ibm-loading overlay *ngIf="loading"></ibm-loading>

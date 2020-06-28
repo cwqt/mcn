@@ -1,7 +1,7 @@
 <div class="header-container">
   <div class="left">
     <img class="icon" src="/assets/leaf.png" />
-    <ibm-header-menu [title]="activeOrg.name">
+    <ibm-header-menu [title]="activeOrg ? activeOrg.name : 'No org'">
       <div *ngFor="let org of userOrgs" (click)="setActiveOrg(org)">
         <ibm-header-item>{{ org.name }}</ibm-header-item>
       </div>
