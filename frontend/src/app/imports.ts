@@ -7,6 +7,7 @@ export * from "../../../backend/lib/models/IoT/Device.model";
 export * from "../../../backend/lib/models/IoT/Hardware.model";
 export * from "../../../backend/lib/models/IoT/ApiKey.model";
 export * from "../../../backend/lib/models/IoT/Measurement.model";
+export * from "../../../backend/lib/models/IoT/DeviceProperty.model";
 export * from "../../../runner/lib/models/Tasks.model";
 
 export * from "../../../backend/lib/models/Hydroponics/Crop.model";

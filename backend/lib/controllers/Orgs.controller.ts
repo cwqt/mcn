@@ -5,8 +5,8 @@ import { cypher } from "../common/dbs";
 import { Types } from "mongoose";
 
 import { IOrgStub, Org } from "../models/Orgs.model";
-import { IDeviceStub } from "../models/IoT/Device.model";
-import { OrgRole } from "../models/Node.model";
+import { OrgRole, objToClass, NodeType, OrgItemType } from "../models/Node.model";
+import { capitalize } from "./Node.controller";
 
 export const createOrg = async (req: Request, res: Response) => {
   const org = new Org(req.body.name);
@@ -24,35 +24,46 @@ export const createOrg = async (req: Request, res: Response) => {
     }
   );
 
-  res.status(HTTP.Created).json(result.records[0].get("o").properties);
+  res.status(HTTP.Created).json(org.toOrg());
 };
 
-export const readOrgDevices = async (req: Request, res: Response) => {
+export const readOrgNodes = async (req: Request, res: Response) => {
+  let nodeType = <string>req.query.type;
   let result = await cypher(
     `
-    MATCH (o:Org {_id:$oid})
-    MATCH (d:Device)-[:IN]->(o)
-    RETURN d
-  `,
+      MATCH (o:Organisation {_id:$oid})
+      MATCH (n:${capitalize(nodeType)})-[:IN]->(o)
+      RETURN n
+    `,
     {
-      oid: req.params.oid,
+      oid: req.params.org_id,
     }
   );
 
-  let devices: IDeviceStub[] = result.records.map(
-    (r: any): IDeviceStub => {
-      let d = r.get("d");
-      return {
-        _id: d._id,
-        name: d.name,
-        state: d.state,
-        hardware_model: d.hardware_model,
-        network_name: d.network_name,
-      };
-    }
-  );
+  console.log(result, nodeType, req.params.org_id);
 
-  res.json(devices);
+  let nodes = result.records.map((r: any) => {
+    return objToClass(<NodeType>nodeType, r.get("n").properties).toStub();
+  });
+
+  res.json(nodes);
 };
 
-export const readOrgUsers = async (req: Request, res: Response) => {};
+export const addItemToOrg = async (req: Request, res: Response) => {
+  let nodeType = <string>req.query.type;
+  let result = await cypher(
+    `
+        MATCH (o:Organisation {_id:$oid})
+        MATCH (n:${capitalize(nodeType)} {_id:$iid})
+        WHERE NOT (n)-[:IN]->(o)
+        CREATE (n)-[:IN $rbody]->(o)
+      `,
+    {
+      oid: req.params.org_id,
+      iid: req.params.iid,
+      rbody: res.locals.relationshipBody ?? {},
+    }
+  );
+
+  res.status(HTTP.OK).end();
+};

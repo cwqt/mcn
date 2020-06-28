@@ -48,7 +48,6 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const readUserById = async (req: Request, res: Response) => {
   let user: User = await new Node(NodeType.User, req.params.uid).read();
-  console.log(user);
   res.json(user.toUser());
 };
 

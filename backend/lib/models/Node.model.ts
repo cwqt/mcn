@@ -4,44 +4,7 @@ import { Types } from "mongoose";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 import { capitalize } from "../controllers/Node.controller";
-
-export enum NodeType {
-  User = "user",
-  Organisation = "organisation",
-  Farm = "farm",
-  Rack = "rack",
-  Crop = "crop",
-  Device = "device",
-  Post = "post",
-}
-
-//adding measurements / getting of / constructing graphs
-export type RecordableType = NodeType.Device | NodeType.Farm | NodeType.Rack | NodeType.Crop;
-
-//posts, pinning
-export type PostableType =
-  | NodeType.Post
-  | NodeType.Device
-  | NodeType.Farm
-  | NodeType.Crop
-  | NodeType.Rack;
-
-//hydroponics stuff
-export type Florable = NodeType.Farm | NodeType.Rack | NodeType.Crop;
-
-//adding / removing to/from org
-export type OrgItemType =
-  | NodeType.User
-  | NodeType.Device
-  | NodeType.Farm
-  | NodeType.Rack
-  | NodeType.Crop;
-
-export enum OrgRole {
-  Owner,
-  Admin,
-  Viewer,
-}
+import { NodeType } from "../common/types/nodes.types";
 
 export class Node {
   _id: string;
@@ -124,26 +87,33 @@ export interface INode {
   type: NodeType;
 }
 
-import { User } from "./Users/User.model";
-import { Org } from "./Orgs.model";
+// import { User } from "./Users/User.model";
+// import { Org } from "./Orgs.model";
+// import { Device } from "./IoT/Device.model";
+// import { DeviceProperty, DeviceSensor, DeviceState } from "./IoT/DeviceProperty.model";
 
-export interface Type<T> extends Function {
-  new (...args: any[]): T;
-}
+// export interface Class<T> extends Function {
+//   new (...args: any[]): T;
+// }
 
-let NodeClassMap: { [index in NodeType]?: Type<any> };
-const getNodeClassMap = () => {
-  if (!NodeClassMap) {
-    NodeClassMap = {
-      [NodeType.Organisation]: Org,
-      [NodeType.User]: User,
-    };
-  }
-  return NodeClassMap;
-};
+// let NodeClassMap: { [index in NodeType]?: Class<any> };
+// const getNodeClassMap = () => {
+//   if (!NodeClassMap) {
+//     NodeClassMap = {
+//       [NodeType.Organisation]: Org,
+//       [NodeType.User]: User,
+//       [NodeType.Device]: Device,
+//       [NodeType.DeviceProperty]: DeviceProperty,
+//       [NodeType.Sensor]: DeviceSensor,
+//       [NodeType.Sensor]: DeviceState,
+//     };
+//   }
+//   return NodeClassMap;
+// };
 
 export const objToClass = (type: NodeType, object: any) => {
   //some stupid bullshit with circular dependencies
-  let NodeMapping = getNodeClassMap();
-  return plainToClass(NodeMapping[type], object);
+  // let NodeMapping = getNodeClassMap();
+  // return plainToClass(NodeMapping[type], object);
+  return {};
 };

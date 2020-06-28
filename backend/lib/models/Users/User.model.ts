@@ -1,5 +1,5 @@
-import { INode, NodeType, Node } from "../Node.model";
-import bcrypt from "bcrypt";
+import { INode, Node, NodeType } from "../Node.model";
+// import bcrypt from "bcrypt";
 
 export class User extends Node {
   name: string;
@@ -25,18 +25,16 @@ export class User extends Node {
   }
 
   async generateCredentials(password: string) {
-    this.salt = await bcrypt.genSalt(10);
-    this.pw_hash = await bcrypt.hash(password, this.salt);
+    // this.salt = await bcrypt.genSalt(10);
+    // this.pw_hash = await bcrypt.hash(password, this.salt);
   }
 
   toStub(): IUserStub {
     return {
       ...super.toStub(),
-      _id: this._id,
       name: this.name,
       username: this.username,
       avatar: this.avatar,
-      created_at: this.created_at,
       type: this.type,
     };
   }
