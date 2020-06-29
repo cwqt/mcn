@@ -1,4 +1,4 @@
-import { INode, Node, NodeType } from "./Node.model";
+import { INode, Node } from "./Node.model";
 
 export class Org extends Node {
   name: string;

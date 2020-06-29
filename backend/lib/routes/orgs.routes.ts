@@ -3,7 +3,7 @@ const AsyncRouter = require("express-async-router").AsyncRouter;
 const { body, param, query } = require("express-validator");
 import { Request, Response } from "express";
 import { createOrg, readOrgNodes, addItemToOrg } from "../controllers/Orgs.controller";
-import { OrgItemType, NodeType, OrgRole } from "../models/Node.model";
+import { OrgItemType, NodeType, OrgRole } from "@cxss/interfaces";
 
 const router = AsyncRouter({ mergeParams: true });
 router.post("/", validate([body("name").not().isEmpty().trim()]), createOrg);

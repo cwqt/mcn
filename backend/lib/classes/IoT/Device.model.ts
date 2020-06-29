@@ -2,7 +2,8 @@ import { SupportedHardware, Type } from "./Hardware.model";
 import { Measurement, Unit, IoTState, IoTMeasurement } from "../../common/types/measurements.types";
 import { HardwareInformation } from "../../common/types/hardware.types";
 import { IApiKey } from "./ApiKey.model";
-import { INode, Node, NodeType } from "../Node.model";
+import { INode, NodeType } from "../../models";
+import { Node } from "../../classes/Node.model";
 
 import * as IpAddress from "ip-address";
 

@@ -2,8 +2,7 @@ import {
   Measurement as RecordableMeasurement,
   IoTMeasurement,
   IoTState,
-} from "../Types/measurements.types";
-import { Document, Schema, Model, model, Types } from "mongoose";
+} from "../Types/Measurements.types";
 
 export enum RecorderType {
   User = "user",
@@ -39,8 +38,4 @@ export interface IMeasurement {
   recorder_type?: RecorderType.User | RecorderType.Device;
   created_at: number;
   data?: IoTDataPacket;
-}
-
-export interface IMeasurementModel extends IMeasurement, Document {
-  _id: string;
 }

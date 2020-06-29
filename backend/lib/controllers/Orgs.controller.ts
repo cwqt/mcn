@@ -4,8 +4,8 @@ import { HTTP } from "../common/http";
 import { cypher } from "../common/dbs";
 import { Types } from "mongoose";
 
-import { IOrgStub, Org } from "../models/Orgs.model";
-import { OrgRole, objToClass, NodeType, OrgItemType } from "../models/Node.model";
+import { IOrgStub, Org } from "../classes/Orgs.model";
+import { OrgRole, objToClass, NodeType, OrgItemType } from "../models";
 import { capitalize } from "./Node.controller";
 
 export const createOrg = async (req: Request, res: Response) => {

@@ -1,4 +1,4 @@
-import { Measurement, IoTMeasurement, Unit, IoTState } from "../measurements.types";
+import { Measurement, IoTMeasurement, Unit, IoTState } from "../Measurements.types";
 import { DeviceCapability, MicroController, HardwareDevice, Type } from "../../IoT/Hardware.model";
 
 const info: HardwareDevice = {

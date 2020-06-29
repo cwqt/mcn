@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@cxss/interfaces": "file:../interfaces",
     "aws-sdk": "^2.656.0",
     "bcrypt": "^4.0.1",
     "class-transformer": "^0.2.3",

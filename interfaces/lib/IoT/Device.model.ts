@@ -1,6 +1,6 @@
 import { SupportedHardware, Type } from "./Hardware.model";
-import { Measurement, Unit, IoTState, IoTMeasurement } from "../Types/measurements.types";
-import { HardwareInformation } from "../Types/hardware.types";
+import { Measurement, Unit, IoTState, IoTMeasurement } from "../Types/Measurements.types";
+import { HardwareInformation } from "../Types/Hardware.types";
 import { IApiKey } from "./ApiKey.model";
 import { INode } from "../Node.model";
 

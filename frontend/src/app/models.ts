@@ -18,3 +18,4 @@ export * from "../../../interfaces/Types/events.types";
 export * from "../../../interfaces/Types/hardware.types";
 export * from "../../../interfaces/Types/measurements.types";
 export * from "../../../interfaces/Types/phases.types";
+export * from "../../../interfaces/Types/nodes.types";

@@ -1,4 +1,4 @@
-import { NodeType } from "./Types/nodes.types";
+import { NodeType } from "./Types/Nodes.types";
 
 export interface INode {
   _id: string;

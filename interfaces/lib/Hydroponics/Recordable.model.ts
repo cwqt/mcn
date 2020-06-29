@@ -1,4 +1,4 @@
-import { Measurement } from "../Types/measurements.types";
+import { Measurement } from "../Types/Measurements.types";
 import * as IpAddress from "ip-address";
 
 export enum RecordableType {

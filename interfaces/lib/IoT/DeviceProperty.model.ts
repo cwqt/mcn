@@ -1,5 +1,5 @@
 import { Type } from "./Hardware.model";
-import { Measurement, Unit, IoTState, IoTMeasurement } from "../Types/measurements.types";
+import { Measurement, Unit, IoTState, IoTMeasurement } from "../Types/Measurements.types";
 import { INode } from "../Node.model";
 
 interface IDeviceProperty extends INode {
