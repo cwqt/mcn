@@ -19,3 +19,5 @@ export * from "./IoT/Measurement.model";
 // export * from './Hydroponics/Farm.model';
 export * from "./Hydroponics/Rack.model";
 export * from "./Hydroponics/Crop.model";
+
+export * from "./Runner/Tasks.model";

@@ -1,5 +1,6 @@
-import { INode, Node, NodeType } from "../Node.model";
-// import bcrypt from "bcrypt";
+import { Node } from "../Node.model";
+import { NodeType, IUser, IUserStub, IUserPrivate } from "@cxss/interfaces";
+import bcrypt from "bcrypt";
 
 export class User extends Node {
   name: string;
@@ -25,8 +26,8 @@ export class User extends Node {
   }
 
   async generateCredentials(password: string) {
-    // this.salt = await bcrypt.genSalt(10);
-    // this.pw_hash = await bcrypt.hash(password, this.salt);
+    this.salt = await bcrypt.genSalt(10);
+    this.pw_hash = await bcrypt.hash(password, this.salt);
   }
 
   toStub(): IUserStub {
@@ -59,25 +60,4 @@ export class User extends Node {
       pw_hash: this.pw_hash,
     };
   }
-}
-
-export interface IUserStub extends INode {
-  name: string;
-  username: string;
-  avatar?: string;
-}
-
-export interface IUser extends IUserStub {
-  email: string;
-  verified: boolean;
-  new_user: boolean;
-  admin?: boolean;
-  bio?: string;
-  cover_image?: string;
-  location?: string;
-}
-
-export interface IUserPrivate extends IUser {
-  salt?: string;
-  pw_hash?: string;
 }

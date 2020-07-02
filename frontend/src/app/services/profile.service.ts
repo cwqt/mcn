@@ -4,7 +4,7 @@ import { UserService } from "./user.service";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 
-import { IUser, IDeviceStub } from "../imports";
+import { IUser, IDeviceStub } from "../models";
 
 @Injectable({
   providedIn: "root",

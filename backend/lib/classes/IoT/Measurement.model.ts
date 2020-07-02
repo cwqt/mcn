@@ -1,8 +1,4 @@
-import {
-  Measurement as RecordableMeasurement,
-  IoTMeasurement,
-  IoTState,
-} from "../../common/types/measurements.types";
+import { Measurement as RecordableMeasurement, IoTMeasurement, IoTState } from "@cxss/interfaces";
 import { Document, Schema, Model, model, Types } from "mongoose";
 
 export enum RecorderType {

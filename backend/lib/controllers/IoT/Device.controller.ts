@@ -1,94 +1,74 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
 
-import { HardwareInformation } from "../../common/types/hardware.types";
 import { HTTP } from "../../common/http";
 import dbs, { cypher } from "../../common/dbs";
-import { HardwareDevice, SupportedHardware } from "../../models/Hardware.model";
-import { IPlant } from "../../models/Plant.model";
-import { IGarden } from "../../models/Garden.model";
-import { IRecordableStub } from "../../models/Recordable.model";
 import { ErrorHandler } from "../../common/errorHandler";
+
 import {
   IDeviceSensor,
   IDevice,
-  DeviceState,
+  DeviceStateType,
   IDeviceState,
-} from "../../models/Device/Device.model";
-import { IApiKey, IApiKeyPrivate } from "../../models/Device/ApiKey.model";
-import {
+  IApiKey,
+  IApiKeyPrivate,
   Measurement,
   IoTState,
   IoTMeasurement,
-} from "../../common/types/measurements.types";
+  HardwareDevice,
+  SupportedHardware,
+  HardwareInformation,
+} from "@cxss/interfaces";
+import { Device } from "../../classes/IoT/Device.model";
+import { DeviceSensor, DeviceState } from "../../classes/IoT/DeviceProperty.model";
 
-export const getDeviceState = (device: IDevice): DeviceState => {
-  if (device.last_ping == undefined) return DeviceState.UnVerified;
-  if (device.last_ping && device.measurement_count == 0)
-    return DeviceState.Verified;
+export const getDeviceState = (device: IDevice): DeviceStateType => {
+  if (device.last_ping == undefined) return DeviceStateType.UnVerified;
+  if (device.last_ping && device.measurement_count == 0) return DeviceStateType.Verified;
   if (device.last_ping && device.measurement_count > 0) {
     let current_time = Date.now();
     if (current_time - device.last_ping > 86400 * 1000) {
       //1 day
-      return DeviceState.InActive;
+      return DeviceStateType.InActive;
     } else {
-      return DeviceState.Active;
+      return DeviceStateType.Active;
     }
   }
 };
 
 export const createDevice = async (req: Request, res: Response) => {
-  const hwInfo: HardwareDevice =
-    HardwareInformation[<SupportedHardware>req.body.hardware_model];
-  let device: IDevice = {
-    _id: Types.ObjectId().toHexString(),
-    name: req.body.name,
-    images: [],
-    created_at: Date.now(),
-    state: DeviceState.UnVerified,
-    measurement_count: 0,
-    hardware_model: req.body.hardware_model,
-    network_name: hwInfo.network_name,
-  };
+  const hwInfo: HardwareDevice = HardwareInformation[<SupportedHardware>req.body.hardware_model];
+  let device = new Device(req.body.name, req.body.hardware_model);
 
-  let sensors: IDeviceSensor[] = [];
-  let metrics: IDeviceSensor[] = [];
-  let states: IDeviceState[] = [];
+  let sensors: DeviceSensor[] = [];
+  let metrics: DeviceSensor[] = [];
+  let states: DeviceState[] = [];
 
   sensors = Object.keys(hwInfo.sensors).map((s: Measurement) => {
-    return {
-      _id: Types.ObjectId().toHexString(),
-      measures: hwInfo.sensors[s].type,
-      unit: hwInfo.sensors[s].unit,
-      name: hwInfo.sensors[s].type + " sensor",
-      description: "",
-      ref: s,
-      value: undefined,
-    } as IDeviceSensor;
+    return new DeviceSensor(
+      hwInfo.sensors[s].type,
+      hwInfo.sensors[s].unit,
+      hwInfo.sensors[s].type + " sensor",
+      s
+    );
   });
 
   metrics = Object.keys(hwInfo.metrics).map((s: IoTMeasurement) => {
-    return {
-      _id: Types.ObjectId().toHexString(),
-      measures: hwInfo.metrics[s].type,
-      unit: hwInfo.metrics[s].unit,
-      name: hwInfo.metrics[s].type + " metric",
-      description: "",
-      ref: s,
-      value: undefined,
-    } as IDeviceSensor;
+    return new DeviceSensor(
+      hwInfo.metrics[s].type,
+      hwInfo.metrics[s].unit,
+      hwInfo.metrics[s].type + " metric",
+      s
+    );
   });
 
   states = Object.keys(hwInfo.states).map((s: IoTState) => {
-    return {
-      _id: Types.ObjectId().toHexString(),
-      state: hwInfo.states[s].type,
-      type: hwInfo.states[s].unit,
-      name: hwInfo.states[s].type + " state",
-      description: "",
-      ref: s,
-      value: undefined,
-    } as IDeviceState;
+    return new DeviceState(
+      hwInfo.states[s].type,
+      hwInfo.states[s].unit,
+      hwInfo.states[s].type + " state",
+      s
+    );
   });
 
   console.log(sensors, states, metrics);
@@ -175,21 +155,8 @@ export const readDevice = async (req: Request, res: Response) => {
   let result = await cypher(
     `
         MATCH (d:Device {_id:$did})
-        WITH d,
-            SIZE((d)<-[:REPOST_OF]-(:Post)) AS reposts,
-            SIZE((d)<-[:REPLY_TO]-(:Post)) AS replies,
-            SIZE((d)<-[:HEARTS]-(:User)) AS hearts
-
-        WITH d, reposts, replies, hearts
         OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
-
-        WITH d, reposts, replies, hearts, k
-        OPTIONAL MATCH (d)-[:MONITORS]->(r)
-        WHERE r:Plant OR r:Garden
-
         RETURN d, r, k, hearts, replies, reposts,
-            EXISTS ((:User {_id:$selfid})-[:HEARTS]->(d)) AS isHearting,
-            EXISTS ((:User {_id:$selfid})-[:POSTED]->(:Post)-[:REPOST_OF]->(d)) AS hasReposted
     `,
     {
       did: req.params.did,
@@ -203,7 +170,6 @@ export const readDevice = async (req: Request, res: Response) => {
   //   : 0;
 
   device.measurement_count = 0;
-  let recordable: IPlant | IGarden = result.records[0].get("r")?.properties;
   let key: IApiKeyPrivate = result.records[0].get("k")?.properties;
 
   if (key) delete key.key;
@@ -211,26 +177,8 @@ export const readDevice = async (req: Request, res: Response) => {
   let data: IDevice = {
     ...device,
     state: getDeviceState(device),
-    assigned_to: recordable || null,
     api_key: (key as IApiKey) || null,
-    meta: {
-      isHearting: result.records[0].get("isHearting") ? true : false,
-      hasReposted: result.records[0].get("hasReposted") ? true : false,
-      hearts: result.records[0].get("hearts").toNumber(),
-      reposts: result.records[0].get("reposts").toNumber(),
-      replies: result.records[0].get("replies").toNumber(),
-    },
   };
-
-  if (recordable) {
-    data.assigned_to = {
-      _id: recordable._id,
-      name: recordable.name,
-      thumbnail: recordable.thumbnail,
-      created_at: recordable.created_at,
-      type: recordable.type,
-    } as IRecordableStub;
-  }
 
   res.json(data);
 };
@@ -275,31 +223,6 @@ export const pingDevice = async (req: Request, res: Response) => {
   );
 
   res.status(HTTP.OK).end();
-};
-
-const getAssignedRecordable = async (
-  device_id: string
-): Promise<IPlant | IGarden> => {
-  let session = dbs.neo4j.session();
-  let result;
-  try {
-    result = await session.run(
-      `
-            MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
-            WHERE r:Plant OR r:Garden
-            RETURN r
-        `,
-      {
-        did: device_id,
-      }
-    );
-  } catch (e) {
-    throw new Error(e);
-  }
-
-  if (!result.records.length)
-    throw new Error("Not recordable assigned to this device");
-  return result.records[0].get("r").properties;
 };
 
 export const readDeviceProperties = async (req: Request, res: Response) => {

@@ -21,18 +21,6 @@ import {
 // import devices from "../iot/devices.routes";
 // import plants from "../Hydroponics/plants.routes";
 
-import { Node } from "../../models/Node.model";
-import {
-  createNode,
-  readNodes,
-  updateNode,
-  readNodeMiddleware,
-  deleteNodeMiddleware,
-} from "../../controllers/Node.controller";
-// import { filterUserFields } from "../../controllers/Users/User.controller";
-import { User } from "../../models/Users/User.model";
-import { HTTP } from "../../common/http";
-
 const storage = multer({
   storage: multer.memoryStorage(),
   limits: {

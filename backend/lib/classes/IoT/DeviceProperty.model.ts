@@ -1,8 +1,15 @@
-import { Type } from "./Hardware.model";
-import { Measurement, Unit, IoTState, IoTMeasurement } from "../../common/types/measurements.types";
-import { INode, Node, NodeType } from "../Node.model";
-
-import * as IpAddress from "ip-address";
+import {
+  Measurement,
+  Unit,
+  IoTState,
+  IoTMeasurement,
+  NodeType,
+  IDeviceProperty,
+  IDeviceSensor,
+  IDeviceState,
+  Type,
+} from "@cxss/interfaces";
+import { Node } from "../Node.model";
 
 export class DeviceProperty extends Node {
   ref: string;
@@ -69,21 +76,4 @@ export class DeviceState extends DeviceProperty {
       dType: this.dType,
     };
   }
-}
-
-interface IDeviceProperty extends INode {
-  ref: string;
-  value: string | number | boolean;
-  name: string;
-  description: string;
-}
-
-export interface IDeviceSensor extends IDeviceProperty {
-  measures: Measurement | IoTMeasurement;
-  unit: Unit;
-}
-
-export interface IDeviceState extends IDeviceProperty {
-  state: IoTState;
-  dType: Type;
 }

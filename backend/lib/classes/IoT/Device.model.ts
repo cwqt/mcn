@@ -1,9 +1,13 @@
-import { SupportedHardware, Type } from "./Hardware.model";
-import { Measurement, Unit, IoTState, IoTMeasurement } from "../../common/types/measurements.types";
-import { HardwareInformation } from "../../common/types/hardware.types";
-import { IApiKey } from "./ApiKey.model";
-import { INode, NodeType } from "../../models";
 import { Node } from "../../classes/Node.model";
+import {
+  NodeType,
+  IApiKey,
+  SupportedHardware,
+  IDeviceStub,
+  IDevice,
+  DeviceStateType,
+  HardwareInformation,
+} from "@cxss/interfaces";
 
 import * as IpAddress from "ip-address";
 
@@ -56,31 +60,4 @@ export class Device extends Node {
       api_key: this.api_key,
     };
   }
-}
-
-export enum DeviceStateType {
-  Active = "active",
-  InActive = "inactive",
-  Verified = "verified",
-  UnVerified = "unverified",
-}
-
-export interface IDeviceStub extends INode {
-  name: string;
-  short_desc?: string;
-  thumbnail?: string;
-  last_ping?: number; //seconds since epoch device sent message
-  state: DeviceStateType;
-  hardware_model: SupportedHardware;
-  network_name: string;
-}
-
-export interface IDevice extends IDeviceStub {
-  images: string[];
-  software_version?: string;
-  measurement_count?: number;
-  full_desc?: string;
-  device_ip?: IpAddress.Address4 | IpAddress.Address6;
-  api_key?: IApiKey;
-  // assigned_to?: IFlorableStub;
 }

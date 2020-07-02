@@ -4,7 +4,7 @@ import { HeaderBarUserMenuComponent } from "./header-bar-user-menu/header-bar-us
 import { OrganisationService } from "src/app/services/organisation.service";
 import { UserService } from "src/app/services/user.service";
 
-import { IOrgStub } from "src/app/imports";
+import { IOrgStub } from "src/app/models";
 
 @Component({
   selector: "app-header-bar",

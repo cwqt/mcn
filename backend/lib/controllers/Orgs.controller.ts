@@ -1,11 +1,10 @@
 import { Request, Response } from "express";
-import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 import { cypher } from "../common/dbs";
-import { Types } from "mongoose";
 
-import { IOrgStub, Org } from "../classes/Orgs.model";
-import { OrgRole, objToClass, NodeType, OrgItemType } from "../models";
+import { objToClass } from "../classes/Node.model";
+import { Org } from "../classes/Orgs.model";
+import { OrgRole, NodeType } from "@cxss/interfaces";
 import { capitalize } from "./Node.controller";
 
 export const createOrg = async (req: Request, res: Response) => {

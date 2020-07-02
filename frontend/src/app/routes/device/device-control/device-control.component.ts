@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { DeviceService } from "src/app/services/device.service";
 
-import { IDevice, IDeviceState, IDeviceStub, IUser } from "src/app/imports";
+import { IDevice, IDeviceState, IDeviceStub, IUser } from "src/app/models";
 
 @Component({
   selector: "app-device-control",

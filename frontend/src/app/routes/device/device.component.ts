@@ -12,7 +12,7 @@ import {
   HardwareDevice,
   IUser,
   HardwareInformation,
-} from "../../imports";
+} from "../../models";
 
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 

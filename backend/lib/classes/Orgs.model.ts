@@ -1,4 +1,5 @@
-import { INode, Node } from "./Node.model";
+import { INode, NodeType, IOrg, IOrgStub } from "@cxss/interfaces";
+import { Node } from "./Node.model";
 
 export class Org extends Node {
   name: string;
@@ -23,10 +24,3 @@ export class Org extends Node {
     };
   }
 }
-
-export interface IOrgStub extends INode {
-  name: string;
-  avatar?: string;
-}
-
-export interface IOrg extends IOrgStub {}

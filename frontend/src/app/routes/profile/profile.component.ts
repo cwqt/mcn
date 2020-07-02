@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from "@angular/core";
-import { IUser } from "src/app/imports";
+import { IUser } from "src/app/models";
 import { UserService } from "src/app/services/user.service";
 import { ActivatedRoute, Router } from "@angular/router";
 
-import { IDeviceStub } from "../../imports";
+import { IDeviceStub } from "../../models";
 
 import { ProfileService } from "src/app/services/profile.service";
 import { MatTabChangeEvent } from "@angular/material/tabs";

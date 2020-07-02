@@ -7,9 +7,11 @@ import { HTTP } from "../../common/http";
 import { uploadImageToS3, S3Image } from "../../common/storage";
 import dbs, { cypher } from "../../common/dbs";
 
-import { IUserPrivate, User, IUser } from "../../models/Users/User.model";
-import { IOrgStub, Org } from "../../models/Orgs.model";
-import { Node, NodeType } from "../../models/Node.model";
+import { User } from "../../classes/Users/User.model";
+import { Org } from "../../classes/Orgs.model";
+import { Node } from "../../classes/Node.model";
+
+import { IUserPrivate, IUser, IOrgStub, NodeType } from "@cxss/interfaces";
 
 export const createUser = async (req: Request, res: Response) => {
   //see if username/email already taken

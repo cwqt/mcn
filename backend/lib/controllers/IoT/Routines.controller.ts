@@ -2,14 +2,9 @@ import { Request, Response } from "express";
 import { cypher } from "../../common/dbs";
 import { Types } from "mongoose";
 
-import {
-  ITaskRoutine,
-  ITask,
-  TaskState,
-} from "../../../../runner/lib/models/Tasks.model";
 import { ErrorHandler } from "../../common/errorHandler";
 import { HTTP } from "../../common/http";
-import { IDeviceSensor } from "../../models/Device/Device.model";
+import { IDeviceSensor, ITaskRoutine, ITask, TaskState } from "@cxss/interfaces";
 
 export const getTaskRoutines = async (req: Request, res: Response) => {
   let result = await cypher(
@@ -95,13 +90,9 @@ export const createTaskInRoutine = async (req: Request, res: Response) => {
   );
 
   let taskRoutine = result.records[0]?.get("tr")?.properties;
-  if (!taskRoutine)
-    throw new ErrorHandler(HTTP.NotFound, "No such TaskRoutine");
+  if (!taskRoutine) throw new ErrorHandler(HTTP.NotFound, "No such TaskRoutine");
   if (taskRoutine.locked)
-    throw new ErrorHandler(
-      HTTP.BadRequest,
-      "Cannot add new task while routine in progress"
-    );
+    throw new ErrorHandler(HTTP.BadRequest, "Cannot add new task while routine in progress");
 
   let startNode = result.records[0].get("startNode")?.properties;
   if (!startNode) {

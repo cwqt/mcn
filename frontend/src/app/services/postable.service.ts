@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { PostableType } from "../imports";
+import { PostableType } from "@cxss/interfaces";
 import { HttpClient } from "@angular/common/http";
 
 @Injectable({

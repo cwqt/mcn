@@ -6,7 +6,7 @@ import config from "../../config";
 import { ErrorHandler } from "../../common/errorHandler";
 import { cypher } from "../../common/dbs";
 import { HTTP } from "../../common/http";
-import { IApiKeyPrivate } from "../../models/Device/ApiKey.model";
+import { IApiKeyPrivate } from "@cxss/interfaces";
 
 const filterFields = (key: any) => {
   let hiddenFields = ["key"];
@@ -46,8 +46,7 @@ export const createApiKey = async (req: Request, res: Response) => {
     }
   );
 
-  if (!result.records.length)
-    throw new ErrorHandler(HTTP.ServerError, "createApiKeyError");
+  if (!result.records.length) throw new ErrorHandler(HTTP.ServerError, "createApiKeyError");
   res.status(HTTP.Created).json(result.records[0].get("a").properties);
 };
 
@@ -62,11 +61,8 @@ export const readApiKey = async (req: Request, res: Response) => {
     }
   );
 
-  if (!result.records.length)
-    throw new ErrorHandler(HTTP.ServerError, "readApiKeyError");
-  res
-    .status(HTTP.Created)
-    .json(filterFields(result.records[0].get("a").properties));
+  if (!result.records.length) throw new ErrorHandler(HTTP.ServerError, "readApiKeyError");
+  res.status(HTTP.Created).json(filterFields(result.records[0].get("a").properties));
 };
 
 export const deleteApiKey = async (req: Request, res: Response) => {};

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { HTTP } from "../common/http";
 import { cypher } from "../common/dbs";
-import { NodeType } from "../../../interfaces/Types/nodes.types";
+import { NodeType } from "@cxss/interfaces";
 
 export const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 

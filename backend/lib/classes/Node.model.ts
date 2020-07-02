@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 import { capitalize } from "../controllers/Node.controller";
-import { NodeType } from "../common/types/nodes.types";
+import { NodeType } from "@cxss/interfaces";
 
 export class Node {
   _id: string;
@@ -87,33 +87,25 @@ export interface INode {
   type: NodeType;
 }
 
-// import { User } from "./Users/User.model";
-// import { Org } from "./Orgs.model";
-// import { Device } from "./IoT/Device.model";
-// import { DeviceProperty, DeviceSensor, DeviceState } from "./IoT/DeviceProperty.model";
+import { User } from "./Users/User.model";
+import { Org } from "./Orgs.model";
+import { Device } from "./IoT/Device.model";
+import { DeviceProperty, DeviceSensor, DeviceState } from "./IoT/DeviceProperty.model";
 
-// export interface Class<T> extends Function {
-//   new (...args: any[]): T;
-// }
+export interface Class<T> extends Function {
+  new (...args: any[]): T;
+}
 
-// let NodeClassMap: { [index in NodeType]?: Class<any> };
-// const getNodeClassMap = () => {
-//   if (!NodeClassMap) {
-//     NodeClassMap = {
-//       [NodeType.Organisation]: Org,
-//       [NodeType.User]: User,
-//       [NodeType.Device]: Device,
-//       [NodeType.DeviceProperty]: DeviceProperty,
-//       [NodeType.Sensor]: DeviceSensor,
-//       [NodeType.Sensor]: DeviceState,
-//     };
-//   }
-//   return NodeClassMap;
-// };
+const NodeClassMap: { [index in NodeType]?: Class<any> } = {
+  [NodeType.Organisation]: Org,
+  [NodeType.User]: User,
+  [NodeType.Device]: Device,
+  [NodeType.DeviceProperty]: DeviceProperty,
+  [NodeType.Sensor]: DeviceSensor,
+  [NodeType.Sensor]: DeviceState,
+};
 
 export const objToClass = (type: NodeType, object: any) => {
-  //some stupid bullshit with circular dependencies
-  // let NodeMapping = getNodeClassMap();
-  // return plainToClass(NodeMapping[type], object);
-  return {};
+  // some stupid bullshit with circular dependencies
+  return plainToClass(NodeClassMap[type], object);
 };
