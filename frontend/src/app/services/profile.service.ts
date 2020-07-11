@@ -1,10 +1,9 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
-import { UserService } from "./user.service";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 
-import { IUser, IDeviceStub } from "../models";
+import { IUser } from "@cxss/interfaces";
 
 @Injectable({
   providedIn: "root",
@@ -22,7 +21,7 @@ export class ProfileService {
   selectedTab: BehaviorSubject<string> = new BehaviorSubject("plants");
   cachedTabs = [];
 
-  constructor(private userService: UserService, private http: HttpClient) {
+  constructor(private http: HttpClient) {
     this.currentProfile = this.currentProfileSubject.asObservable();
   }
 
@@ -33,22 +32,6 @@ export class ProfileService {
         map((user) => {
           this.currentProfileSubject.next(user);
           return user;
-        })
-      )
-      .toPromise();
-  }
-
-  getDevices(page?: number, per_page?: number) {
-    let query = "";
-    if (page != undefined && per_page)
-      query = `?page=${page}&per_page=${per_page}`;
-
-    return this.http
-      .get(`/api/users/${this.currentProfileValue._id}/devices${query}`)
-      .pipe(
-        //pagination: IPaginator
-        map((response: { data: IDeviceStub[] }) => {
-          return response;
         })
       )
       .toPromise();

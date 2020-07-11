@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { environment } from "../environments/environment";
-import { IUser } from "./models";
+import { IUser } from "@cxss/interfaces";
 
 import { UserService } from "./services/user.service";
 import { OrganisationService } from "./services/organisation.service";

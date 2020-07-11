@@ -147,6 +147,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     };
 
     let u: User = await new Node(NodeType.User, user._id).read();
+    console.log(u);
     res.json(u.toUser());
   } catch (e) {
     throw new ErrorHandler(HTTP.ServerError, e);

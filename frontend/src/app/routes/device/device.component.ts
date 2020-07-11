@@ -4,15 +4,11 @@ import { DeviceService } from "src/app/services/device.service";
 import { UserService } from "src/app/services/user.service";
 import {
   IDevice,
-  IDeviceStub,
-  IDeviceState,
   IDeviceSensor,
-  IMeasurementModel,
-  IMeasurement,
   HardwareDevice,
   IUser,
   HardwareInformation,
-} from "../../models";
+} from "@cxss/interfaces";
 
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 
@@ -32,11 +28,6 @@ export class DeviceComponent implements OnInit {
       loading: true,
       error: "",
     },
-    measurements: {
-      data: undefined,
-      loading: true,
-      error: "",
-    },
     sensors: {
       data: undefined,
       loading: true,
@@ -52,7 +43,6 @@ export class DeviceComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
-    private router: Router,
     private deviceService: DeviceService
   ) {}
 
@@ -61,9 +51,6 @@ export class DeviceComponent implements OnInit {
   }
   get device(): IDevice {
     return this.cache.device.data;
-  }
-  get measurements(): IMeasurementModel[] {
-    return this.cache.measurements.data;
   }
 
   async ngOnInit() {
@@ -100,17 +87,17 @@ export class DeviceComponent implements OnInit {
       .finally(() => (this.cache.device.loading = false));
   }
 
-  getDeviceMeasurements(): Promise<IMeasurementModel[]> {
-    this.cache.measurements.loading = true;
-    return this.deviceService
-      .getMeasurements(this.cache.user.data._id, this.cache.device.data._id)
-      .then(
-        (measurements: IMeasurementModel[]) =>
-          (this.cache.measurements.data = measurements)
-      )
-      .catch((e) => (this.cache.measurements.error = e))
-      .finally(() => (this.cache.measurements.loading = false));
-  }
+  // getDeviceMeasurements(): Promise<IMeasurementModel[]> {
+  //   this.cache.measurements.loading = true;
+  //   return this.deviceService
+  //     .getMeasurements(this.cache.user.data._id, this.cache.device.data._id)
+  //     .then(
+  //       (measurements: IMeasurementModel[]) =>
+  //         (this.cache.measurements.data = measurements)
+  //     )
+  //     .catch((e) => (this.cache.measurements.error = e))
+  //     .finally(() => (this.cache.measurements.loading = false));
+  // }
 
   getDeviceSensors(): Promise<IDeviceSensor[]> {
     this.cache.sensors.loading = true;

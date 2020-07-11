@@ -3,7 +3,7 @@ import { of, Observable, BehaviorSubject } from "rxjs";
 import { tap, map } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
 
-import { IUser, IUserStub, IDeviceStub, IOrgStub } from "../models";
+import { IUser, IUserStub, IDeviceStub, IOrgStub } from "@cxss/interfaces";
 
 @Injectable({
   providedIn: "root",

@@ -6,7 +6,7 @@ import {
   IDeviceState,
   IDeviceSensor,
   IUser,
-} from "src/app/models";
+} from "@cxss/interfaces";
 
 import { DeviceService } from "src/app/services/device.service";
 

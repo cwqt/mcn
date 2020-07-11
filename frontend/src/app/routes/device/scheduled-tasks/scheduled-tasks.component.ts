@@ -1,7 +1,13 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { DeviceService } from "src/app/services/device.service";
 
-import { ITaskRoutine, TaskState, ITask, IDevice, IUser } from "src/app/models";
+import {
+  ITaskRoutine,
+  TaskState,
+  ITask,
+  IDevice,
+  IUser,
+} from "@cxss/interfaces";
 
 var cronstrue = require("cronstrue");
 

@@ -1,12 +1,10 @@
 import { Component, OnInit, ViewEncapsulation } from "@angular/core";
-import { IUser } from "src/app/models";
 import { UserService } from "src/app/services/user.service";
 import { ActivatedRoute, Router } from "@angular/router";
 
-import { IDeviceStub } from "../../models";
+import { IDeviceStub, IUser } from "@cxss/interfaces";
 
 import { ProfileService } from "src/app/services/profile.service";
-import { MatTabChangeEvent } from "@angular/material/tabs";
 import { BehaviorSubject } from "rxjs";
 
 @Component({

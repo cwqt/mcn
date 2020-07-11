@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 import { capitalize } from "../controllers/Node.controller";
-import { NodeType } from "@cxss/interfaces";
+import { NodeType, INode } from "@cxss/interfaces";
 
 export class Node {
   _id: string;
@@ -81,12 +81,6 @@ export class Node {
   }
 }
 
-export interface INode {
-  _id: string;
-  created_at: number;
-  type: NodeType;
-}
-
 import { User } from "./Users/User.model";
 import { Org } from "./Orgs.model";
 import { Device } from "./IoT/Device.model";
@@ -96,16 +90,17 @@ export interface Class<T> extends Function {
   new (...args: any[]): T;
 }
 
-const NodeClassMap: { [index in NodeType]?: Class<any> } = {
-  [NodeType.Organisation]: Org,
-  [NodeType.User]: User,
-  [NodeType.Device]: Device,
-  [NodeType.DeviceProperty]: DeviceProperty,
-  [NodeType.Sensor]: DeviceSensor,
-  [NodeType.Sensor]: DeviceState,
-};
-
 export const objToClass = (type: NodeType, object: any) => {
+  const NodeClassMap: { [index in NodeType]?: Class<any> } = {
+    [NodeType.Organisation]: Org,
+    [NodeType.User]: User,
+    [NodeType.Device]: Device,
+    [NodeType.DeviceProperty]: DeviceProperty,
+    [NodeType.Sensor]: DeviceSensor,
+    [NodeType.Sensor]: DeviceState,
+  };
+
   // some stupid bullshit with circular dependencies
+  console.log(type, NodeClassMap[type], NodeClassMap);
   return plainToClass(NodeClassMap[type], object);
 };

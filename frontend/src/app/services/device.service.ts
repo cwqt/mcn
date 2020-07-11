@@ -9,11 +9,10 @@ import {
   IDeviceStub,
   IDeviceState,
   IDeviceSensor,
-  IMeasurementModel,
   ITaskRoutine,
   IApiKey,
   IApiKeyPrivate,
-} from "../models";
+} from "@cxss/interfaces";
 
 @Injectable({
   providedIn: "root",
@@ -56,15 +55,12 @@ export class DeviceService {
       .toPromise();
   }
 
-  getLatestMeasurement(
-    user_id: string,
-    device_id: string
-  ): Promise<IMeasurementModel> {
-    return this.http
-      .get<IMeasurementModel>(
-        `/api/users/${user_id}/devices/${device_id}/measurements?page=1&per_page=1`
-      )
-      .toPromise();
+  getLatestMeasurement(user_id: string, device_id: string) {
+    // return this.http
+    //   .get<IMeasurementModel>(
+    //     `/api/users/${user_id}/devices/${device_id}/measurements?page=1&per_page=1`
+    //   )
+    //   .toPromise();
   }
 
   getMeasurements(user_id: string, device_id: string) {
