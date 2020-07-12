@@ -1,37 +1,43 @@
 <div *ngIf="!success">
-  <h1>Log in</h1>
-  <p>Don't have an account? <a href="">Register now</a></p>
-  <br />
+  <h1 class="mat-display-1">already have an account?</h1>
 
   <form [formGroup]="loginForm" [hidden]="success" (ngSubmit)="submitHandler()">
-    <ibm-label [invalid]="errors.email" [invalidText]="errors.email">
-      e-mail
-      <input
-        formControlName="email"
-        ibmText
-        [invalid]="false"
-        [autocomplete]="false"
-      />
-    </ibm-label>
+    <mat-form-field>
+      <mat-label type="email">e-mail</mat-label>
+      <input matInput type="text" formControlName="email" />
+      <mat-error *ngIf="!errors.email && email.invalid && email.touched"
+        >E-mail is required</mat-error
+      >
+      <mat-error *ngIf="errors.email">{{ errors.email }}</mat-error>
+    </mat-form-field>
 
     <br />
 
-    <ibm-label [invalid]="errors.password" [invalidText]="errors.password">
-      password
-      <input
-        formControlName="password"
-        ibmText
-        type="password"
-        [invalid]="false"
-        [autocomplete]="false"
-      />
-    </ibm-label>
+    <mat-form-field>
+      <mat-label type="password">password</mat-label>
+      <input matInput type="password" formControlName="password" />
+      <mat-error
+        *ngIf="!errors.password && password.invalid && password.touched"
+        >Password is required</mat-error
+      >
+      <mat-error *ngIf="errors.password">{{ errors.password }}</mat-error>
+    </mat-form-field>
 
     <br />
 
-    <app-load-button [loading]="loading">
+    <mat-form-field floatPlaceholder="always" class="app-input-no-underline">
+      <input matInput style="display: none !important;" />
+      <mat-checkbox formControlName="rememberMe">remember me?</mat-checkbox>
+    </mat-form-field>
+
+    <br />
+
+    <!-- <ui-load-button
+      [disabled]="loginForm.invalid || loading"
+      [loading]="loading"
+    >
       <span>log in</span>
-    </app-load-button>
+    </ui-load-button> -->
 
     <mat-error class="form" *ngIf="errors.form">{{ errors.form }}</mat-error>
   </form>

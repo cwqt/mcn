@@ -1,31 +1,28 @@
 <div class="header-container">
   <div class="left">
     <img class="icon" src="/assets/leaf.png" />
-    <ibm-header-menu [title]="activeOrg ? activeOrg.name : 'No org'">
-      <div *ngFor="let org of userOrgs" (click)="setActiveOrg(org)">
-        <ibm-header-item>{{ org.name }}</ibm-header-item>
-      </div>
-    </ibm-header-menu>
+    <ui-button-menu [style]="'secondary'" [pre]="'mcn ·'" [title]="activeOrg ? activeOrg.name : 'No org'">
+        <ui-button [style]="'secondary'" *ngFor="let org of userOrgs" (click)="setActiveOrg(org)">{{ org.name }}</ui-button>
+    </ui-button-menu>
 
-    <!-- <ibm-header-navigation>
-      <ibm-header-item>Catalog</ibm-header-item>
-      <ibm-header-item>Docs</ibm-header-item>
-      <ibm-header-item>Support</ibm-header-item>
-    </ibm-header-navigation> -->
+    <div class="separator"></div>
+
+    <ui-button [style]="'secondary'">Catalog</ui-button>
+    <ui-button [style]="'secondary'">Docs</ui-button>
+    <ui-button [style]="'secondary'">Support</ui-button>
   </div>
 
+
   <div class="right">
-    <ibm-header-global>
-      <ibm-header-action>
-        <mat-icon>notifications_none</mat-icon>
-      </ibm-header-action>
-      <ibm-header-action
-        class="header-bar-thumb"
-        (selected)="openUserMenu($event)"
-      >
-        <img [src]="currentUser.avatar" />
-        <span>{{ currentUser.name }}</span>
-      </ibm-header-action>
-    </ibm-header-global>
+    <ui-button [style]="'secondary'" id="alert-wrapper">
+      <div id="alert">
+        <mat-icon inline>notifications_none</mat-icon>
+      </div>
+    </ui-button>
+    <div class="separator"></div>
+    <ui-button id="user-icon" [style]="'secondary'">
+      <img [src]="currentUser.avatar" />
+      <span>{{ currentUser.name }}</span>
+    </ui-button>
   </div>
 </div>

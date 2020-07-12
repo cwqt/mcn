@@ -17,14 +17,13 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
     this.sidebarItems = [
-      ["home", "Home", ""],
-      // ["explore", "Explore"],
-      // ["notifications", "Notifications"],
-      ["group_work", "Gardens", `${this.currentUser.username}?tab=gardens`],
-      ["eco", "Plants", `${this.currentUser.username}?tab=plants`],
-      ["device_hub", "Devices", `${this.currentUser.username}?tab=devices`],
-      ["person", "Profile", `${this.currentUser.username}`],
-      ["more_horiz", "More", `more`],
+      ["compass", "Explore"],
+      ["apps", "Farms", `${this.currentUser.username}?tab=gardens`],
+      ["table", "Racks", `${this.currentUser.username}?tab=plants`],
+      ["sprout", "Plants", `${this.currentUser.username}?tab=plants`],
+      ["iot--platform", "Devices", `${this.currentUser.username}?tab=devices`],
+      ["user", "Profile", `${this.currentUser.username}`],
+      ["overflow-menu--horizontal", "More", `more`],
     ];
 
     this.route.url.subscribe((url) => {
@@ -37,7 +36,7 @@ export class SidebarComponent implements OnInit {
   }
 
   isActiveRoute(index) {
-    if (this.activePath == this.sidebarItems[index][2].split("/").pop()) {
+    if (this.activePath == this.sidebarItems[index][1].toLowerCase()) {
       return true;
     }
   }

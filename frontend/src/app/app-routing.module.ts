@@ -9,13 +9,14 @@ import { VerifiedComponent } from "./components/pages/verified/verified.componen
 import { NotFoundComponent } from "./components/pages/not-found/not-found.component";
 import { OrganisationsComponent } from "./routes/organisations/organisations.component";
 import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
+import { DeviceListComponent } from "./components/device-list/device-list.component";
 
 const routes: Routes = [
   {
     path: "",
     component: IndexComponent,
     children: [
-      // { path: "devices", component: UserDevicesListComponent },
+      { path: "devices", component: DeviceListComponent },
       // { path: "alerts", component: UserDevicesListComponent },
       // { path: "farms", component: UserDevicesListComponent },
       // { path: "racks", component: UserDevicesListComponent },

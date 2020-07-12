@@ -1,0 +1,81 @@
+@import "~@angular/material/theming";
+
+$custom-typography: mat-typography-config(
+  $font-family: "IBM Plex Sans, sans-serif",
+);
+@include mat-core($custom-typography);
+
+/* ======== Angular material custom themes ======== */
+$my-custom-primary: mat-palette($mat-grey);
+$my-custom-accent: mat-palette($mat-grey, 100, 500, A100);
+$my-custom-warn: mat-palette($mat-red);
+
+$my-custom-theme: mat-light-theme(
+  $my-custom-primary,
+  $my-custom-accent,
+  $my-custom-warn
+);
+
+button {
+  &.mat-button {
+    border: 2px solid rgba($color: #000000, $alpha: 0);
+    transition: 0.1s;
+    border-radius: 0 !important;
+    box-sizing: border-box;
+    font-weight: normal;
+    min-width: 0px;
+
+    .mat-button-wrapper {
+      min-width: 0px;
+      width: 100%;
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    &.mat-primary {
+      background-color: #0f62fe;
+      .mat-button-wrapper {
+        color: white;
+      }
+      &:hover {
+        background-color: #0353e9;
+      }
+      &:focus {
+        box-shadow: inset 0 0 0 1px #0f62fe, inset 0 0 0 2px #ffffff;
+      }
+    }
+
+    &.mat-secondary {
+      background: #181818;
+      color: white;
+      &:hover {
+        background-color: #353535;
+      }
+      &:focus {
+        border: 2px solid white;
+      }
+    }
+
+    &.mat-accent {
+      color: black;
+      &:focus {
+        border: 2px solid #e5e5e5;
+      }
+    }
+
+    &.mat-warn {
+      background: #da1e28;
+      color: white;
+      &:hover {
+        background: #ba1b23;
+      }
+      &:focus {
+        box-shadow: inset 0 0 0 1px #da1e28, inset 0 0 0 2px #ffffff;
+      }
+    }
+  }
+}
+
+@include angular-material-theme($my-custom-theme);

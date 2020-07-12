@@ -1,4 +1,4 @@
-<div *ngIf="cache.states.data">
+<!-- <div *ngIf="cache.states.data">
   <ibm-table-container>
     <ibm-table-header>
       <h4 ibmTableHeaderTitle>Device control</h4>
@@ -6,18 +6,18 @@
     </ibm-table-header>
     <mat-table [dataSource]="cache.states.data">
       <!-- Position Column -->
-      <ng-container matColumnDef="ref">
-        <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.ref}} </mat-cell>
-      </ng-container>
-    
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-      </ng-container>
-    
-      <!-- Set value Column -->
+<ng-container matColumnDef="ref">
+  <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
+  <mat-cell *matCellDef="let element"> {{ element.ref }} </mat-cell>
+</ng-container>
+
+<!-- Name Column -->
+<ng-container matColumnDef="name">
+  <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+  <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
+</ng-container>
+
+<!-- Set value Column
       <ng-container matColumnDef="set-value">
         <mat-header-cell *matHeaderCellDef> Set state </mat-header-cell>
         <mat-cell *matCellDef="let element">
@@ -38,11 +38,11 @@
 
         </mat-cell>
       </ng-container>
-          
+
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
     </mat-table>
 
   </ibm-table-container>
 </div>
-
+ -->

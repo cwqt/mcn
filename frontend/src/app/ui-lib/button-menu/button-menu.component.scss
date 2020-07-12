@@ -1,0 +1,44 @@
+.button-menu-container {
+  position: relative;
+  min-width: 150px;
+  font-weight: light;
+  .dropdown {
+    position: absolute;
+    top: 48px;
+    display: flex;
+    flex-flow: column;
+    width: 200px;
+    background: #2c2c2c;
+
+    ::ng-deep {
+      ui-button {
+        z-index: 999;
+        width: 100%;
+        .mat-button {
+          opacity: 0.5;
+          &:hover {
+            opacity: 1;
+          }
+          width: 100%;
+          .mat-button-wrapper {
+            span {
+              font-weight: normal;
+            }
+          }
+        }
+        &:hover {
+          background-color: #353535;
+        }
+      }
+    }
+  }
+
+  ui-icon {
+    display: inline;
+    margin-left: 5px;
+    transition: 0.1s transform;
+    &.open {
+      transform: rotate(180deg);
+    }
+  }
+}

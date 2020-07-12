@@ -45,6 +45,8 @@ export const readOrgNodes = async (req: Request, res: Response) => {
     return objToClass(<NodeType>nodeType, r.get("n").properties).toStub();
   });
 
+  console.log(nodes);
+
   res.json(nodes);
 };
 

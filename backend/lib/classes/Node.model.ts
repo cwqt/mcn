@@ -101,6 +101,5 @@ export const objToClass = (type: NodeType, object: any) => {
   };
 
   // some stupid bullshit with circular dependencies
-  console.log(type, NodeClassMap[type], NodeClassMap);
   return plainToClass(NodeClassMap[type], object);
 };

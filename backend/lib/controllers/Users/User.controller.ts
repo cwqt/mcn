@@ -39,8 +39,6 @@ export const createUser = async (req: Request, res: Response) => {
   let emailSent = await sendVerificationEmail(req.body.email);
   if (!emailSent) throw new ErrorHandler(HTTP.ServerError, "Verification email could not be sent");
 
-  console.log(req.body);
-
   let user = new User(req.body.username, req.body.email);
   user.generateCredentials(req.body.password);
   await user.create();
@@ -66,7 +64,6 @@ export const readUserByUsername = async (req: Request, res: Response) => {
 
   let r = result.records[0];
   if (!r || r.get("u") == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
-  console.log(r.get("u").properties._id);
 
   let user: User = await new Node(NodeType.User, r.get("u").properties._id).read();
   res.json(user.toUser());
@@ -147,7 +144,6 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     };
 
     let u: User = await new Node(NodeType.User, user._id).read();
-    console.log(u);
     res.json(u.toUser());
   } catch (e) {
     throw new ErrorHandler(HTTP.ServerError, e);

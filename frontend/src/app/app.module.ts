@@ -2,6 +2,9 @@ import { CookieService } from "ngx-cookie-service";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 
+import { UiLibModule } from "./ui-lib/ui-lib.module";
+import { AngularMaterialModule } from "./angular-material.module";
+
 import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { HttpClientModule } from "@angular/common/http";
@@ -25,52 +28,11 @@ import { WrapperComponent } from "./components/app/wrapper/wrapper.component";
 import { HeaderBarComponent } from "./components/app/header-bar/header-bar.component";
 import { SidebarComponent } from "./components/app/sidebar/sidebar.component";
 
-import { LoadButtonComponent } from "./components/_helpers/load-button/load-button.component";
-import { RoundedButtonComponent } from "./components/_helpers/rounded-button/rounded-button.component";
-import { LoadablePanelComponent } from "./components/_helpers/loadable-panel/loadable-panel.component";
-
 import { DeviceComponent } from "./routes/device/device.component";
 import { ScheduledTasksComponent } from "./routes/device/scheduled-tasks/scheduled-tasks.component";
 import { DeviceControlComponent } from "./routes/device/device-control/device-control.component";
 
 import { ProfileComponent } from "./routes/profile/profile.component";
-
-import { MatButtonModule } from "@angular/material/button";
-import { MatButtonToggleModule } from "@angular/material/button-toggle";
-import { MatInputModule } from "@angular/material/input";
-import { MatDividerModule } from "@angular/material/divider";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatStepperModule } from "@angular/material/stepper";
-import { MatIconModule } from "@angular/material/icon";
-import { MatTabsModule } from "@angular/material/tabs";
-import { MatCardModule } from "@angular/material/card";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { MatExpansionModule } from "@angular/material/expansion";
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { MatTableModule } from "@angular/material/table";
-import { MatSelectModule } from "@angular/material/select";
-import { MatChipsModule } from "@angular/material/chips";
-import { MatPaginatorModule } from "@angular/material/paginator";
-
-import { ChartsModule } from "@carbon/charts-angular";
-import {
-  InputModule,
-  LoadingModule,
-  InlineLoadingModule,
-  ButtonModule,
-  TabsModule,
-  TilesModule,
-  TagModule,
-  ToggleModule,
-  NumberModule,
-  Table,
-  TableModule,
-  DialogModule,
-  StructuredListModule,
-  UIShellModule,
-} from "carbon-components-angular";
 
 import { DocumentationComponent } from "./routes/documentation/documentation.component";
 import { HeaderBarUserMenuComponent } from "./components/app/header-bar/header-bar-user-menu/header-bar-user-menu.component";
@@ -82,6 +44,7 @@ import { IndexComponent } from "./routes/index/index.component";
 import { OrganisationsComponent } from "./routes/organisations/organisations.component";
 import { PageComponent } from "./components/app/page/page.component";
 import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
+import { DeviceListComponent } from "./components/device-list/device-list.component";
 
 @NgModule({
   declarations: [
@@ -92,15 +55,12 @@ import { CreateOrgComponent } from "./routes/organisations/create-org/create-org
     VerifiedComponent,
     FirstTimeSetupComponent,
     HeaderBarComponent,
-    LoadButtonComponent,
     WrapperComponent,
     NotFoundComponent,
     SidebarComponent,
     DeviceComponent,
-    RoundedButtonComponent,
     DocumentationComponent,
     HeaderBarUserMenuComponent,
-    LoadablePanelComponent,
     ScheduledTasksComponent,
     DeviceControlComponent,
     FooterComponent,
@@ -111,11 +71,14 @@ import { CreateOrgComponent } from "./routes/organisations/create-org/create-org
     OrganisationsComponent,
     PageComponent,
     CreateOrgComponent,
+    DeviceListComponent,
   ],
   imports: [
+    AngularMaterialModule,
+    UiLibModule,
     BrowserModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
+    AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
@@ -126,43 +89,9 @@ import { CreateOrgComponent } from "./routes/organisations/create-org/create-org
     ClickOutsideModule,
     CrystalLightboxModule,
     PopoverModule,
-
-    MatButtonModule,
-    MatButtonToggleModule,
-    MatInputModule,
-    MatDividerModule,
-    MatCheckboxModule,
-    MatProgressSpinnerModule,
-    MatStepperModule,
-    MatIconModule,
-    MatTabsModule,
-    MatCardModule,
-    MatDialogModule,
-    MatSelectModule,
-    MatExpansionModule,
-    MatSlideToggleModule,
-    MatTableModule,
-    MatProgressBarModule,
-    MatChipsModule,
-    MatPaginatorModule,
-
-    ChartsModule,
-    InputModule,
-    LoadingModule,
-    InlineLoadingModule,
-    ButtonModule,
-    TabsModule,
-    TilesModule,
-    TagModule,
-    ToggleModule,
-    NumberModule,
-    TableModule,
-    DialogModule,
-    StructuredListModule,
-    UIShellModule,
   ],
   providers: [CookieService],
-  entryComponents: [Table, HeaderBarUserMenuComponent],
+  entryComponents: [HeaderBarUserMenuComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

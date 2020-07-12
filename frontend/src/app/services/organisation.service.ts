@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { IOrgStub, IOrg } from "@cxss/interfaces";
+import { IOrgStub, IOrg, IDeviceStub } from "@cxss/interfaces";
 import { BehaviorSubject } from "rxjs";
 import { tap } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
@@ -12,6 +12,10 @@ export class OrganisationService {
   currentOrg: BehaviorSubject<IOrg | null> = new BehaviorSubject(null);
 
   constructor(private userService: UserService, private http: HttpClient) {}
+
+  get orgId() {
+    return this.currentOrg.value._id;
+  }
 
   createOrganisation(data): Promise<IOrgStub> {
     return this.http
@@ -27,10 +31,19 @@ export class OrganisationService {
       .toPromise();
   }
 
+  getOrg(orgId: string): Promise<IOrgStub> {
+    return this.http.get<IOrgStub>(`/api/orgs/${orgId}`).toPromise();
+  }
+
   setActiveOrg(org: IOrgStub) {
-    if (org) {
-      localStorage.setItem("lastActiveOrg", org._id);
-      this.currentOrg.next(org);
-    }
+    console.log("setting active org");
+    localStorage.setItem("lastActiveOrg", org._id);
+    this.currentOrg.next(org);
+  }
+
+  getDevices(): Promise<IDeviceStub[]> {
+    return this.http
+      .get<IDeviceStub[]>(`/api/orgs/${this.orgId}/items?type=device`)
+      .toPromise();
   }
 }

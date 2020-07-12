@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { IOrgStub } from "@cxss/interfaces";
 import { UserService } from "src/app/services/user.service";
 import { Router } from "@angular/router";
+import { OrganisationService } from "src/app/services/organisation.service";
 
 @Component({
   selector: "app-index",
@@ -10,6 +11,7 @@ import { Router } from "@angular/router";
 })
 export class IndexComponent implements OnInit {
   userOrgs: IOrgStub[];
+  currentOrg: IOrgStub;
 
   coverCards = [
     { title: "Devices", icon: "mediation" },
@@ -20,10 +22,15 @@ export class IndexComponent implements OnInit {
     { title: "Users", icon: "group" },
   ];
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private orgService: OrganisationService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.userService.userOrgs.subscribe((orgs) => (this.userOrgs = orgs));
+    this.orgService.currentOrg.subscribe((org) => (this.currentOrg = org));
   }
 
   navigate(route: string) {

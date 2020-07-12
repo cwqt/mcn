@@ -12,7 +12,7 @@
 
       <form [formGroup]="avatarImageFormGroup">
         <ng-template matStepLabel>upload an avatar</ng-template>
-        
+
         <input hidden (change)="onAvatarFileSelected()" #fileInput type="file" id="file" formControlName="avatar">
         <button mat-raised-button [color]="fileTypeError ? 'warn' : 'primary'" (click)="fileInput.click()" class="select-file">
             <mat-icon inline="true">attach_file</mat-icon>
@@ -26,33 +26,33 @@
         <p>images must be &lt;500kb in size & either jpg or png</p>
 
         <div class="avatar-submit">
-          <app-load-button
+          <ui-load-button
             [color]="hasSelectedImage ? (errorMessage ? 'warn' : 'primary') : 'secondary'"
             [loading]="loading"
             [disabled]="loading"
-            (onClick)="handleUploadImage()">{{hasSelectedImage ? (errorMessage ? 'error' : 'upload!') : 'skip'}}</app-load-button>
-          <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>  
+            (onClick)="handleUploadImage()">{{hasSelectedImage ? (errorMessage ? 'error' : 'upload!') : 'skip'}}</ui-load-button>
+          <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>
         </div>
       </form>
     </mat-step>
-    
+
     <mat-step [stepControl]="userNameFormGroup">
       <form [formGroup]="userNameFormGroup">
         <ng-template matStepLabel>add your name</ng-template>
         <mat-form-field>
           <mat-label>full name</mat-label>
           <input matInput formControlName="name" placeholder="" required autocomplete="off">
-          <mat-error>name is required</mat-error>  
+          <mat-error>name is required</mat-error>
         </mat-form-field>
         <div>
 
-          <app-load-button
+          <ui-load-button
             [color]="errorMessage ? 'warn' : 'primary'"
             [disabled]="!userNameFormGroup.dirty || loading"
             [loading]="loading" (onClick)="handleSubmitName()">
               continue
-          </app-load-button>
-          <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>  
+          </ui-load-button>
+          <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>
 
         </div>
       </form>

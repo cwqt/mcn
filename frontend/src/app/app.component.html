@@ -10,13 +10,6 @@
             a social network and management system for gardeners, plant growers
             and hobbyists alike.
           </p>
-          <app-rounded-button
-            [color]="'primary'"
-            (click)="toggleUiStateRegister()"
-            >{{
-              this.ui != "login" ? "login" : "create account"
-            }}</app-rounded-button
-          >
         </div>
       </div>
     </div>
@@ -44,3 +37,6 @@
 <app-wrapper *ngIf="currentUser && !currentUser.new_user">
   <router-outlet></router-outlet>
 </app-wrapper>
+
+
+<ui-testbed></ui-testbed>

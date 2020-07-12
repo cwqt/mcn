@@ -1,16 +1,30 @@
-.help {
-    color: grey;
-    text-decoration: none;
-    transition: 0.2s;
+h1 {
+  margin-bottom: 30px !important;
+}
 
-    &:hover {
-        color: darken(grey, 20%)
-    }
+form {
+  padding-left: 15px;
+}
+
+mat-error.form {
+  display: inline-block !important;
+  margin-left: 20px;
+}
+
+.help {
+  margin-left: 15px;
+  color: grey;
+  text-decoration: none;
+  transition: 0.2s;
+
+  &:hover {
+    color: darken(grey, 20%)
+  }
 }
 
 .loader {
-    .mat-spinner {
-        display: inline-block;
-        margin-right: 5px;
-    }
+  .mat-spinner {
+    display: inline-block;
+    margin-right: 5px;
+  }
 }

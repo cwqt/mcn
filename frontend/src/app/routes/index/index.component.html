@@ -6,18 +6,20 @@
   </p>
 </div>
 
-<div class="index-cover" *ngIf="userOrgs.length">
-  <div
-    class="tile-container"
-    *ngFor="let item of coverCards"
-    (click)="navigate(item.title)"
-  >
-    <ibm-tile>
-      <mat-icon>{{ item.icon }}</mat-icon>
-      <h2>{{ item.title }}</h2>
-      <h1>12</h1>
-    </ibm-tile>
+<div *ngIf="userOrgs.length && currentOrg">
+  <div class="index-cover">
+    <div
+      class="tile-container"
+      *ngFor="let item of coverCards"
+      (click)="navigate(item.title)"
+    >
+      <mat-card>
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <h2>{{ item.title }}</h2>
+        <h1>12</h1>
+      </mat-card>
+    </div>
   </div>
-</div>
 
-<router-outlet></router-outlet>
+  <router-outlet></router-outlet>
+</div>

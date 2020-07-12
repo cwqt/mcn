@@ -8,7 +8,7 @@
     [hidden]="success"
     (ngSubmit)="submitHandler()"
   >
-    <ibm-label [invalid]="errors.name" [invalidText]="errors.name">
+    <!-- <ibm-label [invalid]="errors.name" [invalidText]="errors.name">
       Name
       <input
         formControlName="name"
@@ -16,13 +16,13 @@
         [invalid]="false"
         [autocomplete]="false"
       />
-    </ibm-label>
+    </ibm-label> -->
 
     <br />
 
-    <app-load-button [loading]="loading">
+    <!-- <app-load-button [loading]="loading">
       <span>Create</span>
-    </app-load-button>
+    </app-load-button> -->
 
     <mat-error class="form" *ngIf="errors.form">{{ errors.form }}</mat-error>
   </form>
