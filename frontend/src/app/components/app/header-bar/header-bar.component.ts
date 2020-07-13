@@ -12,6 +12,8 @@ import { IOrgStub } from "@cxss/interfaces";
   styleUrls: ["./header-bar.component.scss"],
 })
 export class HeaderBarComponent implements OnInit {
+  @ViewChild("ref") ref: ElementRef;
+
   @Input() currentUser: any;
   userOrgs: IOrgStub[];
   activeOrg: IOrgStub;
@@ -36,6 +38,7 @@ export class HeaderBarComponent implements OnInit {
       offset: 16,
       width: "500px",
       placement: "bottom-left",
+      targetElement: this.ref.nativeElement,
     } as PopoverProperties);
   }
 

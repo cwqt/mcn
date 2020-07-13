@@ -1,1 +1,14 @@
-<button [matTooltip]="tooltip" [id]="style" [color]="style" mat-button (click)="this.onClick()"><ng-content></ng-content></button>
+<button
+  [matTooltip]="tooltip"
+  [disabled]="disabled"
+  [id]="style"
+  [color]="style"
+  [class.large]="size == 'l'"
+  [class.med]="size == 'm'"
+  [class.small]="size == 's'"
+  mat-button
+  (click)="onClick($event)">
+    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <ui-icon *ngIf="icon && !loading">{{icon}}</ui-icon>
+    <ng-content></ng-content>
+</button>

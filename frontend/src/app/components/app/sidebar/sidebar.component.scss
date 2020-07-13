@@ -7,7 +7,6 @@
   z-index: 9999;
   position: relative;
   width: 48px;
-  position: relative;
 
   .sidebar-buttons {
     max-width: 48px;
@@ -35,5 +34,19 @@
     &.open {
       border-right: 1px solid rgb(141, 139, 139);
     }
+  }
+}
+
+.sidebar .nav {
+  width: 300px;
+  position: absolute;
+  height: 100%;
+  transform: translateX(-300px);
+  transition: 0.5s;
+  will-change: transform;
+  user-select: none;
+
+  &.open {
+    transform: translateX(48px);
   }
 }

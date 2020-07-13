@@ -1,26 +1,18 @@
-<div class="user-menu">
-    <button mat-button (click)="gotoSettings()">
-        <mat-icon inline>settings</mat-icon>
-        <p>
-            Settings & privacy
-        </p>
-    </button>
+<ui-overflow-menu class="user-menu">
+  <ui-button [size]="'m'" [style]="'accent'" [icon]="'settings'" (click)="gotoSettings()">
+    Settings & privacy
+  </ui-button>
 
-    <button mat-button (click)="gotoDocumentation()">
-        <mat-icon inline>collections_bookmark</mat-icon>
-        <p>
-            Documentation
-            <span>Learn how to create things</span>    
-        </p>
-    </button>
+  <ui-button [size]="'m'" [style]="'accent'" [icon]="'document'">
+    <div class="alt">
+      <p>Documentation</p>
+      <p>Learn how to create things</p>
+    </div>
+  </ui-button>
 
-    <mat-divider></mat-divider>
+  <mat-divider></mat-divider>
 
-    <button mat-button (click)="logout()">
-        <mat-icon inline>exit_to_app</mat-icon>
-        <p>
-            Logout
-        </p>
-    </button>
-    <p class="copyright">copyright <b>daughter.systems</b> (2020)</p>
-</div>
+  <ui-button [size]="'m'" [style]="'accent'" [icon]="'logout'" (click)="logout()">
+    Log out
+  </ui-button>
+</ui-overflow-menu>

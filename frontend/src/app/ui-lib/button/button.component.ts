@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 
 @Component({
   selector: "ui-button",
@@ -6,20 +6,25 @@ import { Component, OnInit, Input } from "@angular/core";
   styleUrls: ["./button.component.scss"],
 })
 export class ButtonComponent implements OnInit {
-  @Input() click: Function;
+  @Output() click = new EventEmitter();
   @Input() tooltip?: string;
+  @Input() disabled?: boolean = false;
+  @Input() loading?: boolean = false;
   @Input() style?:
     | "primary"
     | "secondary"
     | "accent"
     | "warn"
     | "disabled"
-    | "basic" = "basic";
+    | "basic" = "accent";
+  @Input() icon?: string;
+  @Input() size?: "l" | "m" | "s";
 
   constructor() {}
 
   ngOnInit(): void {}
-  onClick() {
-    this.click();
+
+  onClick(event) {
+    this.click.emit(event);
   }
 }

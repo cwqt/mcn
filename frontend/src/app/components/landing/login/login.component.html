@@ -32,12 +32,13 @@
 
     <br />
 
-    <!-- <ui-load-button
+    <ui-button
+      [style]="'primary'"
       [disabled]="loginForm.invalid || loading"
       [loading]="loading"
     >
       <span>log in</span>
-    </ui-load-button> -->
+    </ui-button>
 
     <mat-error class="form" *ngIf="errors.form">{{ errors.form }}</mat-error>
   </form>

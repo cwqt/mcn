@@ -20,7 +20,7 @@
       </div>
     </ui-button>
     <div class="separator"></div>
-    <ui-button id="user-icon" [style]="'secondary'">
+    <ui-button id="user-icon"  #ref [style]="'secondary'" (click)="openUserMenu($event)">
       <img [src]="currentUser.avatar" />
       <span>{{ currentUser.name }}</span>
     </ui-button>
