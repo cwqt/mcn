@@ -10,7 +10,7 @@ export class ButtonComponent implements OnInit {
   @Input() tooltip?: string;
   @Input() disabled?: boolean = false;
   @Input() loading?: boolean = false;
-  @Input() style?:
+  @Input() variant?:
     | "primary"
     | "secondary"
     | "accent"

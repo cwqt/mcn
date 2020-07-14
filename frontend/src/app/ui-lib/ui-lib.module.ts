@@ -10,6 +10,7 @@ import { IconComponent } from "./icon/icon.component";
 import { TestbedComponent } from "./testbed/testbed.component";
 import { IconButtonComponent } from "./icon-button/icon-button.component";
 import { OverflowMenuComponent } from "./overflow-menu/overflow-menu.component";
+import { SectionHeaderComponent } from "./section-header/section-header.component";
 
 const allComponents = [
   LoadablePanelComponent,
@@ -19,6 +20,7 @@ const allComponents = [
   TestbedComponent,
   IconButtonComponent,
   OverflowMenuComponent,
+  SectionHeaderComponent,
 ];
 
 @NgModule({

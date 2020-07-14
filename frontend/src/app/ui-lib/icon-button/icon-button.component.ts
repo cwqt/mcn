@@ -6,7 +6,7 @@ import { Component, OnInit, Input } from "@angular/core";
   styleUrls: ["./icon-button.component.scss"],
 })
 export class IconButtonComponent implements OnInit {
-  @Input() style: string;
+  @Input() variant: string;
   @Input() size: string;
   @Input() tooltip?: string;
 

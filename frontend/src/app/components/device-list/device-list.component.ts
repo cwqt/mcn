@@ -1,13 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import moment from "moment";
 
-import { IDeviceStub } from "@cxss/interfaces";
+import { IDeviceStub, IDeviceSensor } from "@cxss/interfaces";
 import { OrganisationService } from "src/app/services/organisation.service";
-import {
-  TableItem,
-  TableModel,
-  TableHeaderItem,
-} from "carbon-components-angular";
 
 @Component({
   selector: "app-device-list",
@@ -15,11 +10,13 @@ import {
   styleUrls: ["./device-list.component.scss"],
 })
 export class DeviceListComponent implements OnInit {
+  @Output() selectedDevice: EventEmitter<IDeviceStub> = new EventEmitter();
+
   devices = {
     data: <IDeviceStub[]>[],
     error: <string>"",
     loading: <boolean>false,
-    model: new TableModel(),
+    tableRows: ["name", "_id", "last_ping", "state"],
   };
 
   model: any;
@@ -33,31 +30,13 @@ export class DeviceListComponent implements OnInit {
       .getDevices()
       .then((devices) => {
         this.devices.data = devices;
-        this.devices.model.header = [
-          new TableHeaderItem({ data: "Device" }),
-          new TableHeaderItem({ data: "_id" }),
-          new TableHeaderItem({ data: "Last ping" }),
-          new TableHeaderItem({ data: "State" }),
-        ];
-        this.devices.model.data = this.compileIbmTable(devices);
+        console.log(devices);
       })
       .catch((e) => (this.devices.error = e))
       .finally(() => (this.devices.loading = false));
   }
 
-  compileIbmTable(devices: IDeviceStub[]): Array<TableItem[]> {
-    //device name | _id | last_ping | state
-
-    let modelData: Array<TableItem[]> = [];
-    devices.forEach((d: IDeviceStub) => {
-      let row: TableItem[] = [];
-      row.push(new TableItem({ data: d.name }));
-      row.push(new TableItem({ data: d._id }));
-      row.push(new TableItem({ data: moment.unix(d.last_ping).fromNow() }));
-      row.push(new TableItem({ data: d.state }));
-      modelData.push(row);
-    });
-
-    return modelData;
+  openDeviceDetail(device: IDeviceStub) {
+    this.selectedDevice.emit(device);
   }
 }

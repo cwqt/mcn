@@ -1,0 +1,40 @@
+<div class="list-wrapper">
+  <div class="table-wrapper">
+    <ui-section-header title="Devices" subtitle="IoT device management">
+    </ui-section-header>
+
+    <mat-table *ngIf="devices.data"[dataSource]="devices.data">
+      <!-- Position Column -->
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="_id">
+        <mat-header-cell *matHeaderCellDef> _id </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element._id}} </mat-cell>
+      </ng-container>
+
+      <!-- Weight Column -->
+      <ng-container matColumnDef="last_ping">
+        <mat-header-cell *matHeaderCellDef> Last ping </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.last_ping}} </mat-cell>
+      </ng-container>
+
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="state">
+        <mat-header-cell *matHeaderCellDef> State </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.sttae}} </mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="devices.tableRows; sticky: true"></mat-header-row>
+      <mat-row (click)="openDeviceDetail(row)" *matRowDef="let row; columns: devices.tableRows;"></mat-row>
+    </mat-table>
+
+  </div>
+
+  <div class="device-info-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+</div>

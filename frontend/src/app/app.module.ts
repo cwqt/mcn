@@ -28,16 +28,16 @@ import { WrapperComponent } from "./components/app/wrapper/wrapper.component";
 import { HeaderBarComponent } from "./components/app/header-bar/header-bar.component";
 import { SidebarComponent } from "./components/app/sidebar/sidebar.component";
 
-import { DeviceComponent } from "./routes/device/device.component";
-import { ScheduledTasksComponent } from "./routes/device/scheduled-tasks/scheduled-tasks.component";
-import { DeviceControlComponent } from "./routes/device/device-control/device-control.component";
+import { DeviceComponent } from "./components/device-list/device/device.component";
+import { ScheduledTasksComponent } from "./components/device-list/device/scheduled-tasks/scheduled-tasks.component";
+import { DeviceControlComponent } from "./components/device-list/device/device-control/device-control.component";
+import { SensorListComponent } from "./components/device-list/device/sensor-list/sensor-list.component";
 
 import { ProfileComponent } from "./routes/profile/profile.component";
 
 import { DocumentationComponent } from "./routes/documentation/documentation.component";
 import { HeaderBarUserMenuComponent } from "./components/app/header-bar/header-bar-user-menu/header-bar-user-menu.component";
 import { FooterComponent } from "./components/app/footer/footer.component";
-import { SensorListComponent } from "./routes/device/sensor-list/sensor-list.component";
 import { SidebarNavComponent } from "./components/app/sidebar/sidebar-nav/sidebar-nav.component";
 import { TreeNodeComponent } from "./components/app/sidebar/sidebar-nav/tree-node/tree-node.component";
 import { IndexComponent } from "./routes/index/index.component";

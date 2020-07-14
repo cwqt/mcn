@@ -1,3 +1,12 @@
-::ng-deep th {
-  padding-left: 20px;
+.list-wrapper {
+  display: flex;
+  flex-flow: row;
+
+  div {
+    width: 50%;
+  }
+
+  mat-table {
+    border-right: 1px solid lightgray;
+  }
 }

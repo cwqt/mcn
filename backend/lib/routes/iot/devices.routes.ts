@@ -1,7 +1,17 @@
-// import { Router, NextFunction, Request, Response } from "express";
-// const { body, param, query } = require("express-validator");
-// import { validate } from "../../common/validate";
-// var AsyncRouter = require("express-async-router").AsyncRouter;
+import { Router, NextFunction, Request, Response } from "express";
+const { body, param, query } = require("express-validator");
+import { validate } from "../../common/validate";
+var AsyncRouter = require("express-async-router").AsyncRouter;
+
+// import { getDevice } from "../../controllers/IoT/Device.controller";
+import { NodeType } from "@cxss/interfaces";
+const router = AsyncRouter({ mergeParams: true });
+router.use((req: Request, res: Response, next: NextFunction) => {
+  res.locals.type = NodeType.Device;
+  next();
+});
+
+export default router;
 
 // // import { readAllMeasurements } from '../controllers/Device/Measurements.controller';
 // import {

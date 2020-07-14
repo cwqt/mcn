@@ -58,10 +58,26 @@ export class DeviceComponent implements OnInit {
 
     this.route.params
       .subscribe(async (params) => {
-        await this.getUser(params.username);
-        await this.getDevice(params.did);
+        this.cache.user.data = this.userService.currentUserValue;
+        // await this.getDevice(params.did);
         // this.getDeviceMeasurements();
-        this.getDeviceSensors();
+        // this.getDeviceSensors();
+        this.cache.device.data = {
+          thumbnail:
+            "https://cdn.discordapp.com/attachments/264522461943562244/704820132312252426/IMG_0028.JPG",
+          images: [],
+          last_ping: 1592687507507.0,
+          measurement_count: 6.0,
+          name: "Model 1",
+          network_name: "mcn-wd1m",
+          created_at: 1592159241286.0,
+          short_desc:
+            "This is my prototype device, featuring a DHT22 temp/humidity sensor, VEML7700 i²c photometer & 1 corrosion resistant capacitative moisture sensor",
+          _id: "5ee66c09161c3e5284e3f67d",
+          state: "unverified",
+          hardware_model: "mcn_wemos_d1_mini",
+        };
+        this.cache.device.loading = false;
       })
       .unsubscribe();
   }

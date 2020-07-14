@@ -10,13 +10,23 @@ import { NotFoundComponent } from "./components/pages/not-found/not-found.compon
 import { OrganisationsComponent } from "./routes/organisations/organisations.component";
 import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
 import { DeviceListComponent } from "./components/device-list/device-list.component";
+import { DeviceComponent } from "./components/device-list/device/device.component";
 
 const routes: Routes = [
   {
     path: "",
     component: IndexComponent,
     children: [
-      { path: "devices", component: DeviceListComponent },
+      {
+        path: "devices",
+        component: DeviceListComponent,
+        children: [
+          {
+            path: "**",
+            component: DeviceComponent,
+          },
+        ],
+      },
       // { path: "alerts", component: UserDevicesListComponent },
       // { path: "farms", component: UserDevicesListComponent },
       // { path: "racks", component: UserDevicesListComponent },

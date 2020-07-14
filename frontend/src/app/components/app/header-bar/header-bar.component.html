@@ -1,26 +1,26 @@
 <div class="header-container">
   <div class="left">
     <img class="icon" src="/assets/leaf.png" />
-    <ui-button-menu [style]="'secondary'" [pre]="'mcn ·'" [title]="activeOrg ? activeOrg.name : 'No org'">
-        <ui-button [style]="'secondary'" *ngFor="let org of userOrgs" (click)="setActiveOrg(org)">{{ org.name }}</ui-button>
+    <ui-button-menu variant="secondary" [pre]="'mcn ·'" [title]="activeOrg ? activeOrg.name : 'No org'">
+        <ui-button variant="secondary" *ngFor="let org of userOrgs" (click)="setActiveOrg(org)">{{ org.name }}</ui-button>
     </ui-button-menu>
 
     <div class="separator"></div>
 
-    <ui-button [style]="'secondary'">Catalog</ui-button>
-    <ui-button [style]="'secondary'">Docs</ui-button>
-    <ui-button [style]="'secondary'">Support</ui-button>
+    <ui-button variant="secondary">Catalog</ui-button>
+    <ui-button variant="secondary">Docs</ui-button>
+    <ui-button variant="secondary">Support</ui-button>
   </div>
 
 
   <div class="right">
-    <ui-button [style]="'secondary'" id="alert-wrapper">
+    <ui-button variant="secondary" id="alert-wrapper">
       <div id="alert">
         <mat-icon inline>notifications_none</mat-icon>
       </div>
     </ui-button>
     <div class="separator"></div>
-    <ui-button id="user-icon"  #ref [style]="'secondary'" (click)="openUserMenu($event)">
+    <ui-button id="user-icon"  #ref variant="secondary" (click)="openUserMenu($event)">
       <img [src]="currentUser.avatar" />
       <span>{{ currentUser.name }}</span>
     </ui-button>

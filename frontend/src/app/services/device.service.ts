@@ -50,9 +50,7 @@ export class DeviceService {
   }
 
   getDevice(user_id: string, device_id: string): Promise<IDevice> {
-    return this.http
-      .get<IDevice>(`/api/users/${user_id}/devices/${device_id}`)
-      .toPromise();
+    return this.http.get<IDevice>(`/api/devices/${device_id}`).toPromise();
   }
 
   getLatestMeasurement(user_id: string, device_id: string) {

@@ -2,7 +2,7 @@ import { validate } from "../common/validate";
 const AsyncRouter = require("express-async-router").AsyncRouter;
 const { body, param, query } = require("express-validator");
 import { Request, Response } from "express";
-import { createOrg, readOrgNodes, addItemToOrg } from "../controllers/Orgs.controller";
+import { createOrg, readOrgNodes, addItemToOrg, getOrgItem } from "../controllers/Orgs.controller";
 import { OrgItemType, NodeType, OrgRole } from "@cxss/interfaces";
 
 const router = AsyncRouter({ mergeParams: true });
@@ -33,5 +33,7 @@ orgItemRouter.post(
   },
   addItemToOrg
 );
+
+orgItemRouter.get("/", getOrgItem);
 
 export default router;

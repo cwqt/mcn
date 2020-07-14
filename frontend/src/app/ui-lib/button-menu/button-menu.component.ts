@@ -8,7 +8,7 @@ import { Component, OnInit, Input } from "@angular/core";
 export class ButtonMenuComponent implements OnInit {
   @Input() title: string;
   @Input() pre?: string;
-  @Input() style?:
+  @Input() variant?:
     | "primary"
     | "secondary"
     | "accent"

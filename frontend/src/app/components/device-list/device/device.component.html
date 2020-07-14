@@ -1,27 +1,29 @@
-<!-- <div class="device-container" *ngIf="device">
-  <div class="title">
+<div class="device-container" *ngIf="device">
+  <ui-section-header [title]="device.name" [subtitle]="device.network_name + '@' + device.hardware_model" ></ui-section-header>
+
+  <!-- <div class="title">
     <h1>
       {{ device.name }}
       <h4>
         @{{ device.network_name }}:<b>{{ device.hardware_model }}</b>
       </h4>
-    </h1>
+    </h1> -->
     <div class="manage-device-buttons">
-      <ibm-overflow-menu [flip]="true" [offset]="0">
+      <!-- <ibm-overflow-menu [flip]="true" [offset]="0">
         <ibm-overflow-menu-option>Edit details</ibm-overflow-menu-option>
         <ibm-overflow-menu-option>Change API key</ibm-overflow-menu-option>
         <ibm-overflow-menu-option>Re-assign</ibm-overflow-menu-option>
         <ibm-overflow-menu-option type="danger"
           >Delete device</ibm-overflow-menu-option
         >
-      </ibm-overflow-menu>
+      </ibm-overflow-menu> -->
     </div>
-  </div>
+  <!-- </div> -->
 </div>
 
 <br />
 
-<ibm-tile>
+<div>
   <mat-tab-group *ngIf="cache.device.data" class="light">
     <mat-tab>
       <ng-template mat-tab-label>
@@ -48,12 +50,12 @@
         Information
       </ng-template>
       <div class="device-info">
-        <ibm-table-container>
+        <!-- <ibm-table-containelr>
           <ibm-table-header>
             <h4 ibmTableHeaderTitle>Description</h4>
             <p ibmTableHeaderDescription>{{ cache.device.data.short_desc }}</p>
           </ibm-table-header>
-        </ibm-table-container>
+        </ibm-table-container> -->
 
         <div lightbox-group id="gallery">
           <img
@@ -114,11 +116,11 @@
   </mat-tab-group>
 
   <br />
-</ibm-tile>
+</div>
 
 <!-- <mat-divider></mat-divider>
 <div class="device-container">
     <app-postable-replies></app-postable-replies>
 </div> -->
 
-<mat-spinner *ngIf="cache.device.loading"></mat-spinner> -->
+<mat-spinner *ngIf="cache.device.loading"></mat-spinner>

@@ -17,10 +17,6 @@ import {
   readUserOrgs,
 } from "../../controllers/Users/User.controller";
 
-// import posts from "./posts.routes";
-// import devices from "../iot/devices.routes";
-// import plants from "../Hydroponics/plants.routes";
-
 const storage = multer({
   storage: multer.memoryStorage(),
   limits: {
