@@ -40,7 +40,7 @@ export class User extends Node {
     };
   }
 
-  toUser(): IUser {
+  toFull(): IUser {
     return {
       ...this.toStub(),
       email: this.email,
@@ -55,7 +55,7 @@ export class User extends Node {
 
   toPrivate(): IUserPrivate {
     return {
-      ...this.toUser(),
+      ...this.toFull(),
       salt: this.salt,
       pw_hash: this.pw_hash,
     };

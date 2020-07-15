@@ -13,7 +13,7 @@
       *ngFor="let item of coverCards"
       (click)="navigate(item.title)"
     >
-      <mat-card>
+      <mat-card [class.selected]="item.title.toLowerCase() == activeUrl">
         <mat-icon>{{ item.icon }}</mat-icon>
         <h2>{{ item.title }}</h2>
         <h1>12</h1>

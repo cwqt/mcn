@@ -43,12 +43,12 @@ export const createUser = async (req: Request, res: Response) => {
   user.generateCredentials(req.body.password);
   await user.create();
 
-  res.status(HTTP.Created).json(user.toUser());
+  res.status(HTTP.Created).json(user.toFull());
 };
 
 export const readUserById = async (req: Request, res: Response) => {
   let user: User = await new Node(NodeType.User, req.params.uid).read();
-  res.json(user.toUser());
+  res.json(user.toFull());
 };
 
 export const readUserByUsername = async (req: Request, res: Response) => {
@@ -66,7 +66,7 @@ export const readUserByUsername = async (req: Request, res: Response) => {
   if (!r || r.get("u") == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
 
   let user: User = await new Node(NodeType.User, r.get("u").properties._id).read();
-  res.json(user.toUser());
+  res.json(user.toFull());
 };
 
 export const updateUser = async (req: Request, res: Response) => {
@@ -79,7 +79,7 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 
   let user: User = await new Node(NodeType.User, req.params.uid).update(newData);
-  res.json(user.toUser());
+  res.json(user.toFull());
 };
 
 export const updateUserAvatar = async (req: Request, res: Response) => {
@@ -144,7 +144,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
     };
 
     let u: User = await new Node(NodeType.User, user._id).read();
-    res.json(u.toUser());
+    res.json(u.toFull());
   } catch (e) {
     throw new ErrorHandler(HTTP.ServerError, e);
   }
@@ -194,5 +194,5 @@ const updateImage = async (
   }
 
   let user: User = await new Node(NodeType.User, user_id).update({ [field]: image.data.Location });
-  return user.toUser();
+  return user.toFull();
 };

@@ -18,10 +18,6 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
     this.sidebarItems = [
       ["compass", "Explore"],
-      ["apps", "Farms", `${this.currentUser.username}?tab=gardens`],
-      ["table", "Racks", `${this.currentUser.username}?tab=plants`],
-      ["sprout", "Plants", `${this.currentUser.username}?tab=plants`],
-      ["iot--platform", "Devices", `${this.currentUser.username}?tab=devices`],
       ["user", "Profile", `${this.currentUser.username}`],
       ["overflow-menu--horizontal", "More", `more`],
     ];

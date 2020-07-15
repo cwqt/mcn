@@ -10,11 +10,13 @@ export class Node {
   _id: string;
   created_at: number;
   type: NodeType;
+  modifiableFields: string[];
 
   constructor(node: NodeType, _id?: string) {
     this._id = _id ?? new Types.ObjectId().toHexString();
     this.created_at = Date.now();
     this.type = node;
+    this.modifiableFields = [];
   }
 
   toStub(): INode {
@@ -23,6 +25,14 @@ export class Node {
       created_at: this.created_at,
       type: this.type,
     };
+  }
+
+  //fallbacks
+  toFull(): INode {
+    return this.toStub();
+  }
+  toPrivate(): INode {
+    return this.toStub();
   }
 
   async create() {

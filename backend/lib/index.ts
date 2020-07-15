@@ -13,6 +13,8 @@ import routes from "./routes";
 import { handleError, ErrorHandler } from "./common/errorHandler";
 import { awaitAllDbsConnected } from "./common/dbs";
 
+import mcnr from "./routes";
+
 let server: http.Server;
 const app = express();
 app.set("trust proxy", 1);
@@ -37,12 +39,13 @@ if (!config.TESTING) app.use(morgan("tiny", { stream: log.stream }));
 (async () => {
   await awaitAllDbsConnected();
   try {
-    app.use("/orgs", routes.orgs);
-    app.use("/users", routes.users);
+    app.use("/", mcnr.router);
+    // app.use("/orgs", routes.orgs);
+    // app.use("/users", routes.users);
     // app.use("/auth", routes.auth);
     // app.use("/iot", routes.iot);
 
-    if (config.TESTING) app.use("/test", routes.test);
+    // if (config.TESTING) app.use("/test", routes.test);
 
     app.all("*", (req: any, res: any, next: any) => {
       throw new ErrorHandler(404, "No such route exists");

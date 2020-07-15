@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { IOrgStub } from "@cxss/interfaces";
 import { UserService } from "src/app/services/user.service";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { OrganisationService } from "src/app/services/organisation.service";
 
 @Component({
@@ -12,6 +12,7 @@ import { OrganisationService } from "src/app/services/organisation.service";
 export class IndexComponent implements OnInit {
   userOrgs: IOrgStub[];
   currentOrg: IOrgStub;
+  activeUrl: string = "devices";
 
   coverCards = [
     { title: "Devices", icon: "mediation" },
@@ -25,7 +26,8 @@ export class IndexComponent implements OnInit {
   constructor(
     private userService: UserService,
     private orgService: OrganisationService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {

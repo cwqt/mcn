@@ -86,3 +86,23 @@ export const addItemToOrg = async (req: Request, res: Response) => {
 
   res.status(HTTP.OK).end();
 };
+
+// export const getItem = async (node:NodeType, org_id?:string) => {
+//   return async (req:Request, res:Response) => {
+//     let result = await cypher(
+//       `
+//         MATCH (o:Organisation {_id:$oid})
+//         MATCH (n:${capitalize(node)} {_id:$iid})-[:IN]->(o)
+//         RETURN n
+//       `,
+//       {
+//         oid: org_id,
+//         iid: req.params.iid,
+//       }
+//     );
+
+//     if (!result.records.length) throw new ErrorHandler(HTTP.NotFound, `No such ${nodeType}`);
+//     let node = objToClass(<NodeType>nodeType, result.records[0].get("n").properties).toFull();
+//     res.json(node);
+//   }
+// }

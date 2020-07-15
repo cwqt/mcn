@@ -20,3 +20,11 @@ export interface IUserPrivate extends IUser {
   salt?: string;
   pw_hash?: string;
 }
+
+export enum IUserPermissions {
+  SiteAdmin,
+  OrgAdmin,
+  OrgEditor,
+  ItemOwner,
+  Viewer,
+}

@@ -49,7 +49,7 @@ export class Device extends Node {
     };
   }
 
-  toDevice(): IDevice {
+  toFull(): IDevice {
     return {
       ...this.toStub(),
       images: this.images,
