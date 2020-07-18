@@ -1,6 +1,5 @@
-import { Router, Request, Response, NextFunction } from "express";
-import { IUser } from "@cxss/interfaces";
-import multer = require("multer");
+import { Request, Response, NextFunction } from "express";
+import { NodeType } from "@cxss/interfaces";
 import { HTTP } from "./common/http";
 import { ErrorHandler } from "./common/errorHandler";
 import { cypher } from "./common/dbs";
@@ -30,7 +29,7 @@ const skip = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export class McnRouter {
-  router: Router;
+  router: any;
 
   constructor() {
     this.router = AsyncRouter();
@@ -38,247 +37,164 @@ export class McnRouter {
 
   get = <T>(
     path: string,
+    controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
+    access: Access[],
     validators: any = skip,
-    controller: (req: Request, permissions: Access[]) => Promise<T>,
-    access: Access[]
+    nodeData?: [NodeType, string]
   ) => {
     const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const item = await controller(req, access);
+        const item = await controller(req, next, access);
         res.status(HTTP.OK).json(item);
       } catch (err) {
-        // handleError(req, res, next, err);
+        throw new ErrorHandler(HTTP.ServerError, err);
       }
     };
-    this.router.get(path, getCheckPermissions(access), validators, wrappedController);
+    this.router.get(path, getCheckPermissions(access, nodeData), validators, wrappedController);
   };
 
-  //   regCreate = <T>(
-  //     path: string,
-  //     controller: (
-  //       req: UserRequest,
-  //       spacePermissions: IUserPermissions | undefined,
-  //       connection: mongoose.Connection | undefined
-  //     ) => Promise<T>,
-  //     access: DbAccess,
-  //     options?: DbRouterOptions
-  //   ) => {
-  //     const fixedOptions = this.resolveOptions(options);
-  //     const wrappedController = async (req: UserRequest, res: Response, next: NextFunction) => {
-  //       try {
-  //         this.logRequest(path, req);
-  //         const userSpacePermissions = await getCheckPermissions(
-  //           access,
-  //           req,
-  //           fixedOptions.spaceParam
-  //         );
-  //         const item = await controller(req, userSpacePermissions, fixedOptions.mongooseConnection);
-  //         res.status(200).json(item);
-  //       } catch (err) {
-  //         handleError(req, res, next, err);
-  //       }
-  //     };
-  //     this.router.post(path, fixedOptions.auth, wrappedController);
-  //   };
-  //   regUpdate = <T>(
-  //     path: string,
-  //     controller: (
-  //       req: UserRequest,
-  //       spacePermissions: IUserPermissions | undefined,
-  //       connection: mongoose.Connection | undefined
-  //     ) => Promise<T>,
-  //     access: DbAccess,
-  //     options?: DbRouterOptions
-  //   ) => {
-  //     const fixedOptions = this.resolveOptions(options);
-  //     const wrappedController = async (req: UserRequest, res: Response, next: NextFunction) => {
-  //       try {
-  //         this.logRequest(path, req);
-  //         const userSpacePermissions = await getCheckPermissions(
-  //           access,
-  //           req,
-  //           fixedOptions.spaceParam
-  //         );
-  //         const item = await controller(req, userSpacePermissions, fixedOptions.mongooseConnection);
-  //         res.status(200).json(item);
-  //       } catch (err) {
-  //         handleError(req, res, next, err);
-  //       }
-  //     };
-  //     this.router.put(path, fixedOptions.auth, fileParser.single("asset"), wrappedController);
-  //   };
-  //   regDelete = (
-  //     path: string,
-  //     controller: (
-  //       req: UserRequest,
-  //       spacePermissions: IUserPermissions | undefined,
-  //       connection: mongoose.Connection | undefined
-  //     ) => Promise<boolean>,
-  //     access: DbAccess,
-  //     options?: DbRouterOptions
-  //   ) => {
-  //     const fixedOptions = this.resolveOptions(options);
-  //     const wrappedController = async (req: UserRequest, res: Response, next: NextFunction) => {
-  //       try {
-  //         this.logRequest(path, req);
-  //         const userSpacePermissions = await getCheckPermissions(
-  //           access,
-  //           req,
-  //           fixedOptions.spaceParam
-  //         );
-  //         const deleted = await controller(
-  //           req,
-  //           userSpacePermissions,
-  //           fixedOptions.mongooseConnection
-  //         );
-  //         res.status(200).json(deleted);
-  //       } catch (err) {
-  //         // handleError(req, res, next, err);
-  //       }
-  //     };
-  //     this.router.delete(path, fixedOptions.auth, wrappedController);
-  //   };
+  post = <T>(
+    path: string,
+    controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
+    access: Access[],
+    validators: any = skip
+  ) => {
+    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const item = await controller(req, next, access);
+        res.status(HTTP.Created).json(item);
+      } catch (err) {
+        throw new ErrorHandler(HTTP.ServerError, err);
+      }
+    };
+    this.router.post(path, getCheckPermissions(access), validators, wrappedController);
+  };
+
+  put = <T>(
+    path: string,
+    controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
+    access: Access[],
+    validators: any = skip
+  ) => {
+    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const item = await controller(req, next, access);
+        res.status(HTTP.OK).json(item);
+      } catch (err) {
+        throw new ErrorHandler(HTTP.ServerError, err);
+      }
+    };
+    this.router.put(path, getCheckPermissions(access), validators, wrappedController);
+  };
+
+  delete = <T>(
+    path: string,
+    controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
+    access: Access[],
+    validators: any = skip
+  ) => {
+    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const item = await controller(req, next, access);
+        res.status(HTTP.Created).json(item);
+      } catch (err) {
+        throw new ErrorHandler(HTTP.ServerError, err);
+      }
+    };
+    this.router.delete(path, getCheckPermissions(access), validators, wrappedController);
+  };
 }
 
-// const handleError = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction,
-//   err: DbError | Error
-// ) => {
-//   await logger.error(`Error occurred in backend`, { error: err });
-//   if (err["errorType"] != undefined) {
-//     switch (err["errorType"]) {
-//       case DbErrorType.Unauthorised:
-//         res.status(401).send(`Unauthorised: You are not authorised to view this content`);
-//         break;
-//       case DbErrorType.NotFound:
-//         res.status(404).send(`Content not found`);
-//         break;
-//       case DbErrorType.BadRequest:
-//         res.status(400).send(`Bad Request`);
-//         break;
-//     }
-//   } else {
-//     res.status(400).send(`Bad Request`);
-//   }
-//   next(err);
-// };
-const getCheckPermissions = async (
-  access: Access[],
-  req: Request,
-  next: NextFunction
-): Promise<void> => {
-  if (access.includes(Access.None)) return;
-  if (!req.session) throw new ErrorHandler(HTTP.Unauthorised, `Session required to access`);
+const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) => {
+  //highest to lowest privilege check
+  return async (req: Request, res: Response, next: NextFunction) => {
+    //Site admin can do anything
+    if (access.includes(Access.SiteAdmin)) {
+      let result = await cypher(
+        `
+        MATCH (u:User {_id:$uid, admin:true})
+        RETURN u
+      `,
+        {
+          uid: req.session.user._id,
+        }
+      );
+      if (!result.records.length) next(new ErrorHandler(HTTP.Unauthorised));
+      return next();
+    }
 
-  if (access.includes(Access.SiteAdmin)) {
-    let result = await cypher(
-      `
-      MATCH (u:User {_id:$uid, admin:true})
-      RETURN u
-    `,
-      {
-        uid: req.session.user._id,
+    //Check if user is owner of item
+    if (nodeData && access.some((a) => [Access.ItemOwner].includes(a))) {
+      let result = await cypher(
+        `
+        MATCH (u:User {_id:$uid})-[isOwner:CREATED | OWNER]->(n:${nodeData[0]} {_id:iid})
+        RETURN isOwner, n
+      `,
+        {
+          uid: req.session.user._id,
+          iid: req.params[nodeData[1]],
+        }
+      );
+
+      getCheck(result.records[0]?.get("n"), nodeData[0]);
+      if (!result.records[0]?.get("isOwner"))
+        return next(new ErrorHandler(HTTP.Unauthorised, "You do not own this item"));
+      return next();
+    }
+
+    // Check if user must be part of organisation to perform action
+    if (access.some((a) => [Access.OrgAdmin, Access.OrgEditor, Access.OrgMember].includes(a))) {
+      let result = await cypher(
+        `
+        MATCH (u:User {_id:$uid})-[isOrgMember:IN]->(o:Organisation {_id:$oid})
+        RETURN u, o, isOrgMember,
+          EXISTS ((u)-[:OWNER]->(o)) as isOrgOwner,
+          EXISTS ((u)-[:EDITOR]->(o)) as isOrgEditor
+      `,
+        {
+          uid: req.session.user._id,
+          oid: req.params.oid,
+        }
+      );
+
+      //check org owner first
+      if (
+        access.some((a) => [Access.OrgAdmin].includes(a)) &&
+        !result.records[0].get("isOrgOwner")
+      ) {
+        return next(
+          new ErrorHandler(HTTP.Unauthorised, "Requires Org Owner privilege to perform action.")
+        );
+      } else {
+        //then editor
+        if (
+          access.some((a) => [Access.OrgEditor].includes(a)) &&
+          !result.records[0].get("isOrgEditor")
+        ) {
+          return next(
+            new ErrorHandler(HTTP.Unauthorised, "Requires Org Editor privilege to perform action.")
+          );
+        } else {
+          //finally member
+          if (
+            access.some((a) => [Access.OrgMember].includes(a)) &&
+            !result.records[0].get("isOrgMember")
+          ) {
+            return next(
+              new ErrorHandler(HTTP.Unauthorised, "You are not member of this organisation.")
+            );
+          } else {
+            return next();
+          }
+        }
       }
-    );
-    if (!result.records.length) throw new ErrorHandler(HTTP.Unauthorised);
-    return;
-  }
+    }
 
-  let requiresOrgAccess = access.some((a) =>
-    [Access.OrgAdmin, Access.OrgEditor, Access.OrgMember].includes(a)
-  );
-  if (requiresOrgAccess) {
-    let result = await cypher(
-      `
-      MATCH (u:User {_id:$uid})-[isOrgMember:IN]->(o:Organisation {_id:$oid})
-      RETURN u, o, isOrgMember,
-        EXISTS ((u)-[:OWNER]->(o)) as isOrgOwner,
-        EXISTS ((u)-[:EDITOR]->(o)) as isOrgEditor
-    `,
-      {
-        uid: req.session.user._id,
-        oid: req.params.oid,
-      }
-    );
+    //must be atleast logged in
+    if (!req.session && access.includes(Access.Authenticated))
+      throw new ErrorHandler(HTTP.Unauthorised, `Session required to access requested resource.`);
 
-    if(!result.records[0].get('isOrgMember')) throw new ErrorHandler(HTTP.Unauthorised);
-    if(access.find(a => Access.OrgAdmin) && !)
-  }
-
-  let requiresItemOwnership = access.some((a) => [Access.ItemOwner].includes(a));
-
-  // if(requiresOrgAccess)
-
-  // if (access == Access.None) return;
-
-  // if (access != Access.None) {
-  //   if (!req.user) {
-  //     throw new DbError(DbErrorType.Unauthorised, "auth required, had none");
-  //   } else if (access == DbAccess.Authenticated) {
-  //     // do nothing - they are authed
-  //   } else if (access == DbAccess.EnvOwner) {
-  //     if (!req.user.environmentAdmin || !req.user.environmentOwner) {
-  //       throw new DbError(DbErrorType.Unauthorised, "env owner admin required, had none");
-  //     }
-  //   } else if (access == DbAccess.EnvAdmin) {
-  //     // check the user has auth admin
-  //     if (!req.user.environmentAdmin) {
-  //       throw new DbError(DbErrorType.Unauthorised, "env admin required, had none");
-  //     }
-  //   } else {
-  //     // we have a space access
-  //     // check we have a spaceId to find
-  //     if (!spaceParam || !req.params[spaceParam]) {
-  //       throw new DbError(
-  //         DbErrorType.BadRequest,
-  //         "no valid space param given for method with space-based accessibility"
-  //       );
-  //     }
-  //     // get the space from the DB
-  //     const spaceId = req.params[spaceParam];
-  //     const space = await DocumentSpace.findById(spaceId).lean();
-  //     if (!space) {
-  //       throw new DbError(
-  //         DbErrorType.BadRequest,
-  //         "no valid space param given for method with space-based accessibility"
-  //       );
-  //     }
-  //     for (let i = 0; i < space.userPermissions.length && !userSpacePermissions; i++) {
-  //       let up = space.userPermissions[i];
-  //       if (up.user.equals(req.user._id)) {
-  //         userSpacePermissions = up;
-  //       }
-  //     }
-
-  //     //envAdmin has same rights as spaceAdmin
-  //     if (!userSpacePermissions && req.user.environmentAdmin) {
-  //       userSpacePermissions = {
-  //         user: req.user,
-  //         hasAccess: true,
-  //         hasAdmin: true,
-  //         status: "",
-  //         isOwner: false,
-  //         documentManager: false,
-  //         documentManagerElevated: false,
-  //       };
-  //     } else if (userSpacePermissions && req.user.environmentAdmin) {
-  //       userSpacePermissions.hasAccess = true;
-  //       userSpacePermissions.hasAdmin = true;
-  //     }
-
-  //     if (
-  //       !userSpacePermissions ||
-  //       !userSpacePermissions.hasAccess ||
-  //       (access == DbAccess.SpaceDocMan && !userSpacePermissions.documentManager) ||
-  //       (access == DbAccess.SpaceDocManElevated && !userSpacePermissions.documentManagerElevated) ||
-  //       (access == DbAccess.SpaceAdmin && !userSpacePermissions.hasAdmin) ||
-  //       (access == DbAccess.SpaceOwner && !userSpacePermissions.isOwner)
-  //     ) {
-  //       throw new DbError(DbErrorType.Unauthorised, `${access} required, had none`);
-  //     }
-  //   }
-  // }
-  // return userSpacePermissions;
+    // no perms / session required
+    if (access.includes(Access.None)) return next();
+  };
 };

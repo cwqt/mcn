@@ -1,6 +1,7 @@
 @import "~@angular/material/theming";
 
-$custom-typography: mat-typography-config($font-family: "IBM Plex Sans, sans-serif",
+$custom-typography: mat-typography-config(
+  $font-family: "IBM Plex Sans, sans-serif",
 );
 @include mat-core($custom-typography);
 
@@ -9,9 +10,11 @@ $my-custom-primary: mat-palette($mat-grey);
 $my-custom-accent: mat-palette($mat-grey, 100, 500, A100);
 $my-custom-warn: mat-palette($mat-red);
 
-$my-custom-theme: mat-light-theme($my-custom-primary,
+$my-custom-theme: mat-light-theme(
+  $my-custom-primary,
   $my-custom-accent,
-  $my-custom-warn);
+  $my-custom-warn
+);
 
 button {
   &.mat-button {
@@ -86,6 +89,10 @@ button {
       }
     }
   }
+
+  &:disabled {
+    opacity: 0.5;
+  }
 }
 
 mat-table {
@@ -98,7 +105,56 @@ mat-table {
       color: #161616 !important;
       font-size: 14px !important;
     }
+  }
+}
 
+mat-form-field {
+  width: 100% !important;
+  .mat-form-field-appearance-fill {
+    border-radius: 0 !important;
+  }
+
+  .mat-form-field-flex {
+    border-radius: 0 !important;
+    border: 2px solid transparent;
+  }
+
+  &.mat-focused {
+    .mat-form-field-ripple,
+    .mat-form-field-underline {
+      display: none !important;
+    }
+
+    &.mat-form-field-invalid .mat-form-field-flex {
+      border: 2px solid red !important;
+    }
+
+    .mat-form-field-flex {
+      border: 2px solid #0f62fe;
+    }
+  }
+
+  &:hover {
+    &:not(.mat-form-field-invalid) {
+      .mat-form-field-ripple {
+        background-color: #78a9ff;
+      }
+    }
+  }
+}
+
+mat-checkbox {
+  &.mat-checkbox-checked.mat-accent .mat-checkbox-ripple .mat-ripple-element {
+    opacity: 0.03 !important;
+    background-color: #0f62fe !important;
+  }
+  &.mat-checkbox-checked.mat-accent .mat-checkbox-background,
+  &.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+    background-color: #0f62fe !important;
+  }
+  &.mat-checkbox-ripple .mat-ripple-element,
+  &.mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: #0f62fe !important;
   }
 }
 

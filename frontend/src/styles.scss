@@ -11,45 +11,27 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
-}
-
-label {
-  font-size: 18px;
 }
 
 .app-input-no-underline .mat-form-field-underline {
   display: none;
 }
 
-@keyframes example {
+@keyframes OffsetLabel {
   from {
     margin-bottom: 0;
   }
 
   to {
-    margin-bottom: 24px;
+    margin-bottom: 15px;
   }
 }
 
 mat-form-field.ng-invalid.ng-touched {
-  animation: example;
+  animation: OffsetLabel;
   animation-duration: 0.3s;
-  margin-bottom: 24px;
+  margin-bottom: 15px;
 }
-
-// button,
-// a {
-//     &.mat-button,
-//     &.mat-raised-button,
-//     &.mat-flat-button,
-//     &.mat-stroked-button {
-//         .mat-icon {
-//             vertical-align: top;
-//             font-size: 1.25em;
-//         }
-//     }
-// }
 
 .mat-tab-group {
   height: 100%;
@@ -72,8 +54,6 @@ mat-form-field.ng-invalid.ng-touched {
 
 .mat-dialog-container {
   padding: 0 !important;
-  border-radius: 20px !important;
-  overflow: visible !important;
 }
 
 popover-container {

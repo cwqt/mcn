@@ -1,5 +1,78 @@
-<div class="wrapper" *ngIf="!currentUser || currentUser.new_user">
-  <div class="left side">
+<div class="landing-wrapper" *ngIf="!currentUser || currentUser.new_user">
+  <div class="landing-cover">
+    <img class="landing-cover-image" src="/assets/cover.jpg">
+    <img class="landing-cover-image__blur" src="/assets/cover.jpg">
+    <div class="landing-cover-gradient"></div>
+
+    <div class="landing-content">
+      <div class="landing-header">
+        <div class="left">
+          <img src="/assets/leaf.png" />
+          <div>
+            <h1>mcn</h1>
+            <p>my.corrhizal.net</p>
+          </div>
+        </div>
+
+        <div class="center"></div>
+
+        <div class="right">
+          <ui-button size="s" transparent="true" variant="accent" icon="login" (click)="openDialog('login')">Sign in</ui-button>
+          <ui-button size="s" transparent="true" variant="accent" icon="user" (click)="openDialog('register')">Register</ui-button>
+        </div>
+      </div>
+
+      <div class="landing-cover-body">
+        <h1>
+          <b>All-in-one solution for vertical farming</b><br />
+          IoT & agritech combined.
+        </h1>
+
+        <div class="landing-body-buttons">
+          <ui-button variant="secondary" icon="download">Download</ui-button>
+          <ui-button variant="accent" icon="arrow--right">Get started</ui-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="landing-body">
+    <ui-admonition type="info" title="During early access, getting a server for a world is complicated">
+      Eventually it will be easy. However, there's an advanced guide for
+      self-hosting on Linux which you can find here
+    </ui-admonition>
+
+    <br />
+
+    <ui-admonition type="warning" title="During early access, getting a server for a world is complicated">
+      Eventually it will be easy. However, there's an advanced guide for
+      self-hosting on Linux which you can find here
+    </ui-admonition>
+
+    <br />
+
+    <ui-admonition type="bug" title="During early access, getting a server for a world is complicated">
+      Eventually it will be easy. However, there's an advanced guide for
+      self-hosting on Linux which you can find here
+    </ui-admonition>
+
+    <br />
+
+    <ui-admonition type="success" title="During early access, getting a server for a world is complicated">
+      Eventually it will be easy. However, there's an advanced guide for
+      self-hosting on Linux which you can find here
+    </ui-admonition>
+
+    <br />
+
+    <ui-admonition type="example" title="During early access, getting a server for a world is complicated">
+      Eventually it will be easy. However, there's an advanced guide for
+      self-hosting on Linux which you can find here
+    </ui-admonition>
+  </div>
+
+
+  <!-- <div class="left side">
     <div class="content-wrapper">
       <div class="content">
         <img src="/assets/leaf.png" />
@@ -31,12 +104,25 @@
         <app-first-time-setup></app-first-time-setup>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <app-wrapper *ngIf="currentUser && !currentUser.new_user">
   <router-outlet></router-outlet>
   <!-- <ui-testbed></ui-testbed> -->
 </app-wrapper>
-
-

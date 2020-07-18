@@ -16,6 +16,10 @@ button {
     opacity: .7;
   }
 
+  &.isTransparent {
+    background: transparent !important;
+  }
+
   &.mat-accent {
     ::ng-deep .mat-spinner circle {
       stroke: black !important;
@@ -28,7 +32,20 @@ button {
     }
   }
 
-  &.small {}
+  &.small {
+    padding: 2px 5px 2px 0;
+    border-radius: 4px !important;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 0;
+    min-height: 30px;
+
+    ui-icon {
+      transform: scale(.8);
+      margin-right: 4px;
+      ;
+    }
+  }
 
   &.med {
     padding: 8px 16px

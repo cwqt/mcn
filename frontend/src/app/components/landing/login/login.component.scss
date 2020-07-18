@@ -1,9 +1,5 @@
 h1 {
-  margin-bottom: 30px !important;
-}
-
-form {
-  padding-left: 15px;
+  margin-bottom: 20px !important;
 }
 
 mat-error.form {
@@ -12,19 +8,79 @@ mat-error.form {
 }
 
 .help {
-  margin-left: 15px;
   color: grey;
   text-decoration: none;
   transition: 0.2s;
+  margin-left: auto;
+  white-space: nowrap;
+  margin-top: -4px;
 
   &:hover {
-    color: darken(grey, 20%)
+    color: darken(grey, 20%);
   }
 }
 
-.loader {
-  .mat-spinner {
-    display: inline-block;
-    margin-right: 5px;
+.login-wrapper {
+  display: flex;
+  overflow: hidden;
+  max-height: 400px;
+  position: relative;
+
+  .image {
+    width: 200px;
+    min-width: 200px;
+    height: 400px;
+    overflow: hidden;
+    position: relative;
+
+    img:not(#logo) {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+      object-position: center;
+    }
+
+    #logo {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      max-height: 38px;
+      max-width: 38px;
+      z-index: 999;
+    }
   }
+
+  ui-button img {
+    max-height: 20px;
+    margin-right: 10px;
+  }
+
+  .content {
+    padding: 20px;
+    width: 100%;
+  }
+}
+
+.sign-in-buttons {
+  display: flex;
+  align-items: center;
+  max-height: 48px;
+  overflow: hidden;
+  mat-checkbox {
+    margin-left: 15px;
+  }
+}
+
+ui-button {
+  margin-right: 10px;
+}
+
+.alt-sign-in-buttons {
+  background-color: #f4f4f4;
+  position: absolute;
+  padding: 10px;
+  bottom: 0px;
+  left: 200px;
+  width: 100%;
 }

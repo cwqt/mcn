@@ -10,6 +10,7 @@ export class ButtonComponent implements OnInit {
   @Input() tooltip?: string;
   @Input() disabled?: boolean = false;
   @Input() loading?: boolean = false;
+  @Input() transparent?: boolean = false;
   @Input() variant?:
     | "primary"
     | "secondary"
@@ -25,6 +26,6 @@ export class ButtonComponent implements OnInit {
   ngOnInit(): void {}
 
   onClick(event) {
-    this.click.emit(event);
+    // this.click.emit(event);
   }
 }

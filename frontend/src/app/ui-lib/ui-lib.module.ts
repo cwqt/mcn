@@ -11,6 +11,8 @@ import { TestbedComponent } from "./testbed/testbed.component";
 import { IconButtonComponent } from "./icon-button/icon-button.component";
 import { OverflowMenuComponent } from "./overflow-menu/overflow-menu.component";
 import { SectionHeaderComponent } from "./section-header/section-header.component";
+import { AdmonitionComponent } from "./admonition/admonition.component";
+import { ReactiveFormsModule } from "@angular/forms";
 
 const allComponents = [
   LoadablePanelComponent,
@@ -21,11 +23,17 @@ const allComponents = [
   IconButtonComponent,
   OverflowMenuComponent,
   SectionHeaderComponent,
+  AdmonitionComponent,
 ];
 
 @NgModule({
   declarations: [allComponents],
-  imports: [CommonModule, AngularMaterialModule, ClickOutsideModule],
+  imports: [
+    CommonModule,
+    AngularMaterialModule,
+    ClickOutsideModule,
+    ReactiveFormsModule,
+  ],
   exports: [allComponents],
   providers: [],
   entryComponents: [],

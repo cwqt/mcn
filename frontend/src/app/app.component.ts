@@ -5,6 +5,9 @@ import { IUser } from "@cxss/interfaces";
 
 import { UserService } from "./services/user.service";
 import { OrganisationService } from "./services/organisation.service";
+import { LoginComponent } from "./components/landing/login/login.component";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "app-root",
@@ -17,8 +20,10 @@ export class AppComponent implements OnInit {
   ui: string = "login";
 
   constructor(
+    public dialog: MatDialog,
     private userService: UserService,
     private orgService: OrganisationService,
+    private titleService: Title,
     private router: Router
   ) {
     console.log(
@@ -52,6 +57,9 @@ export class AppComponent implements OnInit {
         }
       }
     });
+
+    this.titleService.setTitle("mcn — Index");
+    this.openDialog("login");
   }
 
   toggleUiStateRegister() {
@@ -60,5 +68,21 @@ export class AppComponent implements OnInit {
     } else if (this.ui == "register") {
       this.ui = "login";
     }
+  }
+
+  openDialog(component: "login" | "register") {
+    let dialogRef: MatDialogRef<any>;
+
+    switch (component) {
+      case "login":
+        dialogRef = this.dialog.open(LoginComponent, {
+          width: "700px",
+          height: "400px",
+        });
+    }
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }

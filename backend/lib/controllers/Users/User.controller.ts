@@ -104,7 +104,7 @@ export const deleteUser = async (req: Request, res: Response) => {
   await new Node(NodeType.User, req.params._id).delete();
 };
 
-export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+export const loginUser = async (req: Request, next: NextFunction) => {
   let email = req.body.email;
   let password = req.body.password;
 
@@ -139,14 +139,14 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
       next(new ErrorHandler(HTTP.Unauthorised, [{ param: "password", msg: "Incorrect password" }]));
 
     req.session.user = {
-      id: user._id,
+      _id: user._id,
       admin: user.admin || false,
     };
 
     let u: User = await new Node(NodeType.User, user._id).read();
-    res.json(u.toFull());
+    return u.toFull();
   } catch (e) {
-    throw new ErrorHandler(HTTP.ServerError, e);
+    next(new ErrorHandler(HTTP.ServerError, e));
   }
 };
 
