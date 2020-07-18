@@ -12,8 +12,31 @@ import { Org } from "../../classes/Orgs.model";
 import { Node } from "../../classes/Node.model";
 
 import { IUserPrivate, IUser, IOrgStub, NodeType } from "@cxss/interfaces";
+const { body, param, query } = require("express-validator");
+import { validate } from "../../common/validate";
 
-export const createUser = async (req: Request, res: Response) => {
+export const validators = {
+  loginUser: validate([
+    body("email").isEmail().normalizeEmail().withMessage("Not a valid email address"),
+    body("password")
+      .not()
+      .isEmpty()
+      .isLength({ min: 6 })
+      .withMessage("Password length must be > 6 characters"),
+  ]),
+  createUser: validate([
+    body("username").not().isEmpty().trim().withMessage("Username cannot be empty"),
+    body("email").isEmail().normalizeEmail().withMessage("Not a valid email address"),
+    body("password")
+      .not()
+      .isEmpty()
+      .isLength({ min: 6 })
+      .withMessage("Password length must be > 6 characters"),
+  ]),
+  readUserByUsername: validate([param("username").not().isEmpty().trim()]),
+};
+
+export const createUser = async (req: Request) => {
   //see if username/email already taken
   let result = await cypher(
     `
@@ -43,15 +66,15 @@ export const createUser = async (req: Request, res: Response) => {
   user.generateCredentials(req.body.password);
   await user.create();
 
-  res.status(HTTP.Created).json(user.toFull());
+  return user.toFull();
 };
 
-export const readUserById = async (req: Request, res: Response) => {
+export const readUserById = async (req: Request) => {
   let user: User = await new Node(NodeType.User, req.params.uid).read();
-  res.json(user.toFull());
+  return user.toFull();
 };
 
-export const readUserByUsername = async (req: Request, res: Response) => {
+export const readUserByUsername = async (req: Request) => {
   let result = await cypher(
     `
         MATCH (u:User {username: $username})
@@ -66,10 +89,10 @@ export const readUserByUsername = async (req: Request, res: Response) => {
   if (!r || r.get("u") == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
 
   let user: User = await new Node(NodeType.User, r.get("u").properties._id).read();
-  res.json(user.toFull());
+  return user.toFull();
 };
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async (req: Request) => {
   var newData: any = {};
   let allowedFields = ["name", "email", "location", "bio", "new_user"];
   let reqKeys = Object.keys(req.body);
@@ -79,29 +102,30 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 
   let user: User = await new Node(NodeType.User, req.params.uid).update(newData);
-  res.json(user.toFull());
+  user.toFull();
 };
 
-export const updateUserAvatar = async (req: Request, res: Response) => {
+export const updateUserAvatar = async (req: Request) => {
   try {
     let user = await updateImage(req.params.uid, req.file, "avatar");
-    res.json(user);
+    return user;
   } catch (e) {
     throw new ErrorHandler(HTTP.ServerError, e);
   }
 };
 
-export const updateUserCoverImage = async (req: Request, res: Response) => {
-  try {
-    let user = await updateImage(req.params.uid, req.file, "cover_image");
-    res.json(user);
-  } catch (e) {
-    throw new ErrorHandler(HTTP.ServerError, e);
-  }
-};
+// export const updateUserCoverImage = async (req: Request, res: Response) => {
+//   try {
+//     let user = await updateImage(req.params.uid, req.file, "cover_image");
+//     res.json(user);
+//   } catch (e) {
+//     throw new ErrorHandler(HTTP.ServerError, e);
+//   }
+// };
 
-export const deleteUser = async (req: Request, res: Response) => {
+export const deleteUser = async (req: Request) => {
   await new Node(NodeType.User, req.params._id).delete();
+  return;
 };
 
 export const loginUser = async (req: Request, next: NextFunction) => {
@@ -150,16 +174,14 @@ export const loginUser = async (req: Request, next: NextFunction) => {
   }
 };
 
-export const logoutUser = (req: Request, res: Response, next: NextFunction) => {
-  if (req.session) {
-    req.session.destroy((err) => {
-      if (err) return next(new ErrorHandler(HTTP.ServerError, "Logging out failed"));
-      res.status(HTTP.OK).end();
-    });
-  }
+export const logoutUser = async (req: Request, next: NextFunction) => {
+  req.session.destroy((err) => {
+    if (err) return next(new ErrorHandler(HTTP.ServerError, "Logging out failed"));
+    return;
+  });
 };
 
-export const readUserOrgs = async (req: Request, res: Response) => {
+export const readUserOrgs = async (req: Request) => {
   let result = await cypher(
     `
         MATCH (u:User {_id:$uid})
@@ -176,7 +198,7 @@ export const readUserOrgs = async (req: Request, res: Response) => {
     return new Org(org.name, org._id).toStub();
   });
 
-  res.json(orgs);
+  return orgs;
 };
 
 // HELPER FUNCTIONS ===============================================================================

@@ -130,10 +130,4 @@
 //   createMeasurementAsDevice
 // );
 
-// //seconds since unix epoch
-// router.get("/time", (req: Request, res: Response) => {
-//   const now = new Date();
-//   return res.status(HTTP.OK).send(Math.round(now.getTime() / 1000));
-// });
-
 // export default router;

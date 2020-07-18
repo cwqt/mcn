@@ -20,6 +20,7 @@ export enum Access {
   OrgEditor,
   OrgMember,
   ItemOwner,
+  Ourself,
   Authenticated,
   None,
 }
@@ -57,7 +58,8 @@ export class McnRouter {
     path: string,
     controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
     access: Access[],
-    validators: any = skip
+    validators: any = skip,
+    nodeData?: [NodeType, string]
   ) => {
     const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -67,14 +69,15 @@ export class McnRouter {
         throw new ErrorHandler(HTTP.ServerError, err);
       }
     };
-    this.router.post(path, getCheckPermissions(access), validators, wrappedController);
+    this.router.post(path, getCheckPermissions(access, nodeData), validators, wrappedController);
   };
 
   put = <T>(
     path: string,
     controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
     access: Access[],
-    validators: any = skip
+    validators: any = skip,
+    nodeData?: [NodeType, string]
   ) => {
     const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -84,14 +87,15 @@ export class McnRouter {
         throw new ErrorHandler(HTTP.ServerError, err);
       }
     };
-    this.router.put(path, getCheckPermissions(access), validators, wrappedController);
+    this.router.put(path, getCheckPermissions(access, nodeData), validators, wrappedController);
   };
 
   delete = <T>(
     path: string,
     controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
     access: Access[],
-    validators: any = skip
+    validators: any = skip,
+    nodeData?: [NodeType, string]
   ) => {
     const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -101,7 +105,7 @@ export class McnRouter {
         throw new ErrorHandler(HTTP.ServerError, err);
       }
     };
-    this.router.delete(path, getCheckPermissions(access), validators, wrappedController);
+    this.router.delete(path, getCheckPermissions(access, nodeData), validators, wrappedController);
   };
 }
 

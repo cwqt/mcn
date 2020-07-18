@@ -18,7 +18,7 @@ export class Org extends Node {
     };
   }
 
-  toOrg(): IOrg {
+  toFull(): IOrg {
     return {
       ...this.toStub(),
     };

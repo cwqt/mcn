@@ -4,11 +4,18 @@ import { cypher } from "../common/dbs";
 
 import { objToClass } from "../classes/Node.model";
 import { Org } from "../classes/Orgs.model";
-import { OrgRole, NodeType } from "@cxss/interfaces";
+import { OrgRole, NodeType, OrgItemType } from "@cxss/interfaces";
 import { capitalize } from "./Node.controller";
 import { ErrorHandler } from "../common/errorHandler";
+const { body, param, query } = require("express-validator");
+import { validate } from "../common/validate";
 
-export const createOrg = async (req: Request, res: Response) => {
+export const validators = {
+  createOrg: validate([body("name").not().isEmpty().trim()]),
+  validOrgNodeType: validate([query("type").isIn(Object.values(OrgItemType))]),
+};
+
+export const createOrg = async (req: Request) => {
   const org = new Org(req.body.name);
   let result = await cypher(
     `
@@ -18,16 +25,16 @@ export const createOrg = async (req: Request, res: Response) => {
         RETURN o
     `,
     {
-      org: org.toOrg(),
+      org: org.toFull(),
       uid: req.session.user.id,
       role: OrgRole.Owner,
     }
   );
 
-  res.status(HTTP.Created).json(org.toOrg());
+  return org.toFull();
 };
 
-export const getOrgItem = async (req: Request, res: Response) => {
+export const getOrgNode = async (req: Request) => {
   let nodeType = <string>req.query.type;
   let result = await cypher(
     `
@@ -43,10 +50,10 @@ export const getOrgItem = async (req: Request, res: Response) => {
 
   if (!result.records.length) throw new ErrorHandler(HTTP.NotFound, `No such ${nodeType}`);
   let node = objToClass(<NodeType>nodeType, result.records[0].get("n").properties).toDevice();
-  res.json(node);
+  return node;
 };
 
-export const readOrgNodes = async (req: Request, res: Response) => {
+export const readOrgNodes = async (req: Request) => {
   let nodeType = <string>req.query.type;
   let result = await cypher(
     `
@@ -65,10 +72,10 @@ export const readOrgNodes = async (req: Request, res: Response) => {
     return objToClass(<NodeType>nodeType, r.get("n").properties).toStub();
   });
 
-  res.json(nodes);
+  return nodes;
 };
 
-export const addItemToOrg = async (req: Request, res: Response) => {
+export const addNodeToOrg = async (req: Request) => {
   let nodeType = <string>req.query.type;
   let result = await cypher(
     `

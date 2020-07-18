@@ -9,7 +9,6 @@ import http from "http";
 import "reflect-metadata";
 
 import config from "./config";
-import routes from "./routes";
 import { handleError, ErrorHandler } from "./common/errorHandler";
 import { awaitAllDbsConnected } from "./common/dbs";
 
@@ -40,12 +39,6 @@ if (!config.TESTING) app.use(morgan("tiny", { stream: log.stream }));
   await awaitAllDbsConnected();
   try {
     app.use("/", mcnr.router);
-    // app.use("/orgs", routes.orgs);
-    // app.use("/users", routes.users);
-    // app.use("/auth", routes.auth);
-    // app.use("/iot", routes.iot);
-
-    // if (config.TESTING) app.use("/test", routes.test);
 
     app.all("*", (req: any, res: any, next: any) => {
       throw new ErrorHandler(404, "No such route exists");
