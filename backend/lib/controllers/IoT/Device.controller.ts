@@ -129,9 +129,9 @@ export const createDevice = async (req: Request, res: Response) => {
   res.status(HTTP.Created).json(d);
 };
 
-export const updateDevice = async (req: Request, res: Response) => {};
+export const updateDevice = async (req: Request) => {};
 
-export const deleteDevice = async (req: Request, res: Response) => {};
+export const deleteDevice = async (req: Request) => {};
 
 export const assignDeviceToRecordable = async (req: Request, res: Response) => {
   let result = await cypher(
@@ -151,7 +151,7 @@ export const assignDeviceToRecordable = async (req: Request, res: Response) => {
   res.status(HTTP.Created).end();
 };
 
-export const readDevice = async (req: Request, res: Response) => {
+export const readDevice = async (req: Request) => {
   let result = await cypher(
     `
         MATCH (d:Device {_id:$did})
@@ -180,7 +180,7 @@ export const readDevice = async (req: Request, res: Response) => {
     api_key: (key as IApiKey) || null,
   };
 
-  res.json(data);
+  return data;
 };
 
 // export const updateDevice = (req:Request, res:Response, next:NextFunction) => {

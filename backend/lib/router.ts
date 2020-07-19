@@ -3,16 +3,8 @@ import { NodeType } from "@cxss/interfaces";
 import { HTTP } from "./common/http";
 import { ErrorHandler } from "./common/errorHandler";
 import { cypher } from "./common/dbs";
+import { accessSync } from "fs";
 const AsyncRouter = require("express-async-router").AsyncRouter;
-
-//Checks if an object is not null, throws exception if it is
-export const getCheck = <T>(
-  nameForErrorIfNull: string,
-  itemToCheckExists: T | null | undefined
-): T => {
-  if (!itemToCheckExists) throw new Error(`${nameForErrorIfNull} not found`);
-  else return itemToCheckExists;
-};
 
 export enum Access {
   SiteAdmin,
@@ -21,6 +13,7 @@ export enum Access {
   OrgMember,
   ItemOwner,
   Ourself,
+  InOrg,
   Authenticated,
   None,
 }
@@ -110,95 +103,117 @@ export class McnRouter {
 }
 
 const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) => {
-  //highest to lowest privilege check
   return async (req: Request, res: Response, next: NextFunction) => {
-    //Site admin can do anything
-    if (access.includes(Access.SiteAdmin)) {
-      let result = await cypher(
-        `
-        MATCH (u:User {_id:$uid, admin:true})
-        RETURN u
-      `,
-        {
-          uid: req.session.user._id,
-        }
-      );
-      if (!result.records.length) next(new ErrorHandler(HTTP.Unauthorised));
-      return next();
-    }
+    try {
+      //No perms / session required
+      if (access.includes(Access.None)) return next();
 
-    //Check if user is owner of item
-    if (nodeData && access.some((a) => [Access.ItemOwner].includes(a))) {
-      let result = await cypher(
-        `
-        MATCH (u:User {_id:$uid})-[isOwner:CREATED | OWNER]->(n:${nodeData[0]} {_id:iid})
-        RETURN isOwner, n
-      `,
-        {
-          uid: req.session.user._id,
-          iid: req.params[nodeData[1]],
-        }
-      );
+      //All other checks require an active session (logged in)
+      if (!req.session?.user) throw new Error(`Session required to access requested resource`);
 
-      getCheck(result.records[0]?.get("n"), nodeData[0]);
-      if (!result.records[0]?.get("isOwner"))
-        return next(new ErrorHandler(HTTP.Unauthorised, "You do not own this item"));
-      return next();
-    }
+      //Site admin can do anything
+      if (req.session.user.admin) return next();
 
-    // Check if user must be part of organisation to perform action
-    if (access.some((a) => [Access.OrgAdmin, Access.OrgEditor, Access.OrgMember].includes(a))) {
-      let result = await cypher(
-        `
-        MATCH (u:User {_id:$uid})-[isOrgMember:IN]->(o:Organisation {_id:$oid})
-        RETURN u, o, isOrgMember,
-          EXISTS ((u)-[:OWNER]->(o)) as isOrgOwner,
-          EXISTS ((u)-[:EDITOR]->(o)) as isOrgEditor
-      `,
-        {
-          uid: req.session.user._id,
-          oid: req.params.oid,
-        }
-      );
-
-      //check org owner first
-      if (
-        access.some((a) => [Access.OrgAdmin].includes(a)) &&
-        !result.records[0].get("isOrgOwner")
-      ) {
-        return next(
-          new ErrorHandler(HTTP.Unauthorised, "Requires Org Owner privilege to perform action.")
-        );
-      } else {
-        //then editor
-        if (
-          access.some((a) => [Access.OrgEditor].includes(a)) &&
-          !result.records[0].get("isOrgEditor")
-        ) {
-          return next(
-            new ErrorHandler(HTTP.Unauthorised, "Requires Org Editor privilege to perform action.")
-          );
-        } else {
-          //finally member
-          if (
-            access.some((a) => [Access.OrgMember].includes(a)) &&
-            !result.records[0].get("isOrgMember")
-          ) {
-            return next(
-              new ErrorHandler(HTTP.Unauthorised, "You are not member of this organisation.")
-            );
-          } else {
-            return next();
-          }
+      //Can only operate when is ourself
+      if (access.some((a) => [Access.Ourself].includes(a)) && nodeData[0] == NodeType.User) {
+        if (req.session.user._id !== req.params[nodeData[1]]) {
+          throw new Error("User id & session id mismatch");
         }
       }
+
+      //Check if user is owner of item
+      if (nodeData) {
+        let result = await cypher(
+          `
+          MATCH (u:User {_id:$uid})-[isOwner:CREATED]->(n:${nodeData[0]} {_id:iid})
+          RETURN isOwner, n
+        `,
+          {
+            uid: req.session.user._id,
+            iid: req.params[nodeData[1]],
+          }
+        );
+
+        if (!result.records[0]?.get("isOwner")) throw new Error("You do not own this item");
+        return next();
+      }
+
+      //Check if node in same org as user & user has access >= editor
+      if (nodeData && access.some((a) => [Access.InOrg].includes(a))) {
+        //item must share common org with user and nodes
+        let result = await cypher(
+          `
+          MATCH (u:User $uid)-[UserInOrg:IN]->(:Organisation)<-[NodeInOrg:IN]-(n:${nodeData[0]} {_id:$iid})
+          WHERE UserInOrg.role IN $roles
+          RETURN UserInOrg, NodeInOrg
+        `,
+          {
+            uid: req.session.user._id,
+            iid: req.params[nodeData[1]],
+            roles: [Access.OrgEditor, Access.SiteAdmin],
+          }
+        );
+
+        if (!result.records[0]?.get("UserInOrg"))
+          throw new Error("Do not have permission for this action.");
+        if (!result.records[0]?.get("NodeInOrg"))
+          throw new Error(`${nodeData[0]} is not in this organisation`);
+        return next();
+      }
+
+      // Check if user must be part of organisation to perform action
+      if (access.some((a) => [Access.OrgAdmin, Access.OrgEditor, Access.OrgMember].includes(a))) {
+        let result = await cypher(
+          `
+          MATCH (u:User {_id:$uid})-[orgRole:IN]->(o:Organisation {_id:$oid})
+          RETURN u, o, orgRole, ${
+            nodeData
+              ? `EXISTS ((u)-[:IN]->(o)<-[:IN]-(n:${nodeData[0]} {_id:$iid})) as nodeInOrg`
+              : ""
+          }
+        `,
+          {
+            uid: req.session.user._id,
+            oid: req.params.oid,
+            iid: nodeData ? nodeData[1] : null,
+          }
+        );
+
+        let userRole = result.records[0]?.get("orgRole")?.properties;
+
+        // Allow anyone to view public organisations
+        if (result.records[0].get("o").public) userRole.role = Access.OrgMember;
+        if (!userRole) throw new Error("You are not in this organisation");
+
+        const hasRole = (accessPolicy: Access) => {
+          if (access.some((a) => [accessPolicy].includes(a)) && userRole.role == access)
+            return true;
+          return false;
+        };
+
+        let requiredAccess: Access;
+        if (nodeData) {
+          if (!result.records[0]?.get("nodeInOrg"))
+            throw new Error(`User and ${nodeData[0]} share no common organisation`);
+
+          if (hasRole(Access.OrgAdmin)) {
+            requiredAccess = Access.OrgAdmin;
+          } else if (hasRole(Access.OrgEditor)) {
+            requiredAccess = Access.OrgEditor;
+          } else if (hasRole(Access.OrgMember)) {
+            requiredAccess = Access.OrgMember;
+          }
+
+          if (userRole.role > requiredAccess)
+            throw new Error(
+              `Insufficient priviledge, needed ${requiredAccess}, got ${userRole.role}`
+            );
+        }
+
+        return next();
+      }
+    } catch (error) {
+      next(new ErrorHandler(HTTP.Unauthorised, error));
     }
-
-    //must be atleast logged in
-    if (!req.session && access.includes(Access.Authenticated))
-      throw new ErrorHandler(HTTP.Unauthorised, `Session required to access requested resource.`);
-
-    // no perms / session required
-    if (access.includes(Access.None)) return next();
   };
 };

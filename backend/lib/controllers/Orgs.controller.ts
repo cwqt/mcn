@@ -15,6 +15,9 @@ export const validators = {
   validOrgNodeType: validate([query("type").isIn(Object.values(OrgItemType))]),
 };
 
+export const getOrgs = async (req: Request) => {};
+export const deleteOrg = async (req: Request) => {};
+
 export const createOrg = async (req: Request) => {
   const org = new Org(req.body.name);
   let result = await cypher(
@@ -75,23 +78,34 @@ export const readOrgNodes = async (req: Request) => {
   return nodes;
 };
 
-export const addNodeToOrg = async (req: Request) => {
-  let nodeType = <string>req.query.type;
-  let result = await cypher(
-    `
+export const addNodeToOrg = (node: NodeType) => {
+  let relationship: { role: undefined | OrgRole } = { role: undefined };
+
+  return async (req: Request) => {
+    if (node == NodeType.User) relationship.role = OrgRole.Viewer;
+
+    let result = await cypher(
+      `
         MATCH (o:Organisation {_id:$oid})
-        MATCH (n:${capitalize(nodeType)} {_id:$iid})
+        MATCH (n:${capitalize(node)} {_id:$iid})
         WHERE NOT (n)-[:IN]->(o)
         CREATE (n)-[:IN $rbody]->(o)
       `,
-    {
-      oid: req.params.org_id,
-      iid: req.params.iid,
-      rbody: res.locals.relationshipBody ?? {},
-    }
-  );
+      {
+        oid: req.params.oid,
+        iid: req.params.iid,
+        rbody: relationship,
+      }
+    );
 
-  res.status(HTTP.OK).end();
+    return;
+  };
+};
+
+export const editUserRole = async (req: Request) => {};
+
+export const getNodes = (node: NodeType) => {
+  return async (req: Request) => {};
 };
 
 // export const getItem = async (node:NodeType, org_id?:string) => {
