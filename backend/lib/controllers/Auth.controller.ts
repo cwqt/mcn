@@ -9,7 +9,8 @@ import { ErrorHandler } from "../common/errorHandler";
 import { cypher } from "../common/dbs";
 import { HTTP } from "../common/http";
 import { IApiKeyPrivate } from "@cxss/interfaces";
-import Email from "./Users/Email.controller";
+const { generateVerificationHash, verifyHash } = require("dbless-email-verification");
+import nodemailer from "nodemailer";
 import { env } from "process";
 
 export const validators = {
@@ -23,10 +24,6 @@ const filterFields = (key: any) => {
   let hiddenFields = ["key"];
   hiddenFields.forEach((field) => delete key[field]);
   return key;
-};
-
-export const verifyEmail = async (req: Request) => {
-  await Email.verifyEmail(req.body.email, req.body.password);
 };
 
 export const createApiKey = async (req: Request) => {
@@ -81,3 +78,74 @@ export const readApiKey = async (req: Request) => {
 };
 
 export const deleteApiKey = async (req: Request) => {};
+
+// EMAIL ------------------------------------------------------------------------------------------
+
+const generateEmailHash = (email: string) => {
+  const hash = generateVerificationHash(email, config.PRIVATE_KEY, 60);
+  return hash;
+};
+
+export const verifyEmail = (email: string, hash: string) => {
+  if (!config.PRODUCTION) return true;
+  const isEmailVerified = verifyHash(hash, email, config.PRIVATE_KEY);
+  return isEmailVerified;
+};
+
+export const sendVerificationEmail = (email: string): Promise<boolean> => {
+  return new Promise((resolve, reject) => {
+    if (config.PRODUCTION == false) {
+      resolve(true);
+      return;
+    }
+
+    let hash = generateEmailHash(email);
+    let verificationUrl = `${config.API_URL}/auth/verify?email=${email}&hash=${hash}`;
+
+    let transporter = nodemailer.createTransport({
+      service: "SendGrid",
+      auth: {
+        user: config.SENDGRID_USERNAME,
+        pass: config.SENDGRID_API_KEY,
+      },
+    });
+
+    let mailOptions = {
+      from: config.EMAIL_ADDRESS,
+      to: email,
+      subject: `Verify your ${config.SITE_TITLE} account 🌱`,
+      html: `<p>Click the link to verify: <a href="${verificationUrl}">${verificationUrl}</a></p>`,
+    };
+
+    transporter.sendMail(mailOptions, (error: any) => {
+      if (error) {
+        console.log(error);
+        resolve(false);
+      }
+      resolve(true);
+    });
+  });
+};
+
+export const verifyUserEmail = async (req: Request): Promise<string> => {
+  let hash = req.query.hash as string;
+  let email = req.query.email as string;
+
+  let isVerified = verifyEmail(email, hash);
+  if (!isVerified) throw new ErrorHandler(HTTP.BadRequest, "Not a valid hash");
+
+  let result = await cypher(
+    `
+        MATCH (u:User {email: $email})
+        SET u.verified = TRUE
+        RETURN u`,
+    {
+      email: email,
+    }
+  );
+
+  let u = result.records[0].get("u").properties;
+  if (!u.verified) return `${config.FE_URL}/verified?state=false`;
+
+  return `${config.FE_URL}/verified?state=true`;
+};

@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { Request, Response, NextFunction } from "express";
 
-import { sendVerificationEmail } from "./Email.controller";
+import Auth = require("../Auth.controller");
 import { ErrorHandler, FormErrorResponse } from "../../common/errorHandler";
 import { HTTP } from "../../common/http";
 import { uploadImageToS3, S3Image } from "../../common/storage";
@@ -66,12 +66,12 @@ export const createUser = async (req: Request, next: NextFunction) => {
     return next(new ErrorHandler(HTTP.Conflict, errors.value));
   }
 
-  let emailSent = await sendVerificationEmail(req.body.email);
+  let emailSent = await Auth.sendVerificationEmail(req.body.email);
   if (!emailSent)
     return next(new ErrorHandler(HTTP.ServerError, "Verification email could not be sent"));
 
   let user = new User(req.body.username, req.body.email);
-  user.generateCredentials(req.body.password);
+  await user.generateCredentials(req.body.password);
   await user.create();
 
   return user.toFull();
@@ -151,7 +151,7 @@ export const loginUser = async (req: Request, next: NextFunction) => {
     }
   );
   if (!result.records.length)
-    next(
+    return next(
       new ErrorHandler(HTTP.NotFound, [
         { param: "email", msg: "No such user for this email", value: req.body.email },
       ])
@@ -159,7 +159,7 @@ export const loginUser = async (req: Request, next: NextFunction) => {
 
   let user: IUserPrivate = result.records[0].get("u").properties;
   if (!user.verified)
-    next(
+    return next(
       new ErrorHandler(HTTP.Unauthorised, [
         { param: "form", msg: "Your account has not been verified" },
       ])
@@ -168,7 +168,9 @@ export const loginUser = async (req: Request, next: NextFunction) => {
   try {
     let match = await bcrypt.compare(password, user.pw_hash);
     if (!match)
-      next(new ErrorHandler(HTTP.Unauthorised, [{ param: "password", msg: "Incorrect password" }]));
+      return next(
+        new ErrorHandler(HTTP.Unauthorised, [{ param: "password", msg: "Incorrect password" }])
+      );
 
     req.session.user = {
       _id: user._id,
@@ -178,7 +180,7 @@ export const loginUser = async (req: Request, next: NextFunction) => {
     let u: User = await new Node(NodeType.User, user._id).read();
     return u.toFull();
   } catch (e) {
-    next(new ErrorHandler(HTTP.ServerError, e));
+    return next(new ErrorHandler(HTTP.ServerError, e));
   }
 };
 

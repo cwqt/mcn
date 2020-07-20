@@ -8,8 +8,6 @@ export const createUser = async (user: {
   email: string;
   password: string;
 }): Promise<IUser> => {
-  console.log(JSON.stringify(user));
-
   let res = await fetch(`${Stories.apiUrl}/users`, {
     method: "POST",
     body: JSON.stringify(user),
@@ -34,7 +32,7 @@ export const loginUser = async (email: string, password: string): Promise<IUser>
       "Content-Type": "application/json",
     },
   });
-  expect(res.status).to.be.eq(200);
+  expect(res.status).to.be.eq(201);
   return await res.json();
 };
 

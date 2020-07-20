@@ -119,6 +119,29 @@ export class McnRouter {
       wrappedController
     );
   };
+
+  redirect = <T>(
+    path: string,
+    controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<string>,
+    access: Access[],
+    validators: any = skip,
+    nodeData?: [NodeType, string]
+  ) => {
+    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const redirectUrl = await controller(req, next, access);
+        res.status(HTTP.Moved).redirect(redirectUrl);
+      } catch (err) {
+        throw new ErrorHandler(HTTP.ServerError, err);
+      }
+    };
+    this.router.get(
+      path,
+      getCheckPermissions(access, nodeData),
+      validators ?? skip,
+      wrappedController
+    );
+  };
 }
 
 const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) => {

@@ -13,6 +13,7 @@ export default describe(`Perform User CRUD tasks`, () => {
   it("Do CRUD stuff", async () => {
     await Stories.actions.common.setUp();
     let user = await Stories.actions.users.createUser(userData);
+    await Stories.actions.auth.verifyUserEmail(userData.email);
     await Stories.actions.users.loginUser(userData.email, userData.password);
   });
 });
