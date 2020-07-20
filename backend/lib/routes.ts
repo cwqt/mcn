@@ -1,5 +1,6 @@
 import { Access } from "./router";
 import { Request, Response } from 'express';
+import config from './config';
 
 import Users = require("./controllers/Users/User.controller");
 import Orgs = require("./controllers/Orgs.controller");
@@ -41,12 +42,12 @@ mcnr.get("/orgs",               Orgs.getOrgs,             [Access.SiteAdmin]);
 mcnr.delete("/orgs/:oid",       Orgs.deleteOrg,           [Access.OrgAdmin]);
 
     // ORG USERS ---------------------------------------------------------------------------------
-    mcnr.put("/orgs/:oid/users/role",    Orgs.editUserRole,                  [Access.OrgAdmin]);
-    mcnr.post("/orgs/:oid/users/:iid",   Orgs.addNodeToOrg(NodeType.User),   [Access.OrgEditor]);
+    mcnr.post("/orgs/:oid/users/:iid",      Orgs.addNodeToOrg(NodeType.User),   [Access.OrgEditor]);
+    mcnr.put("/orgs/:oid/users/:uid/role",  Orgs.editUserRole,                  [Access.OrgAdmin]);
 
     // ORG DEVICES -------------------------------------------------------------------------------
-    mcnr.post("/orgs/:oid/devices/:iid", Orgs.addNodeToOrg(NodeType.Device), [Access.OrgEditor]);
-    mcnr.get("/orgs/:oid/devices",       Orgs.getNodes(NodeType.Device),     [Access.OrgMember]);
+    mcnr.post("/orgs/:oid/devices/:iid",   Orgs.addNodeToOrg(NodeType.Device), [Access.OrgEditor]);
+    mcnr.get("/orgs/:oid/devices",         Orgs.getNodes(NodeType.Device),     [Access.OrgMember]);
 
 
 
@@ -121,9 +122,11 @@ mcnr.delete("/orgs/:oid",       Orgs.deleteOrg,           [Access.OrgAdmin]);
 // });
 
 // TEST -------------------------------------------------------------------------------------------
-mcnr.post("/test/drop", async () => {
-    await cypher(`MATCH (n) DETACH DELETE n`, {});
-    return;
-}, [Access.SiteAdmin]);
+// if(config.TESTING) {
+    mcnr.post("/test/drop", async () => {
+        await cypher(`MATCH (n) DETACH DELETE n`, {});
+        return;
+    }, []);
+// }
   
 export default mcnr;

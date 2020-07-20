@@ -11,9 +11,7 @@ export enum Access {
   OrgAdmin,
   OrgEditor,
   OrgMember,
-  ItemOwner,
   Ourself,
-  InOrg,
   Authenticated,
   None,
 }
@@ -44,7 +42,12 @@ export class McnRouter {
         throw new ErrorHandler(HTTP.ServerError, err);
       }
     };
-    this.router.get(path, getCheckPermissions(access, nodeData), validators, wrappedController);
+    this.router.get(
+      path,
+      getCheckPermissions(access, nodeData),
+      validators ?? skip,
+      wrappedController
+    );
   };
 
   post = <T>(
@@ -59,10 +62,16 @@ export class McnRouter {
         const item = await controller(req, next, access);
         res.status(HTTP.Created).json(item);
       } catch (err) {
+        console.log(err);
         throw new ErrorHandler(HTTP.ServerError, err);
       }
     };
-    this.router.post(path, getCheckPermissions(access, nodeData), validators, wrappedController);
+    this.router.post(
+      path,
+      getCheckPermissions(access, nodeData),
+      validators ?? skip,
+      wrappedController
+    );
   };
 
   put = <T>(
@@ -80,7 +89,12 @@ export class McnRouter {
         throw new ErrorHandler(HTTP.ServerError, err);
       }
     };
-    this.router.put(path, getCheckPermissions(access, nodeData), validators, wrappedController);
+    this.router.put(
+      path,
+      getCheckPermissions(access, nodeData),
+      validators ?? skip,
+      wrappedController
+    );
   };
 
   delete = <T>(
@@ -98,7 +112,12 @@ export class McnRouter {
         throw new ErrorHandler(HTTP.ServerError, err);
       }
     };
-    this.router.delete(path, getCheckPermissions(access, nodeData), validators, wrappedController);
+    this.router.delete(
+      path,
+      getCheckPermissions(access, nodeData),
+      validators ?? skip,
+      wrappedController
+    );
   };
 }
 
@@ -106,7 +125,7 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       //No perms / session required
-      if (access.includes(Access.None)) return next();
+      if (access.length == 0 || access.includes(Access.None)) return next();
 
       //All other checks require an active session (logged in)
       if (!req.session?.user) throw new Error(`Session required to access requested resource`);
@@ -135,29 +154,6 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
         );
 
         if (!result.records[0]?.get("isOwner")) throw new Error("You do not own this item");
-        return next();
-      }
-
-      //Check if node in same org as user & user has access >= editor
-      if (nodeData && access.some((a) => [Access.InOrg].includes(a))) {
-        //item must share common org with user and nodes
-        let result = await cypher(
-          `
-          MATCH (u:User $uid)-[UserInOrg:IN]->(:Organisation)<-[NodeInOrg:IN]-(n:${nodeData[0]} {_id:$iid})
-          WHERE UserInOrg.role IN $roles
-          RETURN UserInOrg, NodeInOrg
-        `,
-          {
-            uid: req.session.user._id,
-            iid: req.params[nodeData[1]],
-            roles: [Access.OrgEditor, Access.SiteAdmin],
-          }
-        );
-
-        if (!result.records[0]?.get("UserInOrg"))
-          throw new Error("Do not have permission for this action.");
-        if (!result.records[0]?.get("NodeInOrg"))
-          throw new Error(`${nodeData[0]} is not in this organisation`);
         return next();
       }
 
@@ -191,24 +187,24 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
           return false;
         };
 
-        let requiredAccess: Access;
         if (nodeData) {
           if (!result.records[0]?.get("nodeInOrg"))
             throw new Error(`User and ${nodeData[0]} share no common organisation`);
-
-          if (hasRole(Access.OrgAdmin)) {
-            requiredAccess = Access.OrgAdmin;
-          } else if (hasRole(Access.OrgEditor)) {
-            requiredAccess = Access.OrgEditor;
-          } else if (hasRole(Access.OrgMember)) {
-            requiredAccess = Access.OrgMember;
-          }
-
-          if (userRole.role > requiredAccess)
-            throw new Error(
-              `Insufficient priviledge, needed ${requiredAccess}, got ${userRole.role}`
-            );
         }
+
+        let requiredAccess: Access;
+        if (hasRole(Access.OrgAdmin)) {
+          requiredAccess = Access.OrgAdmin;
+        } else if (hasRole(Access.OrgEditor)) {
+          requiredAccess = Access.OrgEditor;
+        } else if (hasRole(Access.OrgMember)) {
+          requiredAccess = Access.OrgMember;
+        }
+
+        if (userRole.role > requiredAccess)
+          throw new Error(
+            `Insufficient priviledge, needed ${requiredAccess}, got ${userRole.role}`
+          );
 
         return next();
       }

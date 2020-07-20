@@ -17,17 +17,13 @@ logger.stream = {
   },
 };
 
-if (config.DEVELOPMENT) {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.printf(
-          (info: any) => `[${info.level}]: ${info.message.trim()}`
-        )
-      ),
-    })
-  );
-}
+logger.add(
+  new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.printf((info: any) => `[${info.level}]: ${info.message.trim()}`)
+    ),
+  })
+);
 
 export default logger;

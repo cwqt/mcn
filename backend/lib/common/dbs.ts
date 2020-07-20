@@ -15,10 +15,7 @@ let dbs = {
   influx: false,
 };
 
-const n4j = neo4j.driver(
-  "neo4j://localhost",
-  neo4j.auth.basic(config.N4J_USER, config.N4J_PASS)
-);
+const n4j = neo4j.driver("neo4j://localhost", neo4j.auth.basic(config.N4J_USER, config.N4J_PASS));
 const redisClient = redis.createClient();
 const redisStore = require("connect-redis")(session);
 const Redis = new redisStore({
@@ -49,16 +46,11 @@ export default {
   mongo: mongo,
 };
 
-export const awaitAllDbsConnected = async (
-  itrlimit: number = 10,
-  delay: number = 1000
-) => {
+export const awaitAllDbsConnected = async (itrlimit: number = 10, delay: number = 1000) => {
   let itrs: number = 0;
 
   while (Object.values(dbs).every((val) => val === false)) {
-    log.info(
-      `Attempting to connect...${itrs}/${itrlimit}:\n${JSON.stringify(dbs)}`
-    );
+    log.info(`Attempting to connect...${itrs}/${itrlimit}:\n${JSON.stringify(dbs)}`);
 
     if (!dbs.redis) redisClient.on("connect", () => (dbs.redis = true));
     if (!dbs.mongo) mongo.once("connected", () => (dbs.mongo = true));
@@ -73,8 +65,7 @@ export const awaitAllDbsConnected = async (
     }
 
     itrs++;
-    if (itrs == itrlimit)
-      throw new Error("Exceeded iterations for DB connections");
+    if (itrs == itrlimit) throw new Error("Exceeded iterations for DB connections");
     await new Promise((resolve) => setTimeout(resolve, delay));
   }
 };

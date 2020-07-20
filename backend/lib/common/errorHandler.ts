@@ -1,6 +1,7 @@
 import { Response } from "express";
 import log from "./logger";
 import { HTTP } from "./http";
+import { measureMemory } from "vm";
 
 interface ErrorResponse {
   [key: string]: any;
@@ -21,6 +22,8 @@ export const handleError = (err: ErrorHandler, res: Response) => {
   console.log(err.stack);
 
   if (message) response["message"] = message;
+  console.log(JSON.stringify(message));
+
   return res.status(response.statusCode).json(response);
 };
 

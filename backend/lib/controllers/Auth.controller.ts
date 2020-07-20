@@ -9,6 +9,8 @@ import { ErrorHandler } from "../common/errorHandler";
 import { cypher } from "../common/dbs";
 import { HTTP } from "../common/http";
 import { IApiKeyPrivate } from "@cxss/interfaces";
+import Email from "./Users/Email.controller";
+import { env } from "process";
 
 export const validators = {
   verify: validate([
@@ -23,7 +25,9 @@ const filterFields = (key: any) => {
   return key;
 };
 
-export const verifyEmail = async (req: Request) => {};
+export const verifyEmail = async (req: Request) => {
+  await Email.verifyEmail(req.body.email, req.body.password);
+};
 
 export const createApiKey = async (req: Request) => {
   let device_id = req.params.did;

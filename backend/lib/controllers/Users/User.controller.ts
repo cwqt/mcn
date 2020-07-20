@@ -14,10 +14,17 @@ import { Node } from "../../classes/Node.model";
 import { IUserPrivate, IUser, IOrgStub, NodeType } from "@cxss/interfaces";
 const { body, param, query } = require("express-validator");
 import { validate } from "../../common/validate";
+import { AnyPtrRecord } from "dns";
 
 export const validators = {
   loginUser: validate([
-    body("email").isEmail().normalizeEmail().withMessage("Not a valid email address"),
+    body("email")
+      .not()
+      .isEmpty()
+      .withMessage("Must provide an e-mail address")
+      .isEmail()
+      .normalizeEmail()
+      .withMessage("Not a valid e-mail address"),
     body("password")
       .not()
       .isEmpty()
@@ -36,7 +43,7 @@ export const validators = {
   readUserByUsername: validate([param("username").not().isEmpty().trim()]),
 };
 
-export const createUser = async (req: Request) => {
+export const createUser = async (req: Request, next: NextFunction) => {
   //see if username/email already taken
   let result = await cypher(
     `
@@ -56,11 +63,12 @@ export const createUser = async (req: Request) => {
     if (user.username == req.body.username)
       errors.push("username", "Username is already taken", req.body.username);
     if (user.email == req.body.email) errors.push("email", "E-mail already in use", req.body.email);
-    throw new ErrorHandler(HTTP.Conflict, errors.value);
+    return next(new ErrorHandler(HTTP.Conflict, errors.value));
   }
 
   let emailSent = await sendVerificationEmail(req.body.email);
-  if (!emailSent) throw new ErrorHandler(HTTP.ServerError, "Verification email could not be sent");
+  if (!emailSent)
+    return next(new ErrorHandler(HTTP.ServerError, "Verification email could not be sent"));
 
   let user = new User(req.body.username, req.body.email);
   user.generateCredentials(req.body.password);

@@ -1,3 +1,4 @@
+require("dotenv").config();
 import express from "express";
 import morgan from "morgan";
 import bodyParser from "body-parser";
@@ -33,7 +34,7 @@ app.use(
   })
 );
 
-if (!config.TESTING) app.use(morgan("tiny", { stream: log.stream }));
+app.use(morgan("tiny", { stream: log.stream }));
 
 (async () => {
   await awaitAllDbsConnected();
@@ -50,7 +51,6 @@ if (!config.TESTING) app.use(morgan("tiny", { stream: log.stream }));
 
     server = app.listen(3000, () => {
       log.info(`Listening on ${config.EXPRESS_PORT}`);
-      if (config.TESTING) app.emit("APP_STARTED");
     });
   } catch (err) {
     log.error(err);
