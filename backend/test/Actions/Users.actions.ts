@@ -22,6 +22,8 @@ export const createUser = async (user: {
 
 export const logoutUser = async () => {
   // "/users/logout",
+
+  Stories.activeSession = null;
 };
 
 export const loginUser = async (email: string, password: string): Promise<IUser> => {
@@ -32,7 +34,14 @@ export const loginUser = async (email: string, password: string): Promise<IUser>
       "Content-Type": "application/json",
     },
   });
+
   expect(res.status).to.be.eq(201);
+
+  Stories.activeSession = res.headers
+    .get("set-cookie")
+    .split(";")
+    .find((s: string) => s.includes("connect.sid"));
+
   return await res.json();
 };
 

@@ -156,6 +156,9 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
       //Site admin can do anything
       if (req.session.user.admin) return next();
 
+      // Only requires the user be logged in
+      if (access.some((a) => [Access.Authenticated].includes(a))) return next();
+
       //Can only operate when is ourself
       if (access.some((a) => [Access.Ourself].includes(a)) && nodeData[0] == NodeType.User) {
         if (req.session.user._id !== req.params[nodeData[1]]) {
@@ -185,9 +188,9 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
         let result = await cypher(
           `
           MATCH (u:User {_id:$uid})-[orgRole:IN]->(o:Organisation {_id:$oid})
-          RETURN u, o, orgRole, ${
+          RETURN u, o, orgRole${
             nodeData
-              ? `EXISTS ((u)-[:IN]->(o)<-[:IN]-(n:${nodeData[0]} {_id:$iid})) as nodeInOrg`
+              ? `, EXISTS ((u)-[:IN]->(o)<-[:IN]-(n:${nodeData[0]} {_id:$iid})) as nodeInOrg`
               : ""
           }
         `,

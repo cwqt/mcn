@@ -1,4 +1,4 @@
-import { Access } from "./router";
+import { Access } from "./mcnr";
 import { Request, Response } from 'express';
 import config from './config';
 
@@ -9,9 +9,10 @@ import Auth = require("./controllers/Auth.controller");
 import Routines = require("./controllers/IoT/Routines.controller");
 import Device = require("./controllers/IoT/Device.controller");
 
-import { McnRouter } from "./router";
+import { McnRouter } from "./mcnr";
 import { cypher } from "./common/dbs";
 import { NodeType } from "@cxss/interfaces";
+import dbs from './common/dbs';
 const mcnr = new McnRouter();
 
 // USERS ------------------------------------------------------------------------------------------
@@ -31,6 +32,7 @@ mcnr.delete("/auth/keys/:kid",          Auth.deleteApiKey,        []);
 mcnr.redirect("/auth/verify",           Auth.verifyUserEmail,     [Access.None],              Auth.validators.verify);
 
 // DEVICES ----------------------------------------------------------------------------------------
+mcnr.post("/devices",                   Device.createDevice,      [Access.Authenticated],     Device.validators.createDevice);
 mcnr.get("/devices/:did",               Device.readDevice,        [Access.OrgMember], null, [NodeType.Device, "did"]);
 mcnr.put("/devices/:did",               Device.updateDevice,      [Access.OrgEditor], null, [NodeType.Device, "did"]);
 mcnr.delete("/devices/:did",            Device.deleteDevice,      [],                 null, [NodeType.Device, "did"]);
@@ -43,6 +45,7 @@ mcnr.delete("/orgs/:oid",               Orgs.deleteOrg,           [Access.OrgAdm
 
 // ORG USERS ---------------------------------------------------------------------------------
 mcnr.post("/orgs/:oid/users/:iid",      Orgs.addNodeToOrg(NodeType.User),   [Access.OrgEditor]);
+mcnr.post("/orgs/:oid/devices/:iid",    Orgs.addNodeToOrg(NodeType.Device), [Access.OrgEditor]);
 mcnr.put("/orgs/:oid/users/:uid/role",  Orgs.editUserRole,                  [Access.OrgAdmin]);
 
 // ORG DEVICES -------------------------------------------------------------------------------
@@ -124,8 +127,11 @@ mcnr.get("/orgs/:oid/devices",         Orgs.getNodes(NodeType.Device),     [Acce
 // TEST -------------------------------------------------------------------------------------------
 // if(config.TESTING) {
     mcnr.post("/test/drop", async () => {
-        await cypher(`MATCH (n) DETACH DELETE n`, {});
-        return;
+        dbs.redisClient.FLUSHDB(() => {
+            cypher(`MATCH (n) DETACH DELETE n`, {}).then(() => {
+                return;
+            });
+        })
     }, []);
 // }
   

@@ -56,6 +56,10 @@ export class DeviceSensor extends DeviceProperty {
       unit: this.unit,
     };
   }
+
+  toFull(): IDeviceSensor {
+    return this.toStub();
+  }
 }
 
 //state
@@ -75,5 +79,9 @@ export class DeviceState extends DeviceProperty {
       state: this.state,
       dType: this.dType,
     };
+  }
+
+  toFull(): IDeviceState {
+    return this.toStub();
   }
 }

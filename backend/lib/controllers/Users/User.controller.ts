@@ -14,7 +14,6 @@ import { Node } from "../../classes/Node.model";
 import { IUserPrivate, IUser, IOrgStub, NodeType } from "@cxss/interfaces";
 const { body, param, query } = require("express-validator");
 import { validate } from "../../common/validate";
-import { AnyPtrRecord } from "dns";
 
 export const validators = {
   loginUser: validate([

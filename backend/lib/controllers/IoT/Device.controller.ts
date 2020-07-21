@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
-import { Types } from "mongoose";
+import { Request, Response, NextFunction } from "express";
+const { body, param, query } = require("express-validator");
+import { validate } from "../../common/validate";
 
 import { HTTP } from "../../common/http";
 import dbs, { cypher } from "../../common/dbs";
@@ -22,6 +23,21 @@ import {
 import { Device } from "../../classes/IoT/Device.model";
 import { DeviceSensor, DeviceState } from "../../classes/IoT/DeviceProperty.model";
 
+export const validators = {
+  createDevice: validate([
+    body("name").not().isEmpty().trim().withMessage("device must have friendly name"),
+    body("hardware_model")
+      .not()
+      .isEmpty()
+      .withMessage("Must have hardware model")
+      .custom((model: string, { req }: any) => {
+        if (!Object.keys(HardwareInformation).includes(model))
+          throw new Error("Un-supported hardware model");
+        return true;
+      }),
+  ]),
+};
+
 export const getDeviceState = (device: IDevice): DeviceStateType => {
   if (device.last_ping == undefined) return DeviceStateType.UnVerified;
   if (device.last_ping && device.measurement_count == 0) return DeviceStateType.Verified;
@@ -36,7 +52,7 @@ export const getDeviceState = (device: IDevice): DeviceStateType => {
   }
 };
 
-export const createDevice = async (req: Request, res: Response) => {
+export const createDevice = async (req: Request, next: NextFunction): Promise<IDevice> => {
   const hwInfo: HardwareDevice = HardwareInformation[<SupportedHardware>req.body.hardware_model];
   let device = new Device(req.body.name, req.body.hardware_model);
 
@@ -71,12 +87,12 @@ export const createDevice = async (req: Request, res: Response) => {
     );
   });
 
-  console.log(sensors, states, metrics);
-
   let session = dbs.neo4j.session();
   let result;
   try {
     const txc = session.beginTransaction();
+    console.log(req.session, device.toFull());
+
     result = await txc.run(
       `
             MATCH (u:User {_id:$uid})
@@ -84,8 +100,8 @@ export const createDevice = async (req: Request, res: Response) => {
             return d
         `,
       {
-        uid: req.params.uid,
-        body: device,
+        uid: req.session.user._id,
+        body: device.toFull(),
       }
     );
 
@@ -94,7 +110,7 @@ export const createDevice = async (req: Request, res: Response) => {
             MATCH (d:Device {_id:$did})
             FOREACH (sensor in $sensors | CREATE (s:Sensor)<-[:HAS_SENSOR]-(d) SET s=sensor)
         `,
-      { did: device._id, sensors: sensors }
+      { did: device._id, sensors: sensors.map((s) => s.toFull()) }
     );
 
     await txc.run(
@@ -102,7 +118,7 @@ export const createDevice = async (req: Request, res: Response) => {
             MATCH (d:Device {_id:$did})
             FOREACH (metric in $metrics | CREATE (m:Metric)<-[:HAS_METRIC]-(d) SET m=metric);
         `,
-      { did: device._id, metrics: metrics }
+      { did: device._id, metrics: metrics.map((m) => m.toFull()) }
     );
 
     await txc.run(
@@ -110,23 +126,18 @@ export const createDevice = async (req: Request, res: Response) => {
             MATCH (d:Device {_id:$did})
             FOREACH (state in $states | CREATE (s:State)<-[:HAS_STATE]-(d) SET s=state);
         `,
-      { did: device._id, states: states }
+      { did: device._id, states: states.map((s) => s.toFull()) }
     );
 
     await txc.commit();
   } catch (e) {
-    throw new ErrorHandler(HTTP.ServerError, e);
+    next(new ErrorHandler(HTTP.ServerError, e));
   } finally {
-    session.close();
+    await session.close();
   }
 
-  if (!result.records.length) throw new ErrorHandler(HTTP.ServerError);
-  let d = {
-    ...result.records[0].get("d").properties,
-    ...createDefaultMeta(),
-  };
-  // d.measurement_count = d.measurement_count.toNumber();
-  res.status(HTTP.Created).json(d);
+  if (!result.records.length) throw new ErrorHandler(HTTP.ServerError, "Did not create Device");
+  return result.records[0].get("d").properties as IDevice;
 };
 
 export const updateDevice = async (req: Request) => {};
@@ -239,18 +250,6 @@ export const readDeviceProperties = async (req: Request, res: Response) => {
 
   let props = result.records.map((n: any) => n.get("x").properties);
   return res.json(props ?? []);
-};
-
-const createDefaultMeta = () => {
-  return {
-    meta: {
-      isHearting: false,
-      hasReposted: false,
-      hearts: 0,
-      reposts: 0,
-      replies: 0,
-    },
-  };
 };
 
 export const readDevicePropertyData = async (req: Request, res: Response) => {

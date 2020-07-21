@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { HTTP } from "../common/http";
 import { cypher } from "../common/dbs";
 
 import { objToClass } from "../classes/Node.model";
 import { Org } from "../classes/Orgs.model";
-import { OrgRole, NodeType, OrgItemType } from "@cxss/interfaces";
+import { OrgRole, NodeType, OrgItemType, IOrg } from "@cxss/interfaces";
 import { capitalize } from "./Node.controller";
 import { ErrorHandler } from "../common/errorHandler";
 const { body, param, query } = require("express-validator");
@@ -18,7 +18,7 @@ export const validators = {
 export const getOrgs = async (req: Request) => {};
 export const deleteOrg = async (req: Request) => {};
 
-export const createOrg = async (req: Request) => {
+export const createOrg = async (req: Request): Promise<IOrg> => {
   const org = new Org(req.body.name);
   let result = await cypher(
     `
@@ -29,10 +29,12 @@ export const createOrg = async (req: Request) => {
     `,
     {
       org: org.toFull(),
-      uid: req.session.user.id,
+      uid: req.session.user._id,
       role: OrgRole.Owner,
     }
   );
+
+  console.log(org);
 
   return org.toFull();
 };
@@ -79,17 +81,16 @@ export const readOrgNodes = async (req: Request) => {
 };
 
 export const addNodeToOrg = (node: NodeType) => {
-  let relationship: { role: undefined | OrgRole } = { role: undefined };
-
-  return async (req: Request) => {
+  return async (req: Request, next: NextFunction) => {
+    let relationship: any = {};
     if (node == NodeType.User) relationship.role = OrgRole.Viewer;
 
     let result = await cypher(
       `
         MATCH (o:Organisation {_id:$oid})
         MATCH (n:${capitalize(node)} {_id:$iid})
-        WHERE NOT (n)-[:IN]->(o)
-        CREATE (n)-[:IN $rbody]->(o)
+        MERGE (n)-[isIn:IN]->(o)
+        RETURN isIn
       `,
       {
         oid: req.params.oid,
@@ -97,6 +98,9 @@ export const addNodeToOrg = (node: NodeType) => {
         rbody: relationship,
       }
     );
+
+    if (!result.records[0]?.get("isIn"))
+      throw new Error(`Couldn't add ${capitalize(node)} to Organisation.`);
 
     return;
   };
