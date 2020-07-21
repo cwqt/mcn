@@ -19,6 +19,7 @@ import {
   HardwareDevice,
   SupportedHardware,
   HardwareInformation,
+  NodeType,
 } from "@cxss/interfaces";
 import { Device } from "../../classes/IoT/Device.model";
 import { DeviceSensor, DeviceState } from "../../classes/IoT/DeviceProperty.model";
@@ -36,6 +37,12 @@ export const validators = {
         return true;
       }),
   ]),
+  assignDevice: validate([
+    param("rid").isMongoId().trim().withMessage("invalid recordable id to assign to"),
+  ]),
+  setApiKey: validate([
+    body("name").not().isEmpty().trim().withMessage("device name must be named"),
+  ]),
 };
 
 export const getDeviceState = (device: IDevice): DeviceStateType => {
@@ -50,6 +57,22 @@ export const getDeviceState = (device: IDevice): DeviceStateType => {
       return DeviceStateType.Active;
     }
   }
+};
+
+export const readAllDevices = async (req: Request) => {};
+
+export const setApiKey = async (req: Request) => {};
+export const readApiKey = async (req: Request) => {};
+export const updateApiKey = async (req: Request) => {};
+export const deleteApiKey = async (req: Request) => {};
+export const assignDevice = async (req: Request) => {};
+
+export const readProperties = (node: NodeType.Sensor | NodeType.State | NodeType.Metric) => {
+  return async (req: Request) => {};
+};
+
+export const readPropertyData = (node: NodeType.Sensor | NodeType.State | NodeType.Metric) => {
+  return async (req: Request) => {};
 };
 
 export const createDevice = async (req: Request, next: NextFunction): Promise<IDevice> => {
@@ -220,7 +243,7 @@ export const readDevice = async (req: Request) => {
 //     })
 // }
 
-export const pingDevice = async (req: Request, res: Response) => {
+export const pingDevice = async (req: Request) => {
   await cypher(
     `
         MATCH (d:Device {_id:$did})
@@ -233,7 +256,7 @@ export const pingDevice = async (req: Request, res: Response) => {
     }
   );
 
-  res.status(HTTP.OK).end();
+  return;
 };
 
 export const readDeviceProperties = async (req: Request, res: Response) => {

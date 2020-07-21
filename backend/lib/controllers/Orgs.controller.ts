@@ -15,8 +15,9 @@ export const validators = {
   validOrgNodeType: validate([query("type").isIn(Object.values(OrgItemType))]),
 };
 
-export const getOrgs = async (req: Request) => {};
+export const readAllOrgs = async (req: Request) => {};
 export const deleteOrg = async (req: Request) => {};
+export const updateOrg = async (req: Request) => {};
 
 export const createOrg = async (req: Request): Promise<IOrg> => {
   const org = new Org(req.body.name);
@@ -58,26 +59,28 @@ export const getOrgNode = async (req: Request) => {
   return node;
 };
 
-export const readOrgNodes = async (req: Request) => {
-  let nodeType = <string>req.query.type;
-  let result = await cypher(
-    `
+export const readOrgNodes = (node: NodeType) => {
+  return async (req: Request) => {
+    let nodeType = <string>req.query.type;
+    let result = await cypher(
+      `
       MATCH (o:Organisation {_id:$oid})
       MATCH (n:${capitalize(nodeType)})-[:IN]->(o)
       RETURN n
     `,
-    {
-      oid: req.params.org_id,
-    }
-  );
+      {
+        oid: req.params.org_id,
+      }
+    );
 
-  console.log(result, nodeType, req.params.org_id);
+    console.log(result, nodeType, req.params.org_id);
 
-  let nodes = result.records.map((r: any) => {
-    return objToClass(<NodeType>nodeType, r.get("n").properties).toStub();
-  });
+    let nodes = result.records.map((r: any) => {
+      return objToClass(<NodeType>nodeType, r.get("n").properties).toStub();
+    });
 
-  return nodes;
+    return nodes;
+  };
 };
 
 export const addNodeToOrg = (node: NodeType) => {
