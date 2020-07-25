@@ -1,11 +1,11 @@
-import {
-  IRecordable,
-  RecordableType,
-  IRecordableStub,
-} from "./Recordable.model";
+import { IRecordable, RecordableType, IRecordableStub } from "./Recordable.model";
+import { ICropStub } from "./Crop.model";
+import { Paginated } from "../Node.model";
+import { NodeType } from "../Types/Nodes.types";
 
-export interface IRack extends IRecordable {
-  type: RecordableType.Rack;
-  children: IRecordableStub[];
-  created_at?: Date;
+export interface IRackStub extends IRecordable {
+  type: NodeType.Rack;
+  crops: Paginated<ICropStub>;
 }
+
+export interface IRack extends IRackStub {}

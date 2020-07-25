@@ -8,7 +8,7 @@ import config from "../config";
 import { ErrorHandler } from "../common/errorHandler";
 import { cypher } from "../common/dbs";
 import { HTTP } from "../common/http";
-import { IApiKeyPrivate } from "@cxss/interfaces";
+import { IApiKeyPrivate, IApiKey } from "@cxss/interfaces";
 const { generateVerificationHash, verifyHash } = require("dbless-email-verification");
 import nodemailer from "nodemailer";
 import { env } from "process";
@@ -26,7 +26,7 @@ const filterFields = (key: any) => {
   return key;
 };
 
-export const createApiKey = async (req: Request) => {
+export const createApiKey = async (req: Request): Promise<IApiKey> => {
   let device_id = req.params.did;
   let key_name = req.body.key_name;
 

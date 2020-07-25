@@ -10,6 +10,9 @@ export enum NodeType {
   Metric = "metric",
   Sensor = "sensor",
   State = "state",
+  TaskSeries = "task_series",
+  TaskRoutine = "task_routine",
+  Task = "task",
 }
 
 //adding measurements / getting of / constructing graphs

@@ -9,11 +9,14 @@ import dbs, { cypher } from "../../common/dbs";
 
 import { User } from "../../classes/Users/User.model";
 import { Org } from "../../classes/Orgs.model";
-import { Node } from "../../classes/Node.model";
+import { Node, objToClass } from "../../classes/Node.model";
 
-import { IUserPrivate, IUser, IOrgStub, NodeType } from "@cxss/interfaces";
+import { IUserPrivate, IUser, IOrgStub, NodeType, Paginated, IUserStub } from "@cxss/interfaces";
 const { body, param, query } = require("express-validator");
 import { validate } from "../../common/validate";
+import config from "../../config";
+import { createPaginator } from "../Node.controller";
+import { notEqual } from "assert";
 
 export const validators = {
   loginUser: validate([
@@ -42,7 +45,26 @@ export const validators = {
   readUserByUsername: validate([param("username").not().isEmpty().trim()]),
 };
 
-export const createUser = async (req: Request, next: NextFunction) => {
+export const readAllUsers = async (req: Request): Promise<Paginated<IUserStub>> => {
+  const page: number = parseInt(req.query.page as string);
+  const per_page: number = parseInt(req.query.per_page as string);
+
+  let result = await cypher(
+    `
+    MATCH (u:User)
+    RETURN u
+  `,
+    {}
+  );
+
+  let results: IUserStub[] = result.records[0]
+    .get("u")
+    .map((r: any) => objToClass(NodeType.User, r.properties).toStub());
+
+  return createPaginator(NodeType.User, results, results.length, per_page);
+};
+
+export const createUser = async (req: Request, next: NextFunction): Promise<IUser | void> => {
   //see if username/email already taken
   let result = await cypher(
     `
@@ -81,7 +103,7 @@ export const readUserById = async (req: Request) => {
   return user.toFull();
 };
 
-export const readUserByUsername = async (req: Request) => {
+export const readUserByUsername = async (req: Request, next: NextFunction) => {
   let result = await cypher(
     `
         MATCH (u:User {username: $username})
@@ -93,13 +115,13 @@ export const readUserByUsername = async (req: Request) => {
   );
 
   let r = result.records[0];
-  if (!r || r.get("u") == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
+  if (!r || r.get("u") == null) return next(new ErrorHandler(HTTP.NotFound, "No such user exists"));
 
   let user: User = await new Node(NodeType.User, r.get("u").properties._id).read();
   return user.toFull();
 };
 
-export const updateUser = async (req: Request) => {
+export const updateUser = async (req: Request): Promise<IUser> => {
   var newData: any = {};
   let allowedFields = ["name", "email", "location", "bio", "new_user"];
   let reqKeys = Object.keys(req.body);
@@ -109,7 +131,7 @@ export const updateUser = async (req: Request) => {
   }
 
   let user: User = await new Node(NodeType.User, req.params.uid).update(newData);
-  user.toFull();
+  return user.toFull();
 };
 
 export const updateUserAvatar = async (req: Request) => {
@@ -135,7 +157,7 @@ export const deleteUser = async (req: Request) => {
   return;
 };
 
-export const loginUser = async (req: Request, next: NextFunction) => {
+export const loginUser = async (req: Request, next: NextFunction): Promise<IUser | void> => {
   let email = req.body.email;
   let password = req.body.password;
 
@@ -164,23 +186,19 @@ export const loginUser = async (req: Request, next: NextFunction) => {
       ])
     );
 
-  try {
-    let match = await bcrypt.compare(password, user.pw_hash);
-    if (!match)
-      return next(
-        new ErrorHandler(HTTP.Unauthorised, [{ param: "password", msg: "Incorrect password" }])
-      );
+  let match = await bcrypt.compare(password, user.pw_hash);
+  if (!match)
+    return next(
+      new ErrorHandler(HTTP.Unauthorised, [{ param: "password", msg: "Incorrect password" }])
+    );
 
-    req.session.user = {
-      _id: user._id,
-      admin: user.admin || false,
-    };
+  req.session.user = {
+    _id: user._id,
+    admin: user.admin || false,
+  };
 
-    let u: User = await new Node(NodeType.User, user._id).read();
-    return u.toFull();
-  } catch (e) {
-    return next(new ErrorHandler(HTTP.ServerError, e));
-  }
+  let u: User = await new Node(NodeType.User, user._id).read();
+  return u.toFull();
 };
 
 export const logoutUser = async (req: Request, next: NextFunction) => {
@@ -198,7 +216,7 @@ export const readUserOrgs = async (req: Request) => {
         RETURN o
     `,
     {
-      uid: req.session.user.id,
+      uid: req.params.uid,
     }
   );
 

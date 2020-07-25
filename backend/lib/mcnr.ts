@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { NodeType } from "@cxss/interfaces";
 import { HTTP } from "./common/http";
-import { ErrorHandler } from "./common/errorHandler";
+import { ErrorHandler, handleError } from "./common/errorHandler";
 import { cypher } from "./common/dbs";
 import { accessSync } from "fs";
 const AsyncRouter = require("express-async-router").AsyncRouter;
@@ -39,7 +39,7 @@ export class McnRouter {
         const item = await controller(req, next, access);
         res.status(HTTP.OK).json(item);
       } catch (err) {
-        throw new ErrorHandler(HTTP.ServerError, err);
+        handleError(req, res, next, err);
       }
     };
     this.router.get(
@@ -62,8 +62,7 @@ export class McnRouter {
         const item = await controller(req, next, access);
         res.status(HTTP.Created).json(item);
       } catch (err) {
-        console.log(err);
-        throw new ErrorHandler(HTTP.ServerError, err);
+        handleError(req, res, next, err);
       }
     };
     this.router.post(
@@ -86,7 +85,7 @@ export class McnRouter {
         const item = await controller(req, next, access);
         res.status(HTTP.OK).json(item);
       } catch (err) {
-        throw new ErrorHandler(HTTP.ServerError, err);
+        handleError(req, res, next, err);
       }
     };
     this.router.put(
@@ -109,7 +108,7 @@ export class McnRouter {
         const item = await controller(req, next, access);
         res.status(HTTP.Created).json(item);
       } catch (err) {
-        throw new ErrorHandler(HTTP.ServerError, err);
+        handleError(req, res, next, err);
       }
     };
     this.router.delete(
@@ -132,7 +131,7 @@ export class McnRouter {
         const redirectUrl = await controller(req, next, access);
         res.status(HTTP.Moved).redirect(redirectUrl);
       } catch (err) {
-        throw new ErrorHandler(HTTP.ServerError, err);
+        handleError(req, res, next, err);
       }
     };
     this.router.get(

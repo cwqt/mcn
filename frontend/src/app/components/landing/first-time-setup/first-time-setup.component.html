@@ -1,5 +1,4 @@
-  <h1>hey {{currentUser.username}}!</h1>
-  <p>a couple of steps need to be completed before you can start browsing</p>
+  <p>A couple of steps need to be completed before you can start</p>
 
   <mat-vertical-stepper [linear]="true" #matStepper>
 
@@ -11,26 +10,25 @@
       </div>
 
       <form [formGroup]="avatarImageFormGroup">
-        <ng-template matStepLabel>upload an avatar</ng-template>
+        <ng-template matStepLabel>Upload an avatar</ng-template>
 
         <input hidden (change)="onAvatarFileSelected()" #fileInput type="file" id="file" formControlName="avatar">
-        <button mat-raised-button [color]="fileTypeError ? 'warn' : 'primary'" (click)="fileInput.click()" class="select-file">
-            <mat-icon inline="true">attach_file</mat-icon>
+        <ui-button icon="attachment" [variant]="fileTypeError ? 'warn' : 'primary'" (click)="fileInput.click()" class="select-file">
             {{buttonText}}
-        </button>
+        </ui-button>
 
-        <button mat-icon-button *ngIf="hasSelectedImage" class="clear-avatar" (click)="clearAvatar()">
-          <mat-icon>clear</mat-icon>
-        </button>
+        <ui-icon-button size="m" variant="secondary" *ngIf="hasSelectedImage" (click)="clearAvatar()">
+          close
+        </ui-icon-button>
 
         <p>images must be &lt;500kb in size & either jpg or png</p>
 
         <div class="avatar-submit">
-          <!-- <ui-load-button
-            [color]="hasSelectedImage ? (errorMessage ? 'warn' : 'primary') : 'secondary'"
+          <ui-button
+            [variant]="hasSelectedImage ? (errorMessage ? 'warn' : 'primary') : 'accent'"
             [loading]="loading"
             [disabled]="loading"
-            (onClick)="handleUploadImage()">{{hasSelectedImage ? (errorMessage ? 'error' : 'upload!') : 'skip'}}</ui-load-button> -->
+            (click)="handleUploadImage()">{{hasSelectedImage ? (errorMessage ? 'Error' : 'Upload') : 'Skip'}}</ui-button>
           <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>
         </div>
       </form>
@@ -38,36 +36,35 @@
 
     <mat-step [stepControl]="userNameFormGroup">
       <form [formGroup]="userNameFormGroup">
-        <ng-template matStepLabel>add your name</ng-template>
-        <mat-form-field>
-          <mat-label>full name</mat-label>
+        <ng-template matStepLabel>Add your name</ng-template>
+        <mat-form-field appearance="fill">
+          <mat-label>Full name</mat-label>
           <input matInput formControlName="name" placeholder="" required autocomplete="off">
-          <mat-error>name is required</mat-error>
+          <mat-error>Name is required</mat-error>
         </mat-form-field>
         <div>
 
-          <!-- <ui-load-button
-            [color]="errorMessage ? 'warn' : 'primary'"
+          <ui-button
+            [variant]="errorMessage ? 'warn' : 'primary'"
             [disabled]="!userNameFormGroup.dirty || loading"
             [loading]="loading" (onClick)="handleSubmitName()">
-              continue
-          </ui-load-button> -->
+              Continue
+          </ui-button>
           <mat-error *ngIf="errorMessage">{{errorMessage}}</mat-error>
-
         </div>
       </form>
     </mat-step>
 
     <mat-step>
-      <ng-template matStepLabel>finish!</ng-template>
-      <h3>welcome <b>{{userNameFormGroup.get('name').value}}</b>, you're ready to start browsing, for your information here are a few links to aid you along:</h3>
+      <ng-template matStepLabel>Continue</ng-template>
+      <h3>Welcome <b>{{userNameFormGroup.get('name').value}}</b>, you're ready to start browsing, for your information here are a few links to aid you along:</h3>
       <ul>
-        <li>adding plants: <a href="#">https://my.corrhizal.net/docs/adding-plants</a></li>
-        <li>configuring devices: <a href="#">https://my.corrhizal.net/docs/device-config</a></li>
+        <li>Adding plants: <a href="#">https://my.corrhizal.net/docs/adding-plants</a></li>
+        <li>Configuring devices: <a href="#">https://my.corrhizal.net/docs/device-config</a></li>
       </ul>
       <div>
         <br />
-        <button mat-raised-button color="primary" (click)="finishFirstTimeSetup()">lets go 🌱</button>
+        <ui-button icon="arrow--right" variant="primary" (click)="finishFirstTimeSetup()">Continue</ui-button>
       </div>
     </mat-step>
 

@@ -27,8 +27,8 @@ mat-error.form {
   position: relative;
 
   .image {
-    width: 200px;
-    min-width: 200px;
+    width: 78px;
+    min-width: 78px;
     height: 400px;
     overflow: hidden;
     position: relative;
@@ -48,6 +48,7 @@ mat-error.form {
       max-height: 38px;
       max-width: 38px;
       z-index: 999;
+      filter: invert(1);
     }
   }
 
@@ -80,7 +81,8 @@ ui-button {
   background-color: #f4f4f4;
   position: absolute;
   padding: 10px;
+  padding-left: 98px;
   bottom: 0px;
-  left: 200px;
+  left: 0px;
   width: 100%;
 }

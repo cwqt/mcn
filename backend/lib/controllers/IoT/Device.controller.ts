@@ -20,6 +20,7 @@ import {
   SupportedHardware,
   HardwareInformation,
   NodeType,
+  IDeviceStub,
 } from "@cxss/interfaces";
 import { Device } from "../../classes/IoT/Device.model";
 import { DeviceSensor, DeviceState } from "../../classes/IoT/DeviceProperty.model";
@@ -59,7 +60,9 @@ export const getDeviceState = (device: IDevice): DeviceStateType => {
   }
 };
 
-export const readAllDevices = async (req: Request) => {};
+export const readAllDevices = async (req: Request): Promise<IDeviceStub[]> => {
+  return [];
+};
 
 export const setApiKey = async (req: Request) => {};
 export const readApiKey = async (req: Request) => {};
@@ -163,7 +166,9 @@ export const createDevice = async (req: Request, next: NextFunction): Promise<ID
   return result.records[0].get("d").properties as IDevice;
 };
 
-export const updateDevice = async (req: Request) => {};
+export const updateDevice = async (req: Request): Promise<IDevice> => {
+  return {} as IDevice;
+};
 
 export const deleteDevice = async (req: Request) => {};
 

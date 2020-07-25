@@ -4,7 +4,7 @@ import { cypher } from "../common/dbs";
 
 import { objToClass } from "../classes/Node.model";
 import { Org } from "../classes/Orgs.model";
-import { OrgRole, NodeType, OrgItemType, IOrg } from "@cxss/interfaces";
+import { OrgRole, NodeType, OrgItemType, IOrg, IOrgStub } from "@cxss/interfaces";
 import { capitalize } from "./Node.controller";
 import { ErrorHandler } from "../common/errorHandler";
 const { body, param, query } = require("express-validator");
@@ -15,9 +15,13 @@ export const validators = {
   validOrgNodeType: validate([query("type").isIn(Object.values(OrgItemType))]),
 };
 
-export const readAllOrgs = async (req: Request) => {};
+export const readAllOrgs = async (req: Request): Promise<IOrgStub[]> => {
+  return [];
+};
 export const deleteOrg = async (req: Request) => {};
-export const updateOrg = async (req: Request) => {};
+export const updateOrg = async (req: Request): Promise<IOrg> => {
+  return {} as IOrg;
+};
 
 export const createOrg = async (req: Request): Promise<IOrg> => {
   const org = new Org(req.body.name);
@@ -60,7 +64,7 @@ export const getOrgNode = async (req: Request) => {
 };
 
 export const readOrgNodes = (node: NodeType) => {
-  return async (req: Request) => {
+  return async (req: Request): Promise<any[]> => {
     let nodeType = <string>req.query.type;
     let result = await cypher(
       `

@@ -1,5 +1,6 @@
 import { Measurement } from "../Types/Measurements.types";
 import * as IpAddress from "ip-address";
+import { INode } from "../Node.model";
 
 export enum RecordableType {
   Farm = "farm",
@@ -8,12 +9,9 @@ export enum RecordableType {
   Device = "device", //devices can have data recorded onto them, iot metrics etc
 }
 
-export interface IRecordableStub {
-  _id: string;
+export interface IRecordableStub extends INode {
   name: string;
   thumbnail?: string;
-  created_at?: Date;
-  type: RecordableType;
   short_desc?: string;
 }
 
@@ -23,12 +21,4 @@ export interface IRecordable extends IRecordableStub {
   feed_url?: IpAddress.Address4 | IpAddress.Address6;
   parameters?: Map<Measurement, [number, number, number]>; //lower, avg, upper bounds
   full_desc?: string;
-}
-
-export interface IPaginator {
-  first: string;
-  last: string;
-  next: string;
-  prev: string;
-  total_results: number;
 }

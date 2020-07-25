@@ -18,6 +18,8 @@ export class AppComponent implements OnInit {
   title = "fe";
   currentUser: IUser;
   ui: string = "login";
+  entered: boolean = false;
+  loading: boolean = true;
 
   constructor(
     public dialog: MatDialog,
@@ -30,24 +32,25 @@ export class AppComponent implements OnInit {
       `Running in: ${environment.production ? "production" : "development"}`
     );
 
-    (async () => {
-      //upon start up, immediately get the new user & set last active org
-      if (this.userService.currentUserValue) {
-        await this.userService.updateCurrentUser();
-        let orgs = await this.userService.getUserOrgs();
-        let lastActiveOrgId = localStorage.getItem("lastActiveOrg");
-        if (lastActiveOrgId) {
-          this.orgService.setActiveOrg(
-            orgs.find((o) => o._id == lastActiveOrgId)
-          );
-        }
-      }
-    })();
+    this.entered = localStorage.getItem("entered") === "true";
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    //upon start up, immediately get the new user & set last active org
+    if (this.userService.currentUserValue) {
+      await this.userService.updateCurrentUser();
+      let orgs = await this.userService.getUserOrgs();
+      let lastActiveOrgId = localStorage.getItem("lastActiveOrg");
+      if (lastActiveOrgId && orgs?.length) {
+        this.orgService.setActiveOrg(
+          orgs.find((o) => o._id == lastActiveOrgId)
+        );
+      }
+    }
+
     this.userService.currentUser.subscribe((x) => {
       this.currentUser = x;
+      this.loading = false;
       if (this.currentUser) {
         console.log("already logged in");
         if (this.currentUser.new_user) {
@@ -59,7 +62,6 @@ export class AppComponent implements OnInit {
     });
 
     this.titleService.setTitle("mcn — Index");
-    this.openDialog("login");
   }
 
   toggleUiStateRegister() {
@@ -84,5 +86,10 @@ export class AppComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result: ${result}`);
     });
+  }
+
+  enterSite() {
+    this.entered = true;
+    localStorage.setItem("entered", "true");
   }
 }

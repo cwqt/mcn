@@ -1,96 +1,61 @@
-<div class="landing-wrapper" *ngIf="!currentUser || currentUser.new_user">
-  <div class="landing-cover">
-    <img class="landing-cover-image" src="/assets/cover.jpg">
-    <img class="landing-cover-image__blur" src="/assets/cover.jpg">
-    <div class="landing-cover-gradient"></div>
+<div class="page-loader" [class.loading]="loading">
+  <img src="/assets/leaf.png">
+</div>
 
-    <div class="landing-content">
-      <div class="landing-header">
-        <div class="left">
-          <img src="/assets/leaf.png" />
-          <div>
-            <h1>mcn</h1>
-            <p>my.corrhizal.net</p>
+<div *ngIf="!loading">
+  <div class="landing-wrapper" *ngIf="!currentUser || !entered">
+    <div class="landing-cover">
+      <img class="landing-cover-image" src="/assets/cover.jpg">
+      <img class="landing-cover-image__blur" src="/assets/cover.jpg">
+      <div class="landing-cover-gradient"></div>
+
+      <div class="landing-content">
+        <div class="landing-header">
+          <div class="left">
+            <img src="/assets/leaf.png" />
+            <div>
+              <h1>mcn</h1>
+              <p>my.corrhizal.net</p>
+            </div>
+          </div>
+
+          <div class="center"></div>
+
+          <div class="right" *ngIf="!loading">
+            <ui-button *ngIf="!currentUser" size="s" transparent="true" variant="accent" icon="login" (click)="openDialog('login')">Sign in</ui-button>
+            <ui-button *ngIf="!currentUser" size="s" transparent="true" variant="accent" icon="user" (click)="openDialog('register')">Register</ui-button>
+            <ui-button *ngIf="currentUser" size="m" transparent="true" variant="accent" id="user-button">
+              <img [src]="currentUser.avatar">
+              <div>
+                <b>{{currentUser.name || currentUser.username}}</b>
+                <br />
+                <span>{{currentUser.email}}</span>
+              </div>
+            </ui-button>
+            <ui-button *ngIf="currentUser" size="s" variant="primary" icon="arrow--right" (click)="enterSite()"></ui-button>
           </div>
         </div>
 
-        <div class="center"></div>
+        <div class="landing-cover-body">
+          <h1>
+            <b>All-in-one solution for vertical farming</b><br />
+            IoT & agritech combined.
+          </h1>
 
-        <div class="right">
-          <ui-button size="s" transparent="true" variant="accent" icon="login" (click)="openDialog('login')">Sign in</ui-button>
-          <ui-button size="s" transparent="true" variant="accent" icon="user" (click)="openDialog('register')">Register</ui-button>
+          <div class="landing-body-buttons">
+            <ui-button variant="secondary" icon="download">Download</ui-button>
+            <ui-button variant="accent" icon="arrow--right">Get started</ui-button>
+          </div>
         </div>
       </div>
+    </div>
 
-      <div class="landing-cover-body">
-        <h1>
-          <b>All-in-one solution for vertical farming</b><br />
-          IoT & agritech combined.
-        </h1>
-
-        <div class="landing-body-buttons">
-          <ui-button variant="secondary" icon="download">Download</ui-button>
-          <ui-button variant="accent" icon="arrow--right">Get started</ui-button>
-        </div>
-      </div>
+    <div class="landing-body">
     </div>
   </div>
 
-  <div class="landing-body">
-  </div>
-
-
-  <!-- <div class="left side">
-    <div class="content-wrapper">
-      <div class="content">
-        <img src="/assets/leaf.png" />
-
-        <div class="information">
-          <h1 class="mat-display-2">mcn</h1>
-          <p>
-            a social network and management system for gardeners, plant growers
-            and hobbyists alike.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="copyright">
-      <p>copyright <b>daughter.systems</b> (2020)</p>
-    </div>
-  </div>
-
-  <div class="right side">
-    <div class="content-wrapper">
-      <div *ngIf="!currentUser">
-        <div class="content">
-          <app-login *ngIf="ui != 'register'"></app-login>
-          <app-register *ngIf="ui == 'register'"></app-register>
-        </div>
-      </div>
-
-      <div *ngIf="currentUser && currentUser.new_user">
-        <app-first-time-setup></app-first-time-setup>
-      </div>
-    </div>
-  </div> -->
+  <app-wrapper *ngIf="currentUser && entered">
+    <router-outlet></router-outlet>
+    <!-- <ui-testbed></ui-testbed> -->
+  </app-wrapper>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<app-wrapper *ngIf="currentUser && !currentUser.new_user">
-  <router-outlet></router-outlet>
-  <!-- <ui-testbed></ui-testbed> -->
-</app-wrapper>

@@ -10,10 +10,11 @@ import http from "http";
 import "reflect-metadata";
 
 import config from "./config";
-import { handleError, ErrorHandler } from "./common/errorHandler";
+import { ErrorHandler } from "./common/errorHandler";
 import { awaitAllDbsConnected } from "./common/dbs";
 
 import mcnr from "./routes";
+import { HTTP } from "./common/http";
 
 let server: http.Server;
 const app = express();
@@ -41,10 +42,9 @@ app.use(morgan("tiny", { stream: log.stream }));
   try {
     app.use("/", mcnr.router);
 
-    app.all("*", (req: any, res: any, next: any) => {
-      throw new ErrorHandler(404, "No such route exists");
+    app.all("*", (req: any, res: any) => {
+      throw new ErrorHandler(HTTP.NotFound, "No such route exists");
     });
-    app.use((err: any, req: any, res: any, next: any) => handleError(err, res));
 
     process.on("SIGTERM", graceful_exit);
     process.on("SIGINT", graceful_exit);

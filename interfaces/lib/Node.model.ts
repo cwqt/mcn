@@ -5,3 +5,11 @@ export interface INode {
   created_at: number;
   type: NodeType;
 }
+
+export interface Paginated<T> {
+  results: T[];
+  next: string;
+  prev: string;
+  total: number;
+  pages: number;
+}

@@ -7,7 +7,13 @@
 
     <div class="right">
       <div class="app-body">
-        <ng-content></ng-content>
+        <app-page title="First time setup" *ngIf="currentUser && currentUser.new_user">
+          <app-first-time-setup></app-first-time-setup>
+        </app-page>
+
+        <div *ngIf="currentUser && !currentUser.new_user">
+          <ng-content></ng-content>
+        </div>
       </div>
       <app-footer></app-footer>
     </div>
