@@ -1,15 +1,17 @@
 .page-container {
   display: flex;
+  flex-flow: row;
   padding: 20px;
   margin-top: 50px;
   .left {
+    min-width: 20vw;
     h1 {
       font-weight: bold;
       margin-bottom: 10px;
     }
   }
   .right {
+    margin-top: 80px;
     margin-left: 20px;
-    flex: 1;
   }
 }

@@ -4,6 +4,7 @@ import { HTTP } from "./common/http";
 import { ErrorHandler, handleError } from "./common/errorHandler";
 import { cypher } from "./common/dbs";
 import { accessSync } from "fs";
+import { resolveSoa } from "dns";
 const AsyncRouter = require("express-async-router").AsyncRouter;
 
 export enum Access {
@@ -14,6 +15,19 @@ export enum Access {
   Ourself,
   Authenticated,
   None,
+}
+
+export interface IResLocals {
+  session?: {
+    user?: {
+      _id: string;
+      admin: boolean;
+    };
+  };
+  pagination?: {
+    per_page: number;
+    page: number;
+  };
 }
 
 const skip = (req: Request, res: Response, next: NextFunction) => {
@@ -29,14 +43,30 @@ export class McnRouter {
 
   get = <T>(
     path: string,
-    controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
+    controller: (
+      req: Request,
+      next: NextFunction,
+      locals: IResLocals,
+      permissions: Access[]
+    ) => Promise<T>,
     access: Access[],
     validators: any = skip,
     nodeData?: [NodeType, string]
   ) => {
     const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const item = await controller(req, next, access);
+        const item = await controller(
+          req,
+          next,
+          {
+            session: req.session,
+            pagination: {
+              per_page: res.locals.per_page,
+              page: res.locals.page,
+            },
+          } as IResLocals,
+          access
+        );
         res.status(HTTP.OK).json(item);
       } catch (err) {
         handleError(req, res, next, err);
@@ -46,20 +76,37 @@ export class McnRouter {
       path,
       getCheckPermissions(access, nodeData),
       validators ?? skip,
+      (req: Request, res: Response, next: NextFunction) => {
+        res.locals.page = parseInt(req.query.page as string) || 0;
+        res.locals.per_page = parseInt(req.query.per_page as string) || 10;
+        next();
+      },
       wrappedController
     );
   };
 
   post = <T>(
     path: string,
-    controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
+    controller: (
+      req: Request,
+      next: NextFunction,
+      locals: IResLocals,
+      permissions: Access[]
+    ) => Promise<T>,
     access: Access[],
     validators: any = skip,
     nodeData?: [NodeType, string]
   ) => {
     const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const item = await controller(req, next, access);
+        const item = await controller(
+          req,
+          next,
+          {
+            session: req.session,
+          } as IResLocals,
+          access
+        );
         res.status(HTTP.Created).json(item);
       } catch (err) {
         handleError(req, res, next, err);
@@ -75,14 +122,26 @@ export class McnRouter {
 
   put = <T>(
     path: string,
-    controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
+    controller: (
+      req: Request,
+      next: NextFunction,
+      locals: IResLocals,
+      permissions: Access[]
+    ) => Promise<T>,
     access: Access[],
     validators: any = skip,
     nodeData?: [NodeType, string]
   ) => {
     const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const item = await controller(req, next, access);
+        const item = await controller(
+          req,
+          next,
+          {
+            session: req.session,
+          } as IResLocals,
+          access
+        );
         res.status(HTTP.OK).json(item);
       } catch (err) {
         handleError(req, res, next, err);
@@ -98,14 +157,26 @@ export class McnRouter {
 
   delete = <T>(
     path: string,
-    controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<T>,
+    controller: (
+      req: Request,
+      next: NextFunction,
+      locals: IResLocals,
+      permissions: Access[]
+    ) => Promise<T>,
     access: Access[],
     validators: any = skip,
     nodeData?: [NodeType, string]
   ) => {
     const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const item = await controller(req, next, access);
+        const item = await controller(
+          req,
+          next,
+          {
+            session: req.session,
+          } as IResLocals,
+          access
+        );
         res.status(HTTP.Created).json(item);
       } catch (err) {
         handleError(req, res, next, err);
@@ -121,14 +192,26 @@ export class McnRouter {
 
   redirect = <T>(
     path: string,
-    controller: (req: Request, next: NextFunction, permissions: Access[]) => Promise<string>,
+    controller: (
+      req: Request,
+      next: NextFunction,
+      locals: IResLocals,
+      permissions: Access[]
+    ) => Promise<string>,
     access: Access[],
     validators: any = skip,
     nodeData?: [NodeType, string]
   ) => {
     const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const redirectUrl = await controller(req, next, access);
+        const redirectUrl = await controller(
+          req,
+          next,
+          {
+            session: req.session,
+          } as IResLocals,
+          access
+        );
         res.status(HTTP.Moved).redirect(redirectUrl);
       } catch (err) {
         handleError(req, res, next, err);
@@ -234,7 +317,7 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
         return next();
       }
     } catch (error) {
-      next(new ErrorHandler(HTTP.Unauthorised, error));
+      return next(new ErrorHandler(HTTP.Unauthorised, error));
     }
   };
 };

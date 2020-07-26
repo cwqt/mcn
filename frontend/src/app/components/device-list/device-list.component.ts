@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import moment from "moment";
 
-import { IDeviceStub, IDeviceSensor } from "@cxss/interfaces";
+import { IDeviceStub, IDeviceSensor, Paginated } from "@cxss/interfaces";
 import { OrganisationService } from "src/app/services/organisation.service";
 
 @Component({
@@ -28,9 +28,8 @@ export class DeviceListComponent implements OnInit {
     this.devices.loading = true;
     this.orgService
       .getDevices()
-      .then((devices) => {
-        this.devices.data = devices;
-        console.log(devices);
+      .then((paginated: Paginated<IDeviceStub>) => {
+        this.devices.data = paginated.results;
       })
       .catch((e) => (this.devices.error = e))
       .finally(() => (this.devices.loading = false));

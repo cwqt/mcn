@@ -34,11 +34,8 @@ export class CreateOrgComponent implements OnInit {
     this.returnUrl = this.route.snapshot.queryParams["returnUrl"] || "/";
   }
 
-  get email() {
-    return this.createOrgForm.get("email");
-  }
-  get password() {
-    return this.createOrgForm.get("password");
+  get name() {
+    return this.createOrgForm.get("name");
   }
 
   submitHandler() {

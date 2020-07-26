@@ -23,21 +23,19 @@ export const handleError = (
     message: message,
   };
 
-  log.error(
-    `--> ${err.name}: ${
-      typeof err.message == "object" ? JSON.stringify(err.message) : err.message
-    } (${ErrorType})`
-  );
+  log.error(`(${ErrorType}) --> ${JSON.stringify(err.message)}`);
+  console.log(err.stack);
 
   res.status(response.statusCode).json(response);
-  next(err);
 };
 
 export class ErrorHandler extends Error {
   ErrorType: HTTP;
 
-  constructor(statusCode: HTTP, ...params: any[]) {
-    super(...params);
+  constructor(statusCode: HTTP, message: any) {
+    super();
+    this.ErrorType = statusCode;
+    this.message = message;
   }
 }
 

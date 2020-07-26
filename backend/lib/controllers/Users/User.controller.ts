@@ -64,7 +64,7 @@ export const readAllUsers = async (req: Request): Promise<Paginated<IUserStub>> 
   return createPaginator(NodeType.User, results, results.length, per_page);
 };
 
-export const createUser = async (req: Request, next: NextFunction): Promise<IUser | void> => {
+export const createUser = async (req: Request, next: NextFunction): Promise<IUser> => {
   //see if username/email already taken
   let result = await cypher(
     `
@@ -84,12 +84,11 @@ export const createUser = async (req: Request, next: NextFunction): Promise<IUse
     if (user.username == req.body.username)
       errors.push("username", "Username is already taken", req.body.username);
     if (user.email == req.body.email) errors.push("email", "E-mail already in use", req.body.email);
-    return next(new ErrorHandler(HTTP.Conflict, errors.value));
+    throw new ErrorHandler(HTTP.Conflict, errors.value);
   }
 
   let emailSent = await Auth.sendVerificationEmail(req.body.email);
-  if (!emailSent)
-    return next(new ErrorHandler(HTTP.ServerError, "Verification email could not be sent"));
+  if (!emailSent) throw new ErrorHandler(HTTP.ServerError, "Verification email could not be sent");
 
   let user = new User(req.body.username, req.body.email);
   await user.generateCredentials(req.body.password);
@@ -115,7 +114,7 @@ export const readUserByUsername = async (req: Request, next: NextFunction) => {
   );
 
   let r = result.records[0];
-  if (!r || r.get("u") == null) return next(new ErrorHandler(HTTP.NotFound, "No such user exists"));
+  if (!r || r.get("u") == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
 
   let user: User = await new Node(NodeType.User, r.get("u").properties._id).read();
   return user.toFull();
@@ -157,7 +156,7 @@ export const deleteUser = async (req: Request) => {
   return;
 };
 
-export const loginUser = async (req: Request, next: NextFunction): Promise<IUser | void> => {
+export const loginUser = async (req: Request, next: NextFunction): Promise<IUser> => {
   let email = req.body.email;
   let password = req.body.password;
 
@@ -172,25 +171,19 @@ export const loginUser = async (req: Request, next: NextFunction): Promise<IUser
     }
   );
   if (!result.records.length)
-    return next(
-      new ErrorHandler(HTTP.NotFound, [
-        { param: "email", msg: "No such user for this email", value: req.body.email },
-      ])
-    );
+    throw new ErrorHandler(HTTP.NotFound, [
+      { param: "email", msg: "No such user for this email", value: req.body.email },
+    ]);
 
   let user: IUserPrivate = result.records[0].get("u").properties;
   if (!user.verified)
-    return next(
-      new ErrorHandler(HTTP.Unauthorised, [
-        { param: "form", msg: "Your account has not been verified" },
-      ])
-    );
+    throw new ErrorHandler(HTTP.Unauthorised, [
+      { param: "form", msg: "Your account has not been verified" },
+    ]);
 
   let match = await bcrypt.compare(password, user.pw_hash);
   if (!match)
-    return next(
-      new ErrorHandler(HTTP.Unauthorised, [{ param: "password", msg: "Incorrect password" }])
-    );
+    throw new ErrorHandler(HTTP.Unauthorised, [{ param: "password", msg: "Incorrect password" }]);
 
   req.session.user = {
     _id: user._id,
@@ -203,7 +196,7 @@ export const loginUser = async (req: Request, next: NextFunction): Promise<IUser
 
 export const logoutUser = async (req: Request, next: NextFunction) => {
   req.session.destroy((err) => {
-    if (err) return next(new ErrorHandler(HTTP.ServerError, "Logging out failed"));
+    if (err) throw new ErrorHandler(HTTP.ServerError, "Logging out failed");
     return;
   });
 };

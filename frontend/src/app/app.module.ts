@@ -45,6 +45,7 @@ import { OrganisationsComponent } from "./routes/organisations/organisations.com
 import { PageComponent } from "./components/app/page/page.component";
 import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
 import { DeviceListComponent } from "./components/device-list/device-list.component";
+import { OrganisationComponent } from "./routes/organisations/organisation/organisation.component";
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { DeviceListComponent } from "./components/device-list/device-list.compon
     PageComponent,
     CreateOrgComponent,
     DeviceListComponent,
+    OrganisationComponent,
   ],
   imports: [
     AngularMaterialModule,

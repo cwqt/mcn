@@ -11,6 +11,7 @@ import { OrganisationsComponent } from "./routes/organisations/organisations.com
 import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
 import { DeviceListComponent } from "./components/device-list/device-list.component";
 import { DeviceComponent } from "./components/device-list/device/device.component";
+import { OrganisationComponent } from "./routes/organisations/organisation/organisation.component";
 
 const routes: Routes = [
   {
@@ -39,7 +40,10 @@ const routes: Routes = [
   {
     path: "orgs",
     component: OrganisationsComponent,
-    children: [{ path: "create", component: CreateOrgComponent }],
+    children: [
+      { path: "create", component: CreateOrgComponent },
+      { path: ":org_id", component: OrganisationComponent },
+    ],
   },
   {
     path: ":username",

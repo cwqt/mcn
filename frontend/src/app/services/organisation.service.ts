@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { IOrgStub, IOrg, IDeviceStub } from "@cxss/interfaces";
+import { IOrgStub, IOrg, IDeviceStub, Paginated } from "@cxss/interfaces";
 import { BehaviorSubject } from "rxjs";
 import { tap } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
@@ -41,9 +41,9 @@ export class OrganisationService {
     this.currentOrg.next(org);
   }
 
-  getDevices(): Promise<IDeviceStub[]> {
+  getDevices(): Promise<Paginated<IDeviceStub>> {
     return this.http
-      .get<IDeviceStub[]>(`/api/orgs/${this.orgId}/items?type=device`)
+      .get<Paginated<IDeviceStub>>(`/api/orgs/${this.orgId}/devices`)
       .toPromise();
   }
 }

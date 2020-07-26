@@ -4,11 +4,12 @@ import { cypher } from "../common/dbs";
 
 import { objToClass } from "../classes/Node.model";
 import { Org } from "../classes/Orgs.model";
-import { OrgRole, NodeType, OrgItemType, IOrg, IOrgStub } from "@cxss/interfaces";
-import { capitalize } from "./Node.controller";
+import { OrgRole, NodeType, OrgItemType, IOrg, IOrgStub, Paginated } from "@cxss/interfaces";
+import { capitalize, createPaginator } from "./Node.controller";
 import { ErrorHandler } from "../common/errorHandler";
 const { body, param, query } = require("express-validator");
 import { validate } from "../common/validate";
+import { IResLocals } from "../mcnr";
 
 export const validators = {
   createOrg: validate([body("name").not().isEmpty().trim()]),
@@ -64,26 +65,36 @@ export const getOrgNode = async (req: Request) => {
 };
 
 export const readOrgNodes = (node: NodeType) => {
-  return async (req: Request): Promise<any[]> => {
-    let nodeType = <string>req.query.type;
+  return async (req: Request, next: NextFunction, locals: IResLocals): Promise<Paginated<any>> => {
+    // https://stackoverflow.com/questions/54233387/get-total-count-and-paginated-result-in-one-cypher-query-neo4j
     let result = await cypher(
       `
       MATCH (o:Organisation {_id:$oid})
-      MATCH (n:${capitalize(nodeType)})-[:IN]->(o)
-      RETURN n
+      WITH o, size((:${capitalize(node)})-[:IN]->(o)) as total
+      MATCH (n:${capitalize(node)})-[:IN]->(o)
+      RETURN n, total
+      SKIP toInteger($skip) LIMIT toInteger($limit)
     `,
       {
-        oid: req.params.org_id,
+        oid: req.params.oid,
+        skip: locals.pagination.page * locals.pagination.per_page,
+        limit: locals.pagination.per_page,
       }
     );
 
-    console.log(result, nodeType, req.params.org_id);
+    console.log(result, node, req.params.oid);
 
     let nodes = result.records.map((r: any) => {
-      return objToClass(<NodeType>nodeType, r.get("n").properties).toStub();
+      return objToClass(<NodeType>node, r.get("n").properties).toStub();
     });
 
-    return nodes;
+    return createPaginator(
+      node,
+      nodes,
+      result.records[0].get("total").toNumber(),
+      locals.pagination.per_page,
+      req.params.oid
+    );
   };
 };
 
