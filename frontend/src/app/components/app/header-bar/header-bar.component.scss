@@ -62,15 +62,17 @@
       }
       #alert {
         height: 44px;
+        width: 44px;
         mat-icon {
           font-size: 24px;
         }
       }
     }
     #user-icon {
+      height: 48px;
+      max-height: 34px;
+      max-width: 34px;
       img {
-        max-height: 34px;
-        max-width: 34px;
         border-radius: 50%;
         margin-right: 10px;
       }
@@ -78,28 +80,12 @@
   }
 }
 
-// .header-bar-thumb {
-//   ::ng-deep .bx--header__action {
-//     width: auto;
-//     display: flex;
-//     align-items: center;
-//     color: white;
-//     padding: 5px 10px;
-//   }
-
-//   img {
-//     border-radius: 50%;
-//     width: 34px;
-//     height: 34px;
-//   }
-
-//   span {
-//     margin-left: 10px;
-//   }
-
-//   overflow: hidden;
-// }
-
-// mat-icon {
-//   color: white;
-// }
+::ng-deep #user-button {
+  max-height: 48px;
+  button {
+    padding: 3px 8px;
+    b {
+      margin-top: -2px;
+    }
+  }
+}

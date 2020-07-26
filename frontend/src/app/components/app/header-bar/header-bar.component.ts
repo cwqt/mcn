@@ -12,14 +12,11 @@ import { IOrgStub } from "@cxss/interfaces";
   styleUrls: ["./header-bar.component.scss"],
 })
 export class HeaderBarComponent implements OnInit {
-  @ViewChild("ref") ref: ElementRef;
-
   @Input() currentUser: any;
   userOrgs: IOrgStub[];
   activeOrg: IOrgStub;
 
   constructor(
-    private popover: Popover,
     private orgService: OrganisationService,
     private userService: UserService
   ) {}
@@ -29,21 +26,6 @@ export class HeaderBarComponent implements OnInit {
       this.userOrgs = orgs;
     });
     this.orgService.currentOrg.subscribe((org) => (this.activeOrg = org));
-  }
-
-  openUserMenu(event) {
-    this.popover.load({
-      event,
-      component: HeaderBarUserMenuComponent,
-      offset: 16,
-      width: "500px",
-      placement: "bottom-left",
-      targetElement: this.ref.nativeElement,
-    } as PopoverProperties);
-  }
-
-  hideUserMenu() {
-    this.popover.close();
   }
 
   setActiveOrg(org: IOrgStub) {

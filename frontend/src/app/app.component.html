@@ -24,14 +24,8 @@
           <div class="right" *ngIf="!loading">
             <ui-button *ngIf="!currentUser" size="s" transparent="true" variant="accent" icon="login" (click)="openDialog('login')">Sign in</ui-button>
             <ui-button *ngIf="!currentUser" size="s" transparent="true" variant="accent" icon="user" (click)="openDialog('register')">Register</ui-button>
-            <ui-button *ngIf="currentUser" size="m" transparent="true" variant="accent" id="user-button">
-              <img [src]="currentUser.avatar">
-              <div>
-                <b>{{currentUser.name || currentUser.username}}</b>
-                <br />
-                <span>{{currentUser.email}}</span>
-              </div>
-            </ui-button>
+
+            <app-header-user-button variant="accent" transparent="true" [currentUser]="currentUser" *ngIf="currentUser"></app-header-user-button>
             <ui-button id="enter" *ngIf="currentUser" size="m" variant="primary" icon="arrow--right" (click)="enterSite()"></ui-button>
           </div>
         </div>

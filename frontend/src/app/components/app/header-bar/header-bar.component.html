@@ -19,10 +19,9 @@
         <mat-icon inline>notifications_none</mat-icon>
       </div>
     </ui-button>
+
     <div class="separator"></div>
-    <ui-button id="user-icon"  #ref variant="secondary" (click)="openUserMenu($event)">
-      <img [src]="currentUser.avatar" />
-      <span>{{ currentUser.name }}</span>
-    </ui-button>
+
+    <app-header-user-button variant="secondary" id="user-button" [currentUser]="currentUser"></app-header-user-button>
   </div>
 </div>

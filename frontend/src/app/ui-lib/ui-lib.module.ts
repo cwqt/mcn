@@ -14,6 +14,15 @@ import { SectionHeaderComponent } from "./section-header/section-header.componen
 import { AdmonitionComponent } from "./admonition/admonition.component";
 import { ReactiveFormsModule } from "@angular/forms";
 
+export enum ButtonVariants {
+  Primary = "primary",
+  Secondary = "secondary",
+  Accent = "accent",
+  Warn = "warn",
+  Disabled = "disabled",
+  Basic = "basic",
+}
+
 const allComponents = [
   LoadablePanelComponent,
   ButtonMenuComponent,
