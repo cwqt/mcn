@@ -42,12 +42,10 @@ export interface ITaskRoutine extends INode {
   tasks?: ITask[];
 }
 
-export interface ITask {
-  _id: string;
+export interface ITask extends INode {
   name: string;
   command: string; // mcnlang string
   state: TaskState;
-  created_at: number;
 
   error?: string;
   last_started?: number;

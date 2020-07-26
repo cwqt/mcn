@@ -1,4 +1,5 @@
 import { INode } from "../Node.model";
+import { NodeType } from "../Types/Nodes.types";
 
 export interface IUserStub extends INode {
   name: string;
@@ -19,12 +20,4 @@ export interface IUser extends IUserStub {
 export interface IUserPrivate extends IUser {
   salt?: string;
   pw_hash?: string;
-}
-
-export enum IUserPermissions {
-  SiteAdmin,
-  OrgAdmin,
-  OrgEditor,
-  ItemOwner,
-  Viewer,
 }

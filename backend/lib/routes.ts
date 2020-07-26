@@ -1,4 +1,4 @@
-import { IDeviceStub, IDevice, IApiKey, IUser, IOrgStub, IOrg, IUserStub, Paginated as P } from '@cxss/interfaces';
+import { IDeviceStub, IDevice, IApiKey, IUser, IOrgStub, IOrg, IUserStub, Paginated as P, IFarm, IFarmStub } from '@cxss/interfaces';
 
 import { Access } from "./mcnr";
 
@@ -8,6 +8,7 @@ import Orgs = require("./controllers/Orgs.controller");
 import Auth = require("./controllers/Auth.controller");
 // import Routines = require("./controllers/IoT/Routines.controller");
 import Device = require("./controllers/IoT/Device.controller");
+import Farm = require("./controllers/Hydroponics/Farm.controller");
 
 import { McnRouter } from "./mcnr";
 import { cypher } from "./common/dbs";
@@ -64,15 +65,15 @@ mcnr.post    <void>          ("/devices/:did/keys",           Device.setApiKey, 
 // mcnr.get<IDeviceProp[]>("/devices/:did/sensors",  Device.readProperties(NodeType.Sensor),     [Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get<IDeviceProp[]>("/devices/:did/states",   Device.readProperties(NodeType.State),      [Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get<IDeviceProp[]>("/devices/:did/metrics",  Device.readProperties(NodeType.Metric),     [Access.OrgEditor],         null,                           deviceDef);
-mcnr.get("/devices/:did/sensors/:pid",            Device.readPropertyData(NodeType.Sensor),   [Access.OrgEditor],         null,                           deviceDef);
-mcnr.get("/devices/:did/states/:pid",             Device.readPropertyData(NodeType.State),    [Access.OrgEditor],         null,                           deviceDef);
-mcnr.get("/devices/:did/metrics/:pid",            Device.readPropertyData(NodeType.Metric),   [Access.OrgEditor],         null,                           deviceDef);
+// mcnr.get("/devices/:did/sensors/:pid",            Device.readPropertyData(NodeType.Sensor),   [Access.OrgEditor],         null,                           deviceDef);
+// mcnr.get("/devices/:did/states/:pid",             Device.readPropertyData(NodeType.State),    [Access.OrgEditor],         null,                           deviceDef);
+// mcnr.get("/devices/:did/metrics/:pid",            Device.readPropertyData(NodeType.Metric),   [Access.OrgEditor],         null,                           deviceDef);
 
 // FARMS ------------------------------------------------------------------------------------------
 const farmDef:nodeDef = [NodeType.Farm, "fid"];
-// mcnr.get("/farms",                      Farm.readAllFarms,                         [Access.SiteAdmin]);
-// mcnr.post("/farms",                     Farm.createFarm,                           [Access.Authenticated]);
-// mcnr.get("/farms/:fid",                 Farm.readFarm,                             [Access.OrgViewer]);
+mcnr.get     <P<IFarmStub>>  ("/farms",                       Farm.readAllFarms,                         [Access.SiteAdmin]);
+mcnr.post    <IFarm>         ("/farms",                       Farm.createFarm,                           [Access.Authenticated], Farm.validators.createFarm);
+mcnr.get     <IFarm>         ("/farms/:fid",                  Farm.readFarm,                             [Access.OrgMember]);
 // mcnr.put("/farms/:fid",                 Farm.updateFarm,                           [Access.OrgEditor]);
 // mcnr.delete("/farms/:fid",              Farm.deleteFarm,                           [Access.OrgEditor]);
 

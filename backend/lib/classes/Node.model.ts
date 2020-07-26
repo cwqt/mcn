@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 import { capitalize } from "../controllers/Node.controller";
-import { NodeType, INode } from "@cxss/interfaces";
+import { NodeType, INode, RecordableType } from "@cxss/interfaces";
 
 export class Node {
   _id: string;
@@ -12,10 +12,10 @@ export class Node {
   type: NodeType;
   modifiableFields: string[];
 
-  constructor(node: NodeType, _id?: string) {
+  constructor(type: NodeType, _id?: string) {
     this._id = _id ?? new Types.ObjectId().toHexString();
     this.created_at = Date.now();
-    this.type = node;
+    this.type = type;
     this.modifiableFields = [];
   }
 
@@ -31,6 +31,7 @@ export class Node {
   toFull(): INode {
     return this.toStub();
   }
+
   toPrivate(): INode {
     return this.toStub();
   }
@@ -94,7 +95,7 @@ export class Node {
 import { User } from "./Users/User.model";
 import { Org } from "./Orgs.model";
 import { Device } from "./IoT/Device.model";
-import { DeviceProperty, DeviceSensor, DeviceState } from "./IoT/DeviceProperty.model";
+import { DeviceProperty } from "./IoT/DeviceProperty.model";
 
 export interface Class<T> extends Function {
   new (...args: any[]): T;
@@ -106,8 +107,6 @@ export const objToClass = (type: NodeType, object: any) => {
     [NodeType.User]: User,
     [NodeType.Device]: Device,
     [NodeType.DeviceProperty]: DeviceProperty,
-    [NodeType.Sensor]: DeviceSensor,
-    [NodeType.Sensor]: DeviceState,
   };
 
   // some stupid bullshit with circular dependencies

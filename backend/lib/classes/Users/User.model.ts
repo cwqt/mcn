@@ -36,7 +36,6 @@ export class User extends Node {
       name: this.name,
       username: this.username,
       avatar: this.avatar,
-      type: this.type,
     };
   }
 

@@ -1,13 +1,6 @@
 <div class="sidebar">
   <div class="sidebar-buttons" [class.open]="sidebarMenuOpen">
-    <ui-icon-button variant="secondary" [size]="'m'">menu</ui-icon-button>
-
-    <!-- <div
-      class="hamburger"
-      [active]="sidebarMenuOpen"
-      (selected)="toggleSidebarMenu()"
-      >
-    </div> -->
+    <ui-icon-button variant="secondary" size="m" (click)="toggleSidebarMenu()">menu</ui-icon-button>
     <div *ngFor="let item of sidebarItems; let i = index">
       <ui-icon-button [tooltip]="item[1]" [class.active]="isActiveRoute(i)" variant="secondary" [size]="'m'">{{ item[0] }}</ui-icon-button>
     </div>

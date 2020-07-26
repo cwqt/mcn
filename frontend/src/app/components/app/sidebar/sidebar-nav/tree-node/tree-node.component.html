@@ -13,8 +13,8 @@
   </div>
 
   <ul *ngIf="opened">
-    <li *ngFor="let n of node.children">
+    <ui-button *ngFor="let n of node.children">
       <app-tree-node [node]="n" [depth]="depth + 1"></app-tree-node>
-    </li>
+    </ui-button>
   </ul>
 </div>

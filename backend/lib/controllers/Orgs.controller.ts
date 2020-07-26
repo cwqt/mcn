@@ -4,12 +4,12 @@ import { cypher } from "../common/dbs";
 
 import { objToClass } from "../classes/Node.model";
 import { Org } from "../classes/Orgs.model";
-import { OrgRole, NodeType, OrgItemType, IOrg, IOrgStub, Paginated } from "@cxss/interfaces";
+import { NodeType, OrgItemType, IOrg, IOrgStub, Paginated } from "@cxss/interfaces";
 import { capitalize, createPaginator } from "./Node.controller";
 import { ErrorHandler } from "../common/errorHandler";
 const { body, param, query } = require("express-validator");
 import { validate } from "../common/validate";
-import { IResLocals } from "../mcnr";
+import { IResLocals, Access } from "../mcnr";
 
 export const validators = {
   createOrg: validate([body("name").not().isEmpty().trim()]),
@@ -36,7 +36,7 @@ export const createOrg = async (req: Request): Promise<IOrg> => {
     {
       org: org.toFull(),
       uid: req.session.user._id,
-      role: OrgRole.Owner,
+      role: Access.OrgAdmin,
     }
   );
 
@@ -101,7 +101,7 @@ export const readOrgNodes = (node: NodeType) => {
 export const addNodeToOrg = (node: NodeType) => {
   return async (req: Request, next: NextFunction) => {
     let relationship: any = {};
-    if (node == NodeType.User) relationship.role = OrgRole.Viewer;
+    if (node == NodeType.User) relationship.role = Access.OrgMember;
 
     let result = await cypher(
       `

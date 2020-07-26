@@ -47,6 +47,7 @@ import { CreateOrgComponent } from "./routes/organisations/create-org/create-org
 import { DeviceListComponent } from "./components/device-list/device-list.component";
 import { OrganisationComponent } from "./routes/organisations/organisation/organisation.component";
 import { HeaderUserButtonComponent } from "./components/app/header-bar/header-user-button/header-user-button.component";
+import { FarmListComponent } from "./components/farm-list/farm-list.component";
 
 @NgModule({
   declarations: [

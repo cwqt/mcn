@@ -5,6 +5,7 @@ import { IApiKey } from "./ApiKey.model";
 import { INode } from "../Node.model";
 
 import * as IpAddress from "ip-address";
+import { NodeType } from "../Types/Nodes.types";
 
 export enum DeviceStateType {
   Active = "active",

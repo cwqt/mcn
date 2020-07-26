@@ -1,6 +1,7 @@
 import { Type } from "./Hardware.model";
 import { Measurement, Unit, IoTState, IoTMeasurement } from "../Types/Measurements.types";
 import { INode } from "../Node.model";
+import { NodeType } from "../Types/Nodes.types";
 
 export interface IDeviceProperty extends INode {
   ref: string;

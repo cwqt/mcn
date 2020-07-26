@@ -12,6 +12,7 @@ import { CreateOrgComponent } from "./routes/organisations/create-org/create-org
 import { DeviceListComponent } from "./components/device-list/device-list.component";
 import { DeviceComponent } from "./components/device-list/device/device.component";
 import { OrganisationComponent } from "./routes/organisations/organisation/organisation.component";
+import { FarmListComponent } from "./components/farm-list/farm-list.component";
 
 const routes: Routes = [
   {
@@ -29,7 +30,7 @@ const routes: Routes = [
         ],
       },
       // { path: "alerts", component: UserDevicesListComponent },
-      // { path: "farms", component: UserDevicesListComponent },
+      { path: "farms", component: FarmListComponent },
       // { path: "racks", component: UserDevicesListComponent },
       // { path: "crops", component: UserDevicesListComponent },
       // { path: "users", component: UserDevicesListComponent },

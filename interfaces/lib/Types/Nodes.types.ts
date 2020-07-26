@@ -1,6 +1,7 @@
 export enum NodeType {
   User = "user",
   Organisation = "organisation",
+  Recordable = "recordable",
   Farm = "farm",
   Rack = "rack",
   Crop = "crop",
@@ -13,10 +14,18 @@ export enum NodeType {
   TaskSeries = "task_series",
   TaskRoutine = "task_routine",
   Task = "task",
+  Yield = "yield",
+  Recipe = "recipe",
+  Species = "species",
 }
 
 //adding measurements / getting of / constructing graphs
-export type RecordableType = NodeType.Device | NodeType.Farm | NodeType.Rack | NodeType.Crop;
+export type RecordableType =
+  | NodeType.Device
+  | NodeType.Farm
+  | NodeType.Rack
+  | NodeType.Crop
+  | NodeType.Recordable;
 
 //posts, pinning
 export type PostableType =
@@ -36,10 +45,4 @@ export enum OrgItemType {
   Rack = NodeType.Rack,
   Crop = NodeType.Crop,
   Device = NodeType.Device,
-}
-
-export enum OrgRole {
-  Owner,
-  Admin,
-  Viewer,
 }
