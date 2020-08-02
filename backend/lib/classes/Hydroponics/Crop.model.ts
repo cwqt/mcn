@@ -2,6 +2,8 @@ import { ICropStub, ICrop, DataModel, IRecordable, GrowthPhase } from "@cxss/int
 import { cypher } from "../../common/dbs";
 import Recordable from "./Recordable.model";
 import { Transaction } from "neo4j-driver";
+import session from "express-session";
+import { sessionable } from "../Node.model";
 
 type TCrop = ICrop | ICropStub;
 
@@ -41,12 +43,14 @@ const reduce = <K extends TCrop>(data: TCrop, dataModel: DataModel = DataModel.S
   }
 };
 
-const remove = async (_id: string, txc: Transaction) => {
-  await txc.run(
-    ` MATCH (r:Crop {_id:$cid})
-      DETACH DELETE r`,
-    { cid: _id }
-  );
+const remove = async (_id: string, txc?: Transaction) => {
+  await sessionable(async (t: Transaction) => {
+    await t.run(
+      ` MATCH (r:Crop {_id:$cid})
+        DETACH DELETE r`,
+      { cid: _id }
+    );
+  }, txc);
 };
 
 export default { read, reduce, remove };

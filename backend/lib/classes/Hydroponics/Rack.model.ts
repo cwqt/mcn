@@ -54,7 +54,7 @@ const reduce = <T extends TRack>(data: T, dataModel: DataModel = DataModel.Stub)
 };
 
 const remove = async (_id: string, txc?: Transaction) => {
-  const f = async (t: Transaction) => {
+  await sessionable(async (t: Transaction) => {
     let res = await t.run(
       ` MATCH (r:Rack {_id:$rid})
         MATCH (r)-[:HAS_CROP]->(c:Crop)
@@ -66,9 +66,7 @@ const remove = async (_id: string, txc?: Transaction) => {
     for (let cid of res.records[0].get("c")) {
       await Crop.remove(cid, t);
     }
-  };
-
-  await sessionable(f, txc);
+  }, txc);
 };
 
 export default { read, reduce, remove };

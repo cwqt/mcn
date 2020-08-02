@@ -79,7 +79,7 @@ const reduce = <T extends IFarmStub | IFarm>(data: T, dataModel: DataModel = Dat
 };
 
 const remove = async (_id: string, txc?: Transaction) => {
-  const f = async (t: Transaction) => {
+  await sessionable(async (t: Transaction) => {
     let res = await t.run(
       ` MATCH (f:Farm {_id:$fid})
         MATCH (f)-[:HAS_RACK]->(r:Rack)
@@ -91,11 +91,9 @@ const remove = async (_id: string, txc?: Transaction) => {
     );
 
     for (let rid in res.records[0].get("r")) {
-      await Rack.remove(rid, txc);
+      await Rack.remove(rid, t);
     }
-  };
-
-  await sessionable(f, txc);
+  }, txc);
 };
 
 export default { create, read, reduce, remove };

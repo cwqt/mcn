@@ -35,6 +35,7 @@ export const sessionable = async (f: (t: Transaction) => Promise<void>, txc?: Tr
     try {
       const txc = session.beginTransaction();
       await f(txc);
+      await txc.commit();
     } catch (error) {
       throw new Error(error);
     } finally {
