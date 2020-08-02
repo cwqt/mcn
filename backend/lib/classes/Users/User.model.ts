@@ -17,18 +17,15 @@ const read = async <T extends TUser>(
     }
 
     case DataModel.Private: {
-      return reduce<IUserPrivate, T>(data, dataModel);
     }
   }
+
+  return reduce<T>(data, dataModel);
 };
 
 //hack the typing to give me what I want, since IUserPrivate has all props
-// e.g. User.reduce<IUser>(user, DataModel.Full);
-
-const reduce = <T extends TUser, K extends TUser>(
-  data: T,
-  dataModel: DataModel = DataModel.Stub
-): K => {
+// e.g. User.reduce<IUser>(privateUser, DataModel.Full) --> IUser;
+const reduce = <K extends TUser>(data: TUser, dataModel: DataModel = DataModel.Stub): K => {
   switch (dataModel) {
     case DataModel.Stub: {
       let r: IUserStub = {
@@ -41,24 +38,26 @@ const reduce = <T extends TUser, K extends TUser>(
     }
 
     case DataModel.Full: {
+      let d = <IUser>data;
       let r: IUser = {
-        ...reduce<T, IUserStub>(data, DataModel.Stub),
-        email: (<IUser>data).email,
-        verified: (<IUser>data).verified,
-        new_user: (<IUser>data).new_user,
-        admin: (<IUser>data).admin,
-        bio: (<IUser>data).bio,
-        cover_image: (<IUser>data).cover_image,
-        location: (<IUser>data).location,
+        ...reduce<IUserStub>(data, DataModel.Stub),
+        email: d.email,
+        verified: d.verified,
+        new_user: d.new_user,
+        admin: d.admin,
+        bio: d.bio,
+        cover_image: d.cover_image,
+        location: d.location,
       };
       return r as K;
     }
 
     case DataModel.Private: {
+      let d = <IUserPrivate>data;
       let r: IUserPrivate = {
-        ...reduce<T, IUser>(data, DataModel.Full),
-        salt: (<IUserPrivate>data).salt,
-        pw_hash: (<IUserPrivate>data).pw_hash,
+        ...reduce<IUser>(data, DataModel.Full),
+        salt: d.salt,
+        pw_hash: d.pw_hash,
       };
       return r as K;
     }

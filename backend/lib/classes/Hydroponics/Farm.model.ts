@@ -1,18 +1,24 @@
-import {
-  NodeType,
-  IFarm,
-  IFarmStub,
-  IRackStub,
-  Paginated,
-  IRecordable,
-  IRack,
-  IRecordableStub,
-  DataModel,
-} from "@cxss/interfaces";
-import { cypher } from "../../common/dbs";
-import { createPaginator } from "../../controllers/Node.controller";
+import { IFarm, IFarmStub, IRackStub, IRecordable, IRack, DataModel } from "@cxss/interfaces";
+import dbs, { cypher } from "../../common/dbs";
 import Recordable from "./Recordable.model";
 import Rack from "./Rack.model";
+import { Transaction } from "neo4j-driver";
+import session from "express-session";
+import { sessionable } from "../Node.model";
+
+const create = async (data: IFarm): Promise<IFarm> => {
+  let res = await cypher(
+    `
+    CREATE (f:Farm $body)
+    RETURN f
+  `,
+    {
+      body: data,
+    }
+  );
+
+  return reduce<IFarm>(res.records[0].get("f").properties, DataModel.Full);
+};
 
 /**
  * @description Read nodes in & reduce to interface
@@ -46,9 +52,7 @@ const read = async <T extends IFarmStub | IFarm>(
         { fid: _id }
       );
       data = <IFarm>res.records[0].get("f");
-      data.racks = await Promise.all(
-        data.racks.map((r: IRack) => Rack.read<IRackStub>(r._id, DataModel.Stub))
-      );
+      data.racks = await Promise.all(data.racks.map((r: IRack) => Rack.read<IRackStub>(r._id)));
       break;
     }
   }
@@ -68,10 +72,30 @@ const reduce = <T extends IFarmStub | IFarm>(data: T, dataModel: DataModel = Dat
     case DataModel.Full:
       return {
         ...Recordable.reduce<IRecordable>(data, DataModel.Full),
-        racks: data.racks as IRackStub[],
+        racks: data.racks,
         location: data.location,
       } as T;
   }
 };
 
-export default { read, reduce };
+const remove = async (_id: string, txc?: Transaction) => {
+  const f = async (t: Transaction) => {
+    let res = await t.run(
+      ` MATCH (f:Farm {_id:$fid})
+        MATCH (f)-[:HAS_RACK]->(r:Rack)
+        DETACH DELETE f
+        RETURN r{._id}`,
+      {
+        fid: _id,
+      }
+    );
+
+    for (let rid in res.records[0].get("r")) {
+      await Rack.remove(rid, txc);
+    }
+  };
+
+  await sessionable(f, txc);
+};
+
+export default { create, read, reduce, remove };

@@ -9,19 +9,51 @@ import {
 } from "@cxss/interfaces";
 import Node from "../Node.model";
 
-const read = <T extends IRecordable | IRecordableStub>(_id: string): Promise<T> => {
-  return Node.read(_id);
+type TRecordable = IRecordableStub | IRecordable;
+
+const read = async <T extends TRecordable>(
+  _id: string,
+  dataModel: DataModel = DataModel.Stub
+): Promise<T> => {
+  let data;
+  switch (dataModel) {
+    case DataModel.Stub: {
+    }
+
+    case DataModel.Full: {
+    }
+  }
+
+  return reduce<T>(data, dataModel);
 };
 
-const reduce = <T extends IRecordable | IRecordableStub>(
-  data: T,
+const reduce = <K extends TRecordable>(
+  data: TRecordable,
   dataModel: DataModel = DataModel.Stub
-): T => {
+): K => {
   switch (dataModel) {
-    case DataModel.Stub:
-      return <T>{
+    case DataModel.Stub: {
+      let n: IRecordableStub = {
         ...Node.reduce(data),
+        name: data.name,
+        thumbnail: data.thumbnail,
+        tagline: data.tagline,
       };
+      return n as K;
+    }
+
+    case DataModel.Full: {
+      let d = <IRecordable>data;
+      let n: IRecordable = {
+        ...reduce<IRecordableStub>(d, DataModel.Stub),
+        images: d.images,
+        recording: d.recording,
+        feed_url: d.feed_url,
+        parameters: d.parameters,
+        description: d.description,
+      };
+      return n as K;
+    }
   }
 };
 

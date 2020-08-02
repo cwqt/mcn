@@ -1,12 +1,13 @@
-import { cypher } from "../common/dbs";
+import dbs, { cypher } from "../common/dbs";
 import { plainToClass } from "class-transformer";
 import { Types } from "mongoose";
 import { ErrorHandler } from "../common/errorHandler";
 import { HTTP } from "../common/http";
 import { capitalize } from "../controllers/Node.controller";
 import { NodeType, INode, DataModel } from "@cxss/interfaces";
+import { Transaction } from "neo4j-driver";
 
-const read = async <T extends INode>(_id: string): Promise<T> => {
+const read = async (_id: string): Promise<INode> => {
   let res = await cypher(
     `
     MATCH (n:Node {_id:$id})
@@ -15,20 +16,34 @@ const read = async <T extends INode>(_id: string): Promise<T> => {
     { id: _id }
   );
 
-  return res.records[0].get("n") as T;
+  return res.records[0].get("n").properties as INode;
 };
 
-const reduce = <T extends INode, K extends INode>(data: T): K => {
-  let n: INode = {
+const reduce = (data: INode): INode => {
+  return {
     _id: data._id,
     created_at: data.created_at,
     type: data.type,
   };
-
-  return n as K;
 };
 
 export default { read, reduce };
+
+export const sessionable = async (f: (t: Transaction) => Promise<void>, txc?: Transaction) => {
+  if (!txc) {
+    const session = dbs.neo4j.session();
+    try {
+      const txc = session.beginTransaction();
+      await f(txc);
+    } catch (error) {
+      throw new Error(error);
+    } finally {
+      await session.close();
+    }
+  } else {
+    f(txc);
+  }
+};
 
 // export class Node<T extends INode> {
 //   _id: string;

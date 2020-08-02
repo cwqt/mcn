@@ -5,7 +5,7 @@ import session from "express-session";
 import config from "../config";
 import { ErrorHandler } from "./errorHandler";
 import { HTTP } from "./http";
-const neo4j = require("neo4j-driver");
+import neo4j from "neo4j-driver";
 const Influx = require("influx");
 
 let dbs = {
