@@ -16,6 +16,7 @@ export * from "./Types/Hardware.types";
 export * from "./Types/Measurements.types";
 export * from "./Types/Nodes.types";
 export * from "./Types/Phases.types";
+export * from "./Types/DataModels.types";
 
 export * from "./IoT/ApiKey.model";
 export * from "./IoT/Device.model";

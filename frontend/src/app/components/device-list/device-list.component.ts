@@ -1,7 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import moment from "moment";
 
-import { IDeviceStub, IDeviceSensor, Paginated } from "@cxss/interfaces";
+import { IDeviceStub, Paginated } from "@cxss/interfaces";
 import { OrganisationService } from "src/app/services/organisation.service";
 
 @Component({

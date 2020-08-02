@@ -15,6 +15,16 @@ import { awaitAllDbsConnected } from "./common/dbs";
 
 import mcnr from "./routes";
 import { HTTP } from "./common/http";
+import { IFarmStub, IFarm } from "@cxss/interfaces";
+import { Farm } from "./classes/Hydroponics/Farm.model";
+
+(async () => {
+  let x = new Farm<IFarmStub>("cool farm").asStub().read().reduce();
+  // console.log(x);
+  // console.log("\n---------------\n");
+  // let y = await new Farm<IFarm>("cooler farm").reduce();
+  // console.log(y);
+})();
 
 let server: http.Server;
 const app = express();

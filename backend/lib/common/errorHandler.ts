@@ -24,7 +24,9 @@ export const handleError = (
   };
 
   log.error(`(${ErrorType}) --> ${JSON.stringify(err.message)}`);
-  console.log(err.stack);
+  if (ErrorType !== HTTP.NotFound) {
+    console.log(err.stack);
+  }
 
   res.status(response.statusCode).json(response);
 };

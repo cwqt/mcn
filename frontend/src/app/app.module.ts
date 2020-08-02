@@ -77,6 +77,7 @@ import { FarmListComponent } from "./components/farm-list/farm-list.component";
     DeviceListComponent,
     OrganisationComponent,
     HeaderUserButtonComponent,
+    FarmListComponent,
   ],
   imports: [
     AngularMaterialModule,

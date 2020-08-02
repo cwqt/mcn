@@ -1,35 +1,52 @@
-import { Node } from "../Node.model";
-import { Measurement, RecordableType } from "@cxss/interfaces";
-import { IRecordableStub, IRecordable } from "@cxss/interfaces/dist/Hydroponics/Recordable.model";
+import {
+  Measurement,
+  RecordableType,
+  DataModel,
+  IFarmStub,
+  IFarm,
+  IRecordableStub,
+  IRecordable,
+} from "@cxss/interfaces";
+import Node from "../Node.model";
 
-export class Recordable extends Node {
-  name: string;
-  thumbnail?: string;
-  tagline?: string;
+const read = <T extends IRecordable | IRecordableStub>(_id: string): Promise<T> => {
+  return Node.read(_id);
+};
 
-  images: string[];
-  recording?: string[];
-  feed_url?: string;
-  parameters?: Map<Measurement, [number, number, number]>;
-  description?: string;
-
-  constructor(type: RecordableType, name: string) {
-    super(type);
-    this.name = name;
-    this.images = [];
+const reduce = <T extends IRecordable | IRecordableStub>(
+  data: T,
+  dataModel: DataModel = DataModel.Stub
+): T => {
+  switch (dataModel) {
+    case DataModel.Stub:
+      return <T>{
+        ...Node.reduce(data),
+      };
   }
+};
 
-  toStub(): IRecordableStub {
-    return {
-      ...super.toStub(),
-      name: this.name,
-    };
-  }
+export default { read, reduce };
 
-  toFull(): IRecordable {
-    return {
-      ...this.toStub(),
-      images: this.images,
-    };
-  }
-}
+// export class Recordable<T extends IRecordable | IRecordableStub> extends Node {
+//   name: string;
+//   thumbnail?: string;
+//   tagline?: string;
+
+//   images: string[];
+//   recording?: string[];
+//   feed_url?: string;
+//   parameters?: Map<Measurement, [number, number, number]>;
+//   description?: string;
+
+//   constructor(type: RecordableType, name: string) {
+//     super(type);
+//     this.name = name;
+//     this.images = [];
+//   }
+
+//   async read(): Promise<T> {}
+
+//   reduce(dt: Dt) {
+//     return this.toStub();
+//   }
+// }

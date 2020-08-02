@@ -3,19 +3,13 @@ import { Measurement, Unit, IoTState, IoTMeasurement } from "../Types/Measuremen
 import { INode } from "../Node.model";
 import { NodeType } from "../Types/Nodes.types";
 
-export interface IDeviceProperty extends INode {
+export interface IDeviceProperty<T extends NodeType.State | NodeType.Sensor | NodeType.Metric>
+  extends INode {
+  type: T;
   ref: string;
   value: string | number | boolean;
   name: string;
   description: string;
-}
-
-export interface IDeviceSensor extends IDeviceProperty {
-  measures: Measurement | IoTMeasurement;
-  unit: Unit;
-}
-
-export interface IDeviceState extends IDeviceProperty {
-  state: IoTState;
-  dType: Type;
+  measures: Measurement | IoTMeasurement | IoTState;
+  data_format: Unit | Type;
 }

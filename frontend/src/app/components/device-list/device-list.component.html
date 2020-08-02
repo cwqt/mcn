@@ -3,7 +3,7 @@
     <ui-section-header title="Devices" subtitle="IoT device management">
     </ui-section-header>
 
-    <mat-table *ngIf="devices.data"[dataSource]="devices.data">
+    <mat-table *ngIf="devices.data" [dataSource]="devices.data">
       <!-- Position Column -->
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>

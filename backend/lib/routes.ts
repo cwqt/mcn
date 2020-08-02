@@ -40,14 +40,15 @@ mcnr.post    <IOrg>          ("/orgs",                       Orgs.createOrg,    
 mcnr.delete  <void>          ("/orgs/:oid",                  Orgs.deleteOrg,                           [Access.OrgAdmin]);
 mcnr.delete  <IOrg>          ("/orgs/:oid",                  Orgs.updateOrg,                           [Access.OrgEditor]);
 
-// ORG USERS -------------------------------------------------------------------------------------------------------------------------------------------------------
-mcnr.get     <P<IUserStub>>  ("/orgs/:oid/users",            Orgs.readOrgNodes(NodeType.User),         [Access.OrgMember]);
-mcnr.post    <void>          ("/orgs/:oid/users/:iid",       Orgs.addNodeToOrg(NodeType.User),         [Access.OrgEditor]);
+// ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.put     <void>          ("/orgs/:oid/users/:uid/role",  Orgs.editUserRole,                        [Access.OrgAdmin]);
-
-// ORG DEVICES -----------------------------------------------------------------------------------------------------------------------------------------------------
-mcnr.post    <void>          ("/orgs/:oid/devices/:iid",     Orgs.addNodeToOrg(NodeType.Device),       [Access.OrgEditor]);
+mcnr.get     <P<IUserStub>>  ("/orgs/:oid/users",            Orgs.readOrgNodes(NodeType.User),         [Access.OrgMember]);
 mcnr.get     <P<IDeviceStub>>("/orgs/:oid/devices",          Orgs.readOrgNodes(NodeType.Device),       [Access.OrgMember]);
+mcnr.get     <P<IFarmStub>>  ("/orgs/:oid/farms",            Orgs.readOrgNodes(NodeType.Farm),         [Access.OrgMember]);
+mcnr.post    <void>          ("/orgs/:oid/users/:iid",       Orgs.addNodeToOrg(NodeType.User),         [Access.OrgEditor]);
+mcnr.post    <void>          ("/orgs/:oid/devices/:iid",     Orgs.addNodeToOrg(NodeType.Device),       [Access.OrgEditor]);
+mcnr.post    <void>          ("/orgs/:oid/farms/:iid",       Orgs.addNodeToOrg(NodeType.Farm),         [Access.OrgEditor]);
+
 
 // DEVICES ---------------------------------------------------------------------------------------------------------------------------------------------------------
 const deviceDef:nodeDef = [NodeType.Device, "did"];
@@ -72,8 +73,8 @@ mcnr.post    <void>          ("/devices/:did/keys",           Device.setApiKey, 
 // FARMS ------------------------------------------------------------------------------------------
 const farmDef:nodeDef = [NodeType.Farm, "fid"];
 mcnr.get     <P<IFarmStub>>  ("/farms",                       Farm.readAllFarms,                         [Access.SiteAdmin]);
-mcnr.post    <IFarm>         ("/farms",                       Farm.createFarm,                           [Access.Authenticated], Farm.validators.createFarm);
-mcnr.get     <IFarm>         ("/farms/:fid",                  Farm.readFarm,                             [Access.OrgMember]);
+// mcnr.post    <IFarm>         ("/farms",                       Farm.createFarm,                           [Access.Authenticated], Farm.validators.createFarm);
+// mcnr.get     <IFarm>         ("/farms/:fid",                  Farm.readFarm,                             [Access.OrgMember]);
 // mcnr.put("/farms/:fid",                 Farm.updateFarm,                           [Access.OrgEditor]);
 // mcnr.delete("/farms/:fid",              Farm.deleteFarm,                           [Access.OrgEditor]);
 

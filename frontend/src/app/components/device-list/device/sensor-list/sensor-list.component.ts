@@ -3,9 +3,9 @@ import { Component, OnInit, Input } from "@angular/core";
 import {
   IDevice,
   IDeviceStub,
-  IDeviceState,
-  IDeviceSensor,
   IUser,
+  IDeviceProperty,
+  NodeType,
 } from "@cxss/interfaces";
 
 import { DeviceService } from "src/app/services/device.service";
@@ -18,7 +18,7 @@ import { DeviceService } from "src/app/services/device.service";
 export class SensorListComponent implements OnInit {
   @Input() currentUser: IUser;
   @Input() authorUser: IUser;
-  @Input() sensors: { [index: string]: IDeviceSensor[] };
+  @Input() sensors: { [index: string]: IDeviceProperty<NodeType.Sensor>[] };
 
   cachedSensorData: { [index: string]: any }; //ref: data
 
@@ -39,17 +39,7 @@ export class SensorListComponent implements OnInit {
 
   constructor(private deviceService: DeviceService) {}
 
-  ngOnInit(): void {
-    Object.values(this.sensors).forEach((type) => {
-      type.forEach((sensor: IDeviceSensor) => {
-        this.cachedSensorData[sensor.ref] = {
-          loading: false,
-          error: "",
-          data: {},
-        };
-      });
-    });
-  }
+  ngOnInit(): void {}
 
   pretty(str: string) {
     return (str.charAt(0).toUpperCase() + str.slice(1)).replace("_", " ");

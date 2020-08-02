@@ -82,8 +82,6 @@ export const readOrgNodes = (node: NodeType) => {
       }
     );
 
-    console.log(result, node, req.params.oid);
-
     let nodes = result.records.map((r: any) => {
       return objToClass(<NodeType>node, r.get("n").properties).toStub();
     });
@@ -91,7 +89,7 @@ export const readOrgNodes = (node: NodeType) => {
     return createPaginator(
       node,
       nodes,
-      result.records[0].get("total").toNumber(),
+      result.records[0]?.get("total")?.toNumber() || 0,
       locals.pagination.per_page,
       req.params.oid
     );

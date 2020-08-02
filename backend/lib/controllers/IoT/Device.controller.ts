@@ -7,15 +7,10 @@ import dbs, { cypher } from "../../common/dbs";
 import { ErrorHandler } from "../../common/errorHandler";
 
 import {
-  IDeviceSensor,
   IDevice,
   DeviceStateType,
-  IDeviceState,
   IApiKey,
   IApiKeyPrivate,
-  Measurement,
-  IoTState,
-  IoTMeasurement,
   HardwareDevice,
   SupportedHardware,
   HardwareInformation,
@@ -23,7 +18,7 @@ import {
   IDeviceStub,
 } from "@cxss/interfaces";
 import { Device } from "../../classes/IoT/Device.model";
-import { DeviceSensor, DeviceState } from "../../classes/IoT/DeviceProperty.model";
+import { DeviceProperty } from "../../classes/IoT/DeviceProperty.model";
 
 export const validators = {
   createDevice: validate([
@@ -82,36 +77,17 @@ export const createDevice = async (req: Request, next: NextFunction): Promise<ID
   const hwInfo: HardwareDevice = HardwareInformation[<SupportedHardware>req.body.hardware_model];
   let device = new Device(req.body.name, req.body.hardware_model);
 
-  let sensors: DeviceSensor[] = [];
-  let metrics: DeviceSensor[] = [];
-  let states: DeviceState[] = [];
+  let sensors: DeviceProperty<NodeType.Sensor>[] = Object.keys(hwInfo.sensors).map(
+    (ref: string) => new DeviceProperty(NodeType.Sensor, ref, hwInfo.sensors)
+  );
 
-  sensors = Object.keys(hwInfo.sensors).map((s: Measurement) => {
-    return new DeviceSensor(
-      hwInfo.sensors[s].type,
-      hwInfo.sensors[s].unit,
-      hwInfo.sensors[s].type + " sensor",
-      s
-    );
-  });
+  let metrics: DeviceProperty<NodeType.Metric>[] = Object.keys(hwInfo.metrics).map(
+    (ref: string) => new DeviceProperty(NodeType.Metric, ref, hwInfo.metrics)
+  );
 
-  metrics = Object.keys(hwInfo.metrics).map((s: IoTMeasurement) => {
-    return new DeviceSensor(
-      hwInfo.metrics[s].type,
-      hwInfo.metrics[s].unit,
-      hwInfo.metrics[s].type + " metric",
-      s
-    );
-  });
-
-  states = Object.keys(hwInfo.states).map((s: IoTState) => {
-    return new DeviceState(
-      hwInfo.states[s].type,
-      hwInfo.states[s].unit,
-      hwInfo.states[s].type + " state",
-      s
-    );
-  });
+  let states: DeviceProperty<NodeType.State>[] = Object.keys(hwInfo.states).map(
+    (ref: string) => new DeviceProperty(NodeType.State, ref, hwInfo.states)
+  );
 
   let session = dbs.neo4j.session();
   let result;

@@ -7,11 +7,11 @@ import {
   MeasurementUnits,
   IDevice,
   IDeviceStub,
-  IDeviceState,
-  IDeviceSensor,
   ITaskRoutine,
   IApiKey,
   IApiKeyPrivate,
+  NodeType,
+  IDeviceProperty,
 } from "@cxss/interfaces";
 
 @Injectable({
@@ -77,20 +77,10 @@ export class DeviceService {
       .toPromise();
   }
 
-  getDeviceStates(user_id: string, device_id: string): Promise<IDeviceState[]> {
-    return this.http
-      .get<IDeviceState[]>(`/api/users/${user_id}/devices/${device_id}/states`)
-      .toPromise();
-  }
+  // getDeviceProperties(node: T, device_id: string): Promise<IDeviceProperty<T>[]> {
+  //   return this.http
+  //     .get<IDeviceProperty<>[]>(`/api/devices/${device_id}/${node}s`);
+  //     .toPromise();
 
-  getDeviceSensors(
-    user_id: string,
-    device_id: string
-  ): Promise<IDeviceSensor[]> {
-    return this.http
-      .get<IDeviceSensor[]>(
-        `/api/users/${user_id}/devices/${device_id}/sensors`
-      )
-      .toPromise();
-  }
+  // }
 }
