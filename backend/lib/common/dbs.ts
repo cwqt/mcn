@@ -6,14 +6,8 @@ import config from "../config";
 import { ErrorHandler } from "./errorHandler";
 import { HTTP } from "./http";
 import neo4j from "neo4j-driver";
+import { Transaction } from "neo4j-driver";
 const Influx = require("influx");
-
-let dbs = {
-  redis: false,
-  mongo: false,
-  neo4j: false,
-  influx: false,
-};
 
 const n4j = neo4j.driver("neo4j://localhost", neo4j.auth.basic(config.N4J_USER, config.N4J_PASS));
 const redisClient = redis.createClient();
@@ -46,6 +40,13 @@ export default {
   mongo: mongo,
 };
 
+let dbs = {
+  redis: false,
+  mongo: false,
+  neo4j: false,
+  influx: false,
+};
+
 export const awaitAllDbsConnected = async (itrlimit: number = 10, delay: number = 1000) => {
   let itrs: number = 0;
 
@@ -70,6 +71,7 @@ export const awaitAllDbsConnected = async (itrlimit: number = 10, delay: number 
   }
 };
 
+// neo4j helpers
 export const cypher = async (query: string, fields: any) => {
   let result: any;
   let session = n4j.session();
@@ -81,4 +83,25 @@ export const cypher = async (query: string, fields: any) => {
     session.close();
   }
   return result;
+};
+
+export const sessionable = async <T>(
+  f: (t: Transaction) => Promise<T>,
+  txc?: Transaction
+): Promise<T> => {
+  if (!txc) {
+    const session = n4j.session();
+    try {
+      const txc = session.beginTransaction();
+      const res = await f(txc);
+      await txc.commit();
+      return res;
+    } catch (error) {
+      throw new Error(error);
+    } finally {
+      await session.close();
+    }
+  } else {
+    f(txc);
+  }
 };

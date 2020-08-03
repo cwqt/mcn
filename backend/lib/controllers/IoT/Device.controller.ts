@@ -41,20 +41,6 @@ export const validators = {
   ]),
 };
 
-export const getDeviceState = (device: IDevice): DeviceStateType => {
-  if (device.last_ping == undefined) return DeviceStateType.UnVerified;
-  if (device.last_ping && device.measurement_count == 0) return DeviceStateType.Verified;
-  if (device.last_ping && device.measurement_count > 0) {
-    let current_time = Date.now();
-    if (current_time - device.last_ping > 86400 * 1000) {
-      //1 day
-      return DeviceStateType.InActive;
-    } else {
-      return DeviceStateType.Active;
-    }
-  }
-};
-
 export const readAllDevices = async (req: Request): Promise<IDeviceStub[]> => {
   return [];
 };

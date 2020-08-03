@@ -1,22 +1,18 @@
-import dbs, { cypher } from "../common/dbs";
-import { plainToClass } from "class-transformer";
-import { Types } from "mongoose";
-import { ErrorHandler } from "../common/errorHandler";
-import { HTTP } from "../common/http";
+import dbs, { cypher, sessionable } from "../common/dbs";
 import { capitalize } from "../controllers/Node.controller";
 import { NodeType, INode, DataModel } from "@cxss/interfaces";
 import { Transaction } from "neo4j-driver";
 
-const read = async (_id: string): Promise<INode> => {
+const read = async <T>(_id: string, nodeType?: NodeType): Promise<T> => {
   let res = await cypher(
     `
-    MATCH (n:Node {_id:$id})
+    MATCH (n:${nodeType ? capitalize(nodeType) : "Node"} {_id:$id})
     RETURN n
   `,
     { id: _id }
   );
 
-  return res.records[0].get("n").properties as INode;
+  return res.records[0].get("n").properties as T;
 };
 
 const reduce = (data: INode): INode => {
@@ -27,134 +23,17 @@ const reduce = (data: INode): INode => {
   };
 };
 
-export default { read, reduce };
-
-export const sessionable = async (f: (t: Transaction) => Promise<void>, txc?: Transaction) => {
-  if (!txc) {
-    const session = dbs.neo4j.session();
-    try {
-      const txc = session.beginTransaction();
-      await f(txc);
-      await txc.commit();
-    } catch (error) {
-      throw new Error(error);
-    } finally {
-      await session.close();
-    }
-  } else {
-    f(txc);
-  }
+const remove = async (_id: string, txc?: Transaction, nodeType?: NodeType) => {
+  return sessionable(async (t: Transaction) => {
+    await t.run(
+      ` MATCH (n:${nodeType ? capitalize(nodeType) : "Node"} {_id:$id})
+        DETACH DELETE d
+        RETURN p{._id, .type}`,
+      {
+        id: _id,
+      }
+    );
+  }, txc);
 };
 
-// export class Node<T extends INode> {
-//   _id: string;
-//   created_at: number;
-//   type: NodeType;
-//   modifiableFields: string[];
-//   private dataModel: Dt;
-
-//   constructor(type: NodeType, _id?: string) {
-//     this._id = _id ?? new Types.ObjectId().toHexString();
-//     this.created_at = Date.now();
-//     this.type = type;
-//     this.modifiableFields = [];
-//     this.dataModel = Dt.Stub;
-//   }
-
-//   async read():Promise<T> {
-
-//   }
-
-//   toStub(): INode {
-//     return {
-//       _id: this._id,
-//       created_at: this.created_at,
-//       type: this.type,
-//     };
-//   }
-
-//   //fallbacks
-//   toFull(): INode {
-//     return this.toStub();
-//   }
-
-//   toPrivate(): INode {
-//     return this.toStub();
-//   }
-
-//   async create() {
-//     let results = await cypher(
-//       `
-//       CREATE (n:${capitalize(this.type)} $body)
-//       RETURN n
-//     `,
-//       {
-//         body: this.toFull(),
-//       }
-//     );
-//     return objToClass(this.type, results.records[0].get("n").properties);
-//   }
-
-//   async read(_id?: string) {
-//     let results = await cypher(
-//       `
-//       MATCH (n:${capitalize(this.type)} {_id:$nid})
-//       RETURN n
-//     `,
-//       {
-//         nid: _id ?? this._id,
-//       }
-//     );
-
-//     if (!results.records[0]?.get("n"))
-//       throw new ErrorHandler(HTTP.NotFound, `${this.type} does not exist`);
-//     return objToClass(this.type, results.records[0].get("n").properties);
-//   }
-
-//   async update(body: any) {
-//     let results = await cypher(
-//       `
-//       MATCH (n:${capitalize(this.type)} {_id:$nid})
-//       SET n += $body
-//       RETURN n
-//     `,
-//       {
-//         nid: this._id,
-//         body: body,
-//       }
-//     );
-//     return objToClass(this.type, results.records[0].get("n").properties);
-//   }
-
-//   async delete() {
-//     await cypher(
-//       `
-//       DETACH DELETE (n:${capitalize(this.type)} {_id:$nid})
-//     `,
-//       {
-//         nid: this._id,
-//       }
-//     );
-//   }
-// }
-
-// import { User } from "./Users/User.model";
-// import { Org } from "./Orgs.model";
-// import { Device } from "./IoT/Device.model";
-// import { DeviceProperty } from "./IoT/DeviceProperty.model";
-
-// export interface Class<T> extends Function {
-//   new (...args: any[]): T;
-// }
-
-// export const objToClass = (type: NodeType, object: any) => {
-//   const NodeClassMap: { [index in NodeType]?: Class<any> } = {
-//     [NodeType.Organisation]: Org,
-//     [NodeType.User]: User,
-//     [NodeType.Device]: Device,
-//     [NodeType.DeviceProperty]: DeviceProperty,
-//   };
-
-//   // some stupid bullshit with circular dependencies
-//   return plainToClass(NodeClassMap[type], object);
-// };
+export default { read, reduce, remove };

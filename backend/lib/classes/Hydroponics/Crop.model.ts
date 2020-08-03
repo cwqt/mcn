@@ -1,9 +1,8 @@
 import { ICropStub, ICrop, DataModel, IRecordable, GrowthPhase } from "@cxss/interfaces";
-import { cypher } from "../../common/dbs";
+import { cypher, sessionable } from "../../common/dbs";
 import Recordable from "./Recordable.model";
 import { Transaction } from "neo4j-driver";
 import session from "express-session";
-import { sessionable } from "../Node.model";
 
 type TCrop = ICrop | ICropStub;
 
