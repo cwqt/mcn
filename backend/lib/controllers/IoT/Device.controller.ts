@@ -25,7 +25,7 @@ import {
 } from "@cxss/interfaces";
 import Device from "../../classes/IoT/Device.model";
 import { IResLocals } from "../../mcnr";
-import { createPaginator } from "../Node.controller";
+import { paginate } from "../Node.controller";
 
 export const validators = {
   createDevice: validate([
@@ -70,7 +70,7 @@ export const readAllDevices = async (
     res.records.map((r: Record) => Device.read<IDeviceStub>(r.get("d")._id, DataModel.Stub))
   );
 
-  return createPaginator(
+  return paginate(
     NodeType.Device,
     devices,
     res.records[0].get("total").toNumber(),

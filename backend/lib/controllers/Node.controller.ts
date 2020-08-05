@@ -4,7 +4,7 @@ import { cypher } from "../common/dbs";
 import { NodeType, Paginated } from "@cxss/interfaces";
 import config from "../config";
 
-export const createPaginator = (
+export const paginate = (
   nodeType: NodeType,
   results: any[],
   count: number,

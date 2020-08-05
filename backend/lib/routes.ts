@@ -3,7 +3,7 @@ import { IDeviceStub, IDevice, IApiKey, IUser, IOrgStub, IOrg, IUserStub, Pagina
 import { Access } from "./mcnr";
 
 import Users = require("./controllers/Users/User.controller");
-// import Orgs = require("./controllers/Orgs.controller");
+import Orgs = require("./controllers/Orgs.controller");
 // import IoT = require("./controllers/IoT/IoT.controller");
 import Auth = require("./controllers/Auth.controller");
 // import Routines = require("./controllers/IoT/Routines.controller");
@@ -35,10 +35,10 @@ mcnr.delete   <void>         ("/auth/keys/:kid",             Auth.deleteApiKey, 
 mcnr.redirect <string>       ("/auth/verify",                Auth.verifyUserEmail,                     [Access.None],              Auth.validators.verify);
 
 // ORGS ------------------------------------------------------------------------------------------------------------------------------------------------------------
-// mcnr.get     <IOrgStub[]>    ("/orgs",                       Orgs.readAllOrgs,                         [Access.SiteAdmin]);
-// mcnr.post    <IOrg>          ("/orgs",                       Orgs.createOrg,                           [Access.Authenticated],     Orgs.validators.createOrg);
-// mcnr.delete  <void>          ("/orgs/:oid",                  Orgs.deleteOrg,                           [Access.OrgAdmin]);
-// mcnr.delete  <IOrg>          ("/orgs/:oid",                  Orgs.updateOrg,                           [Access.OrgEditor]);
+mcnr.get     <P<IOrgStub>>   ("/orgs",                       Orgs.readAllOrgs,                         [Access.SiteAdmin]);
+mcnr.post    <IOrg>          ("/orgs",                       Orgs.createOrg,                           [Access.Authenticated],     Orgs.validators.createOrg);
+mcnr.delete  <void>          ("/orgs/:oid",                  Orgs.deleteOrg,                           [Access.OrgAdmin]);
+mcnr.delete  <IOrg>          ("/orgs/:oid",                  Orgs.updateOrg,                           [Access.OrgEditor]);
 
 // // ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
 // mcnr.put     <void>          ("/orgs/:oid/users/:uid/role",  Orgs.editUserRole,                        [Access.OrgAdmin]);

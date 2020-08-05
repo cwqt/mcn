@@ -7,7 +7,7 @@ import dbs, { cypher } from "../../common/dbs";
 import { ErrorHandler } from "../../common/errorHandler";
 import { Paginated, IFarm, IFarmStub, NodeType } from "@cxss/interfaces";
 // import { Farm } from "../../classes/Hydroponics/Farm.model";
-import { createPaginator } from "../Node.controller";
+import { paginate } from "../Node.controller";
 import { IResLocals } from "../../mcnr";
 
 export const validators = {
@@ -19,7 +19,7 @@ export const readAllFarms = async (
   next: NextFunction,
   locals: IResLocals
 ): Promise<Paginated<IFarmStub>> => {
-  return createPaginator(NodeType.Farm, [], 0, locals.pagination.per_page);
+  return paginate(NodeType.Farm, [], 0, locals.pagination.per_page);
 };
 
 // export const createFarm = async (req: Request): Promise<IFarm> => {
