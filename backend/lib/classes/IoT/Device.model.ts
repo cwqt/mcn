@@ -20,7 +20,7 @@ import { Transaction } from "neo4j-driver";
 
 const create = async (
   creator_id: string,
-  data: IDevice,
+  data: IDeviceStub,
   states: IDeviceProperty<NodeType.State>[],
   sensors: IDeviceProperty<NodeType.Sensor>[],
   metrics: IDeviceProperty<NodeType.Metric>[]
@@ -66,25 +66,25 @@ const read = async <T extends IDevice | IDeviceStub>(
   let data;
   switch (dataModel) {
     case DataModel.Stub: {
-      let res = await cypher(
-        ` MATCH (d:Device {_id:$did})
-          RETURN d`,
-        { did: _id }
-      );
-
-      data = res.records[0].get("f");
+      data = await Node.read<IDevice>(_id, NodeType.Device);
       break;
     }
 
     case DataModel.Full: {
       let res = await cypher(
-        ` SIZE((d)-[:HAS_PROPERTY]->(:State)) as stateCount,
-          SIZE((d)-[:HAS_PROPERTY]->(:Metric)) as metricCount,
-          SIZE((d)-[:HAS_PROPERTY]->(:Sensor)) as sensorCount`,
-        { fid: _id }
+        ` 
+          MATCH (d:Device {_id:$did})
+          RETURN d,
+            SIZE((d)-[:HAS_PROPERTY]->(:State)) as stateCount,
+            SIZE((d)-[:HAS_PROPERTY]->(:Metric)) as metricCount,
+            SIZE((d)-[:HAS_PROPERTY]->(:Sensor)) as sensorCount`,
+        { did: _id }
       );
 
-      data = res.records[0].get("f");
+      data = res.records[0].get("d").properties;
+      data.metrics = res.records[0].get("metricCount").toNumber();
+      data.states = res.records[0].get("stateCount").toNumber();
+      data.sensors = res.records[0].get("sensorCount").toNumber();
       break;
     }
   }
@@ -134,7 +134,7 @@ const remove = async (_id: string, txc?: Transaction) => {
     );
 
     // Remove all metrics, states & sensors
-    await Promise.all(res.records[0].get("p").map((r: any) => Node.remove(r._id, t, r.type)));
+    await Promise.all(res.records[0].get("p").map((r: any) => Node.remove(r._id, r.type, t)));
   }, txc);
 };
 

@@ -3,6 +3,18 @@ import { capitalize } from "../controllers/Node.controller";
 import { NodeType, INode, DataModel } from "@cxss/interfaces";
 import { Transaction } from "neo4j-driver";
 
+const create = async <T>(nodeType: NodeType, data: T): Promise<T> => {
+  let res = await cypher(
+    ` CREATE (n:${capitalize(nodeType)} $body)
+      RETURN n`,
+    {
+      body: data,
+    }
+  );
+
+  return res.records[0].get("n").properties;
+};
+
 const read = async <T>(_id: string, nodeType?: NodeType): Promise<T> => {
   let res = await cypher(
     `
@@ -23,7 +35,7 @@ const reduce = (data: INode): INode => {
   };
 };
 
-const remove = async (_id: string, txc?: Transaction, nodeType?: NodeType) => {
+const remove = async (_id: string, nodeType: NodeType, txc?: Transaction) => {
   return sessionable(async (t: Transaction) => {
     await t.run(
       ` MATCH (n:${nodeType ? capitalize(nodeType) : "Node"} {_id:$id})
@@ -36,4 +48,4 @@ const remove = async (_id: string, txc?: Transaction, nodeType?: NodeType) => {
   }, txc);
 };
 
-export default { read, reduce, remove };
+export default { create, read, reduce, remove };

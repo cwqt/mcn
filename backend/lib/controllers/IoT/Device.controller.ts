@@ -5,6 +5,9 @@ import { validate } from "../../common/validate";
 import { HTTP } from "../../common/http";
 import dbs, { cypher } from "../../common/dbs";
 import { ErrorHandler } from "../../common/errorHandler";
+import { Types } from "mongoose";
+
+import { Record } from "neo4j-driver";
 
 import {
   IDevice,
@@ -16,9 +19,13 @@ import {
   HardwareInformation,
   NodeType,
   IDeviceStub,
+  IDeviceProperty,
+  DataModel,
+  Paginated,
 } from "@cxss/interfaces";
-import { Device } from "../../classes/IoT/Device.model";
-import { DeviceProperty } from "../../classes/IoT/DeviceProperty.model";
+import Device from "../../classes/IoT/Device.model";
+import { IResLocals } from "../../mcnr";
+import { createPaginator } from "../Node.controller";
 
 export const validators = {
   createDevice: validate([
@@ -41,8 +48,34 @@ export const validators = {
   ]),
 };
 
-export const readAllDevices = async (req: Request): Promise<IDeviceStub[]> => {
-  return [];
+export const readAllDevices = async (
+  req: Request,
+  next: NextFunction,
+  locals: IResLocals
+): Promise<Paginated<IDeviceStub>> => {
+  const res = await cypher(
+    ` MATCH (d:Device)
+      WITH d, count(d) as total
+      RETURN d{._id}, total
+      SKIP toInteger($skip) LIMIT toInteger($limit)`,
+    {
+      skip: locals.pagination.page * locals.pagination.per_page,
+      limit: locals.pagination.per_page,
+    }
+  );
+
+  console.log(res.records);
+
+  let devices = await Promise.all(
+    res.records.map((r: Record) => Device.read<IDeviceStub>(r.get("d")._id, DataModel.Stub))
+  );
+
+  return createPaginator(
+    NodeType.Device,
+    devices,
+    res.records[0].get("total").toNumber(),
+    locals.pagination.per_page
+  );
 };
 
 export const setApiKey = async (req: Request) => {};
@@ -51,81 +84,50 @@ export const updateApiKey = async (req: Request) => {};
 export const deleteApiKey = async (req: Request) => {};
 export const assignDevice = async (req: Request) => {};
 
-export const readProperties = (node: NodeType.Sensor | NodeType.State | NodeType.Metric) => {
-  return async (req: Request) => {};
-};
-
-export const readPropertyData = (node: NodeType.Sensor | NodeType.State | NodeType.Metric) => {
-  return async (req: Request) => {};
-};
-
 export const createDevice = async (req: Request, next: NextFunction): Promise<IDevice> => {
   const hwInfo: HardwareDevice = HardwareInformation[<SupportedHardware>req.body.hardware_model];
-  let device = new Device(req.body.name, req.body.hardware_model);
 
-  let sensors: DeviceProperty<NodeType.Sensor>[] = Object.keys(hwInfo.sensors).map(
-    (ref: string) => new DeviceProperty(NodeType.Sensor, ref, hwInfo.sensors)
-  );
+  const data: IDeviceStub = {
+    _id: new Types.ObjectId().toHexString(),
+    name: req.body.name,
+    hardware_model: req.body.hardware_model,
+    created_at: Date.now(),
+    state: DeviceStateType.UnVerified,
+    network_name: hwInfo.network_name,
+    type: NodeType.Device,
+  };
 
-  let metrics: DeviceProperty<NodeType.Metric>[] = Object.keys(hwInfo.metrics).map(
-    (ref: string) => new DeviceProperty(NodeType.Metric, ref, hwInfo.metrics)
-  );
+  const propMap: { [index: string]: any } = {
+    [NodeType.Sensor]: hwInfo.sensors,
+    [NodeType.State]: hwInfo.states,
+    [NodeType.Metric]: hwInfo.metrics,
+  };
 
-  let states: DeviceProperty<NodeType.State>[] = Object.keys(hwInfo.states).map(
-    (ref: string) => new DeviceProperty(NodeType.State, ref, hwInfo.states)
-  );
-
-  let session = dbs.neo4j.session();
-  let result;
-  try {
-    const txc = session.beginTransaction();
-    console.log(req.session, device.toFull());
-
-    result = await txc.run(
-      `
-            MATCH (u:User {_id:$uid})
-            CREATE (d:Device $body)<-[:CREATED]-(u)
-            return d
-        `,
-      {
-        uid: req.session.user._id,
-        body: device.toFull(),
-      }
-    );
-
-    await txc.run(
-      `
-            MATCH (d:Device {_id:$did})
-            FOREACH (sensor in $sensors | CREATE (s:Sensor)<-[:HAS_SENSOR]-(d) SET s=sensor)
-        `,
-      { did: device._id, sensors: sensors.map((s) => s.toFull()) }
-    );
-
-    await txc.run(
-      `
-            MATCH (d:Device {_id:$did})
-            FOREACH (metric in $metrics | CREATE (m:Metric)<-[:HAS_METRIC]-(d) SET m=metric);
-        `,
-      { did: device._id, metrics: metrics.map((m) => m.toFull()) }
-    );
-
-    await txc.run(
-      `
-            MATCH (d:Device {_id:$did})
-            FOREACH (state in $states | CREATE (s:State)<-[:HAS_STATE]-(d) SET s=state);
-        `,
-      { did: device._id, states: states.map((s) => s.toFull()) }
-    );
-
-    await txc.commit();
-  } catch (e) {
-    next(new ErrorHandler(HTTP.ServerError, e));
-  } finally {
-    await session.close();
+  for (const [propType, deviceProps] of Object.entries(propMap)) {
+    propMap[propType] = Object.keys(deviceProps).map((ref: string) => {
+      return {
+        _id: new Types.ObjectId().toHexString(),
+        name: `${hwInfo.sensors[ref].type} ${propType}`,
+        created_at: Date.now(),
+        ref: ref,
+        type: propType,
+        description: "",
+        value: null,
+        measures: hwInfo.sensors[ref].type,
+        data_format: hwInfo.sensors[ref].unit,
+      };
+    });
   }
 
-  if (!result.records.length) throw new ErrorHandler(HTTP.ServerError, "Did not create Device");
-  return result.records[0].get("d").properties as IDevice;
+  let d = await Device.create(
+    req.session.user.id,
+    data,
+    propMap[NodeType.State],
+    propMap[NodeType.Sensor],
+    propMap[NodeType.Sensor]
+  );
+
+  return d;
 };
 
 export const updateDevice = async (req: Request): Promise<IDevice> => {
@@ -152,63 +154,9 @@ export const assignDeviceToRecordable = async (req: Request, res: Response) => {
   res.status(HTTP.Created).end();
 };
 
-export const readDevice = async (req: Request) => {
-  let result = await cypher(
-    `
-        MATCH (d:Device {_id:$did})
-        OPTIONAL MATCH (d)-[:HAS_KEY]->(k:ApiKey)
-        RETURN d, r, k, hearts, replies, reposts,
-    `,
-    {
-      did: req.params.did,
-      selfid: req.session.user.id,
-    }
-  );
-
-  let device = result.records[0].get("d")?.properties;
-  // device.measurement_count = device.measurement_count
-  //   ? device.measurement_count.toNumber()
-  //   : 0;
-
-  device.measurement_count = 0;
-  let key: IApiKeyPrivate = result.records[0].get("k")?.properties;
-
-  if (key) delete key.key;
-
-  let data: IDevice = {
-    ...device,
-    state: getDeviceState(device),
-    api_key: (key as IApiKey) || null,
-  };
-
-  return data;
+export const readDevice = async (req: Request): Promise<IDevice> => {
+  return await Device.read<IDevice>(req.params.did, DataModel.Full);
 };
-
-// export const updateDevice = (req:Request, res:Response, next:NextFunction) => {
-//     var newData:any = {}
-//     let allowedFields = [
-//         "user_id", "api_key_id", "recordable_id",
-//         "verified", "hardware_model", "software_version",
-//         "friendly_title", "recording"];
-
-//     let reqKeys = Object.keys(req.body);
-//     for(let i=0; i<reqKeys.length; i++) {
-//         if(!allowedFields.includes(reqKeys[i])) continue;
-//         newData[reqKeys[i]] = req.body[reqKeys[i]];
-//     }
-
-//     Device.findByIdAndUpdate(req.params.did, newData, {new:true, runValidators:true}, (error:any, device:IDeviceModel) => {
-//         if(error) return next(new ErrorHandler(HTTP.ServerError, error))
-//         return res.json(device)
-//     })
-// }
-
-// export const deleteDevice = (req:Request, res:Response, next:NextFunction) => {
-//     Device.findByIdAndDelete(req.params.did, (error) => {
-//         if(error) return next(new ErrorHandler(HTTP.ServerError, error));
-//         res.status(200).end();
-//     })
-// }
 
 export const pingDevice = async (req: Request) => {
   await cypher(
@@ -226,28 +174,34 @@ export const pingDevice = async (req: Request) => {
   return;
 };
 
-export const readDeviceProperties = async (req: Request, res: Response) => {
-  let result = await cypher(
-    `
-        MATCH (d:Device {_id: $did})
-        OPTIONAL MATCH (d)-->(x:${res.locals.node_type})
-        RETURN x
-    `,
-    {
-      did: req.params.did,
-    }
-  );
-
-  let props = result.records.map((n: any) => n.get("x").properties);
-  return res.json(props ?? []);
+export const readProperties = (node: NodeType.Sensor | NodeType.State | NodeType.Metric) => {
+  return async (req: Request) => {};
 };
+// export const readDeviceProperties = async (req: Request, res: Response) => {
+//   let result = await cypher(
+//     `
+//         MATCH (d:Device {_id: $did})
+//         OPTIONAL MATCH (d)-->(x:${res.locals.node_type})
+//         RETURN x
+//     `,
+//     {
+//       did: req.params.did,
+//     }
+//   );
 
-export const readDevicePropertyData = async (req: Request, res: Response) => {
-  let results = await dbs.influx.query(`
-    select * from iot
-    order by time desc
-    limit 10
-  `);
+//   let props = result.records.map((n: any) => n.get("x").properties);
+//   return res.json(props ?? []);
+// };
 
-  res.json(results);
+export const readPropertyData = (node: NodeType.Sensor | NodeType.State | NodeType.Metric) => {
+  return async (req: Request) => {};
 };
+// export const readDevicePropertyData = async (req: Request, res: Response) => {
+//   let results = await dbs.influx.query(`
+//     select * from iot
+//     order by time desc
+//     limit 10
+//   `);
+
+//   res.json(results);
+// };

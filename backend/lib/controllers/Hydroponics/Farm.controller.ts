@@ -7,7 +7,6 @@ import dbs, { cypher } from "../../common/dbs";
 import { ErrorHandler } from "../../common/errorHandler";
 import { Paginated, IFarm, IFarmStub, NodeType } from "@cxss/interfaces";
 // import { Farm } from "../../classes/Hydroponics/Farm.model";
-import { Node } from "../../classes/Node.model";
 import { createPaginator } from "../Node.controller";
 import { IResLocals } from "../../mcnr";
 

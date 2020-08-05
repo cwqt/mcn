@@ -1,10 +1,9 @@
 import { IFarm, IFarmStub, IRackStub, IRecordable, IRack, DataModel } from "@cxss/interfaces";
-import dbs, { cypher } from "../../common/dbs";
+import { cypher } from "../../common/dbs";
 import Recordable from "./Recordable.model";
 import Rack from "./Rack.model";
 import { Transaction } from "neo4j-driver";
-import session from "express-session";
-import { sessionable } from "../Node.model";
+import { sessionable } from "../../common/dbs";
 
 const create = async (data: IFarm): Promise<IFarm> => {
   let res = await cypher(

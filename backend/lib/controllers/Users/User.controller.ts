@@ -7,16 +7,20 @@ import { HTTP } from "../../common/http";
 import { uploadImageToS3, S3Image } from "../../common/storage";
 import dbs, { cypher } from "../../common/dbs";
 
-import { User } from "../../classes/Users/User.model";
-import { Org } from "../../classes/Orgs.model";
-import { Node, objToClass } from "../../classes/Node.model";
-
-import { IUserPrivate, IUser, IOrgStub, NodeType, Paginated, IUserStub } from "@cxss/interfaces";
+import {
+  IUserPrivate,
+  IUser,
+  IOrgStub,
+  NodeType,
+  Paginated,
+  IUserStub,
+  DataModel,
+} from "@cxss/interfaces";
 const { body, param, query } = require("express-validator");
 import { validate } from "../../common/validate";
-import config from "../../config";
-import { createPaginator } from "../Node.controller";
-import { notEqual } from "assert";
+import User from "../../classes/Users/User.model";
+import { Types } from "mongoose";
+import Node from "../../classes/Node.model";
 
 export const validators = {
   loginUser: validate([
@@ -45,33 +49,28 @@ export const validators = {
   readUserByUsername: validate([param("username").not().isEmpty().trim()]),
 };
 
-export const readAllUsers = async (req: Request): Promise<Paginated<IUserStub>> => {
-  const page: number = parseInt(req.query.page as string);
-  const per_page: number = parseInt(req.query.per_page as string);
-
-  let result = await cypher(
-    `
-    MATCH (u:User)
-    RETURN u
-  `,
-    {}
-  );
-
-  let results: IUserStub[] = result.records[0]
-    .get("u")
-    .map((r: any) => objToClass(NodeType.User, r.properties).toStub());
-
-  return createPaginator(NodeType.User, results, results.length, per_page);
-};
+// export const readAllUsers = async (req: Request): Promise<Paginated<IUserStub>> => {
+//   const page: number = parseInt(req.query.page as string);
+//   const per_page: number = parseInt(req.query.per_page as string);
+//   let result = await cypher(
+//     `
+//     MATCH (u:User)
+//     RETURN u
+//   `,
+//     {}
+//   );
+//   let results: IUserStub[] = result.records[0]
+//     .get("u")
+//     .map((r: any) => objToClass(NodeType.User, r.properties).toStub());
+//   return createPaginator(NodeType.User, results, results.length, per_page);
+// };
 
 export const createUser = async (req: Request, next: NextFunction): Promise<IUser> => {
   //see if username/email already taken
   let result = await cypher(
-    `
-        MATCH (u:User)
-        WHERE u.email = $email OR u.username = $username
-        RETURN u
-    `,
+    ` MATCH (u:User)
+      WHERE u.email = $email OR u.username = $username
+      RETURN u`,
     {
       email: req.body.email,
       username: req.body.username,
@@ -87,22 +86,25 @@ export const createUser = async (req: Request, next: NextFunction): Promise<IUse
     throw new ErrorHandler(HTTP.Conflict, errors.value);
   }
 
-  let emailSent = await Auth.sendVerificationEmail(req.body.email);
+  const emailSent = await Auth.sendVerificationEmail(req.body.email);
   if (!emailSent) throw new ErrorHandler(HTTP.ServerError, "Verification email could not be sent");
 
-  let user = new User(req.body.username, req.body.email);
-  await user.generateCredentials(req.body.password);
-  await user.create();
+  let user: IUserStub = {
+    name: req.body.name,
+    username: req.body.username,
+    created_at: Date.now(),
+    _id: Types.ObjectId().toHexString(),
+    type: NodeType.User,
+  };
 
-  return user.toFull();
+  return await User.create(user, req.body.password);
 };
 
-export const readUserById = async (req: Request) => {
-  let user: User = await new Node(NodeType.User, req.params.uid).read();
-  return user.toFull();
+export const readUserById = async (req: Request): Promise<IUser> => {
+  return await User.read<IUser>(req.params.uid, DataModel.Full);
 };
 
-export const readUserByUsername = async (req: Request, next: NextFunction) => {
+export const readUserByUsername = async (req: Request, next: NextFunction): Promise<IUser> => {
   let result = await cypher(
     `
         MATCH (u:User {username: $username})
@@ -116,21 +118,11 @@ export const readUserByUsername = async (req: Request, next: NextFunction) => {
   let r = result.records[0];
   if (!r || r.get("u") == null) throw new ErrorHandler(HTTP.NotFound, "No such user exists");
 
-  let user: User = await new Node(NodeType.User, r.get("u").properties._id).read();
-  return user.toFull();
+  return User.read<IUser>(r.get("u").properties._id, DataModel.Full);
 };
 
 export const updateUser = async (req: Request): Promise<IUser> => {
-  var newData: any = {};
-  let allowedFields = ["name", "email", "location", "bio", "new_user"];
-  let reqKeys = Object.keys(req.body);
-  for (let i = 0; i < reqKeys.length; i++) {
-    if (!allowedFields.includes(reqKeys[i])) continue;
-    newData[reqKeys[i]] = req.body[reqKeys[i]];
-  }
-
-  let user: User = await new Node(NodeType.User, req.params.uid).update(newData);
-  return user.toFull();
+  return await User.update(req.params.uid, req.body);
 };
 
 export const updateUserAvatar = async (req: Request) => {
@@ -152,8 +144,7 @@ export const updateUserAvatar = async (req: Request) => {
 // };
 
 export const deleteUser = async (req: Request) => {
-  await new Node(NodeType.User, req.params._id).delete();
-  return;
+  await Node.remove(req.params.uid, NodeType.User);
 };
 
 export const loginUser = async (req: Request, next: NextFunction): Promise<IUser> => {
@@ -190,8 +181,7 @@ export const loginUser = async (req: Request, next: NextFunction): Promise<IUser
     admin: user.admin || false,
   };
 
-  let u: User = await new Node(NodeType.User, user._id).read();
-  return u.toFull();
+  return await User.read(user._id, DataModel.Full);
 };
 
 export const logoutUser = async (req: Request, next: NextFunction) => {
@@ -202,23 +192,21 @@ export const logoutUser = async (req: Request, next: NextFunction) => {
 };
 
 export const readUserOrgs = async (req: Request) => {
-  let result = await cypher(
-    `
-        MATCH (u:User {_id:$uid})
-        MATCH (o:Organisation)<-[:IN]-(u)
-        RETURN o
-    `,
-    {
-      uid: req.params.uid,
-    }
-  );
-
-  let orgs: IOrgStub[] = result.records.map((r: any) => {
-    let org = r.get("o").properties;
-    return new Org(org.name, org._id).toStub();
-  });
-
-  return orgs;
+  // let result = await cypher(
+  //   `
+  //       MATCH (u:User {_id:$uid})
+  //       MATCH (o:Organisation)<-[:IN]-(u)
+  //       RETURN o
+  //   `,
+  //   {
+  //     uid: req.params.uid,
+  //   }
+  // );
+  // let orgs: IOrgStub[] = result.records.map((r: any) => {
+  //   let org = r.get("o").properties;
+  //   return new Org(org.name, org._id).toStub();
+  // });
+  // return orgs;
 };
 
 // HELPER FUNCTIONS ===============================================================================
@@ -235,6 +223,5 @@ const updateImage = async (
     throw new ErrorHandler(HTTP.ServerError, e);
   }
 
-  let user: User = await new Node(NodeType.User, user_id).update({ [field]: image.data.Location });
-  return user.toFull();
+  return await User.update(user_id, { [field]: image.data.Location });
 };

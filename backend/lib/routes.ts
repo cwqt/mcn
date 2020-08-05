@@ -3,7 +3,7 @@ import { IDeviceStub, IDevice, IApiKey, IUser, IOrgStub, IOrg, IUserStub, Pagina
 import { Access } from "./mcnr";
 
 import Users = require("./controllers/Users/User.controller");
-import Orgs = require("./controllers/Orgs.controller");
+// import Orgs = require("./controllers/Orgs.controller");
 // import IoT = require("./controllers/IoT/IoT.controller");
 import Auth = require("./controllers/Auth.controller");
 // import Routines = require("./controllers/IoT/Routines.controller");
@@ -18,14 +18,14 @@ const mcnr = new McnRouter();
 
 type nodeDef = [NodeType, string];
 // USERS -----------------------------------------------------------------------------------------------------------------------------------------------------------
-mcnr.get      <P<IUserStub>> ("/users",                      Users.readAllUsers,                       [Access.SiteAdmin]);
+// mcnr.get      <P<IUserStub>> ("/users",                      Users.readAllUsers,                       [Access.SiteAdmin]);
 mcnr.post     <IUser>        ("/users",                      Users.createUser,                         [Access.None],             Users.validators.createUser);
 mcnr.post     <void>         ("/users/logout",               Users.logoutUser,                         [Access.Authenticated]);
 mcnr.post     <IUser>        ("/users/login",                Users.loginUser,                          [Access.None],             Users.validators.loginUser);
 mcnr.get      <IUser>        ("/u/:username",                Users.readUserByUsername,                 [Access.None],             Users.validators.readUserByUsername);
 mcnr.get      <IUser>        ("/users/:uid",                 Users.readUserById,                       [Access.None]);
 mcnr.put      <IUser>        ("/users/:uid",                 Users.updateUser,                         [Access.Ourself]);
-mcnr.get      <IOrgStub[]>   ("/users/:uid/orgs",            Users.readUserOrgs,                       [Access.Authenticated]);
+// mcnr.get      <IOrgStub[]>   ("/users/:uid/orgs",            Users.readUserOrgs,                       [Access.Authenticated]);
 mcnr.put      <IUser>        ("/users/:uid/avatar",          Users.updateUserAvatar,                   [Access.Ourself]);
 mcnr.delete   <void>         ("/users/:uid",                 Users.deleteUser,                         [Access.Ourself]);
 
@@ -35,24 +35,24 @@ mcnr.delete   <void>         ("/auth/keys/:kid",             Auth.deleteApiKey, 
 mcnr.redirect <string>       ("/auth/verify",                Auth.verifyUserEmail,                     [Access.None],              Auth.validators.verify);
 
 // ORGS ------------------------------------------------------------------------------------------------------------------------------------------------------------
-mcnr.get     <IOrgStub[]>    ("/orgs",                       Orgs.readAllOrgs,                         [Access.SiteAdmin]);
-mcnr.post    <IOrg>          ("/orgs",                       Orgs.createOrg,                           [Access.Authenticated],     Orgs.validators.createOrg);
-mcnr.delete  <void>          ("/orgs/:oid",                  Orgs.deleteOrg,                           [Access.OrgAdmin]);
-mcnr.delete  <IOrg>          ("/orgs/:oid",                  Orgs.updateOrg,                           [Access.OrgEditor]);
+// mcnr.get     <IOrgStub[]>    ("/orgs",                       Orgs.readAllOrgs,                         [Access.SiteAdmin]);
+// mcnr.post    <IOrg>          ("/orgs",                       Orgs.createOrg,                           [Access.Authenticated],     Orgs.validators.createOrg);
+// mcnr.delete  <void>          ("/orgs/:oid",                  Orgs.deleteOrg,                           [Access.OrgAdmin]);
+// mcnr.delete  <IOrg>          ("/orgs/:oid",                  Orgs.updateOrg,                           [Access.OrgEditor]);
 
-// ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
-mcnr.put     <void>          ("/orgs/:oid/users/:uid/role",  Orgs.editUserRole,                        [Access.OrgAdmin]);
-mcnr.get     <P<IUserStub>>  ("/orgs/:oid/users",            Orgs.readOrgNodes(NodeType.User),         [Access.OrgMember]);
-mcnr.get     <P<IDeviceStub>>("/orgs/:oid/devices",          Orgs.readOrgNodes(NodeType.Device),       [Access.OrgMember]);
-mcnr.get     <P<IFarmStub>>  ("/orgs/:oid/farms",            Orgs.readOrgNodes(NodeType.Farm),         [Access.OrgMember]);
-mcnr.post    <void>          ("/orgs/:oid/users/:iid",       Orgs.addNodeToOrg(NodeType.User),         [Access.OrgEditor]);
-mcnr.post    <void>          ("/orgs/:oid/devices/:iid",     Orgs.addNodeToOrg(NodeType.Device),       [Access.OrgEditor]);
-mcnr.post    <void>          ("/orgs/:oid/farms/:iid",       Orgs.addNodeToOrg(NodeType.Farm),         [Access.OrgEditor]);
+// // ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
+// mcnr.put     <void>          ("/orgs/:oid/users/:uid/role",  Orgs.editUserRole,                        [Access.OrgAdmin]);
+// mcnr.get     <P<IUserStub>>  ("/orgs/:oid/users",            Orgs.readOrgNodes(NodeType.User),         [Access.OrgMember]);
+// mcnr.get     <P<IDeviceStub>>("/orgs/:oid/devices",          Orgs.readOrgNodes(NodeType.Device),       [Access.OrgMember]);
+// mcnr.get     <P<IFarmStub>>  ("/orgs/:oid/farms",            Orgs.readOrgNodes(NodeType.Farm),         [Access.OrgMember]);
+// mcnr.post    <void>          ("/orgs/:oid/users/:iid",       Orgs.addNodeToOrg(NodeType.User),         [Access.OrgEditor]);
+// mcnr.post    <void>          ("/orgs/:oid/devices/:iid",     Orgs.addNodeToOrg(NodeType.Device),       [Access.OrgEditor]);
+// mcnr.post    <void>          ("/orgs/:oid/farms/:iid",       Orgs.addNodeToOrg(NodeType.Farm),         [Access.OrgEditor]);
 
 
 // DEVICES ---------------------------------------------------------------------------------------------------------------------------------------------------------
 const deviceDef:nodeDef = [NodeType.Device, "did"];
-mcnr.get     <IDeviceStub[]> ("/devices",                     Device.readAllDevices,                   [Access.SiteAdmin]);
+mcnr.get     <P<IDeviceStub>>("/devices",                     Device.readAllDevices,                   [Access.SiteAdmin]);
 mcnr.post    <IDevice>       ("/devices",                     Device.createDevice,                     [Access.Authenticated],     Device.validators.createDevice);
 mcnr.get     <IDevice>       ("/devices/:did",                Device.readDevice,                       [Access.OrgMember],         null,                           deviceDef);
 mcnr.put     <IDevice>       ("/devices/:did",                Device.updateDevice,                     [Access.OrgEditor],         null,                           deviceDef);

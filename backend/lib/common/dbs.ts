@@ -6,7 +6,7 @@ import config from "../config";
 import { ErrorHandler } from "./errorHandler";
 import { HTTP } from "./http";
 import neo4j from "neo4j-driver";
-import { Transaction } from "neo4j-driver";
+import { Transaction, Result } from "neo4j-driver";
 const Influx = require("influx");
 
 const n4j = neo4j.driver("neo4j://localhost", neo4j.auth.basic(config.N4J_USER, config.N4J_PASS));
@@ -72,7 +72,7 @@ export const awaitAllDbsConnected = async (itrlimit: number = 10, delay: number 
 };
 
 // neo4j helpers
-export const cypher = async (query: string, fields: any) => {
+export const cypher = async (query: string, fields: any): Promise<Result> => {
   let result: any;
   let session = n4j.session();
   try {

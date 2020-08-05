@@ -12,6 +12,7 @@ export const createPaginator = (
   org_id?: string
 ): Paginated<any> => {
   count = count || 0;
+  org_id = org_id || "";
 
   let pages: Paginated<any> = {
     results: results,

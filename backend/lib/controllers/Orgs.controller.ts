@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { HTTP } from "../common/http";
 import { cypher } from "../common/dbs";
 
-import { objToClass } from "../classes/Node.model";
-import { Org } from "../classes/Orgs.model";
+// import Org from "../classes/Orgs.model";
 import { NodeType, OrgItemType, IOrg, IOrgStub, Paginated } from "@cxss/interfaces";
 import { capitalize, createPaginator } from "./Node.controller";
 import { ErrorHandler } from "../common/errorHandler";

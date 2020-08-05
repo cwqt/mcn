@@ -5,6 +5,7 @@ import { ErrorHandler, handleError } from "./common/errorHandler";
 import { cypher } from "./common/dbs";
 import { accessSync } from "fs";
 import { resolveSoa } from "dns";
+import logger from "./common/logger";
 const AsyncRouter = require("express-async-router").AsyncRouter;
 
 export enum Access {
@@ -237,6 +238,8 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
 
       //Site admin can do anything
       if (req.session.user.admin) return next();
+      if (access.some((a) => [Access.SiteAdmin].includes(a)) && !req.session.user.admin)
+        throw new Error("Not site admin");
 
       // Only requires the user be logged in
       if (access.some((a) => [Access.Authenticated].includes(a))) return next();
@@ -316,6 +319,8 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
 
         return next();
       }
+
+      logger.error("Auth dead end.");
     } catch (error) {
       return next(new ErrorHandler(HTTP.Unauthorised, error));
     }

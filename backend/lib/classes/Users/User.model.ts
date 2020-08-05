@@ -1,8 +1,18 @@
 import { NodeType, IUser, IUserStub, IUserPrivate, DataModel, INode } from "@cxss/interfaces";
 import bcrypt from "bcrypt";
 import Node from "../Node.model";
+import { cypher } from "../../common/dbs";
 
 type TUser = IUserPrivate | IUser | IUserStub;
+
+const create = async (user: IUserStub, password: string): Promise<IUser> => {
+  let u = user as IUserPrivate;
+  u.salt = await bcrypt.genSalt(10);
+  u.pw_hash = await bcrypt.hash(password, u.salt);
+
+  let data = await Node.create<IUserPrivate>(NodeType.User, u);
+  return reduce<IUser>(data, DataModel.Full);
+};
 
 const read = async <T extends TUser>(
   _id: string,
@@ -10,13 +20,10 @@ const read = async <T extends TUser>(
 ): Promise<T> => {
   let data;
   switch (dataModel) {
-    case DataModel.Stub: {
-    }
-
-    case DataModel.Full: {
-    }
-
+    case DataModel.Stub:
+    case DataModel.Full:
     case DataModel.Private: {
+      data = await Node.read<IUserPrivate>(_id, NodeType.User);
     }
   }
 
@@ -64,7 +71,11 @@ const reduce = <K extends TUser>(data: TUser, dataModel: DataModel = DataModel.S
   }
 };
 
-export default { read, reduce };
+const update = async (_id: string, potentialUpdates: any): Promise<IUser> => {
+  return {} as IUser;
+};
+
+export default { create, read, reduce, update };
 
 // export class User extends Node {
 //   name: string;
