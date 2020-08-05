@@ -3,9 +3,12 @@ import { capitalize } from "../controllers/Node.controller";
 import { NodeType, INode, DataModel } from "@cxss/interfaces";
 import { Transaction } from "neo4j-driver";
 
-const create = async <T>(nodeType: NodeType, data: T): Promise<T> => {
+const create = async <T>(nodeType: NodeType, data: T, creator_id?: string): Promise<T> => {
   let res = await cypher(
-    ` CREATE (n:${capitalize(nodeType)} $body)
+    `
+      ${creator_id && `MATCH (u:User {_id:'${creator_id}'})\n`}
+      CREATE (n:${capitalize(nodeType)} $body)
+      ${creator_id && `CREATE (u)-[:CREATED]->(n)\n`}
       RETURN n`,
     {
       body: data,

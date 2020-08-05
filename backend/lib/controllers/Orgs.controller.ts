@@ -34,7 +34,7 @@ export const readAllOrgs = async (
   );
 
   let orgs = await Promise.all(
-    res.records.map((r: Record) => Org.read<IOrgStub>(r.get("o")._id, DataModel.Stub))
+    res.records.map((r: Record) => Org.read<IOrgStub>(r.get("")._id, DataModel.Stub))
   );
 
   return paginate(
@@ -63,56 +63,48 @@ export const createOrg = async (req: Request): Promise<IOrg> => {
   return await Org.create(org, req.session.user._id);
 };
 
-// export const getOrgNode = async (req: Request) => {
-//   let nodeType = <string>req.query.type;
-//   let result = await cypher(
-//     `
-//       MATCH (o:Organisation {_id:$oid})
-//       MATCH (n:${capitalize(nodeType)} {_id:$iid})-[:IN]->(o)
-//       RETURN n
-//     `,
-//     {
-//       oid: req.params.org_id,
-//       iid: req.params.iid,
-//     }
-//   );
+import Device from "../classes/IoT/Device.model";
+import User from "../classes/Users/User.model";
+import Farm from "../classes/Hydroponics/Farm.model";
+const nodeMap: { [index in NodeType]?: any } = {
+  [NodeType.Device]: Device,
+  [NodeType.User]: User,
+  [NodeType.Farm]: Farm,
+};
 
-//   if (!result.records.length) throw new ErrorHandler(HTTP.NotFound, `No such ${nodeType}`);
-//   let node = objToClass(<NodeType>nodeType, result.records[0].get("n").properties).toDevice();
-//   return node;
-// };
+export const readOrgNodes = (node: NodeType) => {
+  return async (req: Request, next: NextFunction, locals: IResLocals): Promise<Paginated<any>> => {
+    // https://stackoverflow.com/questions/54233387/get-total-count-and-paginated-result-in-one-cypher-query-neo4j
+    let result = await cypher(
+      `
+      MATCH (o:Organisation {_id:$oid})
+      WITH o, size((:${capitalize(node)})-[:IN]->(o)) as total
+      MATCH (n:${capitalize(node)})-[:IN]->(o)
+      RETURN n{._id}, total
+      SKIP toInteger($skip) LIMIT toInteger($limit)
+    `,
+      {
+        oid: req.params.oid,
+        skip: locals.pagination.page * locals.pagination.per_page,
+        limit: locals.pagination.per_page,
+      }
+    );
 
-// export const readOrgNodes = (node: NodeType) => {
-//   return async (req: Request, next: NextFunction, locals: IResLocals): Promise<Paginated<any>> => {
-//     // https://stackoverflow.com/questions/54233387/get-total-count-and-paginated-result-in-one-cypher-query-neo4j
-//     let result = await cypher(
-//       `
-//       MATCH (o:Organisation {_id:$oid})
-//       WITH o, size((:${capitalize(node)})-[:IN]->(o)) as total
-//       MATCH (n:${capitalize(node)})-[:IN]->(o)
-//       RETURN n, total
-//       SKIP toInteger($skip) LIMIT toInteger($limit)
-//     `,
-//       {
-//         oid: req.params.oid,
-//         skip: locals.pagination.page * locals.pagination.per_page,
-//         limit: locals.pagination.per_page,
-//       }
-//     );
+    let nodes = await Promise.all(
+      result.records.map((r: Record) => {
+        return nodeMap[node].read(r.get("n")._id, DataModel.Stub);
+      })
+    );
 
-//     let nodes = result.records.map((r: any) => {
-//       return objToClass(<NodeType>node, r.get("n").properties).toStub();
-//     });
-
-//     return paginate(
-//       node,
-//       nodes,
-//       result.records[0]?.get("total")?.toNumber() || 0,
-//       locals.pagination.per_page,
-//       req.params.oid
-//     );
-//   };
-// };
+    return paginate(
+      node,
+      nodes,
+      result.records[0]?.get("total")?.toNumber() || 0,
+      locals.pagination.per_page,
+      req.params.oid
+    );
+  };
+};
 
 export const addNodeToOrg = (node: NodeType) => {
   return async (req: Request, next: NextFunction) => {
@@ -141,27 +133,3 @@ export const addNodeToOrg = (node: NodeType) => {
 };
 
 export const editUserRole = async (req: Request) => {};
-
-export const getNodes = (node: NodeType) => {
-  return async (req: Request) => {};
-};
-
-// export const getItem = async (node:NodeType, org_id?:string) => {
-//   return async (req:Request, res:Response) => {
-//     let result = await cypher(
-//       `
-//         MATCH (o:Organisation {_id:$oid})
-//         MATCH (n:${capitalize(node)} {_id:$iid})-[:IN]->(o)
-//         RETURN n
-//       `,
-//       {
-//         oid: org_id,
-//         iid: req.params.iid,
-//       }
-//     );
-
-//     if (!result.records.length) throw new ErrorHandler(HTTP.NotFound, `No such ${nodeType}`);
-//     let node = objToClass(<NodeType>nodeType, result.records[0].get("n").properties).toFull();
-//     res.json(node);
-//   }
-// }

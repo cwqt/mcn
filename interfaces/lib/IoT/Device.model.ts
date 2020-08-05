@@ -16,7 +16,7 @@ export enum DeviceStateType {
 
 export interface IDeviceStub extends INode {
   name: string;
-  short_desc?: string;
+  tagline?: string;
   thumbnail?: string;
   last_ping?: number; //seconds since epoch device sent message
   state: DeviceStateType;
@@ -28,8 +28,11 @@ export interface IDevice extends IDeviceStub {
   images: string[];
   software_version?: string;
   measurement_count?: number;
-  full_desc?: string;
+  description?: string;
   device_ip?: IpAddress.Address4 | IpAddress.Address6;
   api_key?: IApiKey;
+  states: number;
+  metrics: number;
+  sensors: number;
   // assigned_to?: IFlorableStub;
 }

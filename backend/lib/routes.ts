@@ -1,4 +1,4 @@
-import { IDeviceStub, IDevice, IApiKey, IUser, IOrgStub, IOrg, IUserStub, Paginated as P, IFarm, IFarmStub } from '@cxss/interfaces';
+import { IDeviceStub, IDevice, IApiKey, IUser, IOrgStub, IOrg, IUserStub, Paginated as P, IFarm, IFarmStub, IRack, IRackStub, ICrop, ICropStub } from '@cxss/interfaces';
 
 import { Access } from "./mcnr";
 
@@ -9,6 +9,8 @@ import Auth = require("./controllers/Auth.controller");
 // import Routines = require("./controllers/IoT/Routines.controller");
 import Device = require("./controllers/IoT/Device.controller");
 import Farm = require("./controllers/Hydroponics/Farm.controller");
+import Rack = require("./controllers/Hydroponics/Rack.controller");
+import Crop = require("./controllers/Hydroponics/Crops.controller");
 
 import { McnRouter } from "./mcnr";
 import { cypher } from "./common/dbs";
@@ -18,14 +20,14 @@ const mcnr = new McnRouter();
 
 type nodeDef = [NodeType, string];
 // USERS -----------------------------------------------------------------------------------------------------------------------------------------------------------
-// mcnr.get      <P<IUserStub>> ("/users",                      Users.readAllUsers,                       [Access.SiteAdmin]);
+mcnr.get      <P<IUserStub>> ("/users",                      Users.readAllUsers,                       [Access.SiteAdmin]);
 mcnr.post     <IUser>        ("/users",                      Users.createUser,                         [Access.None],             Users.validators.createUser);
 mcnr.post     <void>         ("/users/logout",               Users.logoutUser,                         [Access.Authenticated]);
 mcnr.post     <IUser>        ("/users/login",                Users.loginUser,                          [Access.None],             Users.validators.loginUser);
 mcnr.get      <IUser>        ("/u/:username",                Users.readUserByUsername,                 [Access.None],             Users.validators.readUserByUsername);
 mcnr.get      <IUser>        ("/users/:uid",                 Users.readUserById,                       [Access.None]);
 mcnr.put      <IUser>        ("/users/:uid",                 Users.updateUser,                         [Access.Ourself]);
-// mcnr.get      <IOrgStub[]>   ("/users/:uid/orgs",            Users.readUserOrgs,                       [Access.Authenticated]);
+mcnr.get      <IOrgStub[]>   ("/users/:uid/orgs",            Users.readUserOrgs,                       [Access.Authenticated]);
 mcnr.put      <IUser>        ("/users/:uid/avatar",          Users.updateUserAvatar,                   [Access.Ourself]);
 mcnr.delete   <void>         ("/users/:uid",                 Users.deleteUser,                         [Access.Ourself]);
 
@@ -41,13 +43,13 @@ mcnr.delete  <void>          ("/orgs/:oid",                  Orgs.deleteOrg,    
 mcnr.delete  <IOrg>          ("/orgs/:oid",                  Orgs.updateOrg,                           [Access.OrgEditor]);
 
 // // ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
-// mcnr.put     <void>          ("/orgs/:oid/users/:uid/role",  Orgs.editUserRole,                        [Access.OrgAdmin]);
-// mcnr.get     <P<IUserStub>>  ("/orgs/:oid/users",            Orgs.readOrgNodes(NodeType.User),         [Access.OrgMember]);
-// mcnr.get     <P<IDeviceStub>>("/orgs/:oid/devices",          Orgs.readOrgNodes(NodeType.Device),       [Access.OrgMember]);
-// mcnr.get     <P<IFarmStub>>  ("/orgs/:oid/farms",            Orgs.readOrgNodes(NodeType.Farm),         [Access.OrgMember]);
-// mcnr.post    <void>          ("/orgs/:oid/users/:iid",       Orgs.addNodeToOrg(NodeType.User),         [Access.OrgEditor]);
-// mcnr.post    <void>          ("/orgs/:oid/devices/:iid",     Orgs.addNodeToOrg(NodeType.Device),       [Access.OrgEditor]);
-// mcnr.post    <void>          ("/orgs/:oid/farms/:iid",       Orgs.addNodeToOrg(NodeType.Farm),         [Access.OrgEditor]);
+mcnr.put     <void>          ("/orgs/:oid/users/:uid/role",  Orgs.editUserRole,                        [Access.OrgAdmin]);
+mcnr.get     <P<IUserStub>>  ("/orgs/:oid/users",            Orgs.readOrgNodes(NodeType.User),         [Access.OrgMember]);
+mcnr.get     <P<IDeviceStub>>("/orgs/:oid/devices",          Orgs.readOrgNodes(NodeType.Device),       [Access.OrgMember]);
+mcnr.get     <P<IFarmStub>>  ("/orgs/:oid/farms",            Orgs.readOrgNodes(NodeType.Farm),         [Access.OrgMember]);
+mcnr.post    <void>          ("/orgs/:oid/users/:iid",       Orgs.addNodeToOrg(NodeType.User),         [Access.OrgEditor]);
+mcnr.post    <void>          ("/orgs/:oid/devices/:iid",     Orgs.addNodeToOrg(NodeType.Device),       [Access.OrgEditor]);
+mcnr.post    <void>          ("/orgs/:oid/farms/:iid",       Orgs.addNodeToOrg(NodeType.Farm),         [Access.OrgEditor]);
 
 
 // DEVICES ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -73,22 +75,24 @@ mcnr.post    <void>          ("/devices/:did/keys",           Device.setApiKey, 
 // FARMS ------------------------------------------------------------------------------------------
 const farmDef:nodeDef = [NodeType.Farm, "fid"];
 mcnr.get     <P<IFarmStub>>  ("/farms",                       Farm.readAllFarms,                         [Access.SiteAdmin]);
-// mcnr.post    <IFarm>         ("/farms",                       Farm.createFarm,                           [Access.Authenticated], Farm.validators.createFarm);
-// mcnr.get     <IFarm>         ("/farms/:fid",                  Farm.readFarm,                             [Access.OrgMember]);
+mcnr.post    <IFarm>         ("/farms",                       Farm.createFarm,                           [Access.Authenticated], Farm.validators.createFarm);
+mcnr.get     <IFarm>         ("/farms/:fid",                  Farm.readFarm,                             [Access.OrgMember]);
 // mcnr.put("/farms/:fid",                 Farm.updateFarm,                           [Access.OrgEditor]);
 // mcnr.delete("/farms/:fid",              Farm.deleteFarm,                           [Access.OrgEditor]);
 
-// mcnr.get("/farms/:fid/racks",           Farms.getRacks,                             [Access.OrgViewer]);
+mcnr.get     <IRackStub[]>   ("/farms/:fid/racks",            Farm.readFarmRacks,                        [Access.OrgMember]);
 
 // RACKS ------------------------------------------------------------------------------------------
 const rackDef:nodeDef = [NodeType.Rack, "rid"];
 // mcnr.get("/racks",                      Rack.readAllRacks,                         [Access.SiteAdmin]);
-// mcnr.post("/racks",                     Rack.createRack,                           [Access.Authenticated]);
+mcnr.post    <IRack>         ("/farms/:fid/racks",            Rack.createRack,                           [Access.Authenticated], Rack.validators.createRack);
 // mcnr.get("/racks/:rid",                 Rack.readFarm,                             [Access.OrgViewer]);
 // mcnr.put("/racks/:rid",                 Rack.updateRack,                           [Access.OrgEditor]);
 // mcnr.delete("/racks/:rid",              Rack.deleteRack,                           [Access.OrgEditor]);
+mcnr.get<ICropStub[]>("/racks/:rid/crops", Rack.readRackCrops, [Access.OrgMember]);
 
 // CROPS ------------------------------------------------------------------------------------------
+mcnr.post    <ICrop>         ("/racks/:rid/crops",            Crop.createCrop,                           [Access.Authenticated], Crop.validators.createCrop);
 
 // SPECIES ----------------------------------------------------------------------------------------
 

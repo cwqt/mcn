@@ -1,22 +1,22 @@
-import { IFarm, IFarmStub, IRackStub, IRecordable, IRack, DataModel } from "@cxss/interfaces";
+import {
+  IFarm,
+  IFarmStub,
+  IRackStub,
+  IRecordable,
+  IRack,
+  DataModel,
+  NodeType,
+} from "@cxss/interfaces";
 import { cypher } from "../../common/dbs";
 import Recordable from "./Recordable.model";
 import Rack from "./Rack.model";
 import { Transaction } from "neo4j-driver";
 import { sessionable } from "../../common/dbs";
+import Node from "../Node.model";
 
-const create = async (data: IFarm): Promise<IFarm> => {
-  let res = await cypher(
-    `
-    CREATE (f:Farm $body)
-    RETURN f
-  `,
-    {
-      body: data,
-    }
-  );
-
-  return reduce<IFarm>(res.records[0].get("f").properties, DataModel.Full);
+const create = async (data: IFarmStub, creator_id: string): Promise<IFarm> => {
+  const farm = await Node.create<IFarm>(NodeType.Farm, <IFarm>(<unknown>data), creator_id);
+  return reduce<IFarm>(farm, DataModel.Full);
 };
 
 /**

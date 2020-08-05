@@ -5,7 +5,7 @@ import { NodeType } from "../Types/Nodes.types";
 
 export interface IFarmStub extends IRecordable {
   _id: string;
-  location: string; //lat/long
+  location?: string; //lat/long
   racks: number;
 }
 

@@ -1,3 +1,5 @@
+import { cypher, sessionable } from "../../common/dbs";
+import { Transaction } from "neo4j-driver";
 import {
   NodeType,
   IApiKey,
@@ -13,10 +15,6 @@ import {
 
 import Recordable from "../Hydroponics/Recordable.model";
 import Node from "../Node.model";
-
-import * as IpAddress from "ip-address";
-import { cypher, sessionable } from "../../common/dbs";
-import { Transaction } from "neo4j-driver";
 
 const create = async (
   creator_id: string,
@@ -43,6 +41,7 @@ const create = async (
         sensors: sensors,
       }
     );
+
     let device: IDevice = res.records[0].get("d").properties;
     device.states = states.length;
     device.sensors = sensors.length;
@@ -85,6 +84,8 @@ const read = async <T extends IDevice | IDeviceStub>(
       data.metrics = res.records[0].get("metricCount").toNumber();
       data.states = res.records[0].get("stateCount").toNumber();
       data.sensors = res.records[0].get("sensorCount").toNumber();
+      // data.api_key = await ApiKey.read(_id, DataModel.Stub);
+
       break;
     }
   }
@@ -111,9 +112,13 @@ const reduce = <T extends IDeviceStub | IDevice>(
       let r: IDevice = {
         ...reduce<IDeviceStub>(data, DataModel.Stub),
         images: (<IDevice>data).images,
+        device_ip: (<IDevice>data).device_ip,
+        software_version: (<IDevice>data).software_version,
         states: (<IDevice>data).states,
-        sensors: (<IDevice>data).sensors,
         metrics: (<IDevice>data).metrics,
+        sensors: (<IDevice>data).sensors,
+        api_key: (<IDevice>data).api_key,
+        //measurement_count
       };
       return r as T;
     }

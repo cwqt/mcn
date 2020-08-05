@@ -5,7 +5,8 @@ import Auth = require("../Auth.controller");
 import { ErrorHandler, FormErrorResponse } from "../../common/errorHandler";
 import { HTTP } from "../../common/http";
 import { uploadImageToS3, S3Image } from "../../common/storage";
-import dbs, { cypher } from "../../common/dbs";
+import { cypher } from "../../common/dbs";
+import Org from "../../classes/Orgs.model";
 
 import {
   IUserPrivate,
@@ -15,12 +16,16 @@ import {
   Paginated,
   IUserStub,
   DataModel,
+  OrgItemType,
 } from "@cxss/interfaces";
 const { body, param, query } = require("express-validator");
 import { validate } from "../../common/validate";
 import User from "../../classes/Users/User.model";
 import { Types } from "mongoose";
 import Node from "../../classes/Node.model";
+import { IResLocals } from "../../mcnr";
+import { Record } from "neo4j-driver";
+import { paginate } from "../Node.controller";
 
 export const validators = {
   loginUser: validate([
@@ -49,21 +54,33 @@ export const validators = {
   readUserByUsername: validate([param("username").not().isEmpty().trim()]),
 };
 
-// export const readAllUsers = async (req: Request): Promise<Paginated<IUserStub>> => {
-//   const page: number = parseInt(req.query.page as string);
-//   const per_page: number = parseInt(req.query.per_page as string);
-//   let result = await cypher(
-//     `
-//     MATCH (u:User)
-//     RETURN u
-//   `,
-//     {}
-//   );
-//   let results: IUserStub[] = result.records[0]
-//     .get("u")
-//     .map((r: any) => objToClass(NodeType.User, r.properties).toStub());
-//   return createPaginator(NodeType.User, results, results.length, per_page);
-// };
+export const readAllUsers = async (
+  req: Request,
+  next: NextFunction,
+  locals: IResLocals
+): Promise<Paginated<IUserStub>> => {
+  const res = await cypher(
+    ` MATCH (u:User)
+      WITH u, count(u) as total
+      RETURN u{._id}, total
+      SKIP toInteger($skip) LIMIT toInteger($limit)`,
+    {
+      skip: locals.pagination.page * locals.pagination.per_page,
+      limit: locals.pagination.per_page,
+    }
+  );
+
+  let users = await Promise.all(
+    res.records.map((r: Record) => User.read<IUserStub>(r.get("u")._id, DataModel.Stub))
+  );
+
+  return paginate(
+    NodeType.User,
+    users,
+    res.records[0].get("total").toNumber(),
+    locals.pagination.per_page
+  );
+};
 
 export const createUser = async (req: Request, next: NextFunction): Promise<IUser> => {
   //see if username/email already taken
@@ -192,21 +209,20 @@ export const logoutUser = async (req: Request, next: NextFunction) => {
 };
 
 export const readUserOrgs = async (req: Request) => {
-  // let result = await cypher(
-  //   `
-  //       MATCH (u:User {_id:$uid})
-  //       MATCH (o:Organisation)<-[:IN]-(u)
-  //       RETURN o
-  //   `,
-  //   {
-  //     uid: req.params.uid,
-  //   }
-  // );
-  // let orgs: IOrgStub[] = result.records.map((r: any) => {
-  //   let org = r.get("o").properties;
-  //   return new Org(org.name, org._id).toStub();
-  // });
-  // return orgs;
+  let result = await cypher(
+    ` MATCH (u:User {_id:$uid})
+      MATCH (o:Organisation)<-[:IN]-(u)
+      RETURN o`,
+    {
+      uid: req.params.uid,
+    }
+  );
+
+  let orgs: IOrgStub[] = result.records.map((r: Record) => {
+    return Org.reduce<IOrgStub>(r.get("o").properties, DataModel.Stub);
+  });
+
+  return orgs || [];
 };
 
 // HELPER FUNCTIONS ===============================================================================
