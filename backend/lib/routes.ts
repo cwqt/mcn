@@ -1,6 +1,23 @@
-import { IDeviceStub, IDevice, IApiKey, IUser, IOrgStub, IOrg, IUserStub, Paginated as P, IFarm, IFarmStub, IRack, IRackStub, ICrop, ICropStub } from '@cxss/interfaces';
-
-import { Access } from "./mcnr";
+import {
+    IDeviceStub,
+    IDevice,
+    IApiKey,
+    IUser,
+    IOrgStub,
+    IOrg,
+    IUserStub,
+    Paginated as P,
+    IFarm,
+    IFarmStub,
+    IRack,
+    IRackStub,
+    ICrop,
+    ICropStub,
+    IDeviceProperty as IDProp,
+    NodeType as NT,
+    IApiKeyPrivate
+  } from "@cxss/interfaces";
+  import { Access } from "./mcnr";
 
 import Users = require("./controllers/Users/User.controller");
 import Orgs = require("./controllers/Orgs.controller");
@@ -10,7 +27,8 @@ import Auth = require("./controllers/Auth.controller");
 import Device = require("./controllers/IoT/Device.controller");
 import Farm = require("./controllers/Hydroponics/Farm.controller");
 import Rack = require("./controllers/Hydroponics/Rack.controller");
-import Crop = require("./controllers/Hydroponics/Crops.controller");
+import Crop = require("./controllers/Hydroponics/Crop.controller");
+import IoT = require("./controllers/IoT/IoT.controller");
 
 import { McnRouter } from "./mcnr";
 import { cypher } from "./common/dbs";
@@ -51,7 +69,6 @@ mcnr.post    <void>          ("/orgs/:oid/users/:iid",       Orgs.addNodeToOrg(N
 mcnr.post    <void>          ("/orgs/:oid/devices/:iid",     Orgs.addNodeToOrg(NodeType.Device),       [Access.OrgEditor]);
 mcnr.post    <void>          ("/orgs/:oid/farms/:iid",       Orgs.addNodeToOrg(NodeType.Farm),         [Access.OrgEditor]);
 
-
 // DEVICES ---------------------------------------------------------------------------------------------------------------------------------------------------------
 const deviceDef:nodeDef = [NodeType.Device, "did"];
 mcnr.get     <P<IDeviceStub>>("/devices",                     Device.readAllDevices,                   [Access.SiteAdmin]);
@@ -61,16 +78,22 @@ mcnr.put     <IDevice>       ("/devices/:did",                Device.updateDevic
 mcnr.delete  <void>          ("/devices/:did",                Device.deleteDevice,                     [],                         null,                           deviceDef);
 mcnr.post    <void>          ("/devices/:did/assign",         Device.assignDevice,                     [Access.OrgEditor],         Device.validators.assignDevice, deviceDef);
 mcnr.get     <void>          ("/devices/:did/ping",           Device.pingDevice,                       [Access.None]);     
-mcnr.post    <void>          ("/devices/:did/keys",           Device.setApiKey,                        [Access.OrgEditor],         Device.validators.setApiKey,    deviceDef);
-// mcnr.get<IApiKey[]>("/devices/:did/keys",         Device.readApiKey,                          [Access.OrgEditor],         null,                           deviceDef);
-// mcnr.put<IApiKey>("/devices/:did/keys/:kid",      Device.updateApiKey,                        [Access.OrgEditor],         null,                           deviceDef);
-// mcnr.put<IApiKey>("/devices/:did/keys/:kid",      Device.deleteApiKey,                        [Access.OrgEditor],         null,                           deviceDef);
-// mcnr.get<IDeviceProp[]>("/devices/:did/sensors",  Device.readProperties(NodeType.Sensor),     [Access.OrgEditor],         null,                           deviceDef);
-// mcnr.get<IDeviceProp[]>("/devices/:did/states",   Device.readProperties(NodeType.State),      [Access.OrgEditor],         null,                           deviceDef);
-// mcnr.get<IDeviceProp[]>("/devices/:did/metrics",  Device.readProperties(NodeType.Metric),     [Access.OrgEditor],         null,                           deviceDef);
+mcnr.post<IApiKeyPrivate>    ("/devices/:did/keys",           Device.setApiKey,                        [Access.OrgEditor],         Device.validators.setApiKey,    deviceDef);
+mcnr.get<IApiKey>            ("/devices/:did/key",            Device.readApiKey,                       [Access.OrgEditor],         null,                           deviceDef);
+mcnr.put<IApiKey>            ("/devices/:did/key",            Device.updateApiKey,                     [Access.OrgEditor],         null,                           deviceDef);
+mcnr.put<void>               ("/devices/:did/key",            Device.deleteApiKey,                     [Access.OrgEditor],         null,                           deviceDef);
+mcnr.get<IDProp<NT.Sensor>[]>("/devices/:did/sensors",        Device.readProperties(NodeType.Sensor),  [Access.OrgEditor],         null,                           deviceDef);
+mcnr.get<IDProp<NT.State>[]> ("/devices/:did/states",         Device.readProperties(NodeType.State),   [Access.OrgEditor],         null,                           deviceDef);
+mcnr.get<IDProp<NT.Metric>[]>("/devices/:did/metrics",        Device.readProperties(NodeType.Metric),  [Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get("/devices/:did/sensors/:pid",            Device.readPropertyData(NodeType.Sensor),   [Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get("/devices/:did/states/:pid",             Device.readPropertyData(NodeType.State),    [Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get("/devices/:did/metrics/:pid",            Device.readPropertyData(NodeType.Metric),   [Access.OrgEditor],         null,                           deviceDef);
+
+//mcnr.post("/devices/:did/task_routines", Device.Tasks.addRoutine);
+//mcnr.delete("devices/:did/task_routines", Device.Tasks.removeRoutine);
+//mcnr.post("/devices/:did/task_routines/:trid/start", Device.Tasks.startRoutine);
+//mcnr.delete("/devices/:did/task_routines/:trid/stop", Device.Tasks.stopRoutine);
+//mcnr.post("/devices/:did/task_routines/:trid/tasks:tid/run", Device.Tasks.runTask);
 
 // FARMS ------------------------------------------------------------------------------------------
 const farmDef:nodeDef = [NodeType.Farm, "fid"];
@@ -86,88 +109,39 @@ mcnr.get     <IRackStub[]>   ("/farms/:fid/racks",            Farm.readFarmRacks
 const rackDef:nodeDef = [NodeType.Rack, "rid"];
 // mcnr.get("/racks",                      Rack.readAllRacks,                         [Access.SiteAdmin]);
 mcnr.post    <IRack>         ("/farms/:fid/racks",            Rack.createRack,                           [Access.Authenticated], Rack.validators.createRack);
-// mcnr.get("/racks/:rid",                 Rack.readFarm,                             [Access.OrgViewer]);
+// mcnr.get("/racks/:rid",                 Rack.readRack,                             [Access.OrgViewer]);
 // mcnr.put("/racks/:rid",                 Rack.updateRack,                           [Access.OrgEditor]);
 // mcnr.delete("/racks/:rid",              Rack.deleteRack,                           [Access.OrgEditor]);
 mcnr.get<ICropStub[]>("/racks/:rid/crops", Rack.readRackCrops, [Access.OrgMember]);
+//mcnr.post("/racks/:rid/harvest", Rack.harvestCrops)
 
 // CROPS ------------------------------------------------------------------------------------------
 mcnr.post    <ICrop>         ("/racks/:rid/crops",            Crop.createCrop,                           [Access.Authenticated], Crop.validators.createCrop);
+// mcnr.post("/crops/:cid/harvest", Crop.harvestCrop)
 
 // SPECIES ----------------------------------------------------------------------------------------
+// mcnr.get("/species/search", Species.search)
+// mcnr.get("/species/:sid", Species.readSpecies)
+// mcnr.get("/species/:sid/yields", Species.readYields)
+// mcnr.get("/species/:sid/task_series")
 
-// RECIPIES ---------------------------------------------------------------------------------------
+// TASK SERIES ----------------------------------------------------------------------------------
+//mcnr.post("/task_series", Task.createTaskSeries)
+//mcnr.get("/task_series/:tsid", Tasks.readTaskSeries)
+//mcnr.put("/task_series/:tsid", Task.updateTaskSeries)
+//mcnr.post("/task_series/:tsid/publish", Task.publishTaskSeries)
+//mcnr.delete("/task_series/:tsid", Task.deleteTaskSeries)
 
+//mcnr.post("/task_series/:tsid/routines", Task.createTaskRoutine)
+//mcnr.get("/task_series/:tsid/routines/:trid", Task.readTaskRoutine)
+//mcnr.put("/task_series/:tsid/routines/:trid", Task.updateTaskRoutine)
 
-// TASK ROUTINES ----------------------------------------------------------------------------------
-// TODO: figure out how task routines relate to devices/crops
-// mcnr.get("/routines",   Routines.getTaskRoutines)
-
-
-// // ### `/users/:uid/devices/:did/routines`
-// router.get("/", getTaskRoutines);
-// router.post(
-//   "/",
-//   validate([
-//     body("name").not().isEmpty().withMessage("TaskRoutine requires a name"),
-//     body("cron")
-//       .not()
-//       .isEmpty()
-//       .withMessage("TaskRoutine cron interval required"),
-//     body("timezone")
-//       .not()
-//       .isEmpty()
-//       .withMessage("TaskRoutine requires a timezone"),
-//   ]),
-//   createTaskRoutine
-// );
-
-// // ### `/users/:uid/devices/:did/routines/:rtid`
-// const routineRouter = AsyncRouter({ mergeParams: true });
-// router.use("/:trid", routineRouter);
-// routineRouter.use(
-//   validate([
-//     param("trid").isMongoId().trim().withMessage("invalid TaskRoutine id"),
-//   ])
-// );
-
-// routineRouter.get("/", readRoutine);
-// routineRouter.put("/", updateRoutine);
-// routineRouter.delete("/", deleteRoutine);
-// routineRouter.post(
-//   "/tasks",
-//   validate([
-//     body("name").not().isEmpty().withMessage("Task requires a name"),
-//     body("command")
-//       .not()
-//       .isEmpty()
-//       .withMessage("Task requires an mcnlang command"),
-//   ]),
-//   createTaskInRoutine
-// );
-// routineRouter.get("/execute", executeRoutine);
-
-// // ### `/user/:uid/devices/:did/routines/:rtid/tasks/:tid`
-// const taskRouter = AsyncRouter({ mergeParams: true });
-// routineRouter.use("/tasks/:tid", taskRouter);
-// taskRouter.use(
-//   validate([param("tid").isMongoId().trim().withMessage("invalid Task id")])
-// );
-
-// taskRouter.put("/", updateTask);
-// taskRouter.delete("/", deleteTask);
-// taskRouter.get("/execute", executeTask);
-
-// export default router;
-
+//mcnr.post("/task_series/:tsid/routines/:trid/tasks", Task.createTask)
+//mcnr.put("/task_series/:tsid/routines/:trid/tasks/:tid", Task.updateTask)
+//mcnr.delete("/task_series/:tsid/routines/:trid/tasks/:tid", Task.deleteTask)
 
 // IoT -------------------------------------------------------------------------------------------
-// mcnr.get("/iot/time", IoT.getUnixEpoch, [Access.None]);
-// //seconds since unix epoch
-// router.get("/time", (req: Request, res: Response) => {
-//   const now = new Date();
-//   return res.status(HTTP.OK).send(Math.round(now.getTime() / 1000));
-// });
+mcnr.get("/iot/time", IoT.getUnixEpoch, [Access.None]);
 
 // TEST -------------------------------------------------------------------------------------------
 // if(config.TESTING) {

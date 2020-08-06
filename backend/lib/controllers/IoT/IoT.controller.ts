@@ -1,4 +1,4 @@
-// import { Request, Response } from "express";
+import { Request, Response } from "express";
 // import { Model, model } from "mongoose";
 // import mongoose from "mongoose";
 
@@ -19,6 +19,10 @@
 // import { RecordableType } from "../../models/Recordable.model";
 
 // // ===============================================================================================================================
+
+export const getUnixEpoch = async (req: Request): Promise<string> => {
+  return Math.floor(Date.now() / 1000).toString();
+};
 
 // export const createMeasurementAsDevice = async (
 //   req: Request,

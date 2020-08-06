@@ -24,8 +24,10 @@ import {
   Paginated,
 } from "@cxss/interfaces";
 import Device from "../../classes/IoT/Device.model";
+// import ApiKey from "../../classes/IoT/ApiKey.model";
 import { IResLocals } from "../../mcnr";
-import { paginate } from "../Node.controller";
+import { paginate, capitalize } from "../Node.controller";
+import DeviceProperty from "../../classes/IoT/DeviceProperty.model";
 
 export const validators = {
   createDevice: validate([
@@ -64,8 +66,6 @@ export const readAllDevices = async (
     }
   );
 
-  console.log(res.records);
-
   let devices = await Promise.all(
     res.records.map((r: Record) => Device.read<IDeviceStub>(r.get("d")._id, DataModel.Stub))
   );
@@ -78,10 +78,20 @@ export const readAllDevices = async (
   );
 };
 
-export const setApiKey = async (req: Request) => {};
-export const readApiKey = async (req: Request) => {};
-export const updateApiKey = async (req: Request) => {};
+export const setApiKey = async (req: Request): Promise<IApiKeyPrivate> => {
+  return {} as IApiKeyPrivate;
+};
+
+export const readApiKey = async (req: Request): Promise<IApiKey> => {
+  return {} as IApiKey;
+};
+
+export const updateApiKey = async (req: Request): Promise<IApiKey> => {
+  return {} as IApiKey;
+};
+
 export const deleteApiKey = async (req: Request) => {};
+
 export const assignDevice = async (req: Request) => {};
 
 export const createDevice = async (req: Request, next: NextFunction): Promise<IDevice> => {
@@ -103,24 +113,24 @@ export const createDevice = async (req: Request, next: NextFunction): Promise<ID
     [NodeType.Metric]: hwInfo.metrics,
   };
 
-  for (const [propType, deviceProps] of Object.entries(propMap)) {
-    propMap[propType] = Object.keys(deviceProps).map((ref: string) => {
+  for (const [propType, deviceProp] of Object.entries(propMap)) {
+    propMap[propType] = Object.keys(deviceProp).map((ref: string) => {
       return {
         _id: new Types.ObjectId().toHexString(),
-        name: `${hwInfo.sensors[ref].type} ${propType}`,
+        name: `${deviceProp[ref].type} ${propType}`,
         created_at: Date.now(),
         ref: ref,
         type: propType,
         description: "",
         value: null,
-        measures: hwInfo.sensors[ref].type,
-        data_format: hwInfo.sensors[ref].unit,
+        measures: deviceProp[ref].type,
+        data_format: deviceProp[ref].unit,
       };
     });
   }
 
   let d = await Device.create(
-    req.session.user.id,
+    req.session.user._id,
     data,
     propMap[NodeType.State],
     propMap[NodeType.Sensor],
@@ -175,33 +185,28 @@ export const pingDevice = async (req: Request) => {
 };
 
 export const readProperties = (node: NodeType.Sensor | NodeType.State | NodeType.Metric) => {
-  return async (req: Request) => {};
-};
-// export const readDeviceProperties = async (req: Request, res: Response) => {
-//   let result = await cypher(
-//     `
-//         MATCH (d:Device {_id: $did})
-//         OPTIONAL MATCH (d)-->(x:${res.locals.node_type})
-//         RETURN x
-//     `,
-//     {
-//       did: req.params.did,
-//     }
-//   );
+  return async (req: Request): Promise<IDeviceProperty<any>[]> => {
+    let res = await cypher(
+      ` MATCH (d:Device {_id:$did})
+        MATCH (d)-->(p:${capitalize(node)})
+        RETURN p`,
+      {
+        did: req.params.did,
+      }
+    );
 
-//   let props = result.records.map((n: any) => n.get("x").properties);
-//   return res.json(props ?? []);
-// };
+    return res.records.map((r: Record) => DeviceProperty.reduce(r.get("p")._id));
+  };
+};
 
 export const readPropertyData = (node: NodeType.Sensor | NodeType.State | NodeType.Metric) => {
-  return async (req: Request) => {};
-};
-// export const readDevicePropertyData = async (req: Request, res: Response) => {
-//   let results = await dbs.influx.query(`
-//     select * from iot
-//     order by time desc
-//     limit 10
-//   `);
+  return async (req: Request) => {
+    let results = await dbs.influx.query(`
+      select * from iot
+      order by time desc
+      limit 10
+    `);
 
-//   res.json(results);
-// };
+    return results;
+  };
+};

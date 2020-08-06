@@ -7,45 +7,45 @@ import {
   IDeviceProperty,
   Type,
   HardwareDevice,
+  DataModel,
 } from "@cxss/interfaces";
-import { Node } from "../Node.model";
+import Node from "../Node.model";
+import { sessionable } from "../../common/dbs";
+import { Transaction } from "neo4j-driver";
+import { capitalize } from "../..//controllers/Node.controller";
 
 type TDeviceProperty = NodeType.Metric | NodeType.Sensor | NodeType.State;
 
-export class DeviceProperty<T extends TDeviceProperty> extends Node {
-  type: T;
-  ref: string;
-  value: string | number | boolean;
-  name: string;
-  description: string;
-  measures: Measurement | IoTMeasurement | IoTState;
-  data_format: Type | Unit;
+const read = async <T extends IDeviceProperty<TDeviceProperty>>(
+  _id: string,
+  propType: TDeviceProperty
+): Promise<T> => {
+  let data = await Node.read<T>(_id, propType);
+  return reduce<T>(data);
+};
 
-  constructor(
-    type: T,
-    ref: string,
-    props: {
-      [index: string]: { type: Measurement | IoTMeasurement | IoTState; unit: Type | Unit };
-    }
-  ) {
-    super(type ?? NodeType.DeviceProperty);
+const reduce = <K extends IDeviceProperty<TDeviceProperty>>(data: K): K => {
+  return {
+    _id: data._id,
+    created_at: data.created_at,
+    type: data.type,
+    ref: data.ref,
+    value: data.value,
+    name: data.name,
+    description: data.description,
+    measures: data.measures,
+    data_format: data.data_format,
+  } as K;
+};
 
-    this.ref = ref;
-    this.data_format = props[ref].unit;
-    this.measures = props[ref].type;
-    this.name = `${this.measures} ${this.type}`;
-  }
+const remove = async (_id: string, propType: TDeviceProperty, txc?: Transaction) => {
+  await sessionable(async (t: Transaction) => {
+    await t.run(
+      ` MATCH (p:${capitalize(propType)} {_id:$pid})
+        DETACH DELETE p`,
+      { pid: _id }
+    );
+  }, txc);
+};
 
-  toStub(): IDeviceProperty<T> {
-    return {
-      ...super.toStub(),
-      type: this.type,
-      ref: this.ref,
-      value: this.value,
-      name: this.name,
-      description: this.description,
-      measures: this.measures,
-      data_format: this.data_format,
-    };
-  }
-}
+export default { read, reduce, remove };

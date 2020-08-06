@@ -6,6 +6,24 @@ import session from "express-session";
 
 type TCrop = ICrop | ICropStub;
 
+const create = async (data: ICropStub, rack_id: string, creator_id: string): Promise<ICrop> => {
+  let res = await cypher(
+    ` MATCH (u:User {_id:$uid})
+      MATCH (r:Rack {_id:$did})
+      WHERE u IS NOT NULL AND f IS NOT NULL
+      CREATE (u)-[:CREATED]->(r:Crop $body)-[:IN]->(r)
+      RETURN r`,
+    {
+      rid: rack_id,
+      uid: creator_id,
+      body: data,
+    }
+  );
+
+  let crop = res.records[0].get("r").properties;
+  return reduce<ICrop>(crop, DataModel.Full);
+};
+
 const read = async <T extends TCrop>(
   _id: string,
   dataModel: DataModel = DataModel.Stub
@@ -52,4 +70,4 @@ const remove = async (_id: string, txc?: Transaction) => {
   }, txc);
 };
 
-export default { read, reduce, remove };
+export default { create, read, reduce, remove };
