@@ -1,5 +1,6 @@
+import { getMcnMongoSchema, IMcnMongoSchema } from "@cxss/interfaces";
 import redis, { RedisClient } from "redis";
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import log from "./logger";
 import session from "express-session";
 import config from "../config";
@@ -32,20 +33,14 @@ mongoose.connect(config.MONGO_URL, {
 const mongo = mongoose.connection;
 mongoose.Promise = Promise;
 
-export default {
-  redis: Redis,
-  redisClient: redisClient,
-  neo4j: n4j,
-  influx: influx,
-  mongo: mongo,
-};
-
 let dbs = {
   redis: false,
   mongo: false,
   neo4j: false,
   influx: false,
 };
+
+export let MSchemas: IMcnMongoSchema;
 
 export const awaitAllDbsConnected = async (itrlimit: number = 10, delay: number = 1000) => {
   let itrs: number = 0;
@@ -54,7 +49,11 @@ export const awaitAllDbsConnected = async (itrlimit: number = 10, delay: number 
     log.info(`Attempting to connect...${itrs}/${itrlimit}:\n${JSON.stringify(dbs)}`);
 
     if (!dbs.redis) redisClient.on("connect", () => (dbs.redis = true));
-    if (!dbs.mongo) mongo.once("connected", () => (dbs.mongo = true));
+    if (!dbs.mongo)
+      mongo.once("connected", (mongoose) => {
+        dbs.mongo = true;
+        MSchemas = getMcnMongoSchema(mongoose);
+      });
 
     if (!dbs.neo4j) {
       let x = await cypher(`RETURN 1`, {});
@@ -104,4 +103,12 @@ export const sessionable = async <T>(
   } else {
     f(txc);
   }
+};
+
+export default {
+  redis: Redis,
+  redisClient: redisClient,
+  neo4j: n4j,
+  influx: influx,
+  mongo: mongo,
 };

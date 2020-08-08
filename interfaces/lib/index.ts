@@ -25,3 +25,5 @@ export * from "./IoT/Hardware.model";
 export * from "./IoT/Measurement.model";
 
 export * from "./Runner/Tasks.model";
+
+export * from "./mcnMongoSchema";

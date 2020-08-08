@@ -66,7 +66,4 @@ function graceful_exit() {
   db.redisClient.quit();
 }
 
-module.exports = {
-  app: app,
-  exit: graceful_exit,
-};
+export default { app, graceful_exit };

@@ -16,24 +16,25 @@ import {
     IDeviceProperty as IDProp,
     NodeType as NT,
     IApiKeyPrivate
-  } from "@cxss/interfaces";
-  import { Access } from "./mcnr";
+} from "@cxss/interfaces";
+import { Access } from "./mcnr";
 
 import Users = require("./controllers/Users/User.controller");
 import Orgs = require("./controllers/Orgs.controller");
-// import IoT = require("./controllers/IoT/IoT.controller");
 import Auth = require("./controllers/Auth.controller");
-// import Routines = require("./controllers/IoT/Routines.controller");
+import Routines = require("./controllers/IoT/Routines.controller");
 import Device = require("./controllers/IoT/Device.controller");
 import Farm = require("./controllers/Hydroponics/Farm.controller");
 import Rack = require("./controllers/Hydroponics/Rack.controller");
 import Crop = require("./controllers/Hydroponics/Crop.controller");
 import IoT = require("./controllers/IoT/IoT.controller");
+import Species = require("./controllers/Hydroponics/Species.controller");
 
 import { McnRouter } from "./mcnr";
 import { cypher } from "./common/dbs";
 import { NodeType } from "@cxss/interfaces";
 import dbs from './common/dbs';
+
 const mcnr = new McnRouter();
 
 type nodeDef = [NodeType, string];
@@ -120,10 +121,10 @@ mcnr.post    <ICrop>         ("/racks/:rid/crops",            Crop.createCrop,  
 // mcnr.post("/crops/:cid/harvest", Crop.harvestCrop)
 
 // SPECIES ----------------------------------------------------------------------------------------
-// mcnr.get("/species/search", Species.search)
-// mcnr.get("/species/:sid", Species.readSpecies)
-// mcnr.get("/species/:sid/yields", Species.readYields)
-// mcnr.get("/species/:sid/task_series")
+mcnr.get("/species/search", Species.search, [Access.Authenticated]);
+mcnr.get("/species/:sid", Species.readSpecies, [Access.Authenticated]);
+mcnr.get("/species/:sid/yields", Species.readYields, [Access.Authenticated]);
+mcnr.get("/species/:sid/task_series", Species.readSpeciesTaskSeries, [Access.Authenticated]);
 
 // TASK SERIES ----------------------------------------------------------------------------------
 //mcnr.post("/task_series", Task.createTaskSeries)
