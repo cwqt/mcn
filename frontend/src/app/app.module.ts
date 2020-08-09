@@ -4,9 +4,8 @@ import { NgModule } from "@angular/core";
 
 import { UiLibModule } from "./ui-lib/ui-lib.module";
 import { AngularMaterialModule } from "./angular-material.module";
-
 import { AppRoutingModule } from "./app-routing.module";
-import { AppComponent } from "./app.component";
+import { HighchartsChartModule } from "highcharts-angular";
 import { HttpClientModule } from "@angular/common/http";
 import { MomentModule } from "ngx-moment";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
@@ -16,6 +15,8 @@ import { PickerModule } from "@ctrl/ngx-emoji-mart";
 import { ClickOutsideModule } from "ng-click-outside";
 import { CrystalLightboxModule } from "@crystalui/angular-lightbox";
 import { PopoverModule } from "../assets/popover";
+
+import { AppComponent } from "./app.component";
 
 import { LoginComponent } from "./components/landing/login/login.component";
 import { RegisterComponent } from "./components/landing/register/register.component";
@@ -31,7 +32,7 @@ import { SidebarComponent } from "./components/app/sidebar/sidebar.component";
 import { DeviceComponent } from "./components/device-list/device/device.component";
 import { ScheduledTasksComponent } from "./components/device-list/device/scheduled-tasks/scheduled-tasks.component";
 import { DeviceControlComponent } from "./components/device-list/device/device-control/device-control.component";
-import { SensorListComponent } from "./components/device-list/device/sensor-list/sensor-list.component";
+import { PropertyListComponent } from "./components/device-list/device/property-list/property-list.component";
 
 import { ProfileComponent } from "./routes/profile/profile.component";
 
@@ -48,6 +49,9 @@ import { DeviceListComponent } from "./components/device-list/device-list.compon
 import { OrganisationComponent } from "./routes/organisations/organisation/organisation.component";
 import { HeaderUserButtonComponent } from "./components/app/header-bar/header-user-button/header-user-button.component";
 import { FarmListComponent } from "./components/farm-list/farm-list.component";
+
+import { CatalogComponent } from "./routes/catalog/catalog.component";
+import { SpeciesListComponent } from "./routes/catalog/species-list/species-list.component";
 
 @NgModule({
   declarations: [
@@ -67,7 +71,7 @@ import { FarmListComponent } from "./components/farm-list/farm-list.component";
     ScheduledTasksComponent,
     DeviceControlComponent,
     FooterComponent,
-    SensorListComponent,
+    PropertyListComponent,
     SidebarNavComponent,
     TreeNodeComponent,
     IndexComponent,
@@ -78,6 +82,8 @@ import { FarmListComponent } from "./components/farm-list/farm-list.component";
     OrganisationComponent,
     HeaderUserButtonComponent,
     FarmListComponent,
+    CatalogComponent,
+    SpeciesListComponent,
   ],
   imports: [
     AngularMaterialModule,
@@ -95,6 +101,7 @@ import { FarmListComponent } from "./components/farm-list/farm-list.component";
     ClickOutsideModule,
     CrystalLightboxModule,
     PopoverModule,
+    HighchartsChartModule,
   ],
   providers: [CookieService],
   entryComponents: [HeaderBarUserMenuComponent],

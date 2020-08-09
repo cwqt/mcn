@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { IOrgStub } from "@cxss/interfaces";
+import { IOrgStub, IOrgEnv } from "@cxss/interfaces";
 import { UserService } from "src/app/services/user.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { OrganisationService } from "src/app/services/organisation.service";
@@ -14,14 +14,24 @@ export class IndexComponent implements OnInit {
   currentOrg: IOrgStub;
   activeUrl: string = "devices";
 
-  coverCards = [
-    { title: "Devices", icon: "mediation" },
-    { title: "Alerts", icon: "notifications" },
-    { title: "Farms", icon: "account_tree" },
-    { title: "Racks", icon: "reorder" },
-    { title: "Crops", icon: "view_comfy" },
-    { title: "Users", icon: "group" },
-  ];
+  coverCards = {
+    devices: { icon: "mediation" },
+    alerts: { icon: "notifications" },
+    farms: { icon: "account_tree" },
+    racks: { icon: "reorder" },
+    crops: { icon: "view_comfy" },
+    users: { icon: "group" },
+  };
+
+  cache = {
+    env: {
+      data: null,
+      loading: false,
+      error: "",
+    },
+  };
+
+  env: IOrgEnv;
 
   constructor(
     private userService: UserService,
@@ -32,7 +42,10 @@ export class IndexComponent implements OnInit {
 
   ngOnInit(): void {
     this.userService.userOrgs.subscribe((orgs) => (this.userOrgs = orgs));
-    this.orgService.currentOrg.subscribe((org) => (this.currentOrg = org));
+    this.orgService.currentOrg.subscribe((org) => {
+      this.currentOrg = org;
+      this.getOrgEnvironment(this.currentOrg._id);
+    });
   }
 
   navigate(route: string) {
@@ -41,5 +54,14 @@ export class IndexComponent implements OnInit {
 
   random() {
     return Math.floor(Math.random() * 100);
+  }
+
+  getOrgEnvironment(_id: string) {
+    this.cache.env.loading = true;
+    this.orgService
+      .getEnvironment(_id)
+      .then((env: IOrgEnv) => (this.cache.env.data = env))
+      .catch((e) => (this.cache.env.error = e))
+      .finally(() => (this.cache.env.loading = false));
   }
 }

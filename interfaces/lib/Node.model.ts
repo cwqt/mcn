@@ -1,5 +1,7 @@
 import { NodeType } from "./Types/Nodes.types";
 
+export type Idless<T> = Omit<T, "_id">;
+
 export interface INode {
   _id: string;
   created_at: number;

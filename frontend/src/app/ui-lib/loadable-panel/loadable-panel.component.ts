@@ -16,10 +16,14 @@ import { getSupportedInputTypes } from "@angular/cdk/platform";
   styleUrls: ["./loadable-panel.component.scss"],
 })
 export class LoadablePanelComponent implements OnInit {
-  @Input() hasData: boolean = false;
+  @Input() hasData: boolean = true;
   @Input() loading: boolean = false;
   @Input() title: string;
   @Input() description: string;
+  @Input() variant?: "flat";
+  @Input() icon?: string;
+  open: boolean = false;
+
   @Output() onClick = new EventEmitter();
 
   @ViewChild("panelRef") panelRef: MatExpansionPanel;
@@ -29,25 +33,25 @@ export class LoadablePanelComponent implements OnInit {
   ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ("hasData" in changes) {
-      if (changes.hasData.currentValue && !changes.loading.currentValue) {
-        this.panelRef.open();
-      }
-    }
+    // if ("hasData" in changes) {
+    //   if (changes.hasData.currentValue && !changes.loading.currentValue) {
+    //     this.panelRef.open();
+    //   }
+    // }
   }
 
   click(event): void {
     if (!this.loading) {
       if (!this.hasData) {
         this.panelRef.toggle();
+        this.open = false;
         this.loading = true;
         this.description = "No data";
         setTimeout(() => {
           this.onClick.emit();
-          console.log("emeit");
         }, 100);
       } else {
-        console.log("yayo");
+        this.open = true;
         this.onClick.emit();
       }
     }

@@ -26,7 +26,7 @@
             <ui-button *ngIf="!currentUser" size="s" transparent="true" variant="accent" icon="user" (click)="openDialog('register')">Register</ui-button>
 
             <app-header-user-button variant="accent" transparent="true" [currentUser]="currentUser" *ngIf="currentUser"></app-header-user-button>
-            <ui-button id="enter" *ngIf="currentUser" size="m" variant="primary" icon="arrow--right" (click)="enterSite()"></ui-button>
+            <ui-button id="enter" *ngIf="currentUser" size="m" variant="primary" icon="arrow--right" (click)="setEntered(true)"></ui-button>
           </div>
         </div>
 

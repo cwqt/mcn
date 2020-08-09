@@ -3,7 +3,15 @@ import { HTTP } from "../common/http";
 import { cypher } from "../common/dbs";
 
 import Org from "../classes/Orgs.model";
-import { NodeType, OrgItemType, IOrg, IOrgStub, Paginated, DataModel } from "@cxss/interfaces";
+import {
+  NodeType,
+  OrgItemType,
+  IOrg,
+  IOrgStub,
+  Paginated,
+  DataModel,
+  IOrgEnv,
+} from "@cxss/interfaces";
 import { capitalize, paginate } from "./Node.controller";
 import { ErrorHandler } from "../common/errorHandler";
 const { body, param, query } = require("express-validator");
@@ -133,3 +141,41 @@ export const addNodeToOrg = (node: NodeType) => {
 };
 
 export const editUserRole = async (req: Request) => {};
+
+export const getEnvironment = async (req: Request): Promise<IOrgEnv> => {
+  let res = await cypher(
+    `
+    MATCH (o:${capitalize(NodeType.Organisation)} {_id:$oid})
+    WITH o, 
+      SIZE((:${capitalize(NodeType.Farm)})-[:IN]->(o)) as farmCount,
+      SIZE((:${capitalize(NodeType.User)})-[:IN]->(o)) as userCount,
+      SIZE((:${capitalize(NodeType.Device)})-[:IN]->(o)) as deviceCount
+
+    OPTIONAL MATCH (f:${capitalize(NodeType.Farm)})-[:IN]->(o)
+    WITH farmCount, userCount, deviceCount, f,
+      SIZE((:${capitalize(NodeType.Rack)})<-[:HAS_RACK]-(f)) as rackCount
+
+    OPTIONAL MATCH (r:${capitalize(NodeType.Rack)})<-[:HAS_RACK]-(f)
+    WITH farmCount, userCount, deviceCount, rackCount, r, 
+      SIZE((:${capitalize(NodeType.Crop)})<-[:HAS_CROP]-(r)) as cropCount
+
+    RETURN farmCount, userCount, deviceCount, rackCount, cropCount
+    `,
+    {
+      oid: req.params.oid,
+    }
+  );
+  console.log(res);
+
+  let env: IOrgEnv = {
+    devices: res.records[0].get("deviceCount")?.toNumber() || 0,
+    alerts: 0,
+    farms: res.records[0].get("farmCount")?.toNumber() || 0,
+    racks: res.records[0].get("rackCount")?.toNumber() || 0,
+    crops: res.records[0].get("cropCount")?.toNumber() || 0,
+    users: res.records[0].get("userCount")?.toNumber() || 0,
+    dashboard: {},
+  };
+
+  return env;
+};

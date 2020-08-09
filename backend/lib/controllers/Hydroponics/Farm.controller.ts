@@ -40,6 +40,7 @@ export const createFarm = async (req: Request): Promise<IFarm> => {
 };
 
 export const readFarm = async (req: Request): Promise<IFarm> => {
+  console.log(req.params.fid);
   let farm: IFarm = await Farm.read(req.params.fid, DataModel.Full);
   return farm;
 };

@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { DeviceService } from "src/app/services/device.service";
 
-import { IDevice, IUser } from "@cxss/interfaces";
+import { IDevice, IUser, IDeviceProperty, NodeType } from "@cxss/interfaces";
 
 @Component({
   selector: "app-device-control",
@@ -33,15 +33,20 @@ export class DeviceControlComponent implements OnInit {
   constructor(private deviceService: DeviceService) {}
 
   ngOnInit(): void {
-    // this.getDeviceStates(this.authorUser._id, this.device._id);
+    this.getDeviceStates(this.device._id);
   }
 
-  // getDeviceStatles(user_id: string, device_id: string): Promise<IDeviceState[]> {
-  //   this.cache.states.loading = true;
-  //   return this.deviceService
-  //     .getDeviceStates(user_id, device_id)
-  //     .then((states: IDeviceState[]) => (this.cache.states.data = states))
-  //     .catch((e) => (this.cache.states.error = e))
-  //     .finally(() => (this.cache.states.loading = false));
-  // }
+  getDeviceStates(
+    device_id: string
+  ): Promise<IDeviceProperty<NodeType.State>[]> {
+    this.cache.states.loading = true;
+    return this.deviceService
+      .getDeviceProperties(NodeType.State, device_id)
+      .then(
+        (states: IDeviceProperty<NodeType.State>[]) =>
+          (this.cache.states.data = states)
+      )
+      .catch((e) => (this.cache.states.error = e))
+      .finally(() => (this.cache.states.loading = false));
+  }
 }

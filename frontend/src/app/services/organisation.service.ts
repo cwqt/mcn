@@ -5,6 +5,7 @@ import {
   IDeviceStub,
   Paginated,
   IFarmStub,
+  IOrgEnv,
 } from "@cxss/interfaces";
 import { BehaviorSubject } from "rxjs";
 import { tap } from "rxjs/operators";
@@ -57,5 +58,9 @@ export class OrganisationService {
     return this.http
       .get<Paginated<IFarmStub>>(`/api/orgs/${this.orgId}/farms`)
       .toPromise();
+  }
+
+  getEnvironment(_id: string): Promise<IOrgEnv> {
+    return this.http.get<IOrgEnv>(`/api/orgs/${_id}/environment`).toPromise();
   }
 }

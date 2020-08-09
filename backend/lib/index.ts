@@ -16,6 +16,9 @@ import { awaitAllDbsConnected } from "./common/dbs";
 import mcnr from "./routes";
 import { HTTP } from "./common/http";
 
+import Species from "./classes/Hydroponics/Species.model";
+import { speciesSchema, ISpecies } from "@cxss/interfaces";
+
 let server: http.Server;
 const app = express();
 app.set("trust proxy", 1);

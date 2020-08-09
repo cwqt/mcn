@@ -195,7 +195,7 @@ export const readProperties = (node: NodeType.Sensor | NodeType.State | NodeType
       }
     );
 
-    return res.records.map((r: Record) => DeviceProperty.reduce(r.get("p")._id));
+    return res.records.map((r: Record) => DeviceProperty.reduce(r.get("p").properties));
   };
 };
 

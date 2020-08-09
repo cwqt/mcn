@@ -11,7 +11,10 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from "@angular/material/core"; //FROM ANGULAR CORE
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { MatRadioModule } from "@angular/material/radio";
+import {
+  MatRadioModule,
+  MAT_RADIO_DEFAULT_OPTIONS,
+} from "@angular/material/radio";
 import { MatSelectModule } from "@angular/material/select";
 import { MatSliderModule } from "@angular/material/slider";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -94,5 +97,11 @@ const AllMaterialModules = [
 @NgModule({
   imports: [AllMaterialModules],
   exports: [AllMaterialModules],
+  providers: [
+    {
+      provide: MAT_RADIO_DEFAULT_OPTIONS,
+      useValue: { color: "primary" },
+    },
+  ],
 })
 export class AngularMaterialModule {}

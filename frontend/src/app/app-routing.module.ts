@@ -5,14 +5,17 @@ import { AuthGuard } from "./_helpers";
 
 import { IndexComponent } from "./routes/index/index.component";
 import { ProfileComponent } from "./routes/profile/profile.component";
-import { VerifiedComponent } from "./components/pages/verified/verified.component";
-import { NotFoundComponent } from "./components/pages/not-found/not-found.component";
+import { OrganisationComponent } from "./routes/organisations/organisation/organisation.component";
+import { CatalogComponent } from "./routes/catalog/catalog.component";
 import { OrganisationsComponent } from "./routes/organisations/organisations.component";
 import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
+
+import { VerifiedComponent } from "./components/pages/verified/verified.component";
+import { NotFoundComponent } from "./components/pages/not-found/not-found.component";
 import { DeviceListComponent } from "./components/device-list/device-list.component";
 import { DeviceComponent } from "./components/device-list/device/device.component";
-import { OrganisationComponent } from "./routes/organisations/organisation/organisation.component";
 import { FarmListComponent } from "./components/farm-list/farm-list.component";
+import { SpeciesListComponent } from "./routes/catalog/species-list/species-list.component";
 
 const routes: Routes = [
   {
@@ -24,7 +27,7 @@ const routes: Routes = [
         component: DeviceListComponent,
         children: [
           {
-            path: "**",
+            path: ":did",
             component: DeviceComponent,
           },
         ],
@@ -47,7 +50,15 @@ const routes: Routes = [
     ],
   },
   {
-    path: ":username",
+    path: "catalog",
+    component: CatalogComponent,
+    children: [
+      { path: "species", component: SpeciesListComponent },
+      { path: "devices", component: SpeciesListComponent },
+    ],
+  },
+  {
+    path: "user/:username",
     component: ProfileComponent,
     canActivate: [AuthGuard],
   },

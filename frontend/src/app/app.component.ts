@@ -8,6 +8,8 @@ import { OrganisationService } from "./services/organisation.service";
 import { LoginComponent } from "./components/landing/login/login.component";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { Title } from "@angular/platform-browser";
+import { AuthenticationService } from "./services/authentication.service";
+import { BehaviorSubject } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -15,36 +17,45 @@ import { Title } from "@angular/platform-browser";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
-  title = "fe";
   currentUser: IUser;
   ui: string = "login";
-  entered: boolean = false;
   loading: boolean = true;
+
+  entered = new BehaviorSubject(false);
 
   constructor(
     public dialog: MatDialog,
     private userService: UserService,
     private orgService: OrganisationService,
     private titleService: Title,
-    private router: Router
+    private router: Router,
+    private authService: AuthenticationService
   ) {
     console.log(
       `Running in: ${environment.production ? "production" : "development"}`
     );
 
-    this.entered = localStorage.getItem("entered") === "true";
+    this.entered.next(
+      localStorage.getItem("entered") === "true" ? true : false
+    );
   }
 
   async ngOnInit() {
     //upon start up, immediately get the new user & set last active org
     if (this.userService.currentUserValue) {
-      await this.userService.updateCurrentUser();
-      let orgs = await this.userService.getUserOrgs();
-      let lastActiveOrgId = localStorage.getItem("lastActiveOrg");
-      if (lastActiveOrgId && orgs?.length) {
-        this.orgService.setActiveOrg(
-          orgs.find((o) => o._id == lastActiveOrgId)
-        );
+      try {
+        await this.userService.updateCurrentUser();
+        this.setEntered(true);
+        let orgs = await this.userService.getUserOrgs();
+        let lastActiveOrgId = localStorage.getItem("lastActiveOrg");
+        if (lastActiveOrgId && orgs?.length) {
+          this.orgService.setActiveOrg(
+            orgs.find((o) => o._id == lastActiveOrgId)
+          );
+        }
+      } catch (error) {
+        this.authService.logout();
+        this.setEntered(false);
       }
     }
 
@@ -88,8 +99,8 @@ export class AppComponent implements OnInit {
     });
   }
 
-  enterSite() {
-    this.entered = true;
-    localStorage.setItem("entered", "true");
+  setEntered(state: boolean) {
+    this.entered.next(state);
+    localStorage.setItem("entered", state.toString());
   }
 }

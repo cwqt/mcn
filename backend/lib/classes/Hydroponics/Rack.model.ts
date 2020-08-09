@@ -11,7 +11,7 @@ const create = async (data: IRackStub, farm_id: string, creator_id: string): Pro
     ` MATCH (u:User {_id:$uid})
       MATCH (f:Farm {_id:$fid})
       WHERE u IS NOT NULL AND f IS NOT NULL
-      CREATE (u)-[:CREATED]->(r:Rack $body)-[:IN]->(f)
+      CREATE (u)-[:CREATED]->(r:Rack $body)<-[:HAS_RACK]-(f)
       RETURN r`,
     {
       fid: farm_id,
@@ -37,16 +37,23 @@ const read = async <T extends TRack>(
       let res = await cypher(
         ` MATCH (r:Rack {_id:$rid})
           OPTIONAL MATCH (r)-[:HAS_CROP]->(c:Crop)
-          RETURN r, c`,
+          RETURN r, collect(c{._id}) as c`,
         { rid: _id }
       );
-      console.log(_id, res.records);
 
       let rack = res.records[0].get("r").properties;
-      // rack.crops = Promise.all(
-      //   res.records[0].get("c").map((c: any) => Crop.read<ICropStub>(c.properties._id))
-      // );
       data = rack;
+
+      console.log("rack crop", res.records[0].get("c"));
+      if (res.records[0].get("c")) {
+        data.crops = await Promise.all(
+          res.records[0].get("c").map((c: any) => {
+            if (c._id) {
+              return Crop.read<ICropStub>(c._id);
+            }
+          })
+        );
+      }
     }
   }
 
@@ -68,7 +75,6 @@ const reduce = <T extends TRack>(data: T, dataModel: DataModel = DataModel.Stub)
         ...reduce<IRackStub>(data, DataModel.Stub),
         crops: data.crops,
       };
-      console.log(r);
       return r as T;
     }
   }

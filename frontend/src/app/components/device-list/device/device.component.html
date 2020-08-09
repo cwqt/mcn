@@ -1,126 +1,44 @@
 <div class="device-container" *ngIf="device">
-  <ui-section-header [title]="device.name" [subtitle]="device.network_name + '@' + device.hardware_model" ></ui-section-header>
-
-  <!-- <div class="title">
-    <h1>
-      {{ device.name }}
-      <h4>
-        @{{ device.network_name }}:<b>{{ device.hardware_model }}</b>
-      </h4>
-    </h1> -->
-    <div class="manage-device-buttons">
-      <!-- <ibm-overflow-menu [flip]="true" [offset]="0">
-        <ibm-overflow-menu-option>Edit details</ibm-overflow-menu-option>
-        <ibm-overflow-menu-option>Change API key</ibm-overflow-menu-option>
-        <ibm-overflow-menu-option>Re-assign</ibm-overflow-menu-option>
-        <ibm-overflow-menu-option type="danger"
-          >Delete device</ibm-overflow-menu-option
-        >
-      </ibm-overflow-menu> -->
+  <ui-section-header [title]="device.name" [subtitle]="device.network_name + '@' + device.hardware_model">
+  </ui-section-header>
+  <div class="device-info">
+    <div lightbox-group id="gallery">
+      <img src="https://cdn.discordapp.com/attachments/264522461943562244/704820132312252426/IMG_0028.JPG" lightbox
+        [fullImage]="{ path: 'path_to_fullimage' }" />
+      <img src="https://playwithmyled.com/wp-content/uploads/2013/12/smart-garden1-1024x768.jpg" lightbox
+        [fullImage]="{ path: 'path_to_fullimage' }" />
+      <img src="" lightbox [fullImage]="{ path: 'path_to_fullimage' }" />
     </div>
-  <!-- </div> -->
-</div>
+
+    <br />
+
+    <div class="device-info-footer">
+      <ui-chip color="red">Wemos D1 Mini</ui-chip>
+      <ui-chip color="blue">MCN sponsored</ui-chip>
+      <ui-chip color="magenta">0.1</ui-chip>
+    </div>
+  </div>
+
 
 <br />
 
-<div>
-  <mat-tab-group *ngIf="cache.device.data" class="light">
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon>bar_chart</mat-icon>
-        Measurements
-      </ng-template>
-      <div class="plant-container">
-        <div class="device-container" *ngIf="!cache.device.loading">
-          <div *ngIf="!cache.sensors.loading">
-            <app-sensor-list
-              [sensors]="cache.sensors.data"
-              [authorUser]="cache.user.data"
-              [currentUser]="currentUser"
-            >
-            </app-sensor-list>
-          </div>
-        </div>
-      </div>
-    </mat-tab>
+<div class="device-stats" *ngIf="cache.device.data">
+  <ui-loadable-panel description="View metrics, sensor & state data" variant="flat" icon="chart--bar" title="Measurements" [hasData]="true">
+    <app-property-list [device]="cache.device.data"></app-property-list>  </ui-loadable-panel>
 
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon>information</mat-icon>
-        Information
-      </ng-template>
-      <div class="device-info">
-        <!-- <ibm-table-containelr>
-          <ibm-table-header>
-            <h4 ibmTableHeaderTitle>Description</h4>
-            <p ibmTableHeaderDescription>{{ cache.device.data.short_desc }}</p>
-          </ibm-table-header>
-        </ibm-table-container> -->
+  <hr>
 
-        <div lightbox-group id="gallery">
-          <img
-            src="https://cdn.discordapp.com/attachments/264522461943562244/704820132312252426/IMG_0028.JPG"
-            lightbox
-            [fullImage]="{ path: 'path_to_fullimage' }"
-          />
-          <img
-            src="https://playwithmyled.com/wp-content/uploads/2013/12/smart-garden1-1024x768.jpg"
-            lightbox
-            [fullImage]="{ path: 'path_to_fullimage' }"
-          />
-          <img src="" lightbox [fullImage]="{ path: 'path_to_fullimage' }" />
-        </div>
+  <ui-loadable-panel description="Directly control device outputs" variant="flat" icon="meter" title="Control">
+    <app-device-control [device]="device"></app-device-control>
+  </ui-loadable-panel>
 
-        <br />
+  <hr>
 
-        <div class="device-info-footer">
-          <mat-chip-list>
-            <mat-chip>One fish</mat-chip>
-            <mat-chip>Two fish</mat-chip>
-            <mat-chip color="primary" selected>Primary fish</mat-chip>
-            <mat-chip color="accent" selected>Accent fish</mat-chip>
-          </mat-chip-list>
-        </div>
-      </div>
-    </mat-tab>
-
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon>toggle_on</mat-icon>
-        Control
-      </ng-template>
-      <div class="device-container">
-        <app-device-control
-          [device]="cache.device.data"
-          [authorUser]="cache.user.data"
-          [currentUser]="currentUser"
-        >
-        </app-device-control>
-      </div>
-    </mat-tab>
-
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon>play_for_work</mat-icon>
-        Task routines
-      </ng-template>
-      <div class="device-container">
-        <app-scheduled-tasks
-          [device]="cache.device.data"
-          [authorUser]="cache.user.data"
-          [currentUser]="currentUser"
-        >
-        </app-scheduled-tasks>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
-
-  <br />
+  <ui-loadable-panel description="View planned routines" variant="flat" icon="virtual-machine" title="Task Routines">
+    <app-scheduled-tasks [device]="device"></app-scheduled-tasks>
+  </ui-loadable-panel>
 </div>
 
-<!-- <mat-divider></mat-divider>
-<div class="device-container">
-    <app-postable-replies></app-postable-replies>
-</div> -->
 
 <mat-spinner *ngIf="cache.device.loading"></mat-spinner>
+</div>

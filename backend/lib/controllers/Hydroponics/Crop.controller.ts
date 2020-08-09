@@ -18,10 +18,26 @@ export const createCrop = async (req: Request): Promise<ICrop> => {
     created_at: Date.now(),
     name: req.body.name,
     species: req.body.species,
-    type: NodeType.Rack,
+    type: NodeType.Crop,
     images: [],
     phase: GrowthPhase.Seedling,
   };
 
   return await Crop.create(crop, req.params.rid, req.session.user._id);
+};
+
+export const assignSpecies = async (req: Request): Promise<ICrop> => {
+  await cypher(
+    ` MATCH (s:Species {_id:$sid})
+      MATCH (c:Crop {_id:$cid})
+      WHERE c IS NOT NULL AND s IS NOT NULL
+      MERGE (c)-[:IS_SPECIES]-(s)
+      RETURN c{._id}`,
+    {
+      cid: req.params.cid,
+      sid: req.params.sid,
+    }
+  );
+
+  return Crop.read<ICrop>(req.params.cid, DataModel.Full);
 };

@@ -49,7 +49,7 @@ export class DeviceService {
       .toPromise();
   }
 
-  getDevice(user_id: string, device_id: string): Promise<IDevice> {
+  getDevice(device_id: string): Promise<IDevice> {
     return this.http.get<IDevice>(`/api/devices/${device_id}`).toPromise();
   }
 
@@ -77,10 +77,29 @@ export class DeviceService {
       .toPromise();
   }
 
-  // getDeviceProperties(node: T, device_id: string): Promise<IDeviceProperty<T>[]> {
-  //   return this.http
-  //     .get<IDeviceProperty<>[]>(`/api/devices/${device_id}/${node}s`);
-  //     .toPromise();
-
-  // }
+  getDeviceProperties(
+    propType: NodeType.Sensor | NodeType.State | NodeType.Metric,
+    device_id: string
+  ): Promise<IDeviceProperty<any>[]> {
+    switch (propType) {
+      case NodeType.Sensor:
+        return this.http
+          .get<IDeviceProperty<NodeType.Sensor>[]>(
+            `/api/devices/${device_id}/sensors`
+          )
+          .toPromise();
+      case NodeType.State:
+        return this.http
+          .get<IDeviceProperty<NodeType.State>[]>(
+            `/api/devices/${device_id}/states`
+          )
+          .toPromise();
+      case NodeType.Metric:
+        return this.http
+          .get<IDeviceProperty<NodeType.Metric>[]>(
+            `/api/devices/${device_id}/metrics`
+          )
+          .toPromise();
+    }
+  }
 }

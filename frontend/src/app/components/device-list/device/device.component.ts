@@ -24,17 +24,22 @@ export class DeviceComponent implements OnInit {
   cache = {
     device: {
       data: undefined,
-      loading: true,
+      loading: false,
       error: "",
     },
-    sensors: {
+    measurements: {
       data: undefined,
-      loading: true,
+      loading: false,
       error: "",
     },
-    user: {
+    control: {
       data: undefined,
-      loading: true,
+      loading: false,
+      error: "",
+    },
+    routines: {
+      data: undefined,
+      loading: false,
       error: "",
     },
   };
@@ -45,9 +50,6 @@ export class DeviceComponent implements OnInit {
     private deviceService: DeviceService
   ) {}
 
-  get user(): IUser {
-    return this.cache.user.data;
-  }
   get device(): IDevice {
     return this.cache.device.data;
   }
@@ -57,8 +59,7 @@ export class DeviceComponent implements OnInit {
 
     this.route.params
       .subscribe(async (params) => {
-        this.cache.user.data = this.userService.currentUserValue;
-        // await this.getDevice(params.did);
+        await this.getDevice(params.did);
         // this.getDeviceMeasurements();
         // this.getDeviceSensors();
         this.cache.device.loading = false;
@@ -66,19 +67,10 @@ export class DeviceComponent implements OnInit {
       .unsubscribe();
   }
 
-  getUser(username: string): Promise<IUser> {
-    this.cache.user.loading = true;
-    return this.userService
-      .getUserByUsername(username)
-      .then((user) => (this.cache.user.data = user))
-      .catch((e) => (this.cache.user.error = e))
-      .finally(() => (this.cache.user.loading = false));
-  }
-
   getDevice(device_id: string): Promise<IDevice> {
     this.cache.device.loading = true;
     return this.deviceService
-      .getDevice(this.cache.user.data._id, device_id)
+      .getDevice(device_id)
       .then((device: IDevice) => {
         this.deviceInfo = HardwareInformation[device.hardware_model];
         this.cache.device.data = device;

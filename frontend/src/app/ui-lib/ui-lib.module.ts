@@ -13,6 +13,8 @@ import { OverflowMenuComponent } from "./overflow-menu/overflow-menu.component";
 import { SectionHeaderComponent } from "./section-header/section-header.component";
 import { AdmonitionComponent } from "./admonition/admonition.component";
 import { ReactiveFormsModule } from "@angular/forms";
+import { RadioButtonComponent } from "./radio-button/radio-button.component";
+import { ChipComponent } from "./chip/chip.component";
 
 export enum ButtonVariants {
   Primary = "primary",
@@ -33,6 +35,8 @@ const allComponents = [
   OverflowMenuComponent,
   SectionHeaderComponent,
   AdmonitionComponent,
+  RadioButtonComponent,
+  ChipComponent,
 ];
 
 @NgModule({

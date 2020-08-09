@@ -15,7 +15,8 @@ import {
     ICropStub,
     IDeviceProperty as IDProp,
     NodeType as NT,
-    IApiKeyPrivate
+    IApiKeyPrivate,
+    IOrgEnv
 } from "@cxss/interfaces";
 import { Access } from "./mcnr";
 
@@ -60,6 +61,7 @@ mcnr.get     <P<IOrgStub>>   ("/orgs",                       Orgs.readAllOrgs,  
 mcnr.post    <IOrg>          ("/orgs",                       Orgs.createOrg,                           [Access.Authenticated],     Orgs.validators.createOrg);
 mcnr.delete  <void>          ("/orgs/:oid",                  Orgs.deleteOrg,                           [Access.OrgAdmin]);
 mcnr.delete  <IOrg>          ("/orgs/:oid",                  Orgs.updateOrg,                           [Access.OrgEditor]);
+mcnr.get     <IOrgEnv>       ("/orgs/:oid/environment",      Orgs.getEnvironment,                      [Access.OrgMember]);
 
 // // ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.put     <void>          ("/orgs/:oid/users/:uid/role",  Orgs.editUserRole,                        [Access.OrgAdmin]);
@@ -119,8 +121,10 @@ mcnr.get<ICropStub[]>("/racks/:rid/crops", Rack.readRackCrops, [Access.OrgMember
 // CROPS ------------------------------------------------------------------------------------------
 mcnr.post    <ICrop>         ("/racks/:rid/crops",            Crop.createCrop,                           [Access.Authenticated], Crop.validators.createCrop);
 // mcnr.post("/crops/:cid/harvest", Crop.harvestCrop)
+mcnr.put      <ICrop>       ("/crops/:cid/assign/:sid",       Crop.assignSpecies, [Access.Authenticated]);
 
 // SPECIES ----------------------------------------------------------------------------------------
+mcnr.post("/species", Species.createSpecies, [Access.Authenticated], Species.validators.createSpecies);
 mcnr.get("/species/search", Species.search, [Access.Authenticated]);
 mcnr.get("/species/:sid", Species.readSpecies, [Access.Authenticated]);
 mcnr.get("/species/:sid/yields", Species.readYields, [Access.Authenticated]);

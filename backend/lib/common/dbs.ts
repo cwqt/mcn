@@ -40,7 +40,7 @@ let dbs = {
   influx: false,
 };
 
-export let MSchemas: IMcnMongoSchema;
+export const MSchemas: IMcnMongoSchema = getMcnMongoSchema(require("mongoose"));
 
 export const awaitAllDbsConnected = async (itrlimit: number = 10, delay: number = 1000) => {
   let itrs: number = 0;
@@ -50,9 +50,8 @@ export const awaitAllDbsConnected = async (itrlimit: number = 10, delay: number 
 
     if (!dbs.redis) redisClient.on("connect", () => (dbs.redis = true));
     if (!dbs.mongo)
-      mongo.once("connected", (mongoose) => {
+      mongo.once("connected", () => {
         dbs.mongo = true;
-        MSchemas = getMcnMongoSchema(mongoose);
       });
 
     if (!dbs.neo4j) {

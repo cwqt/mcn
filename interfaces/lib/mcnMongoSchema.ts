@@ -1,4 +1,4 @@
-import { Mongoose, Model, Document } from "mongoose";
+import { Mongoose, Model } from "mongoose";
 import { speciesSchema, ISpeciesModel } from "./Hydroponics/Species.model";
 
 export interface IMcnMongoSchema {

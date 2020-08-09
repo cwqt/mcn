@@ -10,13 +10,13 @@
   <div class="index-cover">
     <div
       class="tile-container"
-      *ngFor="let item of coverCards"
-      (click)="navigate(item.title)"
+      *ngFor="let item of coverCards | keyvalue"
+      (click)="navigate(item.key)"
     >
-      <mat-card [class.selected]="item.title.toLowerCase() == activeUrl">
-        <mat-icon>{{ item.icon }}</mat-icon>
-        <h2>{{ item.title }}</h2>
-        <h1>12</h1>
+      <mat-card [class.selected]="item.key == activeUrl">
+        <mat-icon>{{ item.value.icon }}</mat-icon>
+        <h2>{{ item.key | titlecase }}</h2>
+        <h1>{{ cache.env.data[item.key] }}</h1>
       </mat-card>
     </div>
   </div>

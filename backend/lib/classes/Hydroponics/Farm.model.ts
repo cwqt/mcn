@@ -33,13 +33,12 @@ const read = async <T extends IFarmStub | IFarm>(
     case DataModel.Stub: {
       let res = await cypher(
         ` MATCH (f:Farm {_id:$fid})
-          SIZE((f)-[:HAS_RACK]->(:Rack)) as rackCount
-          RETURN f, rackCount `,
+          RETURN f, SIZE((f)-[:HAS_RACK]->(:Rack)) as rackCount`,
         { fid: _id }
       );
 
-      data = res.records[0].get("f");
-      data.racks = data.racks.toNumber();
+      data = res.records[0].get("f").properties;
+      data.racks = res.records[0]?.get("rackCount").toNumber() || 0;
       break;
     }
 
@@ -47,11 +46,14 @@ const read = async <T extends IFarmStub | IFarm>(
       let res = await cypher(
         ` MATCH (f:Farm {_id:$fid})
           MATCH (f)-[:HAS_RACK]->(r:Rack)
-          RETURN f, r{._id}`,
+          RETURN f, collect(r{._id}) as r`,
         { fid: _id }
       );
-      data = <IFarm>res.records[0].get("f");
-      data.racks = await Promise.all(data.racks.map((r: IRack) => Rack.read<IRackStub>(r._id)));
+
+      data = <IFarm>res.records[0].get("f").properties;
+      data.racks = await Promise.all(
+        res.records[0].get("r")?.map((r: IRack) => Rack.read<IRackStub>(r._id))
+      );
       break;
     }
   }

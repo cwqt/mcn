@@ -7,3 +7,13 @@ export interface IOrgStub extends INode {
 }
 
 export interface IOrg extends IOrgStub {}
+
+export interface IOrgEnv {
+  devices: number;
+  alerts: number;
+  farms: number;
+  racks: number;
+  crops: number;
+  users: number;
+  dashboard: any;
+}

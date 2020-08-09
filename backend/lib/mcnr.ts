@@ -322,7 +322,7 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
 
       logger.error("Auth dead end.");
     } catch (error) {
-      return next(new ErrorHandler(HTTP.Unauthorised, error));
+      return next(new ErrorHandler(HTTP.Unauthorised, error.message));
     }
   };
 };

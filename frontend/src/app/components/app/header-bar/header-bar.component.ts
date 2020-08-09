@@ -5,6 +5,7 @@ import { OrganisationService } from "src/app/services/organisation.service";
 import { UserService } from "src/app/services/user.service";
 
 import { IOrgStub } from "@cxss/interfaces";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-header-bar",
@@ -18,7 +19,8 @@ export class HeaderBarComponent implements OnInit {
 
   constructor(
     private orgService: OrganisationService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -30,5 +32,9 @@ export class HeaderBarComponent implements OnInit {
 
   setActiveOrg(org: IOrgStub) {
     this.orgService.setActiveOrg(org);
+  }
+
+  gotoCatalog() {
+    this.router.navigate(["catalog"]);
   }
 }

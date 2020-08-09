@@ -1,32 +1,27 @@
-<!-- <div *ngIf="cache.states.data">
-  <ibm-table-container>
-    <ibm-table-header>
-      <h4 ibmTableHeaderTitle>Device control</h4>
-      <p ibmTableHeaderDescription>Alter device states & click submit to commit updates</p>
-    </ibm-table-header>
-    <mat-table [dataSource]="cache.states.data">
-      <!-- Position Column -->
-<ng-container matColumnDef="ref">
-  <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
-  <mat-cell *matCellDef="let element"> {{ element.ref }} </mat-cell>
-</ng-container>
+<div *ngIf="cache.states.data">
+  <mat-table [dataSource]="cache.states.data">
+    <!-- Position Column -->
+    <ng-container matColumnDef="ref">
+      <mat-header-cell *matHeaderCellDef> Reference </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.ref }} </mat-cell>
+    </ng-container>
 
-<!-- Name Column -->
-<ng-container matColumnDef="name">
-  <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-  <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
-</ng-container>
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element"> {{ element.name }} </mat-cell>
+    </ng-container>
 
-<!-- Set value Column
-      <ng-container matColumnDef="set-value">
-        <mat-header-cell *matHeaderCellDef> Set state </mat-header-cell>
-        <mat-cell *matCellDef="let element">
-          <span [ngSwitch]="element.type">
+    <!-- Set value Column -->
+    <ng-container matColumnDef="set-value">
+      <mat-header-cell *matHeaderCellDef> Set state </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <span [ngSwitch]="element.data_format">
           <p *ngSwitchCase="'boolean'">
-            <ibm-toggle></ibm-toggle>
+            <mat-slide-toggle></mat-slide-toggle>
           </p>
           <p *ngSwitchCase="'number'">
-            <ibm-number></ibm-number>
+            <input type="number" />
           </p>
           <p *ngSwitchCase="'string'">
             <input ibmText>
@@ -34,15 +29,16 @@
           <p *ngSwitchDefault>
             {{element.type}}
           </p>
-          </span>
+        </span>
 
-        </mat-cell>
-      </ng-container>
+      </mat-cell>
+    </ng-container>
 
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    </mat-table>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
 
-  </ibm-table-container>
+  <br />
+  <ui-button icon="cloud--upload" variant="primary">Commit</ui-button>
 </div>
- -->
+

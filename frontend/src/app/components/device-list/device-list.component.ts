@@ -1,8 +1,16 @@
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import moment from "moment";
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from "@angular/animations";
 
 import { IDeviceStub, Paginated } from "@cxss/interfaces";
 import { OrganisationService } from "src/app/services/organisation.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-device-list",
@@ -19,9 +27,10 @@ export class DeviceListComponent implements OnInit {
     tableRows: ["name", "_id", "last_ping", "state"],
   };
 
-  model: any;
-
-  constructor(private orgService: OrganisationService) {}
+  constructor(
+    private orgService: OrganisationService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     console.log("getting devices");
@@ -36,6 +45,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   openDeviceDetail(device: IDeviceStub) {
-    this.selectedDevice.emit(device);
+    console.log("device ", device._id);
+    this.router.navigate([`/devices/${device._id}`]);
   }
 }
