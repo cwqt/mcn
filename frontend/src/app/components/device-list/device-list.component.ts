@@ -33,7 +33,6 @@ export class DeviceListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log("getting devices");
     this.devices.loading = true;
     this.orgService
       .getDevices()
@@ -45,7 +44,6 @@ export class DeviceListComponent implements OnInit {
   }
 
   openDeviceDetail(device: IDeviceStub) {
-    console.log("device ", device._id);
     this.router.navigate([`/devices/${device._id}`]);
   }
 }

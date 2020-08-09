@@ -17,24 +17,25 @@
       </ng-container>
 
       <!-- Weight Column -->
-      <ng-container matColumnDef="last_ping">
-        <mat-header-cell *matHeaderCellDef> Last ping </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.last_ping}} </mat-cell>
+      <ng-container matColumnDef="racks">
+        <mat-header-cell *matHeaderCellDef>Racks </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.racks}} </mat-cell>
       </ng-container>
 
       <!-- Symbol Column -->
-      <ng-container matColumnDef="state">
-        <mat-header-cell *matHeaderCellDef> State </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.sttae}} </mat-cell>
+      <ng-container matColumnDef="location">
+        <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
+        <mat-cell *matCellDef="let element"> {{element.location}} </mat-cell>
       </ng-container>
 
       <mat-header-row *matHeaderRowDef="farms.tableRows; sticky: true"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: farms.tableRows;"></mat-row>
+      <mat-row (click)="openFarmDetail(row)" *matRowDef="let row; columns: farms.tableRows;"></mat-row>
     </mat-table>
-
   </div>
 
-  <!-- <div class="device-info-wrapper">
-    <router-outlet></router-outlet>
-  </div> -->
+  <div class="farm-info-wrapper" *ngIf="isOutletting" [@detailExpand]>
+    <div class="farm-info">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </div>

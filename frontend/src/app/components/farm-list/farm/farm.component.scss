@@ -1,0 +1,16 @@
+.rack-thumb {
+  margin: 8px;
+  padding: 8px;
+  background-color: #f4f4f4;
+  border: 2px solid lightgrey;
+  transition: 0.2s;
+  &:hover {
+    background-color: darken($color: #f4f4f4, $amount: 5);
+  }
+
+  span {
+    opacity: 0.5;
+    font-size: 16px;
+    margin-bottom: 3px;
+  }
+}

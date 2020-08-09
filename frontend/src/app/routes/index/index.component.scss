@@ -20,7 +20,7 @@
   display: flex;
   align-items: center;
   padding: 30px 20px;
-  padding-top: 150px;
+  height: 22vh;
   background: #457fca;
   background: -webkit-linear-gradient(to bottom, #5691c8, #457fca);
   background: linear-gradient(to bottom, #5691c8, #457fca);
@@ -29,6 +29,7 @@
   background-position: center;
 
   .tile-container {
+    margin-top: auto;
     &:hover {
       cursor: pointer !important;
     }

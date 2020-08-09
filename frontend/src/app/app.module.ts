@@ -52,6 +52,7 @@ import { FarmListComponent } from "./components/farm-list/farm-list.component";
 
 import { CatalogComponent } from "./routes/catalog/catalog.component";
 import { SpeciesListComponent } from "./routes/catalog/species-list/species-list.component";
+import { FarmComponent } from "./components/farm-list/farm/farm.component";
 
 @NgModule({
   declarations: [
@@ -84,6 +85,7 @@ import { SpeciesListComponent } from "./routes/catalog/species-list/species-list
     FarmListComponent,
     CatalogComponent,
     SpeciesListComponent,
+    FarmComponent,
   ],
   imports: [
     AngularMaterialModule,

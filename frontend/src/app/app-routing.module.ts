@@ -16,6 +16,7 @@ import { DeviceListComponent } from "./components/device-list/device-list.compon
 import { DeviceComponent } from "./components/device-list/device/device.component";
 import { FarmListComponent } from "./components/farm-list/farm-list.component";
 import { SpeciesListComponent } from "./routes/catalog/species-list/species-list.component";
+import { FarmComponent } from "./components/farm-list/farm/farm.component";
 
 const routes: Routes = [
   {
@@ -32,8 +33,17 @@ const routes: Routes = [
           },
         ],
       },
+      {
+        path: "farms",
+        component: FarmListComponent,
+        children: [
+          {
+            path: ":fid",
+            component: FarmComponent,
+          },
+        ],
+      },
       // { path: "alerts", component: UserDevicesListComponent },
-      { path: "farms", component: FarmListComponent },
       // { path: "racks", component: UserDevicesListComponent },
       // { path: "crops", component: UserDevicesListComponent },
       // { path: "users", component: UserDevicesListComponent },
