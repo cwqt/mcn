@@ -40,57 +40,60 @@ const mcnr = new McnRouter();
 
 type nodeDef = [NodeType, string];
 // USERS -----------------------------------------------------------------------------------------------------------------------------------------------------------
-mcnr.get      <P<IUserStub>> ("/users",                      Users.readAllUsers,                       [Access.SiteAdmin]);
-mcnr.post     <IUser>        ("/users",                      Users.createUser,                         [Access.None],             Users.validators.createUser);
-mcnr.post     <void>         ("/users/logout",               Users.logoutUser,                         [Access.Authenticated]);
-mcnr.post     <IUser>        ("/users/login",                Users.loginUser,                          [Access.None],             Users.validators.loginUser);
-mcnr.get      <IUser>        ("/u/:username",                Users.readUserByUsername,                 [Access.None],             Users.validators.readUserByUsername);
-mcnr.get      <IUser>        ("/users/:uid",                 Users.readUserById,                       [Access.None]);
-mcnr.put      <IUser>        ("/users/:uid",                 Users.updateUser,                         [Access.Ourself]);
-mcnr.get      <IOrgStub[]>   ("/users/:uid/orgs",            Users.readUserOrgs,                       [Access.Authenticated]);
-mcnr.put      <IUser>        ("/users/:uid/avatar",          Users.updateUserAvatar,                   [Access.Ourself]);
-mcnr.delete   <void>         ("/users/:uid",                 Users.deleteUser,                         [Access.Ourself]);
+mcnr.get      <P<IUserStub>> ("/users",                             Users.readAllUsers,                       [Access.SiteAdmin]);
+mcnr.post     <IUser>        ("/users",                             Users.createUser,                         [Access.None],             Users.validators.createUser);
+mcnr.post     <void>         ("/users/logout",                      Users.logoutUser,                         [Access.Authenticated]);
+mcnr.post     <IUser>        ("/users/login",                       Users.loginUser,                          [Access.None],             Users.validators.loginUser);
+mcnr.get      <IUser>        ("/u/:username",                       Users.readUserByUsername,                 [Access.None],             Users.validators.readUserByUsername);
+mcnr.get      <IUser>        ("/users/:uid",                        Users.readUserById,                       [Access.None]);
+mcnr.put      <IUser>        ("/users/:uid",                        Users.updateUser,                         [Access.Ourself]);
+mcnr.get      <IOrgStub[]>   ("/users/:uid/orgs",                   Users.readUserOrgs,                       [Access.Authenticated]);
+mcnr.put      <IUser>        ("/users/:uid/avatar",                 Users.updateUserAvatar,                   [Access.Ourself]);
+mcnr.delete   <void>         ("/users/:uid",                        Users.deleteUser,                         [Access.Ourself]);
 
 // AUTH ------------------------------------------------------------------------------------------------------------------------------------------------------------
-mcnr.post     <IApiKey>      ("/auth/keys",                  Auth.createApiKey,                        [Access.Authenticated]);
-mcnr.delete   <void>         ("/auth/keys/:kid",             Auth.deleteApiKey,                        []);
-mcnr.redirect <string>       ("/auth/verify",                Auth.verifyUserEmail,                     [Access.None],              Auth.validators.verify);
+mcnr.post     <IApiKey>      ("/auth/keys",                         Auth.createApiKey,                        [Access.Authenticated]);
+mcnr.delete   <void>         ("/auth/keys/:kid",                    Auth.deleteApiKey,                        []);
+mcnr.redirect <string>       ("/auth/verify",                       Auth.verifyUserEmail,                     [Access.None],              Auth.validators.verify);
 
 // ORGS ------------------------------------------------------------------------------------------------------------------------------------------------------------
-mcnr.get     <P<IOrgStub>>   ("/orgs",                       Orgs.readAllOrgs,                         [Access.SiteAdmin]);
-mcnr.post    <IOrg>          ("/orgs",                       Orgs.createOrg,                           [Access.Authenticated],     Orgs.validators.createOrg);
-mcnr.delete  <void>          ("/orgs/:oid",                  Orgs.deleteOrg,                           [Access.OrgAdmin]);
-mcnr.delete  <IOrg>          ("/orgs/:oid",                  Orgs.updateOrg,                           [Access.OrgEditor]);
-mcnr.get     <IOrgEnv>       ("/orgs/:oid/environment",      Orgs.getEnvironment,                      [Access.OrgMember]);
+mcnr.get     <P<IOrgStub>>   ("/orgs",                              Orgs.readAllOrgs,                         [Access.SiteAdmin]);
+mcnr.post    <IOrg>          ("/orgs",                              Orgs.createOrg,                           [Access.Authenticated],     Orgs.validators.createOrg);
+mcnr.delete  <void>          ("/orgs/:oid",                         Orgs.deleteOrg,                           [Access.OrgAdmin]);
+mcnr.delete  <IOrg>          ("/orgs/:oid",                         Orgs.updateOrg,                           [Access.OrgEditor]);
+mcnr.get     <IOrgEnv>       ("/orgs/:oid/environment",             Orgs.getEnvironment,                      [Access.OrgMember]);
 
-// // ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
-mcnr.put     <void>          ("/orgs/:oid/users/:uid/role",  Orgs.editUserRole,                        [Access.OrgAdmin]);
-mcnr.get     <P<IUserStub>>  ("/orgs/:oid/users",            Orgs.readOrgNodes(NodeType.User),         [Access.OrgMember]);
-mcnr.get     <P<IDeviceStub>>("/orgs/:oid/devices",          Orgs.readOrgNodes(NodeType.Device),       [Access.OrgMember]);
-mcnr.get     <P<IFarmStub>>  ("/orgs/:oid/farms",            Orgs.readOrgNodes(NodeType.Farm),         [Access.OrgMember]);
-mcnr.post    <void>          ("/orgs/:oid/users/:iid",       Orgs.addNodeToOrg(NodeType.User),         [Access.OrgEditor]);
-mcnr.post    <void>          ("/orgs/:oid/devices/:iid",     Orgs.addNodeToOrg(NodeType.Device),       [Access.OrgEditor]);
-mcnr.post    <void>          ("/orgs/:oid/farms/:iid",       Orgs.addNodeToOrg(NodeType.Farm),         [Access.OrgEditor]);
+// ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
+mcnr.put     <void>          ("/orgs/:oid/users/:uid/role",         Orgs.editUserRole,                        [Access.OrgAdmin]);
+mcnr.get     <P<IUserStub>>  ("/orgs/:oid/users",                   Orgs.readOrgNodes(NodeType.User),         [Access.OrgMember]);
+mcnr.get     <P<IDeviceStub>>("/orgs/:oid/devices",                 Orgs.readOrgNodes(NodeType.Device),       [Access.OrgMember]);
+mcnr.get     <P<IFarmStub>>  ("/orgs/:oid/farms",                   Orgs.readOrgNodes(NodeType.Farm),         [Access.OrgMember]);
+mcnr.post    <void>          ("/orgs/:oid/users/:iid",              Orgs.addNodeToOrg(NodeType.User),         [Access.OrgEditor]);
+mcnr.post    <void>          ("/orgs/:oid/devices/:iid",            Orgs.addNodeToOrg(NodeType.Device),       [Access.OrgEditor]);
+mcnr.post    <void>          ("/orgs/:oid/farms/:iid",              Orgs.addNodeToOrg(NodeType.Farm),         [Access.OrgEditor]);
 
 // DEVICES ---------------------------------------------------------------------------------------------------------------------------------------------------------
 const deviceDef:nodeDef = [NodeType.Device, "did"];
-mcnr.get     <P<IDeviceStub>>("/devices",                     Device.readAllDevices,                   [Access.SiteAdmin]);
-mcnr.post    <IDevice>       ("/devices",                     Device.createDevice,                     [Access.Authenticated],     Device.validators.createDevice);
-mcnr.get     <IDevice>       ("/devices/:did",                Device.readDevice,                       [Access.OrgMember],         null,                           deviceDef);
-mcnr.put     <IDevice>       ("/devices/:did",                Device.updateDevice,                     [Access.OrgEditor],         null,                           deviceDef);
-mcnr.delete  <void>          ("/devices/:did",                Device.deleteDevice,                     [],                         null,                           deviceDef);
-mcnr.post    <void>          ("/devices/:did/assign",         Device.assignDevice,                     [Access.OrgEditor],         Device.validators.assignDevice, deviceDef);
-mcnr.get     <void>          ("/devices/:did/ping",           Device.pingDevice,                       [Access.None]);     
-mcnr.post<IApiKeyPrivate>    ("/devices/:did/keys",           Device.setApiKey,                        [Access.OrgEditor],         Device.validators.setApiKey,    deviceDef);
-mcnr.get<IApiKey>            ("/devices/:did/key",            Device.readApiKey,                       [Access.OrgEditor],         null,                           deviceDef);
-mcnr.put<IApiKey>            ("/devices/:did/key",            Device.updateApiKey,                     [Access.OrgEditor],         null,                           deviceDef);
-mcnr.put<void>               ("/devices/:did/key",            Device.deleteApiKey,                     [Access.OrgEditor],         null,                           deviceDef);
-mcnr.get<IDProp<NT.Sensor>[]>("/devices/:did/sensors",        Device.readProperties(NodeType.Sensor),  [Access.OrgEditor],         null,                           deviceDef);
-mcnr.get<IDProp<NT.State>[]> ("/devices/:did/states",         Device.readProperties(NodeType.State),   [Access.OrgEditor],         null,                           deviceDef);
-mcnr.get<IDProp<NT.Metric>[]>("/devices/:did/metrics",        Device.readProperties(NodeType.Metric),  [Access.OrgEditor],         null,                           deviceDef);
+mcnr.get     <P<IDeviceStub>>("/devices",                           Device.readAllDevices,                   [Access.SiteAdmin]);
+mcnr.post    <IDevice>       ("/devices",                           Device.createDevice,                     [Access.Authenticated],     Device.validators.createDevice);
+mcnr.get     <IDevice>       ("/devices/:did",                      Device.readDevice,                       [Access.OrgMember],         null,                           deviceDef);
+mcnr.put     <IDevice>       ("/devices/:did",                      Device.updateDevice,                     [Access.OrgEditor],         null,                           deviceDef);
+mcnr.delete  <void>          ("/devices/:did",                      Device.deleteDevice,                     [],                         null,                           deviceDef);
+mcnr.get     <void>          ("/devices/:did/ping",                 Device.pingDevice,                       [Access.None]);     
+mcnr.post<IApiKeyPrivate>    ("/devices/:did/keys",                 Device.setApiKey,                        [Access.OrgEditor],         Device.validators.setApiKey,    deviceDef);
+mcnr.get<IApiKey>            ("/devices/:did/key",                  Device.readApiKey,                       [Access.OrgEditor],         null,                           deviceDef);
+mcnr.put<IApiKey>            ("/devices/:did/key",                  Device.updateApiKey,                     [Access.OrgEditor],         null,                           deviceDef);
+mcnr.put<void>               ("/devices/:did/key",                  Device.deleteApiKey,                     [Access.OrgEditor],         null,                           deviceDef);
+mcnr.get<IDProp<NT.Sensor>[]>("/devices/:did/sensors",              Device.readProperties(NodeType.Sensor),  [Access.OrgEditor],         null,                           deviceDef);
+mcnr.get<IDProp<NT.State>[]> ("/devices/:did/states",               Device.readProperties(NodeType.State),   [Access.OrgEditor],         null,                           deviceDef);
+mcnr.get<IDProp<NT.Metric>[]>("/devices/:did/metrics",              Device.readProperties(NodeType.Metric),  [Access.OrgEditor],         null,                           deviceDef);
+mcnr.post    <void>          ("/devices/:did/sensors/:id/assign",   Device.assignProp(NT.Sensor),            [Access.OrgEditor],         Device.validators.assignProp,  deviceDef);
+mcnr.post    <void>          ("/devices/:did/states/:id/assign",    Device.assignProp(NT.State),             [Access.OrgEditor],         Device.validators.assignProp,  deviceDef);
 // mcnr.get("/devices/:did/sensors/:pid",            Device.readPropertyData(NodeType.Sensor),   [Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get("/devices/:did/states/:pid",             Device.readPropertyData(NodeType.State),    [Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get("/devices/:did/metrics/:pid",            Device.readPropertyData(NodeType.Metric),   [Access.OrgEditor],         null,                           deviceDef);
+
+
 
 //mcnr.post("/devices/:did/task_routines", Device.Tasks.addRoutine);
 //mcnr.delete("devices/:did/task_routines", Device.Tasks.removeRoutine);
@@ -147,16 +150,40 @@ mcnr.get("/species/:sid/task_series", Species.readSpeciesTaskSeries, [Access.Aut
 
 // IoT -------------------------------------------------------------------------------------------
 mcnr.get("/iot/time", IoT.getUnixEpoch, [Access.None]);
+mcnr.post('/iot/devices/:did', IoT.createMeasurementAsDevice, [Access.OrgMember], IoT.validators.createMeasurementAsDevice)
+
+
+// mcnr.post("/users/:uid/:rtype/:rid", IoT.createMeasurementAsUser, [Access.OrgMember], IoT.validators.createMeasurementAsUser);
+
+// // //users have no link to a recordable & require an explict link in the route param
+// // router.post('/users/:uid/:rtype/:rid', validate([
+// //     param('uid').isMongoId().trim().withMessage('invalid user id'),
+// //     param('rid').isMongoId().trim().withMessage('invalid recordable id'),
+// //     validateRecordableMeasurementTypes()
+// // ]), ((req:Request, res:Response, next:NextFunction) => {
+// //     res.locals["recorder_type"] = RecorderType.User
+// //     //de-pluralise
+// //     switch(req.params.rtype.slice(0, req.params.rtype.length - 1)) {
+// //         case RecordableType.Plant:
+// //             res.locals["recordable_type"] = RecordableType.Plant
+// //             break;
+// //         case RecordableType.Garden:
+// //             res.locals["recordable_type"] = RecordableType.Garden
+// //             break;
+// //         default:
+// //             throw new ErrorHandler(HTTP.BadRequest, `Invalid recordable type: ${req.params.rtype}`);
+// //     }
+// //     next();
+// // }), createMeasurementAsUser)
+
 
 // TEST -------------------------------------------------------------------------------------------
-// if(config.TESTING) {
-    mcnr.post("/test/drop", async () => {
-        dbs.redisClient.FLUSHDB(() => {
-            cypher(`MATCH (n) DETACH DELETE n`, {}).then(() => {
-                return;
-            });
-        })
-    }, []);
-// }
+mcnr.post("/test/drop", async () => {
+    dbs.redisClient.FLUSHDB(() => {
+        cypher(`MATCH (n) DETACH DELETE n`, {}).then(() => {
+            return;
+        });
+    })
+}, [Access.SiteAdmin]);
   
 export default mcnr;

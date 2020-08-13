@@ -17,12 +17,20 @@ import { DeviceComponent } from "./components/device-list/device/device.componen
 import { FarmListComponent } from "./components/farm-list/farm-list.component";
 import { SpeciesListComponent } from "./routes/catalog/species-list/species-list.component";
 import { FarmComponent } from "./components/farm-list/farm/farm.component";
+import { DashboardComponent } from "./routes/index/dashboard/dashboard.component";
+
+import { RackListComponent } from "./components/rack-list/rack-list.component";
+import { RackComponent } from "./components/rack-list/rack/rack.component";
 
 const routes: Routes = [
   {
     path: "",
     component: IndexComponent,
     children: [
+      {
+        path: "",
+        component: DashboardComponent,
+      },
       {
         path: "devices",
         component: DeviceListComponent,
@@ -40,6 +48,12 @@ const routes: Routes = [
           {
             path: ":fid",
             component: FarmComponent,
+            children: [
+              {
+                path: "racks/:rid",
+                component: RackComponent,
+              },
+            ],
           },
         ],
       },

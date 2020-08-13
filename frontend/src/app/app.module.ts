@@ -15,6 +15,7 @@ import { PickerModule } from "@ctrl/ngx-emoji-mart";
 import { ClickOutsideModule } from "ng-click-outside";
 import { CrystalLightboxModule } from "@crystalui/angular-lightbox";
 import { PopoverModule } from "../assets/popover";
+import { MuuriModule } from "muuri-angular";
 
 import { AppComponent } from "./app.component";
 
@@ -53,6 +54,9 @@ import { FarmListComponent } from "./components/farm-list/farm-list.component";
 import { CatalogComponent } from "./routes/catalog/catalog.component";
 import { SpeciesListComponent } from "./routes/catalog/species-list/species-list.component";
 import { FarmComponent } from "./components/farm-list/farm/farm.component";
+import { DashboardComponent } from "./routes/index/dashboard/dashboard.component";
+import { RackListComponent } from "./components/rack-list/rack-list.component";
+import { RackComponent } from "./components/rack-list/rack/rack.component";
 
 @NgModule({
   declarations: [
@@ -86,6 +90,9 @@ import { FarmComponent } from "./components/farm-list/farm/farm.component";
     CatalogComponent,
     SpeciesListComponent,
     FarmComponent,
+    DashboardComponent,
+    RackListComponent,
+    RackComponent,
   ],
   imports: [
     AngularMaterialModule,
@@ -104,6 +111,7 @@ import { FarmComponent } from "./components/farm-list/farm/farm.component";
     CrystalLightboxModule,
     PopoverModule,
     HighchartsChartModule,
+    MuuriModule,
   ],
   providers: [CookieService],
   entryComponents: [HeaderBarUserMenuComponent],

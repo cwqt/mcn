@@ -1,28 +1,70 @@
 import { Request, Response } from "express";
-// import { Model, model } from "mongoose";
-// import mongoose from "mongoose";
+import { Model, model } from "mongoose";
+import mongoose from "mongoose";
 
-// import { IDevice } from "../../models/Device/Device.model";
-// import { HTTP } from "../../common/http";
-// import { ErrorHandler } from "../../common/errorHandler";
-// import dbs, { cypher } from "../../common/dbs";
-// import { MeasurementUnits } from "../../common/types/measurements.types";
-// import { IGarden } from "../../models/Garden.model";
-// import { IPlant } from "../../models/Plant.model";
-// import {
-//   IMeasurementModel,
-//   IoTDataPacket,
-//   IMeasurement,
-//   RecorderType,
-// } from "../../models/Measurement.model";
+import { body, param, query, Meta } from "express-validator";
+import { validate } from "../../common/validate";
 
-// import { RecordableType } from "../../models/Recordable.model";
+import { HTTP } from "../../common/http";
+import dbs, { cypher } from "../../common/dbs";
+import { ErrorHandler } from "../../common/errorHandler";
+import {
+  Paginated,
+  IFarm,
+  IFarmStub,
+  NodeType,
+  DataModel,
+  IRackStub,
+  HardwareInformation,
+  IDeviceStub,
+  HardwareDevice,
+  SupportedHardware,
+} from "@cxss/interfaces";
+// import { Farm } from "../../classes/Hydroponics/Farm.model";
+import { paginate } from "../Node.controller";
+import { IResLocals } from "../../mcnr";
+import { Types } from "mongoose";
+import { Record } from "neo4j-driver";
+import Farm from "../../classes/Hydroponics/Farm.model";
+import Rack from "../../classes/Hydroponics/Rack.model";
+import Device from "../../classes/IoT/Device.model";
 
-// // ===============================================================================================================================
+let devicePropMap: { [index in SupportedHardware]?: string[] } = {};
+Object.entries(HardwareInformation).forEach(([model, value]) => {
+  devicePropMap[model as SupportedHardware] = [
+    ...Object.keys(value.sensors),
+    ...Object.keys(value.states),
+    ...Object.keys(value.metrics),
+  ];
+});
+
+export const validators = {
+  createMeasurementAsUser: validate([
+    body("name").not().isEmpty().trim().withMessage("Farm must have a name"),
+  ]),
+  createMeasurementAsDevice: validate([
+    body().custom(async (body: { [index: string]: number | boolean | string }, meta: Meta) => {
+      //Verify device actually exists
+      const device: IDeviceStub = await Device.read<IDeviceStub>(meta.req.params.did);
+      if (!device) throw new Error(`Device ${meta.req.params.did} does not exist`);
+
+      //Verify all body refs are in this device's properties
+      for (let i = 0; i < Object.keys(body).length; i++) {
+        if (!devicePropMap[device.hardware_model].includes(Object.keys(body)[i])) {
+          throw new Error(`Invalid refs in body for device model`);
+        }
+      }
+    }),
+  ]),
+};
+
+// ===============================================================================================================================
 
 export const getUnixEpoch = async (req: Request): Promise<string> => {
   return Math.floor(Date.now() / 1000).toString();
 };
+
+export const createMeasurementAsDevice = async (req: Request) => {};
 
 // export const createMeasurementAsDevice = async (
 //   req: Request,

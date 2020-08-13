@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-const { body, param, query } = require("express-validator");
+import { body, param, query } from "express-validator";
 import { validate } from "../../common/validate";
 
 import { HTTP } from "../../common/http";
@@ -48,6 +48,18 @@ export const validators = {
   setApiKey: validate([
     body("name").not().isEmpty().trim().withMessage("device name must be named"),
   ]),
+  assignProp: validate([
+    body("assignableType")
+      .notEmpty()
+      .withMessage("Must provide assignable type")
+      .isIn([NodeType.Farm, NodeType.Rack, NodeType.Crop])
+      .withMessage("Not a valid assignable type"),
+    body("assignableId")
+      .notEmpty()
+      .withMessage("Must provide assignable id")
+      .isMongoId()
+      .withMessage("Invalid UUID"),
+  ]),
 };
 
 export const readAllDevices = async (
@@ -92,7 +104,41 @@ export const updateApiKey = async (req: Request): Promise<IApiKey> => {
 
 export const deleteApiKey = async (req: Request) => {};
 
-export const assignDevice = async (req: Request) => {};
+export const assignProp = (propType: NodeType.Sensor | NodeType.State) => {
+  return async (req: Request) => {
+    const assignableNodeType: NodeType = req.body.assignableType;
+    const assignableId: string = req.body.assignableId;
+
+    const prop = DeviceProperty.read(req.params.id, propType);
+    if (!prop) throw new ErrorHandler(HTTP.NotFound, `DeviceProperty does not exist`);
+
+    const res = await cypher(
+      `
+      MATCH (a:${capitalize(assignableNodeType)} {_id:$aid})
+      RETURN a
+    `,
+      {
+        aid: assignableId,
+      }
+    );
+
+    if (!res.records.length)
+      throw new ErrorHandler(HTTP.NotFound, `${capitalize(assignableNodeType)} does not exist`);
+
+    await cypher(
+      ` MATCH (p:${capitalize(propType)} {_id:$pid})
+        MATCH (a:${capitalize(assignableNodeType)} {_id:$aid})
+        OPTIONAL MATCH (p)-[r:INTENDED_FOR]->()
+        DELETE r
+        CREATE (p)-[:INTENDED_FOR]->(a)
+    `,
+      {
+        pid: req.params.id,
+        aid: assignableId,
+      }
+    );
+  };
+};
 
 export const createDevice = async (req: Request, next: NextFunction): Promise<IDevice> => {
   const hwInfo: HardwareDevice = HardwareInformation[<SupportedHardware>req.body.hardware_model];
