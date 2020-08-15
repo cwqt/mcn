@@ -23,7 +23,7 @@ export interface S3Image {
 }
 
 export const uploadImageToS3 = async (
-  user_id: string,
+  creator_id: string,
   file: Express.Multer.File,
   filename?: string
 ): Promise<S3Image> => {
@@ -50,15 +50,13 @@ export const uploadImageToS3 = async (
 
   try {
     await check;
-    let extension = file.originalname.substr(
-      file.originalname.lastIndexOf(".") + 1
-    );
+    let extension = file.originalname.substr(file.originalname.lastIndexOf(".") + 1);
 
     let fn = filename || new mongoose.Types.ObjectId();
     let params = {
       Bucket: config.AWS_BUCKET_NAME,
       Body: file.buffer,
-      Key: `${user_id}/${fn}.${extension}`,
+      Key: `${creator_id}/${fn}.${extension}`,
       ContentDisposition: "inline",
       ContentType: mimetype,
       ACL: "public-read",

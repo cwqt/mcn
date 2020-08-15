@@ -40,10 +40,12 @@ export interface IDeviceEndpoint {
 
 export enum SupportedHardware {
   MCNWemosD1Mini = "mcn_wemos_d1_mini",
+  ESP32Cam = "esp32_w_cam",
 }
 
 export enum Type {
   Boolean = "boolean",
   Number = "number",
   String = "string",
+  Image = "image",
 }

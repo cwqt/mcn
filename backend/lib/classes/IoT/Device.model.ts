@@ -28,9 +28,9 @@ const create = async (
       `
       MATCH (u:User {_id:$uid})
       CREATE (d:Device $body)<-[:CREATED]-(u)
-      FOREACH (sensor in $sensors | CREATE (s:Sensor)<-[:HAS_SENSOR]-(d) SET s=sensor)
-      FOREACH (metric in $metrics | CREATE (m:Metric)<-[:HAS_METRIC]-(d) SET m=metric)
-      FOREACH (state in $states | CREATE (s:State)<-[:HAS_STATE]-(d) SET s=state)
+      FOREACH (sensor in $sensors | CREATE (s:Sensor)<-[:HAS_PROPERTY]-(d) SET s=sensor)
+      FOREACH (metric in $metrics | CREATE (m:Metric)<-[:HAS_PROPERTY]-(d) SET m=metric)
+      FOREACH (state in $states | CREATE (s:State)<-[:HAS_PROPERTY]-(d) SET s=state)
       RETURN d
     `,
       {
@@ -129,8 +129,7 @@ const remove = async (_id: string, txc?: Transaction) => {
   return sessionable(async (t: Transaction) => {
     let res = await t.run(
       ` MATCH (d:Device {_id:$did})
-        MATCH (d)-->(p)
-        WHERE p:Metric OR p:State OR p:Sensor
+        MATCH (d)-[:HAS_PROPERTY]->(p)
         DETACH DELETE d
         RETURN p{._id, .type}`,
       {

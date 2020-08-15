@@ -3,9 +3,9 @@ import { NodeType } from "@cxss/interfaces";
 import { HTTP } from "./common/http";
 import { ErrorHandler, handleError } from "./common/errorHandler";
 import { cypher } from "./common/dbs";
-import { accessSync } from "fs";
-import { resolveSoa } from "dns";
 import logger from "./common/logger";
+import Multer from "multer";
+import FileType from "file-type";
 const AsyncRouter = require("express-async-router").AsyncRouter;
 
 export enum Access {
@@ -35,8 +35,28 @@ const skip = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
+const MAX_FILE_COUNT = 5;
 export class McnRouter {
   router: any;
+  fileParser = Multer({
+    storage: Multer.memoryStorage(),
+    limits: {
+      fileSize: 2 * 1024 * 1024, //no files larger than 2mb
+    },
+    fileFilter: (req: Request, file: Express.Multer.File, cb: Multer.FileFilterCallback) => {
+      // FIXME: file.buffer is undefined
+      // FileType.fromBuffer(file.buffer).then((ft) => {
+      //   if (ft.mime != file.mimetype)
+      //     return cb(new Error(`File mime-type mismatch: ${ft.mime} != ${file.mimetype}`));
+      //   if (!["image/png", "image/jpg", "image/jpeg"].includes(ft.mime))
+      //     return cb(new Error(`File type not allowed`));
+      //   cb(null, true);
+      // });
+      if (!["image/png", "image/jpg", "image/jpeg"].includes(file.mimetype))
+        return cb(new Error(`File type not allowed`));
+      cb(null, true);
+    },
+  });
 
   constructor() {
     this.router = AsyncRouter();
@@ -117,6 +137,7 @@ export class McnRouter {
       path,
       getCheckPermissions(access, nodeData),
       validators ?? skip,
+      this.fileParser.any(),
       wrappedController
     );
   };

@@ -8,7 +8,7 @@ import { ErrorHandler } from "./errorHandler";
 import { HTTP } from "./http";
 import neo4j from "neo4j-driver";
 import { Transaction, Result } from "neo4j-driver";
-const Influx = require("influx");
+import * as Influx from "influx";
 
 const n4j = neo4j.driver("neo4j://localhost", neo4j.auth.basic(config.N4J_USER, config.N4J_PASS));
 const redisClient = redis.createClient();

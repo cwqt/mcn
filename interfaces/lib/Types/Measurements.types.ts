@@ -33,6 +33,8 @@ export enum IoTState {
   AireatorState = "aireator_state",
   ScreenText = "screen_text",
   ActiveChildren = "active_children",
+  Camera = "camera", //special case of sending blob
+  IRCamera = "ir_camera",
 }
 
 export enum Unit {
@@ -103,6 +105,8 @@ export const MeasurementUnits: {
   [IoTState.AireatorState]: [Type.Boolean],
   [IoTState.ScreenText]: [Type.String],
   [IoTState.ActiveChildren]: [Type.Number],
+  [IoTState.Camera]: [Type.Image],
+  [IoTState.IRCamera]: [Type.Image],
 };
 
 export const MeasurementConversions: {
