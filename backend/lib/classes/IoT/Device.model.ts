@@ -142,6 +142,28 @@ const remove = async (_id: string, txc?: Transaction) => {
   }, txc);
 };
 
+const update = async (_id: string, newFieldValues: { [index: string]: any }) => {
+  const updatableFields = [
+    "name",
+    "tagline",
+    "state",
+    "thumbnail",
+    "last_ping",
+    "images",
+    "software_version",
+    "measurement_count",
+    "description",
+    "device_ip",
+  ];
+
+  const filtered = updatableFields.reduce(
+    (obj, key) => ({ ...obj, [key]: newFieldValues[key] }),
+    {}
+  );
+
+  await Node.update(_id, filtered, NodeType.Device);
+};
+
 const getState = (device: IDevice): DeviceStateType => {
   if (device.last_ping == undefined) return DeviceStateType.UnVerified;
   if (device.last_ping && device.measurement_count == 0) return DeviceStateType.Verified;
@@ -156,4 +178,4 @@ const getState = (device: IDevice): DeviceStateType => {
   }
 };
 
-export default { create, read, reduce, remove, getState };
+export default { create, read, update, reduce, remove, getState };

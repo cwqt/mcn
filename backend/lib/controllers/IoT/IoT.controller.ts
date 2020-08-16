@@ -19,6 +19,11 @@ import {
   IDeviceStub,
   HardwareDevice,
   SupportedHardware,
+  Measurement,
+  IoTMeasurement,
+  IoTState,
+  IMeasurementResult,
+  IMeasurement,
 } from "@cxss/interfaces";
 // import { Farm } from "../../classes/Hydroponics/Farm.model";
 import { paginate } from "../Node.controller";
@@ -30,6 +35,7 @@ import Rack from "../../classes/Hydroponics/Rack.model";
 import Device from "../../classes/IoT/Device.model";
 import { uploadImageToS3 } from "../../common/storage";
 import Influx from "influx";
+import * as validator from "express-validator";
 
 let devicePropMap: { [index in SupportedHardware]?: string[] } = {};
 Object.entries(HardwareInformation).forEach(([model, value]) => {
@@ -39,6 +45,12 @@ Object.entries(HardwareInformation).forEach(([model, value]) => {
     ...Object.keys(value.metrics),
   ];
 });
+
+const allRecordables: string[] = [
+  ...Object.values(Measurement),
+  ...Object.values(IoTMeasurement),
+  ...Object.values(IoTState),
+];
 
 export const validators = {
   createMeasurementAsUser: validate([
@@ -50,6 +62,7 @@ export const validators = {
       const device: IDeviceStub = await Device.read<IDeviceStub>(meta.req.params.did);
       if (!device) throw new Error(`Device ${meta.req.params.did} does not exist`);
 
+      await Device.update(device._id, { last_ping: Date.now() });
       //Verify all body refs are in this device's properties
       for (let i = 0; i < Object.keys(body).length; i++) {
         if (!devicePropMap[device.hardware_model].includes(Object.keys(body)[i])) {
@@ -60,12 +73,71 @@ export const validators = {
       meta.req.device = device;
     }),
   ]),
+  getMeasurements: validate([
+    query("measurements").custom((v: string[], meta: Meta) => {
+      const m = v[0];
+      if (!m) throw new Error("Must have measurement(s)");
+      const measurements = m.split(",");
+      if (!measurements.every((m) => allRecordables.includes(m)))
+        throw new Error(`Invalid measurement type provided`);
+      return true;
+    }),
+    query(["creator", "intention", "property"]).custom((v: string) => {
+      if (v) {
+        const s = v.split("-") as [NodeType, string];
+        if (s.length !== 2) throw new Error(`Not of the form: node-uid`);
+        if (![NodeType.Farm, NodeType.Rack, NodeType.Crop, NodeType.Device].includes(s[0]))
+          throw new Error(`Not a valid node type`);
+        if (!Types.ObjectId.isValid(s[1])) throw new Error("Not a valid id");
+      }
+      return true;
+    }),
+    // query("start_date")
+    //   .not()
+    //   .isEmpty()
+    //   .withMessage("Require measurement start date")
+    //   .isDate()
+    //   .withMessage("Invalid date format"),
+    // query("end_date").isDate().withMessage("Invalid date format"),
+  ]),
 };
 
 // ===============================================================================================================================
 
-export const getUnixEpoch = async (req: Request): Promise<string> => {
-  return Math.floor(Date.now() / 1000).toString();
+export const getMeasurements = async (req: Request): Promise<IMeasurementResult> => {
+  const creator = req.query.creator;
+  const property = req.query.property;
+  const intention = req.query.intention;
+  const measurements = (<string[]>req.query.measurements)[0].split(",");
+  const start_date = req.query.start_date;
+  const end_date = req.query.end_date || new Date().toISOString();
+
+  let whereables: string[] = [];
+  if (intention) whereables.push(`intention='${intention}'`);
+  if (start_date) whereables.push(`time > '${start_date}'`);
+  if (end_date) whereables.push(`time < '${end_date}'`);
+  if (creator) whereables.push(`creator='${creator}'`);
+  if (property) whereables.push(`property='${property}'`);
+
+  const q = `SELECT * from ${measurements.join(",")}${
+    whereables.length ? "\nWHERE " + whereables.join(" and ") : ";"
+  }`;
+
+  // execute query & format into IMeasurement
+  // {air_temperature:{times:[Date, Date, Date], values:[Value, Value, Value]}}
+  return (await dbs.influx.query(q))
+    .groups()
+    .reduce((acc: { [index: string]: IMeasurement }, curr) => {
+      acc[curr.name] = curr.rows.reduce<IMeasurement>(
+        (a, c: any) => {
+          a.values.push(c.value);
+          a.times.push(c.time);
+          return a;
+        },
+        { times: [], values: [] }
+      );
+      return acc;
+    }, {});
 };
 
 export const createMeasurementAsDevice = async (req: Request) => {
@@ -75,7 +147,7 @@ export const createMeasurementAsDevice = async (req: Request) => {
   let data = req.body;
 
   //x-multipart-form-data handling
-  if (req.files.length) {
+  if (req.files?.length) {
     let imgStateFiles: { [ref: string]: Express.Multer.File } = {};
 
     for (let i = 0; i < req.files.length; i++) {
@@ -111,6 +183,7 @@ export const createMeasurementAsDevice = async (req: Request) => {
     {
       did: device._id,
       refs: Object.keys(data),
+      time: Date.now(),
     }
   );
 
@@ -119,9 +192,10 @@ export const createMeasurementAsDevice = async (req: Request) => {
     const r = curr.get("r")?.properties;
 
     acc.push({
-      measurement: n.ref,
+      measurement: n.measures,
       tags: {
-        creator: `${n.type}-${n._id}`,
+        creator: `${NodeType.Device}-${device._id}`,
+        property: `${n.type}-${n._id}`,
         intention: r ? `${r.type}-${r._id}` : null,
       },
       fields: {
@@ -135,145 +209,9 @@ export const createMeasurementAsDevice = async (req: Request) => {
   }, []);
 
   await dbs.influx.writePoints(points);
-  console.log(points);
   return;
 };
 
-// export const createMeasurementAsDevice = async (
-//   req: Request,
-//   res: Response
-// ) => {
-//   let iotData = <IoTDataPacket>req.body;
-
-//   //find devices' assigned recordable
-//   let result = await cypher(
-//     `
-//         MATCH (d:Device {_id:$did})-[:MONITORS]->(r)
-//         WHERE r:Plant OR r:Garden
-//         RETURN r
-//     `,
-//     {
-//       did: req.params.did,
-//     }
-//   );
-
-//   let device: IDevice = res.locals.node;
-//   let recordable: IPlant | IGarden = result.records[0]?.get("r")?.properties;
-//   if (!recordable)
-//     throw new ErrorHandler(
-//       HTTP.NotFound,
-//       "No such recordable assigned to this device"
-//     );
-
-//   console.log(iotData);
-
-//   let date = Date.now();
-//   await dbs.influx.writePoints([
-//     {
-//       measurement: device._id,
-//       tags: { property: "metrics" },
-//       fields: iotData.metrics,
-//       timestamp: date,
-//     },
-//     {
-//       measurement: device._id,
-//       tags: { property: "states" },
-//       fields: iotData.states,
-//       timestamp: date,
-//     },
-//     {
-//       measurement: recordable._id,
-//       tags: {
-//         property: "sensors",
-//         recorder_type: RecorderType.Device,
-//         recorder_id: device._id,
-//       },
-//       fields: iotData.sensors,
-//       timestamp: date,
-//     },
-//   ]);
-
-//   await cypher(
-//     `
-//         MATCH (d:Device {_id:$did})
-//         SET d.last_ping = $date
-//         SET d.measurement_count = d.measurement_count + 1
-//         RETURN d
-//     `,
-//     {
-//       did: req.params.did,
-//       date: Date.now(),
-//     }
-//   );
-
-//   res.status(HTTP.Created).end();
-// };
-
-// export const createMeasurementAsUser = async (req: Request, res: Response) => {
-//   req.body = req.body as IoTDataPacket;
-//   let measurement: IMeasurement = {
-//     data: req.body.recordable_data,
-//     recorder_type: RecorderType.User,
-//     recorder_id: req.params.uid,
-//     created_at: Date.now(),
-//   };
-
-//   try {
-//     // await createMeasurement(measurement, res.locals.recordable_type, req.params.rid);
-//   } catch (e) {
-//     throw new ErrorHandler(HTTP.ServerError, e);
-//   }
-// };
-
-// // export const readAllMeasurements = async (req:Request, res:Response) => {
-// //     let page = req.query.page ? parseInt(req.query.page as string) : 1;
-// //     let per_page = req.query.per_page ? parseInt(req.query.per_page as string) : 5;
-
-// //     let data:IMeasurementModel[];
-// //     try {
-// //         let Recordable = getModel(res.locals.type, req.params.rid ?? req.params.did);
-// //         // let measurement_count = await Recordable.countDocuments({});
-// //         data = await Recordable.find({})
-// //             .sort({'created_at': -1 })
-// //             .skip((page - 1) * per_page)
-// //             .limit(per_page)
-// //     } catch(e) {
-// //         throw new ErrorHandler(HTTP.ServerError, e);
-// //     }
-
-// //     res.json(data)
-// // }
-
-// // export const readAllMeasurements = async (req:Request, res:Response) => {
-// //     let Measurement = getModel(res.locals.recordable_type, req.params.rid);
-// //     try {
-// //         let ms:IMeasurementModel[] = await Measurement.find({recordable_id:req.params.rid}).select('-recordable_id')
-// //         res.json(ms);
-// //     } catch (e) {
-// //         throw new ErrorHandler(HTTP.ServerError, e)
-// //     }
-// // }
-
-// // export const deleteMeasurements = async (req:Request, res:Response) => {
-// //     let Measurement = getModel(res.locals.recordable_type, req.params.rid);
-// //     try {
-// //         let result = await Measurement.deleteMany(req.body);
-// //         console.log(result);
-// //         res.status(HTTP.OK).end();
-// //     } catch (e) {
-// //         throw new ErrorHandler(HTTP.ServerError, e)
-// //     }
-// // }
-
-// // export const getMeasurementTypes = (req:Request, res:Response) => {
-// //     res.json(MeasurementUnits);
-// // }
-
-// // export const deleteMeasurementCollection = async (req:Request, res:Response) => {
-// //     try {
-// //         let result = await mongoose.connection.dropCollection(`${res.locals.recordable_type}-${req.params.rid}`);
-// //         res.status(HTTP.OK);
-// //     } catch (e) {
-// //         throw new ErrorHandler(HTTP.ServerError, e);
-// //     }
-// // }
+export const getUnixEpoch = async (req: Request): Promise<string> => {
+  return Math.floor(Date.now() / 1000).toString();
+};

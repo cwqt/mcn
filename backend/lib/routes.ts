@@ -150,6 +150,7 @@ mcnr.get("/species/:sid/task_series", Species.readSpeciesTaskSeries, [Access.Aut
 
 // IoT -------------------------------------------------------------------------------------------
 mcnr.get("/iot/time", IoT.getUnixEpoch, [Access.None]);
+mcnr.get("/iot/data", IoT.getMeasurements, [Access.Authenticated], IoT.validators.getMeasurements);
 mcnr.post('/iot/devices/:did', IoT.createMeasurementAsDevice, [Access.OrgMember], IoT.validators.createMeasurementAsDevice)
 
 
@@ -179,11 +180,10 @@ mcnr.post('/iot/devices/:did', IoT.createMeasurementAsDevice, [Access.OrgMember]
 
 // TEST -------------------------------------------------------------------------------------------
 mcnr.post("/test/drop", async () => {
-    dbs.redisClient.FLUSHDB(() => {
-        cypher(`MATCH (n) DETACH DELETE n`, {}).then(() => {
-            return;
-        });
-    })
+    await new Promise((res, rej) => dbs.redisClient.FLUSHDB(res));
+    await cypher(`MATCH (n) DETACH DELETE n`, {});
+    await dbs.influx.dropDatabase('iot');
+    await dbs.influx.createDatabase('iot');
 }, [Access.SiteAdmin]);
   
 export default mcnr;
