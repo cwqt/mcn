@@ -15,11 +15,11 @@ export class IndexComponent implements OnInit {
   activeUrl: string = "devices";
 
   coverCards = {
-    devices: { icon: "mediation" },
     alerts: { icon: "notifications" },
     farms: { icon: "account_tree" },
     racks: { icon: "reorder" },
     crops: { icon: "view_comfy" },
+    devices: { icon: "mediation" },
     users: { icon: "group" },
   };
 
@@ -63,5 +63,9 @@ export class IndexComponent implements OnInit {
       .then((env: IOrgEnv) => (this.cache.env.data = env))
       .catch((e) => (this.cache.env.error = e))
       .finally(() => (this.cache.env.loading = false));
+  }
+
+  asIsOrder(a, b) {
+    return 1;
   }
 }

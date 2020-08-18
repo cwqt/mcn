@@ -1,41 +1,38 @@
-<div class="list-wrapper">
-  <div class="table-wrapper">
-    <ui-section-header title="Farms" subtitle="Rack management">
-    </ui-section-header>
+  <ui-section-header size="l" title="Farms" subtitle="Rack management">
+    <ui-button variant="primary">
+      Add farm
+      <ui-icon>add</ui-icon>
+    </ui-button>
+  </ui-section-header>
 
-    <mat-table *ngIf="farms.data" [dataSource]="farms.data">
-      <!-- Position Column -->
-      <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
-      </ng-container>
+  <div class="list-wrapper">
 
-      <!-- Name Column -->
-      <ng-container matColumnDef="_id">
-        <mat-header-cell *matHeaderCellDef> _id </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element._id}} </mat-cell>
-      </ng-container>
+  <div class="farm-cards-wrapper" [class.outletting]="isOutletting">
 
-      <!-- Weight Column -->
-      <ng-container matColumnDef="racks">
-        <mat-header-cell *matHeaderCellDef>Racks </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.racks}} </mat-cell>
-      </ng-container>
+    <div class="farm-card" *ngFor="let farm of farms.data" [class.selected]="selectedFarm == farm._id">
+      <div class="card-header">
+        <ui-icon-button class="card-options-button" size="m">overflow-menu--vertical</ui-icon-button>
+        <div class="card-emoji-container">
+          🌱
+        </div>
+        <div class="card-title">
+          <h3>{{ farm.name }}</h3>
+          <span>Created: {{ farm.created_at | amTimeAgo }}</span>
+        </div>
+      </div>
 
-      <!-- Symbol Column -->
-      <ng-container matColumnDef="location">
-        <mat-header-cell *matHeaderCellDef> Location </mat-header-cell>
-        <mat-cell *matCellDef="let element"> {{element.location}} </mat-cell>
-      </ng-container>
+      <div class="card-image">
+        <img src="https://i.imgur.com/IeelZfV.jpg">
+        <span class="feed-overlay">Taken: 13:40</span>
+      </div>
 
-      <mat-header-row *matHeaderRowDef="farms.tableRows; sticky: true"></mat-header-row>
-      <mat-row (click)="openFarmDetail(row)" *matRowDef="let row; columns: farms.tableRows;"></mat-row>
-    </mat-table>
+      <div class="card-actions">
+        <ui-button (click)="openFarmDetail(farm)" variant="primary">Open farm&nbsp;<ui-icon>view</ui-icon></ui-button>
+      </div>
+    </div>
   </div>
 
-  <div class="farm-info-wrapper" *ngIf="isOutletting" [@detailExpand]>
-    <div class="farm-info">
-      <router-outlet></router-outlet>
-    </div>
+  <div class="farm-info-wrapper" *ngIf="isOutletting">
+    <router-outlet></router-outlet>
   </div>
 </div>

@@ -104,6 +104,7 @@ const reduce = <T extends IDeviceStub | IDevice>(
         state: data.state,
         hardware_model: data.hardware_model,
         network_name: data.network_name,
+        last_ping: data.last_ping,
       };
       return r as T;
     }

@@ -6,11 +6,11 @@ import { GridOptions } from "muuri";
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.scss"],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   blockItems: string[] = ["test", "test2"];
 
   // Add any options you'd like to set here
-  public layoutConfig: GridOptions = {
+  layoutConfig: GridOptions = {
     items: [],
     layoutOnInit: false,
     dragEnabled: true,
@@ -25,7 +25,7 @@ export class DashboardComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit(): void {}
+  // ngOnInit(): void {}
 
   addToGrid() {
     this.blockItems.push("hello");

@@ -26,3 +26,12 @@ tr.example-element-row:not(.example-expanded-row):active {
 ::ng-deep .highcharts-credits {
   display: none !important;
 }
+
+mat-spinner {
+  width: 100%;
+  margin: 40px auto;
+}
+
+::ng-deep .carousel-cells {
+  background-color: lightgray;
+}

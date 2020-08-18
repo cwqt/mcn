@@ -11,6 +11,8 @@ import {
 import { IDeviceStub, Paginated } from "@cxss/interfaces";
 import { OrganisationService } from "src/app/services/organisation.service";
 import { Router } from "@angular/router";
+import { SelectionModel } from "@angular/cdk/collections";
+import { MatTableDataSource } from "@angular/material/table";
 
 @Component({
   selector: "app-device-list",
@@ -18,13 +20,15 @@ import { Router } from "@angular/router";
   styleUrls: ["./device-list.component.scss"],
 })
 export class DeviceListComponent implements OnInit {
-  @Output() selectedDevice: EventEmitter<IDeviceStub> = new EventEmitter();
+  selectedId: string;
+  selection = new SelectionModel<IDeviceStub>(true, []);
+  dataSource = new MatTableDataSource<IDeviceStub>();
 
   devices = {
     data: <IDeviceStub[]>[],
     error: <string>"",
     loading: <boolean>false,
-    tableRows: ["name", "_id", "last_ping", "state"],
+    tableRows: ["select", "name", "_id", "last_ping", "state"],
   };
 
   constructor(
@@ -38,12 +42,38 @@ export class DeviceListComponent implements OnInit {
       .getDevices()
       .then((paginated: Paginated<IDeviceStub>) => {
         this.devices.data = paginated.results;
+        this.dataSource = new MatTableDataSource<IDeviceStub>(
+          this.devices.data
+        );
       })
       .catch((e) => (this.devices.error = e))
       .finally(() => (this.devices.loading = false));
   }
 
   openDeviceDetail(device: IDeviceStub) {
+    this.selectedId = device._id;
     this.router.navigate([`/devices/${device._id}`]);
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.dataSource.data.forEach((row) => this.selection.select(row));
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: IDeviceStub): string {
+    if (!row) {
+      return `${this.isAllSelected() ? "select" : "deselect"} all`;
+    }
+    return `${this.selection.isSelected(row) ? "deselect" : "select"} row`;
   }
 }

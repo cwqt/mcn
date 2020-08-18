@@ -23,16 +23,16 @@ import {
 } from "@cxss/interfaces";
 import { Access } from "./mcnr";
 
-import Users = require("./controllers/Users/User.controller");
-import Orgs = require("./controllers/Orgs.controller");
-import Auth = require("./controllers/Auth.controller");
-import Device = require("./controllers/IoT/Device.controller");
+import Users    = require("./controllers/Users/User.controller");
+import Orgs     = require("./controllers/Orgs.controller");
+import Auth     = require("./controllers/Auth.controller");
+import Device   = require("./controllers/IoT/Device.controller");
 import Routines = require("./controllers/IoT/Routines.controller");
-import Farm = require("./controllers/Hydroponics/Farm.controller");
-import Rack = require("./controllers/Hydroponics/Rack.controller");
-import Crop = require("./controllers/Hydroponics/Crop.controller");
-import IoT = require("./controllers/IoT/IoT.controller");
-import Species = require("./controllers/Hydroponics/Species.controller");
+import Farm     = require("./controllers/Hydroponics/Farm.controller");
+import Rack     = require("./controllers/Hydroponics/Rack.controller");
+import Crop     = require("./controllers/Hydroponics/Crop.controller");
+import IoT      = require("./controllers/IoT/IoT.controller");
+import Species  = require("./controllers/Hydroponics/Species.controller");
 
 import { McnRouter } from "./mcnr";
 import { cypher } from "./common/dbs";
@@ -82,6 +82,7 @@ mcnr.post    <IDevice>          ("/devices",                           Device.cr
 mcnr.get     <IDevice>          ("/devices/:did",                      Device.readDevice,                       [Access.OrgMember],         null,                           deviceDef);
 mcnr.put     <IDevice>          ("/devices/:did",                      Device.updateDevice,                     [Access.OrgEditor],         null,                           deviceDef);
 mcnr.delete  <void>             ("/devices/:did",                      Device.deleteDevice,                     [],                         null,                           deviceDef);
+mcnr.get                        ("/devices/:did/status",               Device.getStatus,                        [Access.Authenticated])
 mcnr.get     <void>             ("/devices/:did/ping",                 Device.pingDevice,                       [Access.None]);     
 mcnr.post    <IApiKeyPrivate>   ("/devices/:did/keys",                 Device.setApiKey,                        [Access.OrgEditor],         Device.validators.setApiKey,    deviceDef);
 mcnr.get     <IApiKey>          ("/devices/:did/key",                  Device.readApiKey,                       [Access.OrgEditor],         null,                           deviceDef);

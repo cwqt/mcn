@@ -10,6 +10,7 @@ import {
 } from "@cxss/interfaces";
 
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
+import { runInThisContext } from "vm";
 
 @Component({
   selector: "app-device",
@@ -42,6 +43,11 @@ export class DeviceComponent implements OnInit {
       loading: false,
       error: "",
     },
+    status: {
+      data: undefined,
+      loading: false,
+      error: "",
+    },
   };
 
   constructor(
@@ -60,6 +66,7 @@ export class DeviceComponent implements OnInit {
     this.route.params
       .subscribe(async (params) => {
         await this.getDevice(params.did);
+        this.getDeviceStatus(params.did);
         // this.getDeviceMeasurements();
         // this.getDeviceSensors();
         this.cache.device.loading = false;
@@ -79,44 +86,21 @@ export class DeviceComponent implements OnInit {
       .finally(() => (this.cache.device.loading = false));
   }
 
-  // getDeviceMeasurements(): Promise<IMeasurementModel[]> {
-  //   this.cache.measurements.loading = true;
-  //   return this.deviceService
-  //     .getMeasurements(this.cache.user.data._id, this.cache.device.data._id)
-  //     .then(
-  //       (measurements: IMeasurementModel[]) =>
-  //         (this.cache.measurements.data = measurements)
-  //     )
-  //     .catch((e) => (this.cache.measurements.error = e))
-  //     .finally(() => (this.cache.measurements.loading = false));
-  // }
-
-  // getDeviceSensors(): Promise<IDeviceSensor[]> {
-  //   this.cache.sensors.loading = true;
-  //   return this.deviceService
-  //     .getDeviceSensors(this.cache.user.data._id, this.cache.device.data._id)
-  //     .then((sensors: IDeviceSensor[]) => {
-  //       //group by measurement type
-  //       let res = {};
-  //       sensors.forEach((s: IDeviceSensor) => {
-  //         if (!res[s.measures]) {
-  //           res[s.measures] = [s];
-  //         } else {
-  //           res[s.measures].push(s);
-  //         }
-  //       });
-
-  //       this.cache.sensors.data = res;
-  //     })
-  //     .catch((e) => (this.cache.sensors.error = e))
-  //     .finally(() => (this.cache.sensors.loading = false));
-  // }
-
-  // goToAssignedRecordable() {
-  //   this.router.navigate([
-  //     `/${this.cache.user.data.username}/${this.device.assigned_to.type}s/${this.device.assigned_to._id}`,
-  //   ]);
-  // }
+  getDeviceStatus(device_id: string) {
+    this.cache.status.loading = true;
+    return this.deviceService
+      .getDeviceStatus(device_id)
+      .then((res) => {
+        let x = [];
+        res.forEach((r) => {
+          r.rows = r.rows.filter((x) => x.value != null);
+          if (r.rows.length) x.push(r);
+        });
+        this.cache.status.data = x;
+      })
+      .catch((e) => (this.cache.status.error = e))
+      .finally(() => (this.cache.status.loading = false));
+  }
 
   tags = ["Device", "I<3Plants", "Wemos D1 Mini"];
 

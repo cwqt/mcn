@@ -256,3 +256,28 @@ export const readPropertyData = (node: NodeType.Sensor | NodeType.State | NodeTy
     return results;
   };
 };
+
+//get most recent data across all device measurements
+export const getStatus = async (req: Request) => {
+  let res = await cypher(
+    `
+    MATCH (d:Device)
+    MATCH (d)-[:HAS_PROPERTY]->(p)
+    RETURN p
+  `,
+    {
+      did: req.params.did,
+    }
+  );
+
+  let m = res.records.map((x) => x.get("p").properties.measures);
+  console.log(m);
+
+  let r = await dbs.influx.query(`
+    SELECT * FROM ${m.join(",")}
+    WHERE creator='${NodeType.Device + "-" + req.params.did}'
+    LIMIT 1
+  `);
+  console.log(r.groups());
+  return r.groups();
+};

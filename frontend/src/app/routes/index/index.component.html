@@ -7,16 +7,16 @@
 </div>
 
 <div *ngIf="userOrgs.length && currentOrg" class="index-body">
-  <div class="index-cover">
+  <div class="index-cover" *ngIf="cache.env.data">
     <div
       class="tile-container"
-      *ngFor="let item of coverCards | keyvalue"
+      *ngFor="let item of coverCards | keyvalue: asIsOrder"
       (click)="navigate(item.key)"
     >
       <mat-card [class.selected]="item.key == activeUrl">
         <mat-icon>{{ item.value.icon }}</mat-icon>
         <h2>{{ item.key | titlecase }}</h2>
-        <h1>{{ cache.env.data[item.key] }}</h1>
+        <h1>{{ cache.env.data[item.key] }} </h1>
       </mat-card>
     </div>
   </div>

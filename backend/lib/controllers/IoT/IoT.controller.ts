@@ -62,9 +62,12 @@ export const validators = {
       const device: IDeviceStub = await Device.read<IDeviceStub>(meta.req.params.did);
       if (!device) throw new Error(`Device ${meta.req.params.did} does not exist`);
 
+      //Got a ping, regardless of if data is valid
       await Device.update(device._id, { last_ping: Date.now() });
+
       //Verify all body refs are in this device's properties
       for (let i = 0; i < Object.keys(body).length; i++) {
+        console.log(Object.keys(body)[i], devicePropMap[device.hardware_model]);
         if (!devicePropMap[device.hardware_model].includes(Object.keys(body)[i])) {
           throw new Error(`Invalid refs in body for device model`);
         }
@@ -82,7 +85,19 @@ export const validators = {
         throw new Error(`Invalid measurement type provided`);
       return true;
     }),
-    query(["creator", "intention", "property"]).custom((v: string) => {
+    query("property", () => {
+      (v: string) => {
+        if (v) {
+          const s = v.split("-") as [NodeType, string];
+          if (s.length !== 2) throw new Error(`Not of the form: node-uid`);
+          if (![NodeType.Sensor, NodeType.State, NodeType.Metric, NodeType.Device].includes(s[0]))
+            throw new Error(`Not a valid node type`);
+          if (!Types.ObjectId.isValid(s[1])) throw new Error("Not a valid id");
+        }
+        return true;
+      };
+    }),
+    query(["creator", "intention"]).custom((v: string) => {
       if (v) {
         const s = v.split("-") as [NodeType, string];
         if (s.length !== 2) throw new Error(`Not of the form: node-uid`);
@@ -92,13 +107,14 @@ export const validators = {
       }
       return true;
     }),
-    // query("start_date")
-    //   .not()
-    //   .isEmpty()
-    //   .withMessage("Require measurement start date")
-    //   .isDate()
-    //   .withMessage("Invalid date format"),
-    // query("end_date").isDate().withMessage("Invalid date format"),
+    query("start_date")
+      .optional()
+      .not()
+      .isEmpty()
+      .withMessage("Require measurement start date")
+      .isISO8601()
+      .withMessage("Invalid date format"),
+    query("end_date").optional().isISO8601().withMessage("Invalid date format"),
   ]),
 };
 
@@ -138,6 +154,7 @@ export const getMeasurements = async (req: Request): Promise<IMeasurementResult>
       );
       return acc;
     }, {});
+  //TODO: convert units
 };
 
 export const createMeasurementAsDevice = async (req: Request) => {
@@ -150,12 +167,17 @@ export const createMeasurementAsDevice = async (req: Request) => {
   if (req.files?.length) {
     let imgStateFiles: { [ref: string]: Express.Multer.File } = {};
 
+    //Re-validate refs exist in device, since validator only operates on json body
     for (let i = 0; i < req.files.length; i++) {
       const file = (<Express.Multer.File[]>req.files)[i];
       if (Object.keys(hwInfo.states).includes(file.fieldname)) {
         imgStateFiles[file.fieldname] = file;
       }
     }
+
+    //No valid refs in form-data
+    if (!Object.keys(imgStateFiles).length)
+      throw new Error(`Invalid refs in body for device model`);
 
     //upload all images to s3 bucket, returning item key as value
     data = (
@@ -172,6 +194,8 @@ export const createMeasurementAsDevice = async (req: Request) => {
       return acc;
     }, {});
   }
+
+  console.log(data);
 
   //get data intentions & upload to influx
   let res = await cypher(

@@ -32,18 +32,16 @@ import { getTreeMultipleDefaultNodeDefsError } from "@angular/cdk/tree";
   styleUrls: ["./farm-list.component.scss"],
   animations: [
     trigger("detailExpand", [
-      transition(":enter", [
-        style({ opacity: 0 }),
-        animate(".2s ease-out", style({ opacity: 1 })),
-      ]),
-      transition(":leave", [
-        style({ opacity: 1 }),
-        animate(".2s ease-in", style({ opacity: 0 })),
-      ]),
+      state("collapsed", style({ height: "0px", minHeight: "0" })),
+      state("expanded", style({ height: "*" })),
+      transition(
+        "expanded <=> collapsed",
+        animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")
+      ),
     ]),
   ],
 })
-export class FarmListComponent implements OnInit, AfterViewInit {
+export class FarmListComponent implements OnInit {
   farms = {
     data: <IFarmStub[]>[],
     error: <string>"",
@@ -51,7 +49,7 @@ export class FarmListComponent implements OnInit, AfterViewInit {
     tableRows: ["name", "_id", "racks", "location"],
   };
 
-  model: any;
+  selectedFarm: string;
   isOutletting: boolean = false;
 
   constructor(
@@ -90,9 +88,8 @@ export class FarmListComponent implements OnInit, AfterViewInit {
       .unsubscribe();
   }
 
-  ngAfterViewInit() {}
-
   openFarmDetail(farm: IFarmStub) {
+    this.selectedFarm = farm._id;
     this.router.navigate([`/farms`, farm._id]);
   }
 }

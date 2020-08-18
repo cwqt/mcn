@@ -2,43 +2,63 @@
   <ui-section-header [title]="device.name" [subtitle]="device.network_name + '@' + device.hardware_model">
   </ui-section-header>
   <div class="device-info">
-    <div lightbox-group id="gallery">
+    <div *ngIf="cache.status.data" class="device-statuses">
+      <div *ngFor="let v of cache.status.data" class="device-status-point">
+          <p>
+            {{v.name}}
+          </p>
+          <h3>
+            {{v.rows[0]?.value}}
+            <span>
+              {{v.rows[0]?.type}}
+            </span>
+          </h3>
+      </div>
+    </div>
+
+
+
+    <!-- <div lightbox-group id="gallery">
       <img src="https://cdn.discordapp.com/attachments/264522461943562244/704820132312252426/IMG_0028.JPG" lightbox
         [fullImage]="{ path: 'path_to_fullimage' }" />
       <img src="https://playwithmyled.com/wp-content/uploads/2013/12/smart-garden1-1024x768.jpg" lightbox
         [fullImage]="{ path: 'path_to_fullimage' }" />
       <img src="" lightbox [fullImage]="{ path: 'path_to_fullimage' }" />
-    </div>
+    </div> -->
 
     <br />
 
     <div class="device-info-footer">
-      <ui-chip color="red">Wemos D1 Mini</ui-chip>
-      <ui-chip color="blue">MCN sponsored</ui-chip>
-      <ui-chip color="magenta">0.1</ui-chip>
+      <ui-chip color="red">{{device.hardware_model}}</ui-chip>
+      <!-- <ui-chip color="blue">MCN sponsored</ui-chip> -->
+      <ui-chip color="magenta">{{device.software_version || 'No software version'}}</ui-chip>
     </div>
   </div>
 
 
-<br />
+  <div class="device-stats" *ngIf="cache.device.data">
+    <mat-accordion>
+      <ui-loadable-panel description="View metrics, sensor & state data" variant="flat" icon="chart--bar"
+        title="Measurements" [hasData]="true">
+        <app-property-list [device]="cache.device.data"></app-property-list>
+      </ui-loadable-panel>
 
-<div class="device-stats" *ngIf="cache.device.data">
-  <ui-loadable-panel description="View metrics, sensor & state data" variant="flat" icon="chart--bar" title="Measurements" [hasData]="true">
-    <app-property-list [device]="cache.device.data"></app-property-list>  </ui-loadable-panel>
+      <hr>
 
-  <hr>
+      <ui-loadable-panel description="Directly control device outputs" variant="flat" icon="meter" title="Control">
+        <app-device-control [device]="device"></app-device-control>
+      </ui-loadable-panel>
 
-  <ui-loadable-panel description="Directly control device outputs" variant="flat" icon="meter" title="Control">
-    <app-device-control [device]="device"></app-device-control>
-  </ui-loadable-panel>
+      <hr>
 
-  <hr>
+      <ui-loadable-panel description="View planned routines" variant="flat" icon="virtual-machine"
+        title="Task Routines">
+        <!-- <app-scheduled-tasks [device]="device"></app-scheduled-tasks> -->
+      </ui-loadable-panel>
 
-  <ui-loadable-panel description="View planned routines" variant="flat" icon="virtual-machine" title="Task Routines">
-    <app-scheduled-tasks [device]="device"></app-scheduled-tasks>
-  </ui-loadable-panel>
-</div>
+    </mat-accordion>
+  </div>
 
 
-<mat-spinner *ngIf="cache.device.loading"></mat-spinner>
+  <mat-spinner *ngIf="cache.device.loading"></mat-spinner>
 </div>

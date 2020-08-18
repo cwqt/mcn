@@ -15,6 +15,8 @@ import { PickerModule } from "@ctrl/ngx-emoji-mart";
 import { ClickOutsideModule } from "ng-click-outside";
 import { CrystalLightboxModule } from "@crystalui/angular-lightbox";
 import { PopoverModule } from "../assets/popover";
+import { IvyCarouselModule } from "angular-responsive-carousel";
+
 import { MuuriModule } from "muuri-angular";
 
 import { AppComponent } from "./app.component";
@@ -112,6 +114,7 @@ import { RackComponent } from "./components/rack-list/rack/rack.component";
     PopoverModule,
     HighchartsChartModule,
     MuuriModule,
+    IvyCarouselModule,
   ],
   providers: [CookieService],
   entryComponents: [HeaderBarUserMenuComponent],

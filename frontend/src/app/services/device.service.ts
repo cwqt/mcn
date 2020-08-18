@@ -53,6 +53,12 @@ export class DeviceService {
     return this.http.get<IDevice>(`/api/devices/${device_id}`).toPromise();
   }
 
+  getDeviceStatus(device_id: string): Promise<any> {
+    return this.http
+      .get<IDevice>(`/api/devices/${device_id}/status`)
+      .toPromise();
+  }
+
   getLatestMeasurement(user_id: string, device_id: string) {
     // return this.http
     //   .get<IMeasurementModel>(

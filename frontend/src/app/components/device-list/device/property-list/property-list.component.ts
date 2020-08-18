@@ -1,4 +1,10 @@
-import { Component, OnInit, Input, AfterViewInit } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  AfterViewInit,
+  ViewChild,
+} from "@angular/core";
 import {
   animate,
   state,
@@ -14,24 +20,22 @@ import {
   IUser,
   IDeviceProperty,
   NodeType,
+  IMeasurement,
+  IoTMeasurement,
+  IMeasurementResult,
 } from "@cxss/interfaces";
 
 import { DeviceService } from "src/app/services/device.service";
+import { IoTService } from "src/app/services/iot.service";
 
 interface Cacheable<T> {
   data: T;
+  chartData?: Highcharts.Options;
+  imageData?: any;
   loading: boolean;
   error: string;
-  expandedElement: any;
+  expandedElement?: any;
 }
-
-const genInts = () => {
-  let ints = [];
-  for (let i = 0; i < 500; i++) {
-    ints.push(Math.sin(2 * (i / 20)) + Math.sin(Math.PI * (i / 20)));
-  }
-  return ints;
-};
 
 @Component({
   selector: "app-property-list",
@@ -50,17 +54,6 @@ const genInts = () => {
 })
 export class PropertyListComponent implements OnInit, AfterViewInit {
   Highcharts: typeof Highcharts = Highcharts; // required
-  chartOptions: Highcharts.Options = {
-    title: null,
-    xAxis: {},
-    series: [
-      {
-        name: "Relative Humidity (%)",
-        data: [...genInts()],
-        type: "line",
-      },
-    ],
-  };
 
   @Input() currentUser: IUser;
   @Input() authorUser: IUser;
@@ -69,9 +62,9 @@ export class PropertyListComponent implements OnInit, AfterViewInit {
   columnsToDisplay = ["_id", "name", "ref", "value"];
 
   cache: {
-    [NodeType.Sensor]: Cacheable<IDeviceProperty<NodeType.Sensor>[]>;
-    [NodeType.State]: Cacheable<IDeviceProperty<NodeType.State>[]>;
-    [NodeType.Metric]: Cacheable<IDeviceProperty<NodeType.Metric>[]>;
+    [NodeType.Sensor]: Cacheable<Cacheable<IDeviceProperty<any>>[]>;
+    [NodeType.State]: Cacheable<Cacheable<IDeviceProperty<any>>[]>;
+    [NodeType.Metric]: Cacheable<Cacheable<IDeviceProperty<any>>[]>;
   } = {
     [NodeType.Sensor]: {
       data: [],
@@ -93,13 +86,17 @@ export class PropertyListComponent implements OnInit, AfterViewInit {
     },
   };
 
-  constructor(private deviceService: DeviceService) {}
+  constructor(
+    private deviceService: DeviceService,
+    private iotService: IoTService
+  ) {}
 
   ngOnInit(): void {
     console.log(this.device);
   }
 
   ngAfterViewInit() {
+    // this.getProperty(NodeType.State); //first tab
     this.getProperty(NodeType.Sensor); //first tab
   }
 
@@ -108,14 +105,66 @@ export class PropertyListComponent implements OnInit, AfterViewInit {
   }
 
   getProperty(propType: NodeType.State | NodeType.Sensor | NodeType.Metric) {
-    console.log("fuuuc");
     this.cache[propType].loading = true;
     this.deviceService
       .getDeviceProperties(propType, this.device._id)
       .then((props) => {
-        this.cache[propType].data = props;
+        this.cache[propType].data = props.map<Cacheable<any>>((x) => {
+          return {
+            loading: false,
+            data: x,
+            error: "",
+          };
+        });
+        console.log(this.cache[propType].data);
       })
       .catch((e) => (this.cache[propType].error = e))
       .finally(() => (this.cache[propType].loading = false));
+  }
+
+  getPropertyData(property: Cacheable<IDeviceProperty<any>>) {
+    // const m: Cacheable<IDeviceProperty<any>> = (this.cache[property.type]
+    //   .data as any[]).find((x: IDeviceProperty<any>) => {
+    //   return x._id == property._id;
+    // });
+
+    property.loading = true;
+
+    setTimeout(() => {
+      this.iotService
+        .query(
+          `measurements[]=${property.data.measures}&property=${property.data.type}-${property.data._id}`
+        )
+        .then((d: IMeasurementResult) => {
+          if (property.data.data_format == "image") {
+            property.imageData = d[property.data.measures];
+            property.imageData.values = property.imageData.values.map((url) => {
+              return {
+                path: "https://mcn-images.s3.eu-west-2.amazonaws.com/" + url,
+              };
+            });
+            console.log(property.imageData);
+          } else {
+            property.chartData = {
+              title: null,
+              xAxis: {
+                title: { text: "Date" },
+                type: "datetime",
+                categories: d[property.data.measures as string].times.map((x) =>
+                  x.toString()
+                ),
+              },
+              series: [
+                {
+                  name: "Relative Humidity (%)",
+                  data: d[property.data.measures as string].values,
+                  type: "line",
+                },
+              ],
+            };
+          }
+        })
+        .finally(() => (property.loading = false));
+    }, 100);
   }
 }
