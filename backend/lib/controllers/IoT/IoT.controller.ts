@@ -183,7 +183,7 @@ export const createMeasurementAsDevice = async (req: Request) => {
     data = (
       await Promise.all(
         Object.entries(imgStateFiles).map(([ref, file]) => {
-          return new Promise(async (res, rej) => {
+          return new Promise(async (res, _) => {
             let awsImage = await uploadImageToS3(device._id, file);
             res({ ref: ref, value: awsImage.data.Key });
           });
@@ -194,8 +194,6 @@ export const createMeasurementAsDevice = async (req: Request) => {
       return acc;
     }, {});
   }
-
-  console.log(data);
 
   //get data intentions & upload to influx
   let res = await cypher(
