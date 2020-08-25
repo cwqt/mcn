@@ -1,7 +1,6 @@
 .list-wrapper {
   position: relative;
-  min-height: calc(100vh - (22vh + 48px)); //100vh - (index_cover + header_bar)
-  background-color: #f4f4f4;
+  // min-height: calc(100vh - (22vh + 48px)); //100vh - (index_cover + header_bar)
   width: 100%;
   display: flex;
   flex-flow: row;
@@ -15,7 +14,7 @@
 .farm-cards-wrapper {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  align-items: flex-start;
   margin: 10px;
   &.outletting {
     flex-flow: column;
@@ -24,6 +23,7 @@
     .farm-card {
       width: 100%;
       flex: none;
+      margin-bottom: 0;
       .card-image,
       .card-actions {
         display: none;
@@ -34,8 +34,12 @@
 
 .farm-card {
   background-color: white;
-  flex: 0 0 calc(33% - 2.5px);
-  margin-bottom: 10px;
+  flex: 0 1 calc(33% - 2.5px);
+  &:not(:nth-child(3n + 3)) {
+    margin-right: 0;
+  }
+  margin: 5px;
+  margin-bottom: auto;
   display: flex;
   flex-flow: column;
   border: 2px solid transparent;

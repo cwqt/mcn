@@ -21,6 +21,7 @@ import { DashboardComponent } from "./routes/index/dashboard/dashboard.component
 
 import { RackListComponent } from "./components/rack-list/rack-list.component";
 import { RackComponent } from "./components/rack-list/rack/rack.component";
+import { OrgComponent } from "./routes/org/org.component";
 
 const routes: Routes = [
   {
@@ -31,6 +32,13 @@ const routes: Routes = [
         path: "",
         component: DashboardComponent,
       },
+    ],
+  },
+
+  {
+    path: "org",
+    component: OrgComponent,
+    children: [
       {
         path: "devices",
         component: DeviceListComponent,
@@ -52,15 +60,17 @@ const routes: Routes = [
               {
                 path: "racks/:rid",
                 component: RackComponent,
+                children: [
+                  // {
+                  //   path: "/crops/:cid",
+                  //   component: CropComponent
+                  // }
+                ],
               },
             ],
           },
         ],
       },
-      // { path: "alerts", component: UserDevicesListComponent },
-      // { path: "racks", component: UserDevicesListComponent },
-      // { path: "crops", component: UserDevicesListComponent },
-      // { path: "users", component: UserDevicesListComponent },
     ],
   },
 

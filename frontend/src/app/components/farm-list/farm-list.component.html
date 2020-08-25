@@ -1,13 +1,6 @@
-  <ui-section-header size="l" title="Farms" subtitle="Rack management">
-    <ui-button variant="primary">
-      Add farm
-      <ui-icon>add</ui-icon>
-    </ui-button>
-  </ui-section-header>
-
-  <div class="list-wrapper">
-
+<div class="list-wrapper">
   <div class="farm-cards-wrapper" [class.outletting]="isOutletting">
+
 
     <div class="farm-card" *ngFor="let farm of farms.data" [class.selected]="selectedFarm == farm._id">
       <div class="card-header">

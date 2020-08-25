@@ -59,6 +59,7 @@ import { FarmComponent } from "./components/farm-list/farm/farm.component";
 import { DashboardComponent } from "./routes/index/dashboard/dashboard.component";
 import { RackListComponent } from "./components/rack-list/rack-list.component";
 import { RackComponent } from "./components/rack-list/rack/rack.component";
+import { OrgComponent } from "./routes/org/org.component";
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { RackComponent } from "./components/rack-list/rack/rack.component";
     DashboardComponent,
     RackListComponent,
     RackComponent,
+    OrgComponent,
   ],
   imports: [
     AngularMaterialModule,

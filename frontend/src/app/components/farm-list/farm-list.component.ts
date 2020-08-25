@@ -90,6 +90,6 @@ export class FarmListComponent implements OnInit {
 
   openFarmDetail(farm: IFarmStub) {
     this.selectedFarm = farm._id;
-    this.router.navigate([`/farms`, farm._id]);
+    this.router.navigate([`/org/farms`, farm._id]);
   }
 }
