@@ -31,7 +31,7 @@ export class IconComponent implements OnInit, AfterViewInit {
     this.renderer.setAttribute(
       this.icon.nativeElement,
       "data-icon",
-      `${iconMap[this.icon.nativeElement.innerText]}`
+      `${iconMap[this.icon.nativeElement.innerText.toLowerCase()]}`
     );
     this.icon.nativeElement.innerHTML = "";
 

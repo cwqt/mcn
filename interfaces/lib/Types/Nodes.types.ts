@@ -17,6 +17,8 @@ export enum NodeType {
   Yield = "yield",
   Recipe = "recipe",
   Species = "species",
+  Dashboard = "dashboard",
+  DashboardItem = "dashboard_item",
 }
 
 //adding measurements / getting of / constructing graphs

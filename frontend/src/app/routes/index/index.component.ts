@@ -3,6 +3,7 @@ import { IOrgStub, IOrgEnv } from "@cxss/interfaces";
 import { UserService } from "src/app/services/user.service";
 import { Router, ActivatedRoute } from "@angular/router";
 import { OrganisationService } from "src/app/services/organisation.service";
+import { MatTabChangeEvent } from "@angular/material/tabs";
 
 @Component({
   selector: "app-index",
@@ -14,21 +15,20 @@ export class IndexComponent implements OnInit {
   currentOrg: IOrgStub;
   activeUrl: string = "devices";
 
-  coverCards = {
-    alerts: { icon: "notifications" },
-    farms: { icon: "account_tree" },
-    racks: { icon: "reorder" },
-    crops: { icon: "view_comfy" },
-    devices: { icon: "mediation" },
-    users: { icon: "group" },
-  };
-
   cache = {
     env: {
       data: null,
       loading: false,
       error: "",
     },
+  };
+
+  tabs = {
+    ["dashboard"]: { icon: "workspace", url: "/" },
+    ["farms"]: { icon: "sprout", url: "farms" },
+    ["devices"]: { icon: "chip", url: "devices" },
+    ["yields"]: { icon: "money", url: "yields" },
+    ["members"]: { icon: "user--multiple", url: "members" },
   };
 
   env: IOrgEnv;
@@ -54,6 +54,11 @@ export class IndexComponent implements OnInit {
 
   random() {
     return Math.floor(Math.random() * 100);
+  }
+
+  selectedTabChange(event: MatTabChangeEvent) {
+    console.log(event, Object.values(this.tabs)[event.index].url);
+    this.router.navigate([`/${Object.values(this.tabs)[event.index].url}`]);
   }
 
   getOrgEnvironment(_id: string) {

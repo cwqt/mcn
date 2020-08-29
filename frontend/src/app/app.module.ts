@@ -16,8 +16,7 @@ import { ClickOutsideModule } from "ng-click-outside";
 import { CrystalLightboxModule } from "@crystalui/angular-lightbox";
 import { PopoverModule } from "../assets/popover";
 import { IvyCarouselModule } from "angular-responsive-carousel";
-
-import { MuuriModule } from "muuri-angular";
+import { NgxWidgetGridModule } from "ngx-widget-grid";
 
 import { AppComponent } from "./app.component";
 
@@ -32,11 +31,6 @@ import { WrapperComponent } from "./components/app/wrapper/wrapper.component";
 import { HeaderBarComponent } from "./components/app/header-bar/header-bar.component";
 import { SidebarComponent } from "./components/app/sidebar/sidebar.component";
 
-import { DeviceComponent } from "./components/device-list/device/device.component";
-import { ScheduledTasksComponent } from "./components/device-list/device/scheduled-tasks/scheduled-tasks.component";
-import { DeviceControlComponent } from "./components/device-list/device/device-control/device-control.component";
-import { PropertyListComponent } from "./components/device-list/device/property-list/property-list.component";
-
 import { ProfileComponent } from "./routes/profile/profile.component";
 
 import { DocumentationComponent } from "./routes/documentation/documentation.component";
@@ -48,18 +42,22 @@ import { IndexComponent } from "./routes/index/index.component";
 import { OrganisationsComponent } from "./routes/organisations/organisations.component";
 import { PageComponent } from "./components/app/page/page.component";
 import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
-import { DeviceListComponent } from "./components/device-list/device-list.component";
 import { OrganisationComponent } from "./routes/organisations/organisation/organisation.component";
 import { HeaderUserButtonComponent } from "./components/app/header-bar/header-user-button/header-user-button.component";
-import { FarmListComponent } from "./components/farm-list/farm-list.component";
 
 import { CatalogComponent } from "./routes/catalog/catalog.component";
 import { SpeciesListComponent } from "./routes/catalog/species-list/species-list.component";
-import { FarmComponent } from "./components/farm-list/farm/farm.component";
 import { DashboardComponent } from "./routes/index/dashboard/dashboard.component";
-import { RackListComponent } from "./components/rack-list/rack-list.component";
-import { RackComponent } from "./components/rack-list/rack/rack.component";
-import { OrgComponent } from "./routes/org/org.component";
+import { DeviceComponent } from "./routes/index/devices/device/device.component";
+import { ScheduledTasksComponent } from "./routes/index/devices/device/scheduled-tasks/scheduled-tasks.component";
+import { DeviceControlComponent } from "./routes/index/devices/device/device-control/device-control.component";
+import { PropertyListComponent } from "./routes/index/devices/device/property-list/property-list.component";
+import { DevicesComponent } from "./routes/index/devices/devices.component";
+import { FarmsComponent } from "./routes/index/farms/farms.component";
+import { FarmComponent } from "./routes/index/farms/farm/farm.component";
+import { RackComponent } from "./routes/index/farms/racks/rack/rack.component";
+import { CropComponent } from "./routes/index/farms/crop/crop.component";
+import { RacksComponent } from "./routes/index/farms/racks/racks.component";
 
 @NgModule({
   declarations: [
@@ -86,17 +84,17 @@ import { OrgComponent } from "./routes/org/org.component";
     OrganisationsComponent,
     PageComponent,
     CreateOrgComponent,
-    DeviceListComponent,
+    DevicesComponent,
     OrganisationComponent,
     HeaderUserButtonComponent,
-    FarmListComponent,
+    FarmsComponent,
     CatalogComponent,
     SpeciesListComponent,
-    FarmComponent,
     DashboardComponent,
-    RackListComponent,
+    FarmComponent,
+    RacksComponent,
     RackComponent,
-    OrgComponent,
+    CropComponent,
   ],
   imports: [
     AngularMaterialModule,
@@ -114,8 +112,8 @@ import { OrgComponent } from "./routes/org/org.component";
     ClickOutsideModule,
     CrystalLightboxModule,
     PopoverModule,
+    NgxWidgetGridModule,
     HighchartsChartModule,
-    MuuriModule,
     IvyCarouselModule,
   ],
   providers: [CookieService],

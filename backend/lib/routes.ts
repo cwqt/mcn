@@ -19,7 +19,9 @@ import {
     IOrgEnv,
     IMeasurementResult,
     ISpecies,
-    ISpeciesStub
+    ISpeciesStub,
+    IDashboard,
+    IDashboardItem
 } from "@cxss/interfaces";
 import { Access } from "./mcnr";
 
@@ -65,6 +67,10 @@ mcnr.post    <IOrg>             ("/orgs",                              Orgs.crea
 mcnr.delete  <void>             ("/orgs/:oid",                         Orgs.deleteOrg,                           [Access.OrgAdmin]);
 mcnr.delete  <IOrg>             ("/orgs/:oid",                         Orgs.updateOrg,                           [Access.OrgEditor]);
 mcnr.get     <IOrgEnv>          ("/orgs/:oid/environment",             Orgs.getEnvironment,                      [Access.OrgMember]);
+mcnr.get     <IDashboard>       ("/orgs/:oid/dashboard",               Orgs.getDashboard,                        [Access.OrgMember]);
+mcnr.post    <IDashboardItem>   ("/orgs/:oid/dashboard/items",         Orgs.addItemToDashboard,                  [Access.OrgEditor]);
+mcnr.put     <IDashboardItem>   ("/orgs/:oid/dashboard/items/:iid",    Orgs.updateDashboardItem,                 [Access.OrgEditor]);
+mcnr.delete  <void>             ("/orgs/:oid/dashboard/items/:iid",    Orgs.deleteDashboardItem,                 [Access.OrgEditor]);
 
 // ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.put     <void>             ("/orgs/:oid/users/:uid/role",         Orgs.editUserRole,                        [Access.OrgAdmin]);
@@ -115,7 +121,7 @@ mcnr.get     <IRackStub[]>      ("/farms/:fid/racks",                  Farm.read
 const rackDef:nodeDef = [NodeType.Rack, "rid"];
 // mcnr.get                     ("/racks",                             Rack.readAllRacks,                         [Access.SiteAdmin]);
 mcnr.post    <IRack>            ("/farms/:fid/racks",                  Rack.createRack,                           [Access.Authenticated],   Rack.validators.createRack);
-// mcnr.get                     ("/racks/:rid",                        Rack.readRack,                             [Access.OrgViewer]);
+mcnr.get     <IRack>            ("/racks/:rid",                        Rack.readRack,                             [Access.OrgMember]);
 // mcnr.put                     ("/racks/:rid",                        Rack.updateRack,                           [Access.OrgEditor]);
 // mcnr.delete                  ("/racks/:rid",                        Rack.deleteRack,                           [Access.OrgEditor]);
 mcnr.get     <ICropStub[]>      ("/racks/:rid/crops",                  Rack.readRackCrops,                        [Access.OrgMember]);

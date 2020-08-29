@@ -1,47 +1,17 @@
-import {
-  Component,
-  OnInit,
-  Output,
-  EventEmitter,
-  AfterViewInit,
-} from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { IFarmStub, Paginated, IFarm } from "@cxss/interfaces";
 import { OrganisationService } from "src/app/services/organisation.service";
-import {
-  Router,
-  ActivatedRoute,
-  ActivationEnd,
-  NavigationEnd,
-} from "@angular/router";
+import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
 
-import { filter, map, distinctUntilChanged, switchMap } from "rxjs/operators";
-import { FarmComponent } from "./farm/farm.component";
-import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition,
-} from "@angular/animations";
+import { filter, switchMap } from "rxjs/operators";
 import { of } from "rxjs";
-import { getTreeMultipleDefaultNodeDefsError } from "@angular/cdk/tree";
 
 @Component({
-  selector: "app-farm-list",
-  templateUrl: "./farm-list.component.html",
-  styleUrls: ["./farm-list.component.scss"],
-  animations: [
-    trigger("detailExpand", [
-      state("collapsed", style({ height: "0px", minHeight: "0" })),
-      state("expanded", style({ height: "*" })),
-      transition(
-        "expanded <=> collapsed",
-        animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")
-      ),
-    ]),
-  ],
+  selector: "app-farms",
+  templateUrl: "./farms.component.html",
+  styleUrls: ["./farms.component.scss"],
 })
-export class FarmListComponent implements OnInit {
+export class FarmsComponent implements OnInit {
   farms = {
     data: <IFarmStub[]>[],
     error: <string>"",
@@ -90,6 +60,6 @@ export class FarmListComponent implements OnInit {
 
   openFarmDetail(farm: IFarmStub) {
     this.selectedFarm = farm._id;
-    this.router.navigate([`/org/farms`, farm._id]);
+    this.router.navigate([`/farms`, farm._id]);
   }
 }

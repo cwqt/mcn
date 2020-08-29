@@ -12,16 +12,14 @@ import { CreateOrgComponent } from "./routes/organisations/create-org/create-org
 
 import { VerifiedComponent } from "./components/pages/verified/verified.component";
 import { NotFoundComponent } from "./components/pages/not-found/not-found.component";
-import { DeviceListComponent } from "./components/device-list/device-list.component";
-import { DeviceComponent } from "./components/device-list/device/device.component";
-import { FarmListComponent } from "./components/farm-list/farm-list.component";
 import { SpeciesListComponent } from "./routes/catalog/species-list/species-list.component";
-import { FarmComponent } from "./components/farm-list/farm/farm.component";
 import { DashboardComponent } from "./routes/index/dashboard/dashboard.component";
 
-import { RackListComponent } from "./components/rack-list/rack-list.component";
-import { RackComponent } from "./components/rack-list/rack/rack.component";
-import { OrgComponent } from "./routes/org/org.component";
+import { DevicesComponent } from "./routes/index/devices/devices.component";
+import { DeviceComponent } from "./routes/index/devices/device/device.component";
+import { FarmComponent } from "./routes/index/farms/farm/farm.component";
+import { FarmsComponent } from "./routes/index/farms/farms.component";
+import { RacksComponent } from "./routes/index/farms/racks/racks.component";
 
 const routes: Routes = [
   {
@@ -29,19 +27,8 @@ const routes: Routes = [
     component: IndexComponent,
     children: [
       {
-        path: "",
-        component: DashboardComponent,
-      },
-    ],
-  },
-
-  {
-    path: "org",
-    component: OrgComponent,
-    children: [
-      {
         path: "devices",
-        component: DeviceListComponent,
+        component: DevicesComponent,
         children: [
           {
             path: ":did",
@@ -51,25 +38,31 @@ const routes: Routes = [
       },
       {
         path: "farms",
-        component: FarmListComponent,
+        component: FarmsComponent,
         children: [
           {
             path: ":fid",
             component: FarmComponent,
             children: [
               {
-                path: "racks/:rid",
-                component: RackComponent,
-                children: [
-                  // {
-                  //   path: "/crops/:cid",
-                  //   component: CropComponent
-                  // }
-                ],
+                path: "racks",
+                component: RacksComponent,
               },
+              // {
+              //   path: "measurements",
+              //   component: RacksComponent,
+              // },
+              // {
+              //   path: "agenda",
+              //   component: AgendaComponent,
+              // },
             ],
           },
         ],
+      },
+      {
+        path: "",
+        component: DashboardComponent,
       },
     ],
   },

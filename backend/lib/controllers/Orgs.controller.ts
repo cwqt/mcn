@@ -11,6 +11,8 @@ import {
   Paginated,
   DataModel,
   IOrgEnv,
+  IDashboard,
+  IDashboardItem,
 } from "@cxss/interfaces";
 import { capitalize, paginate } from "./Node.controller";
 import { ErrorHandler } from "../common/errorHandler";
@@ -19,6 +21,7 @@ import { validate } from "../common/validate";
 import { IResLocals, Access } from "../mcnr";
 import { Record } from "neo4j-driver";
 import { Types } from "mongoose";
+import Dashboard from "../classes/Dashboard/Dashboard.model";
 
 export const validators = {
   createOrg: validate([body("name").not().isEmpty().trim()]),
@@ -179,3 +182,24 @@ export const getEnvironment = async (req: Request): Promise<IOrgEnv> => {
 
   return env;
 };
+
+export const getDashboard = async (req: Request): Promise<IDashboard> => {
+  const res = await cypher(
+    ` MATCH (o:${capitalize(NodeType.Organisation)} {_id:$oid})
+      MATCH (o)-[:HAS_DASHBOARD]->(d:${capitalize(NodeType.Dashboard)})
+      RETURN d{._id}`,
+    { oid: req.params.oid }
+  );
+
+  return await Dashboard.read(res.records[0].get("d")._id);
+};
+
+export const addItemToDashboard = async (req: Request): Promise<IDashboardItem> => {
+  return {} as IDashboardItem;
+};
+
+export const updateDashboardItem = async (req: Request): Promise<IDashboardItem> => {
+  return {} as IDashboardItem;
+};
+
+export const deleteDashboardItem = async (req: Request) => {};

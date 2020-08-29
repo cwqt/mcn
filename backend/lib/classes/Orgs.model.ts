@@ -3,11 +3,12 @@ import Node from "./Node.model";
 import { Transaction } from "neo4j-driver";
 import { cypher } from "../common/dbs";
 import { Access } from "../mcnr";
+import Dashboard from "./Dashboard/Dashboard.model";
 
 type TOrg = IOrgStub | IOrg;
 
 const create = async (org: IOrgStub, creator_id: string): Promise<IOrg> => {
-  let result = await cypher(
+  let res = await cypher(
     ` MATCH (u:User {_id:$uid})
       CREATE (o:Organisation $org)<-[:CREATED]-(u)
       CREATE (o)<-[:IN {role: $role}]-(u)
@@ -19,7 +20,10 @@ const create = async (org: IOrgStub, creator_id: string): Promise<IOrg> => {
     }
   );
 
-  return reduce<IOrg>(result.records[0].get("o"), DataModel.Full);
+  let data = <IOrg>res.records[0].get("o").properties;
+  await Dashboard.create(data._id);
+
+  return reduce<IOrg>(data, DataModel.Full);
 };
 
 const read = async <T extends TOrg>(

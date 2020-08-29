@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, AfterViewInit } from "@angular/core";
 import { IFarmStub, IRack, IRackStub, ICropStub } from "@cxss/interfaces";
 import { FarmService } from "src/app/services/farm.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { identifierModuleUrl } from "@angular/compiler";
 
 @Component({
@@ -17,11 +17,20 @@ export class FarmComponent implements OnInit, AfterViewInit {
       loading: false,
       error: "",
     },
+    tabs: {
+      ["racks"]: { icon: "table", url: "racks" },
+      ["measurements"]: { icon: "analytics", url: "measurements" },
+      ["agenda"]: { icon: "task--view", url: "agenda" },
+    },
   };
+
+  selectedRack: string;
+  isOutletting: boolean = false;
 
   constructor(
     private farmService: FarmService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   get farm() {
@@ -67,5 +76,16 @@ export class FarmComponent implements OnInit, AfterViewInit {
         console.log(e);
       })
       .finally(() => (this.cache.farm.loading = false));
+  }
+
+  openRackDetail(rack: IRackStub) {
+    this.selectedRack = rack._id;
+    this.router.navigate([
+      `/farms/${this.cache.farm.data._id}/racks/${rack._id}`,
+    ]);
+  }
+
+  asIsOrder(a, b) {
+    return 1;
   }
 }

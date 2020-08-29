@@ -1,8 +1,9 @@
-import { ICropStub, ICrop, DataModel, IRecordable, GrowthPhase } from "@cxss/interfaces";
+import { ICropStub, ICrop, DataModel, IRecordable, GrowthPhase, NodeType } from "@cxss/interfaces";
 import { cypher, sessionable } from "../../common/dbs";
 import Recordable from "./Recordable.model";
 import { Transaction } from "neo4j-driver";
 import Species from "./Species.model";
+import Node from "../Node.model";
 
 type TCrop = ICrop | ICropStub;
 
@@ -29,8 +30,6 @@ const read = async <T extends TCrop>(
   dataModel: DataModel = DataModel.Stub
 ): Promise<T> => {
   let data;
-
-  console.log("crop ", _id);
   switch (dataModel) {
     case DataModel.Full:
     case DataModel.Stub: {
@@ -67,13 +66,7 @@ const reduce = <K extends TCrop>(data: TCrop, dataModel: DataModel = DataModel.S
 };
 
 const remove = async (_id: string, txc?: Transaction) => {
-  await sessionable(async (t: Transaction) => {
-    await t.run(
-      ` MATCH (r:Crop {_id:$cid})
-        DETACH DELETE r`,
-      { cid: _id }
-    );
-  }, txc);
+  await Node.remove(_id, NodeType.Crop, txc);
 };
 
 export default { create, read, reduce, remove };

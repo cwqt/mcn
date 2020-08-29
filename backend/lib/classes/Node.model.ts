@@ -43,8 +43,7 @@ const remove = async (_id: string, nodeType: NodeType, txc?: Transaction) => {
   return sessionable(async (t: Transaction) => {
     await t.run(
       ` MATCH (n:${nodeType ? capitalize(nodeType) : "Node"} {_id:$id})
-        DETACH DELETE d
-        RETURN p{._id, .type}`,
+        DETACH DELETE n`,
       {
         id: _id,
       }

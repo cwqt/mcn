@@ -15,11 +15,11 @@ import { SelectionModel } from "@angular/cdk/collections";
 import { MatTableDataSource } from "@angular/material/table";
 
 @Component({
-  selector: "app-device-list",
-  templateUrl: "./device-list.component.html",
-  styleUrls: ["./device-list.component.scss"],
+  selector: "app-devices",
+  templateUrl: "./devices.component.html",
+  styleUrls: ["./devices.component.scss"],
 })
-export class DeviceListComponent implements OnInit {
+export class DevicesComponent implements OnInit {
   selectedId: string;
   selection = new SelectionModel<IDeviceStub>(true, []);
   dataSource = new MatTableDataSource<IDeviceStub>();

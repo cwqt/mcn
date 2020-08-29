@@ -1,5 +1,6 @@
 export * from "./Node.model";
 export * from "./Orgs.model";
+export * from "./Dashboard.model";
 
 // export * from './Users/Post.model';
 export * from "./Users/User.model";

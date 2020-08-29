@@ -1,8 +1,0 @@
-<div class="farm-container" *ngIf="cache.farm.data">
-  <ui-section-header [title]="farm.name" [subtitle]="'Created ' + (farm.created_at | amTimeAgo)"></ui-section-header>
-
-  <div class="rack-thumb" *ngFor="let rack of farm.racks">
-    <h1>{{rack.name}} <span>({{rack.crops.length}} crops)</span></h1>
-    <ui-chip color="green" *ngFor="let species of cache.farm.racks[rack.name]">{{species}}</ui-chip>
-  </div>
-</div>

@@ -6,24 +6,32 @@
   flex-flow: row;
 }
 
+.farms-section-wrapper,
 .farm-info-wrapper {
-  width: 100%;
-  height: 100%;
+  margin: 20px 30px;
+}
+
+.farms-section-wrapper {
+  &.smaller {
+    width: 20%;
+  }
+  .farms-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
 
 .farm-cards-wrapper {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  margin: 10px;
-  &.outletting {
+  &.smaller {
     flex-flow: column;
-    align-items: flex-start;
-    width: 33%;
     .farm-card {
       width: 100%;
       flex: none;
-      margin-bottom: 0;
+      margin: 0 0 10px 0;
       .card-image,
       .card-actions {
         display: none;
@@ -33,16 +41,18 @@
 }
 
 .farm-card {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
   background-color: white;
   flex: 0 1 calc(33% - 2.5px);
   &:not(:nth-child(3n + 3)) {
-    margin-right: 0;
+    margin-left: 0;
   }
   margin: 5px;
   margin-bottom: auto;
   display: flex;
   flex-flow: column;
   border: 2px solid transparent;
+  background-clip: border-box;
   &.selected {
     border: 2px solid #0f62fe;
   }
@@ -105,20 +115,10 @@
   }
 }
 
-ui-section-header ::ng-deep .section-header-wrapper {
-  background-color: #212121;
-  h1,
-  p {
-    color: white !important;
-  }
+.farm-info-wrapper {
+  flex: 1;
 }
 
-ui-section-header {
-  position: relative;
-  ui-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 15px;
-  }
+.hidden {
+  display: none;
 }

@@ -42,3 +42,7 @@ export const readRackCrops = async (req: Request): Promise<ICropStub[]> => {
 
   return crops;
 };
+
+export const readRack = async (req: Request): Promise<IRack> => {
+  return await Rack.read(req.params.rid, DataModel.Full);
+};
