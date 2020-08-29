@@ -21,7 +21,9 @@ import { validate } from "../common/validate";
 import { IResLocals, Access } from "../mcnr";
 import { Record } from "neo4j-driver";
 import { Types } from "mongoose";
+
 import Dashboard from "../classes/Dashboard/Dashboard.model";
+import DashboardItem from "../classes/Dashboard/DashboardItem.model";
 
 export const validators = {
   createOrg: validate([body("name").not().isEmpty().trim()]),
@@ -195,7 +197,18 @@ export const getDashboard = async (req: Request): Promise<IDashboard> => {
 };
 
 export const addItemToDashboard = async (req: Request): Promise<IDashboardItem> => {
-  return {} as IDashboardItem;
+  const item: IDashboardItem = {
+    _id: new Types.ObjectId().toHexString(),
+    created_at: Date.now(),
+    type: NodeType.DashboardItem,
+    title: req.body.title,
+    position: req.body.position,
+    chart_type: req.body.chart_type,
+    period: req.body.period,
+    source_fields: req.body.source_fields,
+  };
+
+  return await DashboardItem.create(item, req.params.oid);
 };
 
 export const updateDashboardItem = async (req: Request): Promise<IDashboardItem> => {

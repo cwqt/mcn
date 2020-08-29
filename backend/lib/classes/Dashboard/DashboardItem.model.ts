@@ -3,40 +3,41 @@ import { sessionable, cypher } from "../../common/dbs";
 import { Transaction } from "neo4j-driver";
 import { capitalize } from "../../controllers/Node.controller";
 
-const create = async (data: IDashboardItem, dashboard_id: string): Promise<IDashboardItem> => {
-  let body = <any>data;
+const create = async (data: IDashboardItem, org_id: string): Promise<IDashboardItem> => {
+  let body = <any>Object.assign({}, data);
   //parse into json for object storage
   body.position = JSON.stringify(body.position);
   body.source_fields = JSON.stringify(body.source_fields);
 
   let res = await cypher(
-    ` MATCH (d:Dashboard {_id:$did})
+    ` MATCH (:${capitalize(NodeType.Organisation)} {_id:$oid})-[:HAS_DASHBOARD]->(d:${capitalize(
+      NodeType.Dashboard
+    )})
       WHERE d IS NOT NULL
-      CREATE (di:DashboardItem $body)<-[:HAS_ITEM]-(d)
+      CREATE (di:${capitalize(NodeType.DashboardItem)} $body)<-[:HAS_ITEM]-(d)
       RETURN di`,
     {
-      did: dashboard_id,
+      oid: org_id,
       body: body,
     }
   );
 
-  let di = res.records[0].get("di").properties;
-  return reduce(di);
+  return reduce(data);
 };
 
 const read = async (_id: string): Promise<IDashboardItem> => {
   let data;
   let res = await cypher(
-    ` MATCH (d:DashboardItem {_id:$diid})
+    ` MATCH (d:${capitalize(NodeType.DashboardItem)} {_id:$diid})
       RETURN d`,
     { diid: _id }
   );
 
   data = <IDashboardItem>res.records[0].get("d").properties;
+
   //parse back into object from json
   data.source_fields = JSON.parse(<any>data.source_fields);
-  data.position = JSON.parse(<any>data.source_fields);
-
+  data.position = JSON.parse(<any>data.position);
   return reduce(data);
 };
 
