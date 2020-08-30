@@ -12,6 +12,7 @@ import {
   IApiKeyPrivate,
   NodeType,
   IDeviceProperty,
+  INodeGraph,
 } from "@cxss/interfaces";
 
 @Injectable({
@@ -59,27 +60,32 @@ export class DeviceService {
       .toPromise();
   }
 
-  getLatestMeasurement(user_id: string, device_id: string) {
-    // return this.http
-    //   .get<IMeasurementModel>(
-    //     `/api/users/${user_id}/devices/${device_id}/measurements?page=1&per_page=1`
-    //   )
-    //   .toPromise();
-  }
-
   getMeasurements(user_id: string, device_id: string) {
     return this.http
       .get(`/api/users/${user_id}/devices/${device_id}/measurements`)
       .toPromise();
   }
 
-  requestMeasurementsUpdate(user_id: string, device_id: string) {}
-
   getTaskRoutines(user_id: string, device_id: string): Promise<ITaskRoutine[]> {
     return this.http
       .get<ITaskRoutine[]>(
         `/api/users/${user_id}/devices/${device_id}/routines`
       )
+      .toPromise();
+  }
+
+  getPropertyAssignmentsGraph(device_id: string): Promise<INodeGraph> {
+    return this.http
+      .get<INodeGraph>(`/api/devices/${device_id}/properties/graph`)
+      .toPromise();
+  }
+
+  assignManyProperties(
+    device_id: string,
+    assignments: { [property: string]: string }
+  ) {
+    return this.http
+      .post(`/api/devices/${device_id}/properties/assign`, assignments)
       .toPromise();
   }
 

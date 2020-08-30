@@ -43,6 +43,11 @@ export class DeviceComponent implements OnInit {
       loading: false,
       error: "",
     },
+    propAssignments: {
+      data: undefined,
+      loading: false,
+      error: "",
+    },
     status: {
       data: undefined,
       loading: false,
@@ -66,7 +71,8 @@ export class DeviceComponent implements OnInit {
     this.route.params
       .subscribe(async (params) => {
         await this.getDevice(params.did);
-        this.getDeviceStatus(params.did);
+        // this.getDeviceStatus(params.did);
+        await this.getPropAssignmentsGraph(params.did);
         // this.getDeviceMeasurements();
         // this.getDeviceSensors();
         this.cache.device.loading = false;
@@ -102,8 +108,15 @@ export class DeviceComponent implements OnInit {
       .finally(() => (this.cache.status.loading = false));
   }
 
-  tags = ["Device", "I<3Plants", "Wemos D1 Mini"];
-
-  addTag(tag: string) {}
-  removeTag(tag: string) {}
+  getPropAssignmentsGraph(device_id: string) {
+    this.cache.propAssignments.loading = true;
+    return this.deviceService
+      .getPropertyAssignmentsGraph(device_id)
+      .then((res) => {
+        console.log(res);
+        this.cache.propAssignments.data = res;
+      })
+      .catch((e) => (this.cache.propAssignments.error = e))
+      .finally(() => (this.cache.propAssignments.loading = false));
+  }
 }

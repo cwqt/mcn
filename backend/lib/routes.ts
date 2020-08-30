@@ -21,7 +21,9 @@ import {
     ISpecies,
     ISpeciesStub,
     IDashboard,
-    IDashboardItem
+    IDashboardItem,
+    IAggregateData,
+    INodeGraph
 } from "@cxss/interfaces";
 import { Access } from "./mcnr";
 
@@ -99,6 +101,8 @@ mcnr.get     <IDP<NT.State>[]>  ("/devices/:did/states",               Device.re
 mcnr.get     <IDP<NT.Metric>[]> ("/devices/:did/metrics",              Device.readProperties(NodeType.Metric),  [Access.OrgEditor],         null,                           deviceDef);
 mcnr.post    <void>             ("/devices/:did/sensors/:id/assign",   Device.assignProp(NT.Sensor),            [Access.OrgEditor],         Device.validators.assignProp,   deviceDef);
 mcnr.post    <void>             ("/devices/:did/states/:id/assign",    Device.assignProp(NT.State),             [Access.OrgEditor],         Device.validators.assignProp,   deviceDef);
+mcnr.post    <void>             ("/devices/:did/properties/assign",    Device.assignManyProps,                  [Access.OrgMember]);
+mcnr.get     <INodeGraph>       ("/devices/:did/properties/graph",     Device.readPropGraph,                    [Access.OrgMember]);
 // mcnr.get                     ("/devices/:did/sensors/:pid",         Device.readPropertyData(NodeType.Sensor),[Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get                     ("/devices/:did/states/:pid",          Device.readPropertyData(NodeType.State), [Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get                     ("/devices/:did/metrics/:pid",         Device.readPropertyData(NodeType.Metric),[Access.OrgEditor],         null,                           deviceDef);
@@ -157,7 +161,8 @@ mcnr.get                        ("/species/:sid/task_series",          Species.r
 // IoT -------------------------------------------------------------------------------------------
 mcnr.get                        ("/iot/time",                          IoT.getUnixEpoch,                          [Access.None]);
 mcnr.post                       ('/iot/devices/:did',                  IoT.createMeasurementAsDevice,             [Access.OrgMember],       IoT.validators.createMeasurementAsDevice)
-mcnr.get<IMeasurementResult>    ("/iot/data",                          IoT.getMeasurements,                       [Access.Authenticated],   IoT.validators.getMeasurements);
+mcnr.get<IMeasurementResult>    ("/iot/data",                          IoT.getMeasurements(),                     [Access.Authenticated],   IoT.validators.getMeasurements);
+mcnr.get<IAggregateData>        ("/iot/data/aggregate",                IoT.getAggregateData,                      [Access.OrgMember]);
 
 // TEST -------------------------------------------------------------------------------------------
 mcnr.post("/test/drop", async () => {

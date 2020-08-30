@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 
 import { ErrorHandler } from "../../common/errorHandler";
 import { HTTP } from "../../common/http";
-import { IDeviceSensor, ITaskRoutine, ITask, TaskState } from "@cxss/interfaces";
+import { ITaskRoutine, ITask, TaskState, NodeType } from "@cxss/interfaces";
 
 export const getTaskRoutines = async (req: Request, res: Response) => {
   let result = await cypher(
@@ -34,6 +34,7 @@ export const createTaskRoutine = async (req: Request, res: Response) => {
     _id: Types.ObjectId().toHexString(),
     name: req.body.name,
     cron: req.body.cron,
+    type: NodeType.TaskRoutine,
     timezone: req.body.interval,
     execution_count: 0,
     created_at: Date.now(),
@@ -72,6 +73,7 @@ export const createTaskInRoutine = async (req: Request, res: Response) => {
     _id: Types.ObjectId().toHexString(),
     state: TaskState.Inactive,
     name: req.body.name,
+    type: NodeType.Task,
     command: req.body.command,
     created_at: Date.now(),
     error: "",

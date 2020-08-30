@@ -22,6 +22,9 @@ import {
   IDeviceProperty,
   DataModel,
   Paginated,
+  INodeGraphItem,
+  INodeGraph,
+  INode,
 } from "@cxss/interfaces";
 import Device from "../../classes/IoT/Device.model";
 // import ApiKey from "../../classes/IoT/ApiKey.model";
@@ -104,22 +107,38 @@ export const updateApiKey = async (req: Request): Promise<IApiKey> => {
 
 export const deleteApiKey = async (req: Request) => {};
 
-export const assignProp = (propType: NodeType.Sensor | NodeType.State) => {
-  return async (req: Request) => {
-    const assignableNodeType: NodeType = req.body.assignableType;
-    const assignableId: string = req.body.assignableId;
+export const assignManyProps = async (req: Request) => {
+  // 1:1 mapping in req.body
+  // state-1dhc8: farm-dy2nc
+  // sensor-2cadl: rack-3odf
+  await Promise.all(
+    Object.entries(req.body).map(([prop, assignable]) => {
+      let p = prop.split("-");
+      let a = (<string>assignable).split("-");
+      return assignProp(p[0] as NodeType.Sensor | NodeType.State, p[1], a[0] as NodeType, a[1]);
+    })
+  );
 
-    const prop = DeviceProperty.read(req.params.id, propType);
+  return;
+};
+
+export const assignProp = (
+  propType: NodeType.Sensor | NodeType.State,
+  propId?: string,
+  assignableType?: NodeType,
+  assignableId?: string
+) => {
+  return async (req: Request) => {
+    const assignableNodeType: NodeType = assignableType || req.body.assignableType;
+    const assignableNodeId: string = assignableId || req.body.assignableId;
+
+    const prop = DeviceProperty.read(propId || req.params.id, propType);
     if (!prop) throw new ErrorHandler(HTTP.NotFound, `DeviceProperty does not exist`);
 
     const res = await cypher(
-      `
-      MATCH (a:${capitalize(assignableNodeType)} {_id:$aid})
-      RETURN a
-    `,
-      {
-        aid: assignableId,
-      }
+      ` MATCH (a:${capitalize(assignableNodeType)} {_id:$aid})
+        RETURN a`,
+      { aid: assignableNodeId }
     );
 
     if (!res.records.length)
@@ -134,7 +153,7 @@ export const assignProp = (propType: NodeType.Sensor | NodeType.State) => {
     `,
       {
         pid: req.params.id,
-        aid: assignableId,
+        aid: assignableNodeId,
       }
     );
   };
@@ -280,4 +299,59 @@ export const getStatus = async (req: Request) => {
   `);
   console.log(r.groups());
   return r.groups();
+};
+
+export const readPropGraph = async (req: Request): Promise<INodeGraph> => {
+  let graph: INodeGraph = {
+    sources: {},
+    data: [],
+  };
+
+  //https://stackoverflow.com/questions/21896382/neo4j-cypher-nested-collect
+  const res = await cypher(
+    ` MATCH (d:Device {_id:$did})
+      OPTIONAL MATCH (d)-[:HAS_PROPERTY]->(p)
+      WITH d, p
+      OPTIONAL MATCH (p)-[:INTENDED_FOR]->(r)
+      WHERE r IS NOT NULL
+      WITH d,p,{name: r.name, _id:r._id, type: r.type} as recordables
+      WITH d,{name: p.name, _id:p._id, type: p.type, recordables: collect(recordables)} as properties
+      WITH {name: d.name, _id:d._id, properties: collect(properties)} as device
+      RETURN device`,
+    { did: req.params.did }
+  );
+
+  res.records[0].get("device").properties.forEach((p: any) => {
+    if (!Object.keys(graph.sources).includes(`${p.type}-${p._id}`)) {
+      graph.sources[`${p.type}-${p._id}`] = { name: p.name };
+    }
+
+    graph.data.push({
+      from: `${NodeType.Device}-${req.params.did}`,
+      to: `${p.type}-${p._id}`,
+      custom: {
+        relationship: "HAS_PROPERTY",
+      },
+    });
+
+    p.recordables
+      .filter((r: any) => r.type !== null)
+      .forEach((r: any) => {
+        if (!Object.keys(graph.sources).includes(`${r.type}-${r._id}`)) {
+          graph.sources[`${r.type}-${r._id}`] = { name: r.name };
+        }
+
+        graph.data.push({
+          from: `${p.type}-${p._id}`,
+          to: `${r.type}-${r._id}`,
+          custom: {
+            relationship: "INTENDED_FOR",
+          },
+        });
+      });
+  });
+
+  console.log(graph);
+
+  return graph;
 };

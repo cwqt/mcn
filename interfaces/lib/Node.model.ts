@@ -1,5 +1,6 @@
 import { NodeType } from "./Types/Nodes.types";
 
+export type Primitive = string | boolean | number;
 export type Idless<T> = Omit<T, "_id">;
 
 export interface INode {
@@ -14,4 +15,15 @@ export interface Paginated<T> {
   prev: string;
   total: number;
   pages: number;
+}
+
+export interface INodeGraph {
+  sources: { [source: string]: { name: string } };
+  data: INodeGraphItem[];
+}
+
+export interface INodeGraphItem {
+  from: string;
+  to: string;
+  custom: { [index: string]: Primitive };
 }

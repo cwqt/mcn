@@ -47,7 +47,6 @@ import { HeaderUserButtonComponent } from "./components/app/header-bar/header-us
 
 import { CatalogComponent } from "./routes/catalog/catalog.component";
 import { SpeciesListComponent } from "./routes/catalog/species-list/species-list.component";
-import { DashboardComponent } from "./routes/index/dashboard/dashboard.component";
 import { DeviceComponent } from "./routes/index/devices/device/device.component";
 import { ScheduledTasksComponent } from "./routes/index/devices/device/scheduled-tasks/scheduled-tasks.component";
 import { DeviceControlComponent } from "./routes/index/devices/device/device-control/device-control.component";
@@ -58,7 +57,10 @@ import { FarmComponent } from "./routes/index/farms/farm/farm.component";
 import { RackComponent } from "./routes/index/farms/racks/rack/rack.component";
 import { CropComponent } from "./routes/index/farms/crop/crop.component";
 import { RacksComponent } from "./routes/index/farms/racks/racks.component";
+import { PropAssignmentsComponent } from "./routes/index/devices/device/prop-assignments/prop-assignments.component";
 
+import { DashboardComponent } from "./routes/index/dashboard/dashboard.component";
+import { DashboardItemComponent } from "./routes/index/dashboard/dashboard-item/dashboard-item.component";
 @NgModule({
   declarations: [
     AppComponent,
@@ -76,6 +78,7 @@ import { RacksComponent } from "./routes/index/farms/racks/racks.component";
     HeaderBarUserMenuComponent,
     ScheduledTasksComponent,
     DeviceControlComponent,
+    PropAssignmentsComponent,
     FooterComponent,
     PropertyListComponent,
     SidebarNavComponent,
@@ -91,6 +94,7 @@ import { RacksComponent } from "./routes/index/farms/racks/racks.component";
     CatalogComponent,
     SpeciesListComponent,
     DashboardComponent,
+    DashboardItemComponent,
     FarmComponent,
     RacksComponent,
     RackComponent,

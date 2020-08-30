@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from "@angular/core";
+import { IDashboardItem } from "@cxss/interfaces";
+import { IoTService } from "src/app/services/iot.service";
 
 @Component({
   selector: "app-dashboard-item",
@@ -8,7 +10,20 @@ import { Component, OnInit, Input } from "@angular/core";
 export class DashboardItemComponent implements OnInit {
   @Input() item: IDashboardItem;
 
-  constructor() {}
+  cache = {
+    aggregateData: {
+      data: null,
+      loading: false,
+      error: false,
+    },
+  };
+
+  constructor(private iotService: IoTService) {}
 
   ngOnInit(): void {}
+
+  getAggregateData() {
+    this.cache.aggregateData.loading = true;
+    this.iotService.getAggregateData(this.item.aggregation_request);
+  }
 }

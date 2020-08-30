@@ -24,6 +24,8 @@ import {
   IoTState,
   IMeasurementResult,
   IMeasurement,
+  IAggregateData,
+  Unit,
 } from "@cxss/interfaces";
 // import { Farm } from "../../classes/Hydroponics/Farm.model";
 import { paginate } from "../Node.controller";
@@ -120,41 +122,58 @@ export const validators = {
 
 // ===============================================================================================================================
 
-export const getMeasurements = async (req: Request): Promise<IMeasurementResult> => {
-  const creator = req.query.creator;
-  const property = req.query.property;
-  const intention = req.query.intention;
-  const measurements = (<string[]>req.query.measurements)[0].split(",");
-  const start_date = req.query.start_date;
-  const end_date = req.query.end_date || new Date().toISOString();
+export const getAggregateData = async (req: Request): Promise<IAggregateData> => {
+  let data: IAggregateData = {};
+  let body: { [recordable: string]: [IMeasurement | IoTState | IoTMeasurement] } =
+    req.body.source_fields;
 
-  let whereables: string[] = [];
-  if (intention) whereables.push(`intention='${intention}'`);
-  if (start_date) whereables.push(`time > '${start_date}'`);
-  if (end_date) whereables.push(`time < '${end_date}'`);
-  if (creator) whereables.push(`creator='${creator}'`);
-  if (property) whereables.push(`property='${property}'`);
+  return data;
+};
 
-  const q = `SELECT * from ${measurements.join(",")}${
-    whereables.length ? "\nWHERE " + whereables.join(" and ") : ";"
-  }`;
+export const getMeasurements = (
+  creator?: string,
+  property?: string,
+  intention?: string,
+  measurements?: string[],
+  start_date?: string,
+  end_date?: string
+) => {
+  return async (req: Request): Promise<IMeasurementResult> => {
+    creator = creator || (req.query.creator as string);
+    property = property || (req.query.property as string);
+    intention = intention || (req.query.intention as string);
+    measurements = measurements || (<string[]>req.query.measurements)[0].split(",");
+    start_date = start_date || (req.query.start_date as string);
+    end_date = end_date || (req.query.end_date as string) || new Date().toISOString();
 
-  // execute query & format into IMeasurement
-  // {air_temperature:{times:[Date, Date, Date], values:[Value, Value, Value]}}
-  return (await dbs.influx.query(q))
-    .groups()
-    .reduce((acc: { [index: string]: IMeasurement }, curr) => {
-      acc[curr.name] = curr.rows.reduce<IMeasurement>(
-        (a, c: any) => {
-          a.values.push(c.value);
-          a.times.push(c.time);
-          return a;
-        },
-        { times: [], values: [] }
-      );
-      return acc;
-    }, {});
-  //TODO: convert units
+    let whereables: string[] = [];
+    if (intention) whereables.push(`intention='${intention}'`);
+    if (start_date) whereables.push(`time > '${start_date}'`);
+    if (end_date) whereables.push(`time < '${end_date}'`);
+    if (creator) whereables.push(`creator='${creator}'`);
+    if (property) whereables.push(`property='${property}'`);
+
+    const q = `SELECT * from ${measurements.join(",")}${
+      whereables.length ? "\nWHERE " + whereables.join(" and ") : ";"
+    }`;
+
+    // execute query & format into IMeasurement
+    // {air_temperature:{times:[Date, Date, Date], values:[Value, Value, Value]}}
+    return (await dbs.influx.query(q))
+      .groups()
+      .reduce((acc: { [index: string]: IMeasurement }, curr) => {
+        acc[curr.name] = curr.rows.reduce<IMeasurement>(
+          (a, c: any) => {
+            a.values.push(c.value);
+            a.times.push(c.time);
+            return a;
+          }, //FIXME: units
+          { times: [], values: [], unit: Unit.Boolean }
+        );
+        return acc;
+      }, {});
+    //TODO: convert units
+  };
 };
 
 export const createMeasurementAsDevice = async (req: Request) => {

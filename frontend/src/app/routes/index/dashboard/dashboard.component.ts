@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { OrganisationService } from "src/app/services/organisation.service";
+import { IDashboard, IOrg } from "@cxss/interfaces";
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
@@ -10,8 +11,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     dashboard: {
       data: null,
       editing: false,
+      loading: false,
+      error: "",
     },
   };
+
+  org: IOrg;
 
   position = { top: 2, left: 2, height: 1, width: 1 };
 
@@ -22,26 +27,24 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   constructor(private orgService: OrganisationService) {}
 
   ngOnInit(): void {
-    this.cache.dashboard.data = {
-      rows: 3,
-      columns: 6,
-      items: [
-        {
-          title: "first dashboard item!",
-          position: { top: 1, left: 1, width: 2, height: 2 },
-          data: [],
-          sources: [],
-          type: "line-graph",
-        },
-      ],
-    };
+    this.orgService.currentOrg.subscribe((o) => (this.org = o));
+    this.getDashboard();
   }
 
   ngAfterViewInit() {}
 
   addToGrid() {}
 
-  getDashboard() {}
+  getDashboard() {
+    this.cache.dashboard.loading = true;
+    this.orgService
+      .getDashboard()
+      .then((d: IDashboard) => {
+        this.cache.dashboard.data = d;
+      })
+      .catch((e) => (this.cache.dashboard.error = e.message))
+      .finally(() => (this.cache.dashboard.loading = false));
+  }
 
   onWidgetChange(event) {
     console.log(event);

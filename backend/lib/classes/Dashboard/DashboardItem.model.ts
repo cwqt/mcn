@@ -9,7 +9,7 @@ const create = async (data: IDashboardItem, org_id: string): Promise<IDashboardI
   body.position = JSON.stringify(body.position);
   body.source_fields = JSON.stringify(body.source_fields);
 
-  let res = await cypher(
+  const res = await cypher(
     ` MATCH (:${capitalize(NodeType.Organisation)} {_id:$oid})-[:HAS_DASHBOARD]->(d:${capitalize(
       NodeType.Dashboard
     )})
@@ -27,16 +27,15 @@ const create = async (data: IDashboardItem, org_id: string): Promise<IDashboardI
 
 const read = async (_id: string): Promise<IDashboardItem> => {
   let data;
-  let res = await cypher(
+  const res = await cypher(
     ` MATCH (d:${capitalize(NodeType.DashboardItem)} {_id:$diid})
       RETURN d`,
     { diid: _id }
   );
-
   data = <IDashboardItem>res.records[0].get("d").properties;
 
   //parse back into object from json
-  data.source_fields = JSON.parse(<any>data.source_fields);
+  data.aggregation_request = JSON.parse(<any>data.aggregation_request);
   data.position = JSON.parse(<any>data.position);
   return reduce(data);
 };

@@ -6,6 +6,7 @@ import {
   Paginated,
   IFarmStub,
   IOrgEnv,
+  IDashboard,
 } from "@cxss/interfaces";
 import { BehaviorSubject } from "rxjs";
 import { tap } from "rxjs/operators";
@@ -60,9 +61,11 @@ export class OrganisationService {
       .toPromise();
   }
 
-  // getDashboard(): Promise<IDashboard> {
-  //   return this.http.get<IDashboard>(`/api/orgs/${this.orgId}/dashboard`);
-  // }
+  getDashboard(): Promise<IDashboard> {
+    return this.http
+      .get<IDashboard>(`/api/orgs/${this.orgId}/dashboard`)
+      .toPromise();
+  }
 
   getEnvironment(_id: string): Promise<IOrgEnv> {
     return this.http.get<IOrgEnv>(`/api/orgs/${_id}/environment`).toPromise();

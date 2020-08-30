@@ -38,6 +38,13 @@
 
   <div class="device-stats" *ngIf="cache.device.data">
     <mat-accordion>
+      <ui-loadable-panel description="Assign device properties to recordables" variant="flat" icon="api"
+        title="Properties" [hasData]="true">
+        <app-prop-assignments *ngIf="cache.propAssignments.data" [graph]="cache.propAssignments.data"></app-prop-assignments>
+      </ui-loadable-panel>
+
+      <hr>
+
       <ui-loadable-panel description="View metrics, sensor & state data" variant="flat" icon="chart--bar"
         title="Measurements" [hasData]="true">
         <app-property-list [device]="cache.device.data"></app-property-list>

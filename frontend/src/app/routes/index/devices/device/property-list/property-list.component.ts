@@ -15,13 +15,10 @@ import {
 import * as Highcharts from "highcharts";
 
 import {
-  IDevice,
   IDeviceStub,
   IUser,
   IDeviceProperty,
   NodeType,
-  IMeasurement,
-  IoTMeasurement,
   IMeasurementResult,
 } from "@cxss/interfaces";
 
@@ -157,7 +154,7 @@ export class PropertyListComponent implements OnInit, AfterViewInit {
               series: [
                 {
                   name: "Relative Humidity (%)",
-                  data: d[property.data.measures as string].values,
+                  data: d[property.data.measures as string].values as any[],
                   type: "line",
                 },
               ],

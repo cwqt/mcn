@@ -204,8 +204,7 @@ export const addItemToDashboard = async (req: Request): Promise<IDashboardItem> 
     title: req.body.title,
     position: req.body.position,
     chart_type: req.body.chart_type,
-    period: req.body.period,
-    source_fields: req.body.source_fields,
+    aggregation_request: req.body.aggregation_request,
   };
 
   return await DashboardItem.create(item, req.params.oid);

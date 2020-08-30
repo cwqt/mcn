@@ -40,7 +40,7 @@ const read = async (_id: string): Promise<IDashboard> => {
     { did: _id }
   );
 
-  data = <IDashboard>res.records[0].get("d").properties;
+  data = <IDashboard>res.records[0]?.get("d").properties;
   data.items = await Promise.all(
     res.records[0].get("di")?.map((di: INode) => DashboardItem.read(di._id))
   );
