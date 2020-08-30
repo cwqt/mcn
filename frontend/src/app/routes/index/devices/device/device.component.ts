@@ -112,10 +112,7 @@ export class DeviceComponent implements OnInit {
     this.cache.propAssignments.loading = true;
     return this.deviceService
       .getPropertyAssignmentsGraph(device_id)
-      .then((res) => {
-        console.log(res);
-        this.cache.propAssignments.data = res;
-      })
+      .then((res) => (this.cache.propAssignments.data = res))
       .catch((e) => (this.cache.propAssignments.error = e))
       .finally(() => (this.cache.propAssignments.loading = false));
   }

@@ -40,7 +40,7 @@
     <mat-accordion>
       <ui-loadable-panel description="Assign device properties to recordables" variant="flat" icon="api"
         title="Properties" [hasData]="true">
-        <app-prop-assignments *ngIf="cache.propAssignments.data" [graph]="cache.propAssignments.data"></app-prop-assignments>
+        <app-prop-assignments *ngIf="cache.propAssignments.data" [graph]="cache.propAssignments.data" [device]="cache.device.data"></app-prop-assignments>
       </ui-loadable-panel>
 
       <hr>

@@ -1,0 +1,27 @@
+.chart-wrapper {
+  min-width: 0;
+  overflow: hidden;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.assignment-wrapper {
+  padding: 10px;
+  h1 {
+    display: flex;
+    align-items: center;
+    ui-icon {
+      margin-right: 10px;
+    }
+  }
+}
+
+.assigner {
+  display: flex;
+  align-items: center;
+  ui-icon {
+    margin: -10px 10px 0 10px;
+  }
+}

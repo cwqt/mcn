@@ -321,6 +321,12 @@ export const readPropGraph = async (req: Request): Promise<INodeGraph> => {
     { did: req.params.did }
   );
 
+  //insert root node to sources
+  graph.sources[`${NodeType.Device}-${req.params.did}`] = {
+    name: res.records[0].get("device").name,
+  };
+
+  // add all props / recordables into flat node array
   res.records[0].get("device").properties.forEach((p: any) => {
     if (!Object.keys(graph.sources).includes(`${p.type}-${p._id}`)) {
       graph.sources[`${p.type}-${p._id}`] = { name: p.name };
