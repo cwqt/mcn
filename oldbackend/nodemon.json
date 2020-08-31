@@ -1,5 +1,0 @@
-{
-    "watch": ["lib/**/*.ts"],
-    "ext": "ts",
-    "exec": "ts-node ./lib/index.ts"
-}
