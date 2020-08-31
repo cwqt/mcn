@@ -4,7 +4,7 @@
   flex-flow: row;
   .table-wrapper,
   .device-info-wrapper {
-    width: 50%;
+    width: 100%;
     max-height: 100%;
     overflow: scroll;
   }
@@ -40,8 +40,50 @@ mat-paginator {
 
 mat-row,
 mat-header-row {
-  border-left: 4px solid transparent;
+  position: relative;
 }
+
 .active {
-  border-left: 4px solid #105ff9;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border-left: 4px solid #105ff9;
+  }
+}
+
+mat-row.example-detail-row {
+  min-height: 0 !important;
+  overflow: hidden;
+  max-width: 100%;
+  ::ng-deep mat-cell {
+    padding: 0;
+  }
+}
+
+mat-row.example-element-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+mat-row.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-element-row {
+  border-bottom-width: 0;
+}
+
+.example-element-detail {
+  z-index: 999;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  background: #f4f4f4;
+  width: 100%;
+  ::ng-deep app-device {
+    width: 100%;
+  }
 }

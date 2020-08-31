@@ -20,6 +20,7 @@ import {
   IDeviceProperty,
   NodeType,
   IMeasurementResult,
+  IDevice,
 } from "@cxss/interfaces";
 
 import { DeviceService } from "src/app/services/device.service";
@@ -54,8 +55,8 @@ export class PropertyListComponent implements OnInit, AfterViewInit {
 
   @Input() currentUser: IUser;
   @Input() authorUser: IUser;
-  @Input() device: IDeviceStub;
 
+  device: IDevice;
   columnsToDisplay = ["_id", "name", "ref", "value"];
 
   cache: {
@@ -89,6 +90,7 @@ export class PropertyListComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    this.device = this.deviceService.lastActiveDevice.getValue();
     console.log(this.device);
   }
 

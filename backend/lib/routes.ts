@@ -23,7 +23,8 @@ import {
     IDashboard,
     IDashboardItem,
     IAggregateData,
-    INodeGraph
+    IFlatNodeGraph,
+    IFlorableGraph
 } from "@cxss/interfaces";
 import { Access } from "./mcnr";
 
@@ -73,6 +74,7 @@ mcnr.get     <IDashboard>       ("/orgs/:oid/dashboard",               Orgs.getD
 mcnr.post    <IDashboardItem>   ("/orgs/:oid/dashboard/items",         Orgs.addItemToDashboard,                  [Access.OrgEditor]);
 mcnr.put     <IDashboardItem>   ("/orgs/:oid/dashboard/items/:iid",    Orgs.updateDashboardItem,                 [Access.OrgEditor]);
 mcnr.delete  <void>             ("/orgs/:oid/dashboard/items/:iid",    Orgs.deleteDashboardItem,                 [Access.OrgEditor]);
+mcnr.get     <IFlorableGraph>   ("/orgs/:oid/graph",                   Orgs.readRecordablesGraph,                [Access.OrgMember]);
 
 // ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.put     <void>             ("/orgs/:oid/users/:uid/role",         Orgs.editUserRole,                        [Access.OrgAdmin]);
@@ -102,7 +104,7 @@ mcnr.get     <IDP<NT.Metric>[]> ("/devices/:did/metrics",              Device.re
 mcnr.post    <void>             ("/devices/:did/sensors/:id/assign",   Device.assignProp(NT.Sensor),            [Access.OrgEditor],         Device.validators.assignProp,   deviceDef);
 mcnr.post    <void>             ("/devices/:did/states/:id/assign",    Device.assignProp(NT.State),             [Access.OrgEditor],         Device.validators.assignProp,   deviceDef);
 mcnr.post    <void>             ("/devices/:did/properties/assign",    Device.assignManyProps,                  [Access.OrgMember]);
-mcnr.get     <INodeGraph>       ("/devices/:did/properties/graph",     Device.readPropGraph,                    [Access.OrgMember]);
+mcnr.get     <IFlatNodeGraph>   ("/devices/:did/properties/graph",     Device.readPropGraph,                    [Access.OrgMember]);
 // mcnr.get                     ("/devices/:did/sensors/:pid",         Device.readPropertyData(NodeType.Sensor),[Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get                     ("/devices/:did/states/:pid",          Device.readPropertyData(NodeType.State), [Access.OrgEditor],         null,                           deviceDef);
 // mcnr.get                     ("/devices/:did/metrics/:pid",         Device.readPropertyData(NodeType.Metric),[Access.OrgEditor],         null,                           deviceDef);

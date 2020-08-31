@@ -22,8 +22,7 @@ import {
   IDeviceProperty,
   DataModel,
   Paginated,
-  INodeGraphItem,
-  INodeGraph,
+  IFlatNodeGraph,
   INode,
 } from "@cxss/interfaces";
 import Device from "../../classes/IoT/Device.model";
@@ -114,8 +113,13 @@ export const assignManyProps = async (req: Request) => {
   await Promise.all(
     Object.entries(req.body).map(([prop, assignable]) => {
       let p = prop.split("-");
-      let a = (<string>assignable).split("-");
-      return assignProp(p[0] as NodeType.Sensor | NodeType.State, p[1], a[0] as NodeType, a[1]);
+      let a = (<string>assignable)?.split("-") || [null, null];
+      return assignProp(
+        p[0] as NodeType.Sensor | NodeType.State,
+        p[1],
+        a[0] as NodeType,
+        a[1]
+      )(req);
     })
   );
 
@@ -135,27 +139,37 @@ export const assignProp = (
     const prop = DeviceProperty.read(propId || req.params.id, propType);
     if (!prop) throw new ErrorHandler(HTTP.NotFound, `DeviceProperty does not exist`);
 
-    const res = await cypher(
-      ` MATCH (a:${capitalize(assignableNodeType)} {_id:$aid})
-        RETURN a`,
-      { aid: assignableNodeId }
-    );
+    if (assignableNodeId && assignableNodeType) {
+      const res = await cypher(
+        ` MATCH (a:${capitalize(assignableNodeType)} {_id:$aid})
+          RETURN a`,
+        { aid: assignableNodeId }
+      );
 
-    if (!res.records.length)
-      throw new ErrorHandler(HTTP.NotFound, `${capitalize(assignableNodeType)} does not exist`);
+      if (!res.records.length)
+        throw new ErrorHandler(HTTP.NotFound, `${capitalize(assignableNodeType)} does not exist`);
 
-    await cypher(
-      ` MATCH (p:${capitalize(propType)} {_id:$pid})
-        MATCH (a:${capitalize(assignableNodeType)} {_id:$aid})
-        OPTIONAL MATCH (p)-[r:INTENDED_FOR]->()
-        DELETE r
-        CREATE (p)-[:INTENDED_FOR]->(a)
-    `,
-      {
-        pid: req.params.id,
-        aid: assignableNodeId,
-      }
-    );
+      await cypher(
+        ` MATCH (p:${capitalize(propType)} {_id:$pid})
+          MATCH (a:${capitalize(assignableNodeType)} {_id:$aid})
+          OPTIONAL MATCH (p)-[r:INTENDED_FOR]->()
+          DELETE r
+          CREATE (p)-[:INTENDED_FOR]->(a)
+      `,
+        {
+          pid: propId || req.params.id,
+          aid: assignableNodeId,
+        }
+      );
+    } else {
+      // delete assignment
+      await cypher(
+        ` MATCH (p:${capitalize(propType)} {_id:$pid})
+          OPTIONAL MATCH (p)-[r:INTENDED_FOR]-(x)
+          DELETE r `,
+        { pid: propId || req.params.id }
+      );
+    }
   };
 };
 
@@ -290,19 +304,17 @@ export const getStatus = async (req: Request) => {
   );
 
   let m = res.records.map((x) => x.get("p").properties.measures);
-  console.log(m);
-
   let r = await dbs.influx.query(`
     SELECT * FROM ${m.join(",")}
     WHERE creator='${NodeType.Device + "-" + req.params.did}'
     LIMIT 1
   `);
-  console.log(r.groups());
+
   return r.groups();
 };
 
-export const readPropGraph = async (req: Request): Promise<INodeGraph> => {
-  let graph: INodeGraph = {
+export const readPropGraph = async (req: Request): Promise<IFlatNodeGraph> => {
+  let graph: IFlatNodeGraph = {
     sources: {},
     data: [],
   };
@@ -311,10 +323,8 @@ export const readPropGraph = async (req: Request): Promise<INodeGraph> => {
   const res = await cypher(
     ` MATCH (d:Device {_id:$did})
       OPTIONAL MATCH (d)-[:HAS_PROPERTY]->(p)
-      WITH d, p
       OPTIONAL MATCH (p)-[:INTENDED_FOR]->(r)
-      WHERE r IS NOT NULL
-      WITH d,p,{name: r.name, _id:r._id, type: r.type} as recordables
+      WITH d,p, {name: r.name, _id:r._id, type: r.type} as recordables
       WITH d,{name: p.name, _id:p._id, type: p.type, recordables: collect(recordables)} as properties
       WITH {name: d.name, _id:d._id, properties: collect(properties)} as device
       RETURN device`,
@@ -356,8 +366,6 @@ export const readPropGraph = async (req: Request): Promise<INodeGraph> => {
         });
       });
   });
-
-  console.log(graph);
 
   return graph;
 };

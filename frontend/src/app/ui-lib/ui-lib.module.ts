@@ -15,6 +15,8 @@ import { AdmonitionComponent } from "./admonition/admonition.component";
 import { ReactiveFormsModule } from "@angular/forms";
 import { RadioButtonComponent } from "./radio-button/radio-button.component";
 import { ChipComponent } from "./chip/chip.component";
+import { DialogButtonsComponent } from "./dialog-buttons/dialog-buttons.component";
+import { OverlaySpinnerComponent } from "./overlay-spinner/overlay-spinner.component";
 
 export enum ButtonVariants {
   Primary = "primary",
@@ -37,6 +39,8 @@ const allComponents = [
   AdmonitionComponent,
   RadioButtonComponent,
   ChipComponent,
+  DialogButtonsComponent,
+  OverlaySpinnerComponent,
 ];
 
 @NgModule({

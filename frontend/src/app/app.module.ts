@@ -58,6 +58,9 @@ import { RackComponent } from "./routes/index/farms/racks/rack/rack.component";
 import { CropComponent } from "./routes/index/farms/crop/crop.component";
 import { RacksComponent } from "./routes/index/farms/racks/racks.component";
 import { PropAssignmentsComponent } from "./routes/index/devices/device/prop-assignments/prop-assignments.component";
+import { PropAssignDialogComponent } from "./routes/index/devices/device/prop-assignments/prop-assign-dialog/prop-assign-dialog.component";
+import { DeviceMenuComponent } from "./routes/index/devices/device/device-menu/device-menu.component";
+import { DeviceInfoComponent } from "./routes/index/devices/device/device-info/device-info.component";
 
 import { DashboardComponent } from "./routes/index/dashboard/dashboard.component";
 import { DashboardItemComponent } from "./routes/index/dashboard/dashboard-item/dashboard-item.component";
@@ -78,15 +81,18 @@ import { DashboardItemComponent } from "./routes/index/dashboard/dashboard-item/
     HeaderBarUserMenuComponent,
     ScheduledTasksComponent,
     DeviceControlComponent,
+    DeviceInfoComponent,
     PropAssignmentsComponent,
     FooterComponent,
     PropertyListComponent,
+    PropAssignDialogComponent,
     SidebarNavComponent,
     TreeNodeComponent,
     IndexComponent,
     OrganisationsComponent,
     PageComponent,
     CreateOrgComponent,
+    DeviceMenuComponent,
     DevicesComponent,
     OrganisationComponent,
     HeaderUserButtonComponent,

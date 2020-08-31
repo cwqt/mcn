@@ -17,12 +17,19 @@ export interface Paginated<T> {
   pages: number;
 }
 
-export interface INodeGraph {
-  sources: { [source: string]: { name: string } };
-  data: INodeGraphItem[];
+export interface IGraphNode {
+  name: string;
+  _id: string;
+  type: NodeType;
 }
 
-export interface INodeGraphItem {
+export interface IFlatNodeGraph {
+  //farm-as47wic...etc
+  sources: { [source: string]: { name: string } };
+  data: IFlatNodeGraphItem[];
+}
+
+export interface IFlatNodeGraphItem {
   from: string;
   to: string;
   custom: { [index: string]: Primitive };

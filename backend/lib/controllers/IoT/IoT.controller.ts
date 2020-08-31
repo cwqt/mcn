@@ -69,7 +69,6 @@ export const validators = {
 
       //Verify all body refs are in this device's properties
       for (let i = 0; i < Object.keys(body).length; i++) {
-        console.log(Object.keys(body)[i], devicePropMap[device.hardware_model]);
         if (!devicePropMap[device.hardware_model].includes(Object.keys(body)[i])) {
           throw new Error(`Invalid refs in body for device model`);
         }

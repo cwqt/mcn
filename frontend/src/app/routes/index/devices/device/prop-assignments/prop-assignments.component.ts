@@ -1,13 +1,35 @@
-import { Component, OnInit, Input } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 import * as Highcharts from "highcharts";
 import {
-  INodeGraph,
+  IFlatNodeGraph,
   NodeType,
   IDevice,
-  INodeGraphItem,
+  IFlatNodeGraphItem,
+  IFlorableGraph,
 } from "@cxss/interfaces";
 import networkgraph from "highcharts/modules/networkgraph";
+import { MatDialog } from "@angular/material/dialog";
+import { PropAssignDialogComponent } from "./prop-assign-dialog/prop-assign-dialog.component";
+import { DeviceService } from "src/app/services/device.service";
 networkgraph(Highcharts);
+
+const colourMap = {
+  [NodeType.Sensor]: "#da7294",
+  [NodeType.State]: "#579480",
+  [NodeType.Metric]: "#a5abb6",
+  [NodeType.Device]: "#56c7e3",
+  [NodeType.Farm]: "#f16667",
+  [NodeType.Rack]: "#ffc454",
+  [NodeType.Crop]: "#8dcc93",
+};
 
 @Component({
   selector: "app-prop-assignments",
@@ -16,41 +38,38 @@ networkgraph(Highcharts);
 })
 export class PropAssignmentsComponent implements OnInit {
   Highcharts: typeof Highcharts = Highcharts; // required
+  device: IDevice;
+  florableGraph: IFlorableGraph;
+  graph: IFlatNodeGraph;
 
-  @Input() graph: INodeGraph;
-  @Input() device: IDevice;
-  chartData;
+  loading: boolean;
+  error: string;
+  assignmentGraph: { [property: string]: string } = {};
+  chartData; //Highcharts.Options //bad typing
 
-  constructor() {}
-
-  chart;
-  filteredGraph: INodeGraphItem[];
-
-  saveInstance(chartInstance: any) {
-    this.chart = chartInstance;
-    console.log(this.chart);
-    setTimeout(() => {
-      this.chart.reflow();
-    }, 0);
-  }
+  constructor(private deviceService: DeviceService, public dialog: MatDialog) {}
 
   ngOnInit(): void {
-    const colourMap = {
-      [NodeType.Sensor]: "#da7294",
-      [NodeType.State]: "#579480",
-      [NodeType.Metric]: "#a5abb6",
-      [NodeType.Device]: "#56c7e3",
-      [NodeType.Farm]: "#f16667",
-      [NodeType.Rack]: "#ffc454",
-      [NodeType.Crop]: "#8dcc93",
-    };
+    this.device = this.deviceService.lastActiveDevice.getValue();
+    this.initialise();
+  }
 
-    this.filteredGraph = this.graph.data.filter((x) => {
-      let type = x.from.split("-")[0];
-      if ([NodeType.Sensor, NodeType.State].includes(type as NodeType))
-        return true;
-      return false;
-    });
+  async initialise() {
+    await this.getPropAssignmentsGraph();
+    //get the mapping between sources & recordables
+    this.assignmentGraph = Object.keys(this.graph.sources).reduce(
+      (acc, curr) => {
+        let type = curr.split("-")[0];
+        if ([NodeType.State, NodeType.Sensor].includes(type as NodeType)) {
+          acc[curr] =
+            this.graph.data.find(
+              (x) => x.from == curr && x.to !== `device-${this.device._id}`
+            )?.to || "Not assigned";
+        }
+        return acc;
+      },
+      {}
+    );
 
     let graph = this.graph as any; //for formatter context binding
     graph.data = graph.data.map((x) => {
@@ -72,8 +91,6 @@ export class PropAssignmentsComponent implements OnInit {
       marker: { radius: 35 },
     });
 
-    console.log(graph);
-
     this.chartData = {
       chart: {
         type: "networkgraph",
@@ -87,7 +104,7 @@ export class PropAssignmentsComponent implements OnInit {
       plotOptions: {
         networkgraph: {
           layoutAlgorithm: {
-            enableSimulation: true,
+            enableSimulation: false, //too laggy
             initialPositionRadius: 2,
             linkLength: 35,
           },
@@ -121,5 +138,39 @@ export class PropAssignmentsComponent implements OnInit {
         },
       ],
     };
+  }
+
+  getPropAssignmentsGraph(isRefresh?: boolean, event?) {
+    this.loading = true;
+    return this.deviceService
+      .getPropertyAssignmentsGraph(this.device._id)
+      .then((res) => {
+        if (event) this.assignmentGraph[event[0]] = event[1];
+        this.graph = res;
+      })
+      .catch((e) => (this.error = e))
+      .finally(() => (this.loading = false));
+  }
+
+  openAssignmentDialog(property: string, recordable: string) {
+    const dialogRef = this.dialog.open(PropAssignDialogComponent, {
+      data: {
+        property: property,
+        recordable: recordable,
+        sources: this.graph.sources,
+        device: this.device,
+      },
+      autoFocus: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && `${result.type}-${result?._id}` !== recordable) {
+        //assignment change
+        this.getPropAssignmentsGraph(true, [
+          property,
+          `${result.type}-${result?._id}`,
+        ]);
+      }
+    });
   }
 }

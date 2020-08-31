@@ -23,8 +23,8 @@ interface ITaskRoutineFe extends ITaskRoutine {
 export class ScheduledTasksComponent implements OnInit {
   @Input() currentUser: IUser;
   @Input() authorUser: IUser;
-  @Input() device: IDevice;
 
+  device: IDevice;
   routines: ITaskRoutineFe[] = [];
   loading: boolean = false;
   error: string = "";
@@ -40,6 +40,8 @@ export class ScheduledTasksComponent implements OnInit {
   constructor(private deviceService: DeviceService) {}
 
   ngOnInit(): void {
+    this.device = this.deviceService.lastActiveDevice.getValue();
+
     this.getTaskRoutines();
     setTimeout(() => {
       console.log(this.routines);

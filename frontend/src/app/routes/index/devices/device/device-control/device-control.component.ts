@@ -11,15 +11,7 @@ import { IDevice, IUser, IDeviceProperty, NodeType } from "@cxss/interfaces";
 export class DeviceControlComponent implements OnInit {
   @Input() currentUser: IUser;
   @Input() authorUser: IUser;
-  @Input() device: IDevice;
-
-  // _id: string,
-  // ref: string,
-  // value: string | number | boolean,
-  // name: string,
-  // description: string,
-  // state:           IoTState,
-  // type:            Type,
+  device: IDevice;
 
   displayedColumns: string[] = ["ref", "name", "set-value"];
   cache = {
@@ -33,6 +25,7 @@ export class DeviceControlComponent implements OnInit {
   constructor(private deviceService: DeviceService) {}
 
   ngOnInit(): void {
+    this.device = this.deviceService.lastActiveDevice.getValue();
     this.getDeviceStates(this.device._id);
   }
 

@@ -1,20 +1,18 @@
-<div [style]="'padding-left: ' + depth * 20 + 'px'">
+<div matRipple [style]="'padding-left: ' + depth * 25 + 'px'" [class.selected]="activeNode?._id == node._id">
   <div
     [id]="'depth-' + depth"
     class="item"
-    (click)="toggleOpened()"
     [class.singular]="!node.children"
     [class.opened]="opened"
   >
-    <mat-icon *ngIf="node.children">{{
-      opened ? "expand_less" : "expand_more"
-    }}</mat-icon>
-    <p [class.singular]="!node.children">{{ node.item }}</p>
+    <button mat-icon-button *ngIf="node.children" [disabled]="node.children?.length == 0" (click)="toggleOpened()">
+      <mat-icon>{{ opened ? "expand_less" : "expand_more" }}</mat-icon>
+    </button>
+    <p (click)="emit(node);onClick($event, node);" [class.singular]="!node.children">{{ node.name }} <span>{{node._id.substr(-6)}}</span></p>
   </div>
 
-  <ul *ngIf="opened">
-    <ui-button *ngFor="let n of node.children">
-      <app-tree-node [node]="n" [depth]="depth + 1"></app-tree-node>
-    </ui-button>
-  </ul>
+</div>
+
+<div *ngIf="opened">
+  <app-tree-node [activeNode]="activeNode" (selectedNode)="emit($event)" *ngFor="let n of node.children" [node]="n" [depth]="depth + 1"></app-tree-node>
 </div>

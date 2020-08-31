@@ -12,14 +12,17 @@ import {
   IApiKeyPrivate,
   NodeType,
   IDeviceProperty,
-  INodeGraph,
+  IFlatNodeGraph,
 } from "@cxss/interfaces";
+import { BehaviorSubject } from "rxjs";
+import { tap } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
 })
 export class DeviceService {
   availableMeasurements = MeasurementUnits;
+  lastActiveDevice: BehaviorSubject<IDevice> = new BehaviorSubject(null);
 
   constructor(
     private profileService: ProfileService,
@@ -51,7 +54,14 @@ export class DeviceService {
   }
 
   getDevice(device_id: string): Promise<IDevice> {
-    return this.http.get<IDevice>(`/api/devices/${device_id}`).toPromise();
+    return this.http
+      .get<IDevice>(`/api/devices/${device_id}`)
+      .pipe(
+        tap((d) => {
+          this.lastActiveDevice.next(d);
+        })
+      )
+      .toPromise();
   }
 
   getDeviceStatus(device_id: string): Promise<any> {
@@ -74,9 +84,9 @@ export class DeviceService {
       .toPromise();
   }
 
-  getPropertyAssignmentsGraph(device_id: string): Promise<INodeGraph> {
+  getPropertyAssignmentsGraph(device_id: string): Promise<IFlatNodeGraph> {
     return this.http
-      .get<INodeGraph>(`/api/devices/${device_id}/properties/graph`)
+      .get<IFlatNodeGraph>(`/api/devices/${device_id}/properties/graph`)
       .toPromise();
   }
 

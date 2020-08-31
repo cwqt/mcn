@@ -12,68 +12,101 @@
     </div>
 
     <div class="input-bar">
-      <!-- <mat-form-field>
-        <input matInput type="text" formControlName="email" />
-      </mat-form-field> -->
 
     </div>
 
 
-    <mat-table *ngIf="devices.data" [dataSource]="dataSource">
+    <!-- <table mat-table [dataSource]="devices.data" multiTemplateDataRows class="mat-elevation-z8">
+      <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
+        <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+        <td mat-cell *matCellDef="let element"> {{element.data[column]}}</td>
+      </ng-container>
 
-  <!-- Checkbox Column -->
-  <ng-container matColumnDef="select">
-    <mat-header-cell *matHeaderCellDef>
-      <mat-checkbox (change)="$event ? masterToggle() : null"
-                    [checked]="selection.hasValue() && isAllSelected()"
-                    [indeterminate]="selection.hasValue() && !isAllSelected()"
-                    [aria-label]="checkboxLabel()">
-      </mat-checkbox>
-    </mat-header-cell>
-    <mat-cell *matCellDef="let row">
-      <mat-checkbox (click)="$event.stopPropagation()"
-                    (change)="$event ? selection.toggle(row) : null"
-                    [checked]="selection.isSelected(row)"
-                    [aria-label]="checkboxLabel(row)">
-      </mat-checkbox>
-    </mat-cell>
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
+          <div class="example-element-detail"
+            [@detailExpand]="element == cache.sensor.expandedElement ? 'expanded' : 'collapsed'">
 
-  </ng-container>
-      <!-- Position Column -->
+            <highcharts-chart *ngIf="cache.sensor.expandedElement?.chartData && !cache.sensor.expandedElement?.loading"
+              [Highcharts]="Highcharts" [options]="cache.sensor.expandedElement.chartData"
+              style="width: 140%; height: 300px; display: block;">
+            </highcharts-chart>
+
+            <mat-spinner *ngIf="cache.sensor.expandedElement?.loading"></mat-spinner>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+      <tr mat-row *matRowDef="let element; columns: columnsToDisplay;" class="example-element-row"
+        [class.example-expanded-row]="cache.sensor.expandedElement === element"
+        (click)="cache.sensor.expandedElement = cache.sensor.expandedElement === element ? null : element; getPropertyData(element)">
+      </tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    </table> -->
+
+
+
+    <mat-table *ngIf="devices.data" [dataSource]="dataSource" multiTemplateDataRows>
+      <ng-container matColumnDef="select">
+        <mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
+          </mat-checkbox>
+        </mat-header-cell>
+        <mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
+            [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
+          </mat-checkbox>
+        </mat-cell>
+
+      </ng-container>
       <ng-container matColumnDef="name">
         <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
       </ng-container>
 
-      <!-- Name Column -->
       <ng-container matColumnDef="_id">
         <mat-header-cell *matHeaderCellDef> _id </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element._id}} </mat-cell>
       </ng-container>
 
-      <!-- Weight Column -->
       <ng-container matColumnDef="last_ping">
         <mat-header-cell *matHeaderCellDef> Last ping </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.last_ping | amTimeAgo}} </mat-cell>
       </ng-container>
 
-      <!-- Symbol Column -->
       <ng-container matColumnDef="state">
         <mat-header-cell *matHeaderCellDef> State </mat-header-cell>
-        <mat-cell *matCellDef="let element"> <ui-chip color="red">{{element.state | uppercase}}</ui-chip> </mat-cell>
+        <mat-cell *matCellDef="let element">
+          <ui-chip color="red">{{element.state | uppercase}}</ui-chip>
+        </mat-cell>
       </ng-container>
 
+      <ng-container matColumnDef="expandedDetail" >
+        <mat-cell *matCellDef="let element">
+          <div class="example-element-detail">
+            <router-outlet></router-outlet>
+          </div>
+        </mat-cell>
+      </ng-container>
+
+
       <mat-header-row *matHeaderRowDef="devices.tableRows; sticky: true"></mat-header-row>
-      <mat-row (click)="openDeviceDetail(row)" *matRowDef="let row; columns: devices.tableRows;" [class.active]="row._id == selectedId"></mat-row>
+
+      <mat-row *matRowDef="let element; columns: devices.tableRows;" class="example-element-row"
+        [class.active]="element == expandedElement"
+        [class.example-expanded-row]="expandedElement === element"
+        (click)="expandedElement = expandedElement === element ? null : element;">
+      </mat-row>
+      <mat-row class="example-detail-row"
+        [class.active]="element == expandedElement"
+        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
+        *matRowDef="let element; columns: ['expandedDetail']">
+      </mat-row>
     </mat-table>
 
-    <mat-paginator [length]="10"
-    [pageSize]="5"
-    [pageSizeOptions]="[5,10]">
-</mat-paginator>
-  </div>
-
-  <div class="device-info-wrapper">
-    <router-outlet></router-outlet>
+    <mat-paginator [length]="10" [pageSize]="5" [pageSizeOptions]="[5,10]">
+    </mat-paginator>
   </div>
 </div>

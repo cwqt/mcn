@@ -1,32 +1,11 @@
 <div class="assignment-wrapper" *ngIf="graph">
-  <h1><ui-icon>connect</ui-icon>Assign properties</h1>
-
-  <div class="assigner" *ngFor="let assigment of filteredGraph">
-
-
-
-    <mat-form-field appearance="fill">
-      <mat-label>Property</mat-label>
-      <mat-select>
-        <mat-option *ngFor="let food of graph.data" [value]="assigment.from">
-          {{graph.sources[food.to].name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
+  <div class="assigner" *ngFor="let assignment of assignmentGraph | keyvalue">
+    <ui-button variant="accent" (click)="openAssignmentDialog(assignment.key, assignment.value)">
+      {{graph.sources[assignment.key].name}}
+    </ui-button>
     <ui-icon>arrow--right</ui-icon>
-
-    <mat-form-field appearance="fill">
-      <mat-label>Recordable</mat-label>
-      <mat-select>
-        <mat-option *ngFor="let food of graph.data" [value]="assigment.to">
-          {{graph.sources[food.to].name}}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
+    <p>{{graph.sources[assignment.value]?.name || "Not assigned"}}</p>
   </div>
-
 
   <mat-divider></mat-divider>
 </div>
@@ -34,9 +13,8 @@
 
 <div class="chart-wrapper">
   <highcharts-chart *ngIf="graph"
-  [Highcharts]="Highcharts"
-  [options]="chartData"
-  (load)="saveInstance($event.context)"
-  style="height: 500px;">
-</highcharts-chart>
+    [Highcharts]="Highcharts"
+    [options]="chartData"
+    style="height: 500px;">
+  </highcharts-chart>
 </div>

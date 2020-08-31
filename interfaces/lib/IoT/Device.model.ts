@@ -2,7 +2,7 @@ import { SupportedHardware, Type } from "./Hardware.model";
 import { Measurement, Unit, IoTState, IoTMeasurement } from "../Types/Measurements.types";
 import { HardwareInformation } from "../Types/Hardware.types";
 import { IApiKey } from "./ApiKey.model";
-import { INode } from "../Node.model";
+import { INode, IGraphNode } from "../Node.model";
 
 import * as IpAddress from "ip-address";
 import { NodeType } from "../Types/Nodes.types";
@@ -35,4 +35,11 @@ export interface IDevice extends IDeviceStub {
   metrics: number;
   sensors: number;
   // assigned_to?: IFlorableStub;
+}
+
+export interface IDeviceGraph {
+  device: IGraphNode;
+  properties: ({
+    florables: IGraphNode[];
+  } & IGraphNode)[];
 }

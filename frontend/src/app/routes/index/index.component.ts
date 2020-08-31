@@ -57,7 +57,6 @@ export class IndexComponent implements OnInit {
   }
 
   selectedTabChange(event: MatTabChangeEvent) {
-    console.log(event, Object.values(this.tabs)[event.index].url);
     this.router.navigate([`/${Object.values(this.tabs)[event.index].url}`]);
   }
 

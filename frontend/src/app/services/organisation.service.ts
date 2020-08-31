@@ -7,6 +7,7 @@ import {
   IFarmStub,
   IOrgEnv,
   IDashboard,
+  IFlorableGraph,
 } from "@cxss/interfaces";
 import { BehaviorSubject } from "rxjs";
 import { tap } from "rxjs/operators";
@@ -69,5 +70,11 @@ export class OrganisationService {
 
   getEnvironment(_id: string): Promise<IOrgEnv> {
     return this.http.get<IOrgEnv>(`/api/orgs/${_id}/environment`).toPromise();
+  }
+
+  getFlorableGraph(): Promise<IFlorableGraph> {
+    return this.http
+      .get<IFlorableGraph>(`/api/orgs/${this.orgId}/graph`)
+      .toPromise();
   }
 }

@@ -7,7 +7,7 @@
 </div>
 
 <div *ngIf="userOrgs.length && currentOrg">
-  <mat-tab-group [animationDuration]="0" mat-align-tabs="start" class="light"  (selectedTabChange)="selectedTabChange($event)">
+  <mat-tab-group [animationDuration]="0" mat-align-tabs="start" class="light" (selectedTabChange)="selectedTabChange($event)">
     <mat-tab *ngFor="let tab of tabs | keyvalue: asIsOrder">
       <ng-template mat-tab-label>
         <ui-icon>{{ tab.value.icon }}</ui-icon>

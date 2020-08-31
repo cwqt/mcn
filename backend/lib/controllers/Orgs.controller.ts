@@ -13,6 +13,7 @@ import {
   IOrgEnv,
   IDashboard,
   IDashboardItem,
+  IFlorableGraph,
 } from "@cxss/interfaces";
 import { capitalize, paginate } from "./Node.controller";
 import { ErrorHandler } from "../common/errorHandler";
@@ -170,7 +171,6 @@ export const getEnvironment = async (req: Request): Promise<IOrgEnv> => {
       oid: req.params.oid,
     }
   );
-  console.log(res);
 
   let env: IOrgEnv = {
     devices: res.records[0].get("deviceCount")?.toNumber() || 0,
@@ -215,3 +215,23 @@ export const updateDashboardItem = async (req: Request): Promise<IDashboardItem>
 };
 
 export const deleteDashboardItem = async (req: Request) => {};
+
+export const readRecordablesGraph = async (req: Request): Promise<IFlorableGraph> => {
+  const res = await cypher(
+    ` MATCH (o:Organisation {_id:$oid})<-[:IN]-(f:Farm)
+      OPTIONAL MATCH (f)-[:HAS_RACK]->(r:Rack)
+      WITH f, r
+      OPTIONAL MATCH (r)-[:HAS_CROP]->(c:Crop)
+      WITH f,r, CASE WHEN c IS NULL THEN NULL ELSE {name: c.name, _id:c._id, type: c.type} END as crops
+      WITH f, CASE WHEN r IS NULL THEN NULL ELSE {name: r.name, _id:r._id, type: r.type, crops: collect(crops)} END as racks
+      WITH {name: f.name, _id:f._id, type: f.type, racks: collect(racks)} as farm
+      RETURN farm`,
+    { oid: req.params.oid }
+  );
+
+  let graph: IFlorableGraph = {
+    farms: res.records.map((x) => x.get("farm")),
+  };
+
+  return graph;
+};

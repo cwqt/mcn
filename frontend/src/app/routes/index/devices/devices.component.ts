@@ -1,5 +1,10 @@
-import { Component, OnInit, Output, EventEmitter } from "@angular/core";
-import moment from "moment";
+import { Component, OnInit } from "@angular/core";
+
+import { IDeviceStub, Paginated } from "@cxss/interfaces";
+import { OrganisationService } from "src/app/services/organisation.service";
+import { Router, ActivatedRoute } from "@angular/router";
+import { SelectionModel } from "@angular/cdk/collections";
+import { MatTableDataSource } from "@angular/material/table";
 import {
   animate,
   state,
@@ -8,16 +13,20 @@ import {
   trigger,
 } from "@angular/animations";
 
-import { IDeviceStub, Paginated } from "@cxss/interfaces";
-import { OrganisationService } from "src/app/services/organisation.service";
-import { Router } from "@angular/router";
-import { SelectionModel } from "@angular/cdk/collections";
-import { MatTableDataSource } from "@angular/material/table";
-
 @Component({
   selector: "app-devices",
   templateUrl: "./devices.component.html",
   styleUrls: ["./devices.component.scss"],
+  animations: [
+    trigger("detailExpand", [
+      state("collapsed", style({ height: "0px", minHeight: "0" })),
+      state("expanded", style({ height: "*" })),
+      transition(
+        "expanded <=> collapsed",
+        animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")
+      ),
+    ]),
+  ],
 })
 export class DevicesComponent implements OnInit {
   selectedId: string;
@@ -31,9 +40,12 @@ export class DevicesComponent implements OnInit {
     tableRows: ["select", "name", "_id", "last_ping", "state"],
   };
 
+  expandedElement: IDeviceStub;
+
   constructor(
     private orgService: OrganisationService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -45,6 +57,12 @@ export class DevicesComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IDeviceStub>(
           this.devices.data
         );
+
+        this.route.firstChild.params.subscribe((params) => {
+          this.expandedElement = this.devices.data.find(
+            (d) => d._id == params.did
+          );
+        });
       })
       .catch((e) => (this.devices.error = e))
       .finally(() => (this.devices.loading = false));

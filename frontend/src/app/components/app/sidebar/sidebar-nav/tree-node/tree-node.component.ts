@@ -1,4 +1,11 @@
-import { Component, OnInit, Input } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+} from "@angular/core";
 
 @Component({
   selector: "app-tree-node",
@@ -6,8 +13,11 @@ import { Component, OnInit, Input } from "@angular/core";
   styleUrls: ["./tree-node.component.scss"],
 })
 export class TreeNodeComponent implements OnInit {
+  @Input() activeNode;
   @Input() node;
   @Input() depth: number;
+  @Output() selectedNode = new EventEmitter();
+
   opened: boolean = true;
 
   constructor() {}
@@ -18,5 +28,15 @@ export class TreeNodeComponent implements OnInit {
 
   toggleOpened() {
     if (this.node.children) this.opened = !this.opened;
+  }
+
+  onClick(event, node) {
+    // console.log(node);
+    event?.stopPropagation();
+  }
+
+  emit(n) {
+    console.log(n);
+    this.selectedNode.emit(n);
   }
 }

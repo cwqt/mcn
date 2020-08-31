@@ -21,7 +21,13 @@
 .assigner {
   display: flex;
   align-items: center;
-  ui-icon {
-    margin: -10px 10px 0 10px;
+  justify-content: space-between;
+  ui-button {
+    min-width: 40%;
+  }
+  p {
+    width: 50%;
+    white-space: nowrap;
+    margin: 0;
   }
 }

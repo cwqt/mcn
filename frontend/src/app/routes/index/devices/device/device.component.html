@@ -1,71 +1,43 @@
 <div class="device-container" *ngIf="device">
-  <ui-section-header [title]="device.name" [subtitle]="device.network_name + '@' + device.hardware_model">
-  </ui-section-header>
-  <div class="device-info">
-    <div *ngIf="cache.status.data" class="device-statuses">
-      <div *ngFor="let v of cache.status.data" class="device-status-point">
-          <p>
-            {{v.name}}
-          </p>
-          <h3>
-            {{v.rows[0]?.value}}
-            <span>
-              {{v.rows[0]?.type}}
-            </span>
-          </h3>
+  <!-- <ui-icon-button #deviceRef (click)="openDeviceMenu()" size="m">overflow-menu--vertical</ui-icon-button> -->
+
+    <div class="vertical-tabs">
+      <div class="vertical-tab" [class.active]="tab.value.active" (click)="gotoTab(tab.value.url)" *ngFor="let tab of tabs | keyvalue: asIsOrder">
+        <ui-icon>{{tab.value.icon}}</ui-icon>
+        <div>
+          <h3>{{tab.key | titlecase }}</h3>
+          <span>{{tab.value.desc}}</span>
+        </div>
       </div>
     </div>
 
-
-
-    <!-- <div lightbox-group id="gallery">
-      <img src="https://cdn.discordapp.com/attachments/264522461943562244/704820132312252426/IMG_0028.JPG" lightbox
-        [fullImage]="{ path: 'path_to_fullimage' }" />
-      <img src="https://playwithmyled.com/wp-content/uploads/2013/12/smart-garden1-1024x768.jpg" lightbox
-        [fullImage]="{ path: 'path_to_fullimage' }" />
-      <img src="" lightbox [fullImage]="{ path: 'path_to_fullimage' }" />
-    </div> -->
-
-    <br />
-
-    <div class="device-info-footer">
-      <ui-chip color="red">{{device.hardware_model}}</ui-chip>
-      <!-- <ui-chip color="blue">MCN sponsored</ui-chip> -->
-      <ui-chip color="magenta">{{device.software_version || 'No software version'}}</ui-chip>
+    <div class="tab-body">
+      <router-outlet></router-outlet>
     </div>
-  </div>
 
+  <!-- <div class="device-right">
+    <div class="device-stats" *ngIf="cache.device.data">
+      <mat-accordion>
+        <ui-loadable-panel description="Assign device properties to recordables" variant="flat" icon="api"
+          title="Properties" [hasData]="true">
+          <app-prop-assignments (refreshPropAssignments)="getPropAssignmentsGraph(device._id, true, $event)" *ngIf="cache.propAssignments.data" [graph]="cache.propAssignments.data" [device]="cache.device.data"></app-prop-assignments>
+        </ui-loadable-panel>
 
-  <div class="device-stats" *ngIf="cache.device.data">
-    <mat-accordion>
-      <ui-loadable-panel description="Assign device properties to recordables" variant="flat" icon="api"
-        title="Properties" [hasData]="true">
-        <app-prop-assignments *ngIf="cache.propAssignments.data" [graph]="cache.propAssignments.data" [device]="cache.device.data"></app-prop-assignments>
-      </ui-loadable-panel>
+        <ui-loadable-panel description="View metrics, sensor & state data" variant="flat" icon="chart--bar"
+          title="Measurements" [hasData]="true">
+          <app-property-list [device]="cache.device.data"></app-property-list>
+        </ui-loadable-panel>
 
-      <hr>
+        <ui-loadable-panel description="Directly control device outputs" variant="flat" icon="meter" title="Control">
+          <app-device-control [device]="device"></app-device-control>
+        </ui-loadable-panel>
 
-      <ui-loadable-panel description="View metrics, sensor & state data" variant="flat" icon="chart--bar"
-        title="Measurements" [hasData]="true">
-        <app-property-list [device]="cache.device.data"></app-property-list>
-      </ui-loadable-panel>
-
-      <hr>
-
-      <ui-loadable-panel description="Directly control device outputs" variant="flat" icon="meter" title="Control">
-        <app-device-control [device]="device"></app-device-control>
-      </ui-loadable-panel>
-
-      <hr>
-
-      <ui-loadable-panel description="View planned routines" variant="flat" icon="virtual-machine"
-        title="Task Routines">
-        <!-- <app-scheduled-tasks [device]="device"></app-scheduled-tasks> -->
-      </ui-loadable-panel>
-
-    </mat-accordion>
-  </div>
-
+        <ui-loadable-panel description="View planned routines" variant="flat" icon="virtual-machine"
+          title="Task Routines">
+          <app-scheduled-tasks [device]="device"></app-scheduled-tasks>
+        </ui-loadable-panel>
+      </mat-accordion>
+    </div> -->
 
   <mat-spinner *ngIf="cache.device.loading"></mat-spinner>
 </div>

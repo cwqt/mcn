@@ -20,6 +20,11 @@ import { DeviceComponent } from "./routes/index/devices/device/device.component"
 import { FarmComponent } from "./routes/index/farms/farm/farm.component";
 import { FarmsComponent } from "./routes/index/farms/farms.component";
 import { RacksComponent } from "./routes/index/farms/racks/racks.component";
+import { PropertyListComponent } from "./routes/index/devices/device/property-list/property-list.component";
+import { PropAssignmentsComponent } from "./routes/index/devices/device/prop-assignments/prop-assignments.component";
+import { DeviceControlComponent } from "./routes/index/devices/device/device-control/device-control.component";
+import { ScheduledTasksComponent } from "./routes/index/devices/device/scheduled-tasks/scheduled-tasks.component";
+import { DeviceInfoComponent } from "./routes/index/devices/device/device-info/device-info.component";
 
 const routes: Routes = [
   {
@@ -33,6 +38,28 @@ const routes: Routes = [
           {
             path: ":did",
             component: DeviceComponent,
+            children: [
+              {
+                path: "",
+                component: DeviceInfoComponent,
+              },
+              {
+                path: "properties",
+                component: PropAssignmentsComponent,
+              },
+              {
+                path: "measurements",
+                component: PropertyListComponent,
+              },
+              {
+                path: "control",
+                component: DeviceControlComponent,
+              },
+              {
+                path: "tasks",
+                component: ScheduledTasksComponent,
+              },
+            ],
           },
         ],
       },

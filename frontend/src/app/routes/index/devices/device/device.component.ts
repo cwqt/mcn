@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { DeviceService } from "src/app/services/device.service";
 import { UserService } from "src/app/services/user.service";
@@ -10,7 +10,10 @@ import {
 } from "@cxss/interfaces";
 
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
-import { runInThisContext } from "vm";
+import { PropAssignmentsComponent } from "./prop-assignments/prop-assignments.component";
+import { Popover, PopoverProperties } from "src/assets/popover";
+import { DeviceMenuComponent } from "./device-menu/device-menu.component";
+import { MatTabChangeEvent } from "@angular/material/tabs";
 
 @Component({
   selector: "app-device",
@@ -18,9 +21,45 @@ import { runInThisContext } from "vm";
   styleUrls: ["./device.component.scss"],
 })
 export class DeviceComponent implements OnInit {
+  @ViewChild(PropAssignmentsComponent) propAssignmentComponent;
+  @ViewChild("deviceRef") ref: ElementRef;
+
   deviceInfo: HardwareDevice;
   currentUser: IUser;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+
+  tabs = {
+    ["information"]: {
+      icon: "information",
+      url: "/",
+      active: false,
+      desc: "View recent state & edit device info",
+    },
+    ["properties"]: {
+      icon: "api",
+      url: "properties",
+      active: false,
+      desc: "Assign device properties to recordables",
+    },
+    ["measurements"]: {
+      icon: "chart--bar",
+      url: "measurements",
+      active: false,
+      desc: "View metrics, sensor & state data",
+    },
+    ["control"]: {
+      icon: "meter",
+      url: "control",
+      active: false,
+      desc: "Directly control device outputs",
+    },
+    ["task routines"]: {
+      icon: "virtual-machine",
+      url: "tasks",
+      active: false,
+      desc: "Manage and edit planned routines",
+    },
+  };
 
   cache = {
     device: {
@@ -58,11 +97,21 @@ export class DeviceComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
-    private deviceService: DeviceService
+    private deviceService: DeviceService,
+    private popover: Popover,
+    private router: Router
   ) {}
 
   get device(): IDevice {
     return this.cache.device.data;
+  }
+
+  selectedTabChange(event: MatTabChangeEvent) {
+    this.router.navigate([
+      `/devices/${this.device._id}/${
+        Object.values(this.tabs)[event.index].url
+      }`,
+    ]);
   }
 
   async ngOnInit() {
@@ -71,8 +120,21 @@ export class DeviceComponent implements OnInit {
     this.route.params
       .subscribe(async (params) => {
         await this.getDevice(params.did);
+        this.route.firstChild.url
+          .subscribe((x) => {
+            Object.values(this.tabs).forEach((t) => (t.active = false));
+            let t = Object.values(this.tabs).find((t) => t.url == x[0]?.path);
+            if (!t) {
+              this.tabs.information.active = true;
+            } else {
+              t.active = true;
+            }
+          })
+          .unsubscribe();
+
         // this.getDeviceStatus(params.did);
-        await this.getPropAssignmentsGraph(params.did);
+        // await this.getPropAssignmentsGraph(params.did);
+
         // this.getDeviceMeasurements();
         // this.getDeviceSensors();
         this.cache.device.loading = false;
@@ -108,12 +170,22 @@ export class DeviceComponent implements OnInit {
       .finally(() => (this.cache.status.loading = false));
   }
 
-  getPropAssignmentsGraph(device_id: string) {
-    this.cache.propAssignments.loading = true;
-    return this.deviceService
-      .getPropertyAssignmentsGraph(device_id)
-      .then((res) => (this.cache.propAssignments.data = res))
-      .catch((e) => (this.cache.propAssignments.error = e))
-      .finally(() => (this.cache.propAssignments.loading = false));
+  openDeviceMenu() {
+    this.popover.load({
+      event,
+      component: DeviceMenuComponent,
+      offset: 16,
+      width: "500px",
+      placement: "bottom-left",
+      targetElement: this.ref.nativeElement,
+    } as PopoverProperties);
+  }
+
+  asIsOrder(a, b) {
+    return 1;
+  }
+
+  gotoTab(url) {
+    this.router.navigate([`/devices/${this.device._id}/${url}`]);
   }
 }
