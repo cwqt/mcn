@@ -14,6 +14,7 @@ import { PropAssignmentsComponent } from "./prop-assignments/prop-assignments.co
 import { Popover, PopoverProperties } from "src/assets/popover";
 import { DeviceMenuComponent } from "./device-menu/device-menu.component";
 import { MatTabChangeEvent } from "@angular/material/tabs";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-device",
@@ -63,32 +64,7 @@ export class DeviceComponent implements OnInit {
 
   cache = {
     device: {
-      data: undefined,
-      loading: false,
-      error: "",
-    },
-    measurements: {
-      data: undefined,
-      loading: false,
-      error: "",
-    },
-    control: {
-      data: undefined,
-      loading: false,
-      error: "",
-    },
-    routines: {
-      data: undefined,
-      loading: false,
-      error: "",
-    },
-    propAssignments: {
-      data: undefined,
-      loading: false,
-      error: "",
-    },
-    status: {
-      data: undefined,
+      data: null,
       loading: false,
       error: "",
     },
@@ -114,32 +90,33 @@ export class DeviceComponent implements OnInit {
     ]);
   }
 
+  tabPositionSub: Subscription;
   async ngOnInit() {
+    console.log("init");
+
     this.currentUser = this.userService.currentUserValue;
 
     this.route.params
       .subscribe(async (params) => {
         await this.getDevice(params.did);
-        this.route.firstChild.url
-          .subscribe((x) => {
-            Object.values(this.tabs).forEach((t) => (t.active = false));
-            let t = Object.values(this.tabs).find((t) => t.url == x[0]?.path);
-            if (!t) {
-              this.tabs.information.active = true;
-            } else {
-              t.active = true;
-            }
-          })
-          .unsubscribe();
+        this.tabPositionSub = this.route.firstChild.url.subscribe((x) => {
+          Object.values(this.tabs).forEach((t) => (t.active = false));
+          let t = Object.values(this.tabs).find((t) => t.url == x[0]?.path);
+          if (!t) {
+            this.tabs.information.active = true;
+          } else {
+            t.active = true;
+          }
+        });
 
-        // this.getDeviceStatus(params.did);
-        // await this.getPropAssignmentsGraph(params.did);
-
-        // this.getDeviceMeasurements();
-        // this.getDeviceSensors();
         this.cache.device.loading = false;
       })
+      //unsub after initial component re-creation
       .unsubscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.tabPositionSub?.unsubscribe();
   }
 
   getDevice(device_id: string): Promise<IDevice> {
@@ -152,22 +129,6 @@ export class DeviceComponent implements OnInit {
       })
       .catch((e) => (this.cache.device.error = e))
       .finally(() => (this.cache.device.loading = false));
-  }
-
-  getDeviceStatus(device_id: string) {
-    this.cache.status.loading = true;
-    return this.deviceService
-      .getDeviceStatus(device_id)
-      .then((res) => {
-        let x = [];
-        res.forEach((r) => {
-          r.rows = r.rows.filter((x) => x.value != null);
-          if (r.rows.length) x.push(r);
-        });
-        this.cache.status.data = x;
-      })
-      .catch((e) => (this.cache.status.error = e))
-      .finally(() => (this.cache.status.loading = false));
   }
 
   openDeviceMenu() {

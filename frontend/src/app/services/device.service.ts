@@ -15,13 +15,14 @@ import {
   IFlatNodeGraph,
 } from "@cxss/interfaces";
 import { BehaviorSubject } from "rxjs";
-import { tap } from "rxjs/operators";
+import { tap, delay } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
 })
 export class DeviceService {
   availableMeasurements = MeasurementUnits;
+  isLoadingDevice: BehaviorSubject<boolean> = new BehaviorSubject(false);
   lastActiveDevice: BehaviorSubject<IDevice> = new BehaviorSubject(null);
 
   constructor(
@@ -54,11 +55,14 @@ export class DeviceService {
   }
 
   getDevice(device_id: string): Promise<IDevice> {
+    this.isLoadingDevice.next(true);
     return this.http
       .get<IDevice>(`/api/devices/${device_id}`)
       .pipe(
+        delay(1000),
         tap((d) => {
           this.lastActiveDevice.next(d);
+          this.isLoadingDevice.next(false);
         })
       )
       .toPromise();

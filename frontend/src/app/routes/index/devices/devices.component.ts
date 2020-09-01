@@ -1,4 +1,9 @@
-import { Component, OnInit } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  AfterContentChecked,
+} from "@angular/core";
 
 import { IDeviceStub, Paginated } from "@cxss/interfaces";
 import { OrganisationService } from "src/app/services/organisation.service";
@@ -12,6 +17,8 @@ import {
   transition,
   trigger,
 } from "@angular/animations";
+import { DeviceService } from "src/app/services/device.service";
+import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
 
 @Component({
   selector: "app-devices",
@@ -28,7 +35,7 @@ import {
     ]),
   ],
 })
-export class DevicesComponent implements OnInit {
+export class DevicesComponent implements OnInit, AfterContentChecked {
   selectedId: string;
   selection = new SelectionModel<IDeviceStub>(true, []);
   dataSource = new MatTableDataSource<IDeviceStub>();
@@ -40,15 +47,25 @@ export class DevicesComponent implements OnInit {
     tableRows: ["select", "name", "_id", "last_ping", "state"],
   };
 
+  isLoadingDevice: boolean = false;
   expandedElement: IDeviceStub;
+
+  midTransition: boolean = false;
 
   constructor(
     private orgService: OrganisationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private deviceService: DeviceService,
+    private cdref: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.deviceService.isLoadingDevice.subscribe((x) => {
+      this.isLoadingDevice = x;
+      console.log("devices loading", x);
+    });
+
     this.devices.loading = true;
     this.orgService
       .getDevices()
@@ -57,41 +74,41 @@ export class DevicesComponent implements OnInit {
         this.dataSource = new MatTableDataSource<IDeviceStub>(
           this.devices.data
         );
-
-        this.route.firstChild.params.subscribe((params) => {
-          this.expandedElement = this.devices.data.find(
-            (d) => d._id == params.did
-          );
-        });
       })
       .catch((e) => (this.devices.error = e))
       .finally(() => (this.devices.loading = false));
+
+    this.route.firstChild?.params.subscribe((params) => {
+      this.expandedElement = this.devices.data.find((d) => {
+        return d._id == params.did;
+      });
+    });
+  }
+
+  ngAfterContentChecked() {
+    this.cdref.detectChanges();
   }
 
   openDeviceDetail(device: IDeviceStub) {
-    this.selectedId = device._id;
-    this.router.navigate([`/devices/${device._id}`]);
-  }
+    if (this.isLoadingDevice) return;
 
-  /** Whether the number of selected elements matches the total number of rows. */
-  isAllSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
-    return numSelected === numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isAllSelected()
-      ? this.selection.clear()
-      : this.dataSource.data.forEach((row) => this.selection.select(row));
-  }
-
-  /** The label for the checkbox on the passed row */
-  checkboxLabel(row?: IDeviceStub): string {
-    if (!row) {
-      return `${this.isAllSelected() ? "select" : "deselect"} all`;
+    // console.log(device);
+    // this.selectedId = device._id;
+    if (this.expandedElement) {
+      this.midTransition = true;
+      console.log(device, this.expandedElement);
+      if (device._id !== this.expandedElement._id) {
+        // this.router.navigate([`/devices/${device._id}`]);
+        console.log("navi");
+      }
+      setTimeout(() => {
+        this.expandedElement = this.expandedElement === device ? null : device;
+        this.midTransition = false;
+      }, 225);
+    } else {
+      // this.router.navigate([`/devices/${device._id}`]);
+      console.log("navielse");
+      this.expandedElement = this.expandedElement === device ? null : device;
     }
-    return `${this.selection.isSelected(row) ? "deselect" : "select"} row`;
   }
 }
