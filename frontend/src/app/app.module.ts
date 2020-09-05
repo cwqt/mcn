@@ -64,6 +64,8 @@ import { DeviceInfoComponent } from "./routes/index/devices/device/device-info/d
 
 import { DashboardComponent } from "./routes/index/dashboard/dashboard.component";
 import { DashboardItemComponent } from "./routes/index/dashboard/dashboard-item/dashboard-item.component";
+import { CreateDashItemDialogComponent } from "./routes/index/dashboard/create-dash-item-dialog/create-dash-item-dialog.component";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -105,6 +107,7 @@ import { DashboardItemComponent } from "./routes/index/dashboard/dashboard-item/
     RacksComponent,
     RackComponent,
     CropComponent,
+    CreateDashItemDialogComponent,
   ],
   imports: [
     AngularMaterialModule,

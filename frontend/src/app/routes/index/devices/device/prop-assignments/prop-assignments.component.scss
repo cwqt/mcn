@@ -8,14 +8,24 @@
 }
 
 .assignment-wrapper {
-  padding: 10px;
-  h1 {
-    display: flex;
-    align-items: center;
-    ui-icon {
-      margin-right: 10px;
-    }
+  position: relative;
+  table {
+    width: 100%;
   }
+}
+
+ui-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 48px;
+  ::ng-deep button {
+    min-height: 48px !important;
+  }
+}
+
+mat-cell mat-checkbox {
+  margin-left: 24px;
 }
 
 .assigner {

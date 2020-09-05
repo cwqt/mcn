@@ -19,6 +19,8 @@ import networkgraph from "highcharts/modules/networkgraph";
 import { MatDialog } from "@angular/material/dialog";
 import { PropAssignDialogComponent } from "./prop-assign-dialog/prop-assign-dialog.component";
 import { DeviceService } from "src/app/services/device.service";
+import { MatTableDataSource } from "@angular/material/table";
+import { SelectionModel } from "@angular/cdk/collections";
 networkgraph(Highcharts);
 
 const colourMap = {
@@ -44,8 +46,17 @@ export class PropAssignmentsComponent implements OnInit {
 
   loading: boolean;
   error: string;
-  assignmentGraph: { [property: string]: string } = {};
+  assignmentGraph: { [index: string]: string } = {};
   chartData; //Highcharts.Options //bad typing
+  dataSource: MatTableDataSource<any>;
+  selection = new SelectionModel<any>(true, []);
+  displayedColumns: string[] = [
+    "select",
+    "property",
+    "assignee",
+    "unit",
+    "type",
+  ];
 
   constructor(private deviceService: DeviceService, public dialog: MatDialog) {}
 
@@ -76,6 +87,15 @@ export class PropAssignmentsComponent implements OnInit {
       x.id = x.to;
       return x;
     });
+
+    this.dataSource = new MatTableDataSource<any>(
+      Object.entries(this.assignmentGraph).reduce((acc, curr) => {
+        acc.push({ key: curr[0], value: curr[1] });
+        return acc;
+      }, [])
+    );
+
+    console.log(this.dataSource);
 
     graph.nodes = graph.data.map((x) => {
       let type = x.to.split("-")[0];
@@ -152,11 +172,11 @@ export class PropAssignmentsComponent implements OnInit {
       .finally(() => (this.loading = false));
   }
 
-  openAssignmentDialog(property: string, recordable: string) {
+  openAssignmentDialog() {
     const dialogRef = this.dialog.open(PropAssignDialogComponent, {
       data: {
-        property: property,
-        recordable: recordable,
+        // property: property,
+        // recordable: recordable,
         sources: this.graph.sources,
         device: this.device,
       },
@@ -164,13 +184,37 @@ export class PropAssignmentsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result && `${result.type}-${result?._id}` !== recordable) {
-        //assignment change
-        this.getPropAssignmentsGraph(true, [
-          property,
-          `${result.type}-${result?._id}`,
-        ]);
-      }
+      // if (result && `${result.type}-${result?._id}` !== recordable) {
+      //   //assignment change
+      //   this.getPropAssignmentsGraph(true, [
+      //     property,
+      //     `${result.type}-${result?._id}`,
+      //   ]);
+      // }
     });
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.dataSource.data.forEach((row) => this.selection.select(row));
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: any): string {
+    if (!row) {
+      return `${this.isAllSelected() ? "select" : "deselect"} all`;
+    }
+    return `${this.selection.isSelected(row) ? "deselect" : "select"} row ${
+      row.position + 1
+    }`;
   }
 }

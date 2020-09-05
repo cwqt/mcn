@@ -14,7 +14,7 @@ import { PropAssignmentsComponent } from "./prop-assignments/prop-assignments.co
 import { Popover, PopoverProperties } from "src/assets/popover";
 import { DeviceMenuComponent } from "./device-menu/device-menu.component";
 import { MatTabChangeEvent } from "@angular/material/tabs";
-import { Subscription } from "rxjs";
+import { Subscription, BehaviorSubject } from "rxjs";
 
 @Component({
   selector: "app-device",
@@ -92,14 +92,18 @@ export class DeviceComponent implements OnInit {
 
   tabPositionSub: Subscription;
   async ngOnInit() {
-    console.log("init");
+    console.log("ngOnInit Device");
 
     this.currentUser = this.userService.currentUserValue;
 
     this.route.params
       .subscribe(async (params) => {
+        console.log(params);
         await this.getDevice(params.did);
-        this.tabPositionSub = this.route.firstChild.url.subscribe((x) => {
+
+        //subscribe to change in url & get first child path to set active tab
+        this.tabPositionSub = this.route.url.subscribe(() => {
+          let x = (<BehaviorSubject<any>>this.route.firstChild.url).value;
           Object.values(this.tabs).forEach((t) => (t.active = false));
           let t = Object.values(this.tabs).find((t) => t.url == x[0]?.path);
           if (!t) {
@@ -147,6 +151,7 @@ export class DeviceComponent implements OnInit {
   }
 
   gotoTab(url) {
+    console.log("clicked ", url);
     this.router.navigate([`/devices/${this.device._id}/${url}`]);
   }
 }

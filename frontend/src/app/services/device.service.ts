@@ -59,7 +59,6 @@ export class DeviceService {
     return this.http
       .get<IDevice>(`/api/devices/${device_id}`)
       .pipe(
-        delay(1000),
         tap((d) => {
           this.lastActiveDevice.next(d);
           this.isLoadingDevice.next(false);

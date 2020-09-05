@@ -129,7 +129,7 @@ const reduce = <T extends IDeviceStub | IDevice>(
 const remove = async (_id: string, txc?: Transaction) => {
   return sessionable(async (t: Transaction) => {
     let res = await t.run(
-      ` MATCH (d:Device {_id:$did})
+      ` MATCH (d:Device {_id:$id})
         MATCH (d)-[:HAS_PROPERTY]->(p)
         DETACH DELETE d
         RETURN p{._id, .type}`,
@@ -138,8 +138,10 @@ const remove = async (_id: string, txc?: Transaction) => {
       }
     );
 
+    console.log(res.records);
+
     // Remove all metrics, states & sensors
-    await Promise.all(res.records[0].get("p").map((r: any) => Node.remove(r._id, r.type, t)));
+    await Promise.all(res.records.map((r: any) => Node.remove(r.get("p")._id, r.get("p").type, t)));
   }, txc);
 };
 

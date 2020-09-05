@@ -34,45 +34,72 @@ export enum IoTState {
   ScreenText = "screen_text",
   ActiveChildren = "active_children",
   Camera = "camera", //special case of sending blob
-  IRCamera = "ir_camera",
+  IRCamera = "ir_camera", //same but night-vision
 }
 
+//mapped from https://www.npmjs.com/package/convert-units
 export enum Unit {
-  Celcius = "°C",
-  Fahrenheit = "°F",
+  Celcius = "C",
+  Fahrenheit = "F",
   Kelvin = "K",
-  Lux = "lx",
-  RelativeHumidity = "RH%",
-  AbsoluteHumidity = "g/m³",
-  CapacitiveMoisture = "~",
-  Percentage = "%",
+
   Meters = "m",
   Centimeters = "cm",
   Feet = "ft",
   Inches = "in",
-  pH = "pH",
-  Unknown = "-",
-  Boolean = "",
+
+  Lux = "lx",
+  FootCandle = "ft-cd",
+
   Volts = "V",
   MilliVolts = "mV",
   Amps = "A",
   MilliAmps = "mA",
   Watts = "W",
   MilliWatts = "mW",
-  DecibelMilliWatts = "dBm", //wifi strength,
+
   Pascal = "Pa",
-  EC = "mS/cm",
-  PAR = "mEinstein",
+
+  PartsPerMillion = "ppm",
+
   Seconds = "s",
-  Minutes = "mins",
-  Hour = "hrs",
-  Days = "days",
-  Weeks = "weeks",
-  Months = "months",
+  Minutes = "min",
+  Hour = "h",
+  Days = "d",
+  Weeks = "week",
+  Months = "month",
+  Years = "year",
+
   Hz = "Hz",
+  mHz = "mHz",
+  kHz = "kHz",
   MHz = "MHz",
   GHz = "GHz",
+
+  //non-convertable units
+  pH = "pH",
+  RelativeHumidity = "percentage",
+  AbsoluteHumidity = "grams_per_meter_cubed",
+  CapacitiveMoisture = "~",
+  Percentage = "percentage",
+  DecibelMilliWatts = "decibel_milli_watts", //wifi strength,
+  EC = "milli_sievert_per_centi_meter",
+  PAR = "milli_einstein",
+  Unknown = "-",
 }
+
+export const NonConvertableUnits = [
+  Unit.pH,
+  Unit.RelativeHumidity,
+  Unit.AbsoluteHumidity,
+  Unit.CapacitiveMoisture,
+  Unit.Percentage,
+  Unit.DecibelMilliWatts,
+  Unit.EC,
+  Unit.DecibelMilliWatts,
+  Unit.Unknown,
+  ...Object.values(Type),
+];
 
 // available units for each measurement type are described:
 export const MeasurementUnits: {
@@ -107,12 +134,4 @@ export const MeasurementUnits: {
   [IoTState.ActiveChildren]: [Type.Number],
   [IoTState.Camera]: [Type.Image],
   [IoTState.IRCamera]: [Type.Image],
-};
-
-export const MeasurementConversions: {
-  [index: string]: (input: number) => number;
-} = {
-  [`${Unit.Meters}-${Unit.Feet}`]: (meters: number): number => {
-    return meters * 3.281;
-  },
 };

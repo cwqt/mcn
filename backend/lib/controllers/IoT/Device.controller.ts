@@ -213,7 +213,7 @@ export const createDevice = async (req: Request, next: NextFunction): Promise<ID
     data,
     propMap[NodeType.State],
     propMap[NodeType.Sensor],
-    propMap[NodeType.Sensor]
+    propMap[NodeType.Metric]
   );
 
   return d;
@@ -223,7 +223,9 @@ export const updateDevice = async (req: Request): Promise<IDevice> => {
   return {} as IDevice;
 };
 
-export const deleteDevice = async (req: Request) => {};
+export const deleteDevice = async (req: Request) => {
+  await Device.remove(req.params.did);
+};
 
 export const assignDeviceToRecordable = async (req: Request, res: Response) => {
   let result = await cypher(
@@ -249,11 +251,9 @@ export const readDevice = async (req: Request): Promise<IDevice> => {
 
 export const pingDevice = async (req: Request) => {
   await cypher(
-    `
-        MATCH (d:Device {_id:$did})
-        SET d.last_ping = $time
-        RETURN d
-    `,
+    ` MATCH (d:Device {_id:$did})
+      SET d.last_ping = $time
+      RETURN d`,
     {
       did: req.params.did,
       time: Date.now(),
@@ -275,18 +275,6 @@ export const readProperties = (node: NodeType.Sensor | NodeType.State | NodeType
     );
 
     return res.records.map((r: Record) => DeviceProperty.reduce(r.get("p").properties));
-  };
-};
-
-export const readPropertyData = (node: NodeType.Sensor | NodeType.State | NodeType.Metric) => {
-  return async (req: Request) => {
-    let results = await dbs.influx.query(`
-      select * from iot
-      order by time desc
-      limit 10
-    `);
-
-    return results;
   };
 };
 

@@ -25,6 +25,7 @@
 
 
 <div class="dashboard-edit-buttons">
+  <ui-button variant="primary" (click)="openAddDashItemDialog()" *ngIf="cache.dashboard.editing"><ui-icon>add</ui-icon>Add item</ui-button>
   <ui-button variant="primary" (click)="toggleEditState()">
     <ui-icon *ngIf="!cache.dashboard.editing">edit</ui-icon>
     <ui-icon *ngIf="cache.dashboard.editing">save</ui-icon>

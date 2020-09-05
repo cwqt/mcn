@@ -6,7 +6,7 @@
         <ui-icon>{{tab.value.icon}}</ui-icon>
         <div>
           <h3>{{tab.key | titlecase }}</h3>
-          <span>{{tab.value.desc}}</span>
+          <span *ngIf="tab.value.active">{{tab.value.desc}}</span>
         </div>
       </div>
     </div>

@@ -21,7 +21,8 @@
         </mat-header-cell>
         <mat-cell *matCellDef="let element">
           <mat-spinner [diameter]="25" *ngIf="expandedElement === element && isLoadingDevice && !midTransition"></mat-spinner>
-          <ui-icon *ngIf="expandedElement !== element || (midTransition || !isLoadingDevice)">{{expandedElement === element ? "chevron--up" : "chevron--down"}}</ui-icon>
+          <ui-icon #dropdownIcon *ngIf="expandedElement !== element || midTransition && !isLoadingDevice">chevron--down</ui-icon>
+          <ui-icon #dropdownIcon *ngIf="expandedElement === element && !isLoadingDevice && !midTransition">chevron--up</ui-icon>
         </mat-cell>
       </ng-container>
 
@@ -51,7 +52,7 @@
         <mat-cell *matCellDef="let element">
           <!-- only show one router-outlet to prevent many device fetches -->
           <!-- keep active while midTransition to stop jumpy closes from height diff-->
-          <div class="device-body" *ngIf="element === expandedElement || midTransition">
+          <div class="device-body" *ngIf="element === expandedElement || (element._id == midTransition)">
             <router-outlet></router-outlet>
           </div>
         </mat-cell>

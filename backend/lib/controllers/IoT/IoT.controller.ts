@@ -1,23 +1,13 @@
 import { Request, Response } from "express";
-import { Model, model } from "mongoose";
-import mongoose from "mongoose";
-
 import { body, param, query, Meta } from "express-validator";
 import { validate } from "../../common/validate";
-
-import { HTTP } from "../../common/http";
 import dbs, { cypher } from "../../common/dbs";
-import { ErrorHandler } from "../../common/errorHandler";
+import convert from "convert-units";
+
 import {
-  Paginated,
-  IFarm,
-  IFarmStub,
   NodeType,
-  DataModel,
-  IRackStub,
   HardwareInformation,
   IDeviceStub,
-  HardwareDevice,
   SupportedHardware,
   Measurement,
   IoTMeasurement,
@@ -26,18 +16,18 @@ import {
   IMeasurement,
   IAggregateData,
   Unit,
+  IAggregateRequest,
+  IAggregatePoint,
+  IAggregatePointResult,
+  NonConvertableUnits,
+  Type,
 } from "@cxss/interfaces";
-// import { Farm } from "../../classes/Hydroponics/Farm.model";
-import { paginate } from "../Node.controller";
-import { IResLocals } from "../../mcnr";
+
 import { Types } from "mongoose";
 import { Record } from "neo4j-driver";
-import Farm from "../../classes/Hydroponics/Farm.model";
-import Rack from "../../classes/Hydroponics/Rack.model";
 import Device from "../../classes/IoT/Device.model";
 import { uploadImageToS3 } from "../../common/storage";
 import Influx from "influx";
-import * as validator from "express-validator";
 
 let devicePropMap: { [index in SupportedHardware]?: string[] } = {};
 Object.entries(HardwareInformation).forEach(([model, value]) => {
@@ -122,57 +112,111 @@ export const validators = {
 // ===============================================================================================================================
 
 export const getAggregateData = async (req: Request): Promise<IAggregateData> => {
-  let data: IAggregateData = {};
-  let body: { [recordable: string]: [IMeasurement | IoTState | IoTMeasurement] } =
-    req.body.source_fields;
+  let body: IAggregateRequest = req.body;
+  let data: IAggregateData = {
+    sources: {},
+    data: {},
+  };
+
+  for await (let [recordable, aggregation_points] of Object.entries(body.aggregation_points)) {
+    if (!Object.keys(data.sources).includes(recordable)) {
+      //get recordable stub
+    }
+
+    data.data[recordable] = {};
+
+    for await (let aggregation_point of aggregation_points) {
+      for (let m of aggregation_point.measurements) {
+        let ref: IAggregatePointResult = (data.data[recordable][m.measurement] = {
+          color: m.color,
+          data_format: m.data_format,
+          sources: {},
+        });
+
+        console.log(ref);
+
+        for await (const [idx, sourceType] of [
+          aggregation_point.creators || [],
+          aggregation_point.properties || [],
+        ].entries()) {
+          console.log(sourceType);
+          for (const source of sourceType) {
+            ref.sources[source] = (
+              await getMeasurement(
+                idx == 0 ? source : null,
+                idx == 0 ? null : source,
+                recordable,
+                m.measurement,
+                null,
+                null,
+                m.data_format
+              )
+            )[m.measurement];
+            console.log("--->", ref.sources[source]);
+          }
+        }
+      }
+    }
+
+    console.log(data.data);
+  }
 
   return data;
 };
 
-export const getMeasurements = (
+export const getMeasurement = async (
   creator?: string,
   property?: string,
   intention?: string,
-  measurements?: string[],
+  measurement?: Measurement | IoTState | IoTMeasurement,
   start_date?: string,
-  end_date?: string
+  end_date?: string,
+  data_format?: Unit | Type
 ) => {
-  return async (req: Request): Promise<IMeasurementResult> => {
-    creator = creator || (req.query.creator as string);
-    property = property || (req.query.property as string);
-    intention = intention || (req.query.intention as string);
-    measurements = measurements || (<string[]>req.query.measurements)[0].split(",");
-    start_date = start_date || (req.query.start_date as string);
-    end_date = end_date || (req.query.end_date as string) || new Date().toISOString();
+  let whereables: string[] = [];
+  if (intention) whereables.push(`intention='${intention}'`);
+  if (start_date) whereables.push(`time > '${start_date}'`);
+  if (end_date) whereables.push(`time < '${end_date}'`);
+  if (creator) whereables.push(`creator='${creator}'`);
+  if (property) whereables.push(`property='${property}'`);
 
-    let whereables: string[] = [];
-    if (intention) whereables.push(`intention='${intention}'`);
-    if (start_date) whereables.push(`time > '${start_date}'`);
-    if (end_date) whereables.push(`time < '${end_date}'`);
-    if (creator) whereables.push(`creator='${creator}'`);
-    if (property) whereables.push(`property='${property}'`);
+  const q = `SELECT * from ${measurement}${
+    whereables.length ? "\nWHERE " + whereables.join(" and ") : ";"
+  }`;
 
-    const q = `SELECT * from ${measurements.join(",")}${
-      whereables.length ? "\nWHERE " + whereables.join(" and ") : ";"
-    }`;
+  console.log(measurement, q);
 
-    // execute query & format into IMeasurement
-    // {air_temperature:{times:[Date, Date, Date], values:[Value, Value, Value]}}
-    return (await dbs.influx.query(q))
-      .groups()
-      .reduce((acc: { [index: string]: IMeasurement }, curr) => {
-        acc[curr.name] = curr.rows.reduce<IMeasurement>(
-          (a, c: any) => {
-            a.values.push(c.value);
-            a.times.push(c.time);
-            return a;
-          }, //FIXME: units
-          { times: [], values: [], unit: Unit.Boolean }
-        );
-        return acc;
-      }, {});
-    //TODO: convert units
-  };
+  // execute query & format into IMeasurement
+  // {air_temperature:{times:[Date, Date, Date], values:[Value, Value, Value], unit:Unit}}
+  return (await dbs.influx.query(q))
+    .groups()
+    .reduce((acc: { [index: string]: IMeasurement }, curr) => {
+      acc[curr.name] = curr.rows.reduce<IMeasurement>(
+        (a, c: any) => {
+          //take first unit if none provided
+          data_format = data_format || c.data_format;
+
+          console.log(data_format, c.data_format);
+
+          // unit conversion
+          if (
+            c.data_format !== data_format &&
+            !Object.values(Type).includes(c.data_format) &&
+            !NonConvertableUnits.includes(c.data_format)
+          ) {
+            c.value = convert(c.value)
+              .from(c.data_format)
+              .to(<any>data_format);
+          }
+
+          a.values.push(c.value);
+          a.times.push(c.time);
+          return a;
+        },
+        { times: [], values: [], unit: data_format }
+      );
+      return acc;
+    }, {});
 };
 
 export const createMeasurementAsDevice = async (req: Request) => {
@@ -223,15 +267,15 @@ export const createMeasurementAsDevice = async (req: Request) => {
     {
       did: device._id,
       refs: Object.keys(data),
-      time: Date.now(),
     }
   );
 
+  const timestamp = Date.now();
   const points: Influx.IPoint[] = res.records.reduce((acc: Influx.IPoint[], curr: Record) => {
     const n = curr.get("n").properties;
     const r = curr.get("r")?.properties;
 
-    acc.push({
+    let v = {
       measurement: n.measures,
       tags: {
         creator: `${NodeType.Device}-${device._id}`,
@@ -240,15 +284,19 @@ export const createMeasurementAsDevice = async (req: Request) => {
       },
       fields: {
         value: data[n.ref],
-        type: n.data_format,
+        data_format: n.data_format,
       },
-      timestamp: Date.now(),
-    });
+      timestamp: timestamp,
+    };
+
+    //don't push null as intention
+    if (v.tags.intention == null) delete v.tags.intention;
+    acc.push(v);
 
     return acc;
   }, []);
 
-  await dbs.influx.writePoints(points);
+  await dbs.influx.writePoints(points, { precision: "ms" });
   return;
 };
 

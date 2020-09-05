@@ -6,15 +6,18 @@ import {
   AfterViewInit,
   Renderer2,
   Input,
+  ChangeDetectorRef,
+  AfterContentChecked,
 } from "@angular/core";
 import iconMap from "./iconMap";
+import { Observable, Subscription } from "rxjs";
 
 @Component({
   selector: "ui-icon",
   templateUrl: "./icon.component.html",
   styleUrls: ["./icon.component.scss"],
 })
-export class IconComponent implements OnInit, AfterViewInit {
+export class IconComponent implements OnInit {
   @ViewChild("icon") icon: ElementRef;
   @Input() size: "s" | "m" | "l" = "m";
   dimensionMap = {
@@ -28,6 +31,10 @@ export class IconComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {}
 
   ngAfterViewInit() {
+    this.setIcon();
+  }
+
+  setIcon() {
     this.renderer.setAttribute(
       this.icon.nativeElement,
       "data-icon",

@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { OrganisationService } from "src/app/services/organisation.service";
 import { IDashboard, IOrg } from "@cxss/interfaces";
+import { MatDialog } from "@angular/material/dialog";
+import { CreateDashItemDialogComponent } from "./create-dash-item-dialog/create-dash-item-dialog.component";
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
@@ -18,22 +20,31 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   org: IOrg;
 
-  position = { top: 2, left: 2, height: 1, width: 1 };
-
   get dashboard() {
     return this.cache.dashboard.data;
   }
 
-  constructor(private orgService: OrganisationService) {}
+  constructor(
+    private dialog: MatDialog,
+    private orgService: OrganisationService
+  ) {}
 
   ngOnInit(): void {
     this.orgService.currentOrg.subscribe((o) => (this.org = o));
     this.getDashboard();
   }
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() {
+    this.openAddDashItemDialog();
+  }
 
-  addToGrid() {}
+  openAddDashItemDialog() {
+    const dialogRef = this.dialog.open(CreateDashItemDialogComponent);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
 
   getDashboard() {
     this.cache.dashboard.loading = true;
