@@ -1,3 +1,4 @@
+<div class="dialog-container">
 <div class="dialog-wrapper">
   <h1>Add dashboard item</h1>
 
@@ -37,7 +38,7 @@
     </mat-form-field>
   </div>
 
-  <h3>Select a chart type</h3>
+  <!-- <h3>Select a chart type</h3>
   <div class="chart-type-select-wrapper">
     <div
       class="chart-type-select"
@@ -49,7 +50,7 @@
         <p>{{ chart.key | titlecase }}</p>
       </div>
     </div>
-  </div>
+  </div> -->
 
 </div>
 
@@ -61,3 +62,8 @@
   (leftClick)="cancel()"
   (rightClick)="addItem()">
 </ui-dialog-buttons>
+
+
+<ui-overlay-spinner *ngIf="loading"></ui-overlay-spinner>
+
+</div>

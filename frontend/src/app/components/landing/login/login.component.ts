@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from "@angular/router";
 import { first } from "rxjs/operators";
 
 import { AuthenticationService } from "../../../services/authentication.service";
+import { MatDialog } from "@angular/material/dialog";
 
 @Component({
   selector: "app-login",
@@ -22,6 +23,7 @@ export class LoginComponent implements OnInit {
   };
 
   constructor(
+    private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthenticationService,
@@ -53,6 +55,7 @@ export class LoginComponent implements OnInit {
         .pipe(first())
         .subscribe(
           (user) => {
+            this.dialog.closeAll();
             this.success = true;
             if (!user.new_user) this.router.navigate(["/"]);
           },

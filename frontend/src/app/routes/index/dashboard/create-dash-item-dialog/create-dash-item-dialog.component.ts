@@ -1,6 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { chart } from "highcharts";
 import { IDashboardItem, NodeType, ChartType } from "@cxss/interfaces";
+import { DashboardService } from "src/app/services/dashboard.service";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 
 @Component({
   selector: "app-create-dash-item-dialog",
@@ -10,7 +12,7 @@ import { IDashboardItem, NodeType, ChartType } from "@cxss/interfaces";
 export class CreateDashItemDialogComponent implements OnInit {
   loading: boolean = false;
 
-  dashItem: Omit<IDashboardItem, "_id" | "created_at"> = {
+  dashItem = {
     title: "",
     position: {
       top: 0,
@@ -19,7 +21,6 @@ export class CreateDashItemDialogComponent implements OnInit {
       height: 1,
     },
     chart_type: ChartType["line-graph"],
-    type: NodeType.DashboardItem,
     aggregation_request: {
       period: "24hr",
       aggregation_points: {},
@@ -32,11 +33,33 @@ export class CreateDashItemDialogComponent implements OnInit {
     ["heatmap"]: { selected: false, icon: "heat-map--03" },
   };
 
-  constructor() {}
+  constructor(
+    private dialogRef: MatDialogRef<CreateDashItemDialogComponent>,
+    private dashService: DashboardService
+  ) {}
 
   ngOnInit(): void {}
 
-  addItem() {}
+  addItem() {
+    this.loading = true;
+    this.dashService
+      .addItem(
+        this.dashItem.title,
+        this.dashItem.position,
+        this.dashItem.chart_type,
+        this.dashItem.aggregation_request
+      )
+      .then((item: IDashboardItem) => {
+        this.dialogRef.close(item);
+      })
+      .catch((e) => {
+        this.dialogRef.close(e);
+      })
+      .finally(() => {
+        this.loading = false;
+      });
+  }
+
   cancel() {}
 
   setChartType(chartKey: string) {

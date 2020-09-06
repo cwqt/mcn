@@ -16,6 +16,7 @@
     "@cxss/interfaces": "file:../interfaces",
     "aws-sdk": "^2.656.0",
     "bcrypt": "^4.0.1",
+    "bin-pack-plus": "0.0.5",
     "class-transformer": "^0.2.3",
     "connect-redis": "^4.0.4",
     "convert-units": "^2.3.4",
@@ -41,6 +42,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
+    "@types/bin-pack": "^1.0.0",
     "@types/chai": "^4.2.11",
     "@types/convert-units": "^2.3.2",
     "@types/cors": "^2.8.6",

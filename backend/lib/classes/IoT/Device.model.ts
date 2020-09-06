@@ -42,6 +42,13 @@ const create = async (
       }
     );
 
+    // hook all metrics up to the device
+    await t.run(
+      ` MATCH (d:Device {_id:$did})-[:HAS_PROPERTY]->(m:Metric)
+        CREATE (m)-[:INTENDED_FOR]->(d)`,
+      { did: data._id }
+    );
+
     let device: IDevice = res.records[0].get("d").properties;
     device.states = states.length;
     device.sensors = sensors.length;
@@ -137,8 +144,6 @@ const remove = async (_id: string, txc?: Transaction) => {
         id: _id,
       }
     );
-
-    console.log(res.records);
 
     // Remove all metrics, states & sensors
     await Promise.all(res.records.map((r: any) => Node.remove(r.get("p")._id, r.get("p").type, t)));

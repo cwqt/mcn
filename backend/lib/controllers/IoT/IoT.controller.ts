@@ -133,13 +133,19 @@ export const getAggregateData = async (req: Request): Promise<IAggregateData> =>
           sources: {},
         });
 
-        console.log(ref);
+        //just get all data on ourself from every creator if non passed in
+        if (!aggregation_point.creators?.length && !aggregation_point.properties?.length) {
+          aggregation_point.creators = await getMeasurementIntentionCreators(
+            recordable,
+            m.measurement
+          )(req);
+        }
 
+        //get data from creators & props
         for await (const [idx, sourceType] of [
           aggregation_point.creators || [],
           aggregation_point.properties || [],
         ].entries()) {
-          console.log(sourceType);
           for (const source of sourceType) {
             ref.sources[source] = (
               await getMeasurement(
@@ -152,16 +158,25 @@ export const getAggregateData = async (req: Request): Promise<IAggregateData> =>
                 m.data_format
               )
             )[m.measurement];
-            console.log("--->", ref.sources[source]);
           }
         }
       }
     }
-
-    console.log(data.data);
   }
 
   return data;
+};
+
+export const getMeasurementIntentionCreators = (intention?: string, measurement?: string) => {
+  return async (req: Request): Promise<string[]> => {
+    intention = intention || (req.query.intention as string);
+    measurement = measurement || (req.query.measurement as string);
+
+    const q = `SHOW TAG VALUES FROM ${measurement} WITH KEY=creator WHERE intention='${intention}'`;
+    const res = (await dbs.influx.query(q)).groups();
+
+    return res.find((x) => x.name == measurement)?.rows?.map((x: any) => x.value) || [];
+  };
 };
 
 export const getMeasurement = async (
@@ -184,8 +199,6 @@ export const getMeasurement = async (
     whereables.length ? "\nWHERE " + whereables.join(" and ") : ";"
   }`;
 
-  console.log(measurement, q);
-
   // execute query & format into IMeasurement
   // {air_temperature:{times:[Date, Date, Date], values:[Value, Value, Value], unit:Unit}}
   return (await dbs.influx.query(q))
@@ -195,8 +208,6 @@ export const getMeasurement = async (
         (a, c: any) => {
           //take first unit if none provided
           data_format = data_format || c.data_format;
-
-          console.log(data_format, c.data_format);
 
           // unit conversion
           if (
@@ -262,7 +273,7 @@ export const createMeasurementAsDevice = async (req: Request) => {
     ` MATCH (d:Device {_id:$did})-[:HAS_PROPERTY]->(n)
       WHERE n.ref IN $refs
       OPTIONAL MATCH (n)-[:INTENDED_FOR]->(r)
-      WHERE r:Farm OR r:Rack OR r:Crop 
+      WHERE r:Farm OR r:Rack OR r:Crop or r:Device
       RETURN n,r`,
     {
       did: device._id,

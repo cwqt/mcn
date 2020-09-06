@@ -158,6 +158,7 @@ mcnr.get                        ("/species/:sid/task_series",          Species.r
 mcnr.get                        ("/iot/time",                          IoT.getUnixEpoch,                          [Access.None]);
 mcnr.post                       ('/iot/devices/:did',                  IoT.createMeasurementAsDevice,             [Access.OrgMember],       IoT.validators.createMeasurementAsDevice)
 mcnr.get<IAggregateData>        ("/iot/data",                          IoT.getAggregateData,                      [Access.OrgMember]);
+mcnr.get<string[]>              ("/iot/data/creators",                 IoT.getMeasurementIntentionCreators(),     [Access.OrgMember]);
 // mcnr.get<IMeasurementResult>    ("/iot/data",                          IoT.getMeasurements(),                     [Access.Authenticated],   IoT.validators.getMeasurements);
 // mcnr.get                        ("/iot/types",                         IoT.getMeasurementTypes,                   [Access.None]);
 

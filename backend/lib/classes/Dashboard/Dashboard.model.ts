@@ -30,19 +30,18 @@ export const create = async (org_id: string): Promise<IDashboard> => {
   return reduce(data);
 };
 
-const read = async (_id: string): Promise<IDashboard> => {
+const read = async (org_id: string): Promise<IDashboard> => {
   let data;
-  console.log(_id);
   const res = await cypher(
-    ` MATCH (d:${capitalize(NodeType.Dashboard)} {_id:$did})
+    ` MATCH (o:${capitalize(NodeType.Organisation)} {_id:$oid})-->(d:Dashboard)
       OPTIONAL MATCH (d)-[:HAS_ITEM]->(di:${capitalize(NodeType.DashboardItem)})
       RETURN d, collect(di{._id}) as di`,
-    { did: _id }
+    { oid: org_id }
   );
 
   data = <IDashboard>res.records[0]?.get("d").properties;
   data.items = await Promise.all(
-    res.records[0].get("di")?.map((di: INode) => DashboardItem.read(di._id))
+    res.records[0]?.get("di")?.map((di: INode) => DashboardItem.read(di._id))
   );
 
   return reduce(data);
@@ -60,7 +59,7 @@ const update = async (_id: string, newFieldValues: any): Promise<void> => {
     {}
   );
 
-  await Node.update(_id, filtered, NodeType.Device);
+  await Node.update(_id, filtered, NodeType.Dashboard);
 };
 
 const remove = async (_id: string, txc?: Transaction) => {

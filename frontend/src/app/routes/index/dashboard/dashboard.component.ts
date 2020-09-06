@@ -43,6 +43,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       console.log(`Dialog result: ${result}`);
+      this.getDashboard();
     });
   }
 

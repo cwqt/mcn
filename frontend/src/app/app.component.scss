@@ -30,6 +30,10 @@
   flex-flow: column;
   overflow: scroll;
 
+  app-header-user-button ::ng-deep span {
+    color: white !important;
+  }
+
   .landing-cover {
     height: 45vh;
     background-position: center;

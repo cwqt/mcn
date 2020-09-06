@@ -2,12 +2,13 @@ import { NodeType, IDashboardItem } from "@cxss/interfaces";
 import { sessionable, cypher } from "../../common/dbs";
 import { Transaction } from "neo4j-driver";
 import { capitalize } from "../../controllers/Node.controller";
+import Node from "../Node.model";
 
 const create = async (data: IDashboardItem, org_id: string): Promise<IDashboardItem> => {
   let body = <any>Object.assign({}, data);
   //parse into json for object storage
   body.position = JSON.stringify(body.position);
-  body.source_fields = JSON.stringify(body.source_fields);
+  body.aggregation_request = JSON.stringify(body.aggregation_request);
 
   const res = await cypher(
     ` MATCH (:${capitalize(NodeType.Organisation)} {_id:$oid})-[:HAS_DASHBOARD]->(d:${capitalize(
@@ -26,14 +27,13 @@ const create = async (data: IDashboardItem, org_id: string): Promise<IDashboardI
 };
 
 const read = async (_id: string): Promise<IDashboardItem> => {
-  let data;
   const res = await cypher(
     ` MATCH (d:${capitalize(NodeType.DashboardItem)} {_id:$diid})
       RETURN d`,
     { diid: _id }
   );
-  data = <IDashboardItem>res.records[0].get("d").properties;
 
+  let data = <IDashboardItem>res.records[0].get("d").properties;
   //parse back into object from json
   data.aggregation_request = JSON.parse(<any>data.aggregation_request);
   data.position = JSON.parse(<any>data.position);
@@ -42,6 +42,21 @@ const read = async (_id: string): Promise<IDashboardItem> => {
 
 const reduce = (data: IDashboardItem) => {
   return data;
+};
+
+const update = async (_id: string, newFieldValues: { [index: string]: any }) => {
+  const updatableFields = ["position"];
+
+  const filtered: { [index: string]: any } = updatableFields.reduce(
+    (obj, key) => ({ ...obj, [key]: newFieldValues[key] }),
+    {}
+  );
+
+  if (Object.keys(filtered).includes("position")) {
+    filtered.position = JSON.stringify(filtered.position);
+  }
+
+  await Node.update(_id, filtered, NodeType.DashboardItem);
 };
 
 const remove = async (_id: string, txc?: Transaction) => {
@@ -54,4 +69,4 @@ const remove = async (_id: string, txc?: Transaction) => {
   }, txc);
 };
 
-export default { create, read, reduce, remove };
+export default { create, read, reduce, remove, update };

@@ -3,7 +3,7 @@
 </div>
 
 <div *ngIf="!loading">
-  <div class="landing-wrapper" *ngIf="!currentUser || !entered">
+  <div class="landing-wrapper" *ngIf="!currentUser">
     <div class="landing-cover">
       <img class="landing-cover-image" src="/assets/cover.jpg">
       <img class="landing-cover-image__blur" src="/assets/cover.jpg">
@@ -114,7 +114,7 @@
     </div>
   </div>
 
-  <app-wrapper *ngIf="currentUser && entered">
+  <app-wrapper *ngIf="currentUser">
     <router-outlet></router-outlet>
     <!-- <ui-testbed></ui-testbed> -->
   </app-wrapper>

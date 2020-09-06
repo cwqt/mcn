@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   ui: string = "login";
   loading: boolean = true;
 
-  entered = new BehaviorSubject(false);
+  entered = false;
 
   constructor(
     public dialog: MatDialog,
@@ -35,27 +35,22 @@ export class AppComponent implements OnInit {
       `Running in: ${environment.production ? "production" : "development"}`
     );
 
-    this.entered.next(
-      localStorage.getItem("entered") === "true" ? true : false
-    );
+    // this.entered.next(
+    //   localStorage.getItem("entered") === "true" ? true : false
+    // );
   }
 
   async ngOnInit() {
     //upon start up, immediately get the new user & set last active org
     if (this.userService.currentUserValue) {
-      try {
-        await this.userService.updateCurrentUser();
-        this.setEntered(true);
-        let orgs = await this.userService.getUserOrgs();
-        let lastActiveOrgId = localStorage.getItem("lastActiveOrg");
-        if (lastActiveOrgId && orgs?.length) {
-          this.orgService.setActiveOrg(
-            orgs.find((o) => o._id == lastActiveOrgId)
-          );
-        }
-      } catch (error) {
-        this.authService.logout();
-        this.setEntered(false);
+      await this.userService.updateCurrentUser();
+      // this.setEntered(true);
+      let orgs = await this.userService.getUserOrgs();
+      let lastActiveOrgId = localStorage.getItem("lastActiveOrg");
+      if (lastActiveOrgId && orgs?.length) {
+        this.orgService.setActiveOrg(
+          orgs.find((o) => o._id == lastActiveOrgId)
+        );
       }
     }
 
@@ -100,7 +95,7 @@ export class AppComponent implements OnInit {
   }
 
   setEntered(state: boolean) {
-    this.entered.next(state);
-    localStorage.setItem("entered", state.toString());
+    // this.entered.next(state);
+    // localStorage.setItem("entered", state.toString());
   }
 }

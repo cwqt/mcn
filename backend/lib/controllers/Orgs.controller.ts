@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { HTTP } from "../common/http";
 import { cypher } from "../common/dbs";
+import { Bin, PackResult } from "bin-pack";
+const pack = require("bin-pack-plus");
 
 import Org from "../classes/Orgs.model";
 import {
@@ -25,6 +27,9 @@ import { Types } from "mongoose";
 
 import Dashboard from "../classes/Dashboard/Dashboard.model";
 import DashboardItem from "../classes/Dashboard/DashboardItem.model";
+
+import nodeMap from "../classes/nodeMap";
+import { formatWithOptions } from "util";
 
 export const validators = {
   createOrg: validate([body("name").not().isEmpty().trim()]),
@@ -75,15 +80,6 @@ export const createOrg = async (req: Request): Promise<IOrg> => {
   };
 
   return await Org.create(org, req.session.user._id);
-};
-
-import Device from "../classes/IoT/Device.model";
-import User from "../classes/Users/User.model";
-import Farm from "../classes/Hydroponics/Farm.model";
-const nodeMap: { [index in NodeType]?: any } = {
-  [NodeType.Device]: Device,
-  [NodeType.User]: User,
-  [NodeType.Farm]: Farm,
 };
 
 export const readOrgNodes = (node: NodeType) => {
@@ -186,14 +182,33 @@ export const getEnvironment = async (req: Request): Promise<IOrgEnv> => {
 };
 
 export const getDashboard = async (req: Request): Promise<IDashboard> => {
-  const res = await cypher(
-    ` MATCH (o:${capitalize(NodeType.Organisation)} {_id:$oid})
-      MATCH (o)-[:HAS_DASHBOARD]->(d:${capitalize(NodeType.Dashboard)})
-      RETURN d{._id}`,
-    { oid: req.params.oid }
-  );
+  return await Dashboard.read(req.params.oid);
+};
 
-  return await Dashboard.read(res.records[0].get("d")._id);
+export const binpack = (dash: IDashboard): IDashboard => {
+  dash = Object.assign({}, dash); //copy
+  let bins = dash.items.map((i) => {
+    return {
+      _id: i._id,
+      width: i.position.width,
+      height: i.position.height,
+      // ngx-widgets indexing starts from 1, but binpack from 0
+      x: i.position.top - 1 < 0 ? 0 : i.position.top - 1,
+      y: i.position.left - 1 < 0 ? 0 : i.position.left - 1,
+    };
+  });
+
+  let packed: PackResult<Bin> = pack(bins, { maxWidth: dash.columns });
+  dash.columns = packed.width;
+  dash.rows = packed.height;
+
+  packed.items.forEach((i) => {
+    let item = dash.items.find((di) => di._id == (<any>i).item._id);
+    item.position.left = i.x + 1;
+    item.position.top = i.y + 1;
+  });
+
+  return dash;
 };
 
 export const addItemToDashboard = async (req: Request): Promise<IDashboardItem> => {
@@ -207,7 +222,24 @@ export const addItemToDashboard = async (req: Request): Promise<IDashboardItem> 
     aggregation_request: req.body.aggregation_request,
   };
 
-  return await DashboardItem.create(item, req.params.oid);
+  await DashboardItem.create(item, req.params.oid);
+
+  //find new optimal placement of dash items & update accordingly
+  const oldDash = await Dashboard.read(req.params.oid);
+  const newDash = binpack(oldDash);
+
+  if (newDash.columns > oldDash.columns || newDash.rows > oldDash.rows) {
+    await Dashboard.update(newDash._id, {
+      columns: newDash.columns,
+      rows: newDash.rows,
+    });
+  }
+
+  await Promise.all(
+    newDash.items.map((i) => DashboardItem.update(i._id, { position: i.position }))
+  );
+
+  return newDash.items.find((i) => i._id == item._id);
 };
 
 export const updateDashboardItem = async (req: Request): Promise<IDashboardItem> => {
@@ -229,7 +261,7 @@ export const readRecordablesGraph = async (req: Request): Promise<IFlorableGraph
     { oid: req.params.oid }
   );
 
-  let graph: IFlorableGraph = {
+  const graph: IFlorableGraph = {
     farms: res.records.map((x) => x.get("farm")),
   };
 
