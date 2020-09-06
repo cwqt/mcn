@@ -1,6 +1,8 @@
 <div class="header-container">
   <div class="left">
-    <img class="icon" src="/assets/leaf.png" />
+    <ui-button variant="secondary" id="icon" (click)="gotoRoot()">
+      <img src="/assets/leaf.png" />
+    </ui-button>
     <ui-button-menu variant="secondary" [pre]="'mcn ·'" [title]="activeOrg ? activeOrg.name : 'No org'">
         <ui-button variant="secondary" *ngFor="let org of userOrgs" (click)="setActiveOrg(org)">{{ org.name }}</ui-button>
     </ui-button-menu>

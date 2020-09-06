@@ -37,4 +37,8 @@ export class HeaderBarComponent implements OnInit {
   gotoCatalog() {
     this.router.navigate(["catalog"]);
   }
+
+  gotoRoot() {
+    this.router.navigate(["/"]);
+  }
 }

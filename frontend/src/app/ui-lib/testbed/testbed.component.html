@@ -1,42 +1,52 @@
 <div class="container">
   <h1>Buttons</h1>
 
-  <ui-button [style]="'primary'">Primary</ui-button>
-  <ui-button [style]="'secondary'">Secondary</ui-button>
-  <ui-button [style]="'accent'">Accent</ui-button>
-  <ui-button [style]="'warn'">Warn</ui-button>
-  <ui-button [disabled]="true">Disabled</ui-button>
+  <div class="row">
+    <ui-button variant="primary">Primary</ui-button>
+    <ui-button variant="secondary">Secondary</ui-button>
+    <ui-button variant="accent">Accent</ui-button>
+    <ui-button variant="warn">Warn</ui-button>
+    <ui-button [disabled]="true">Disabled</ui-button>
+  </div>
 
-  <br/>
-  <br/>
+  <div class="row">
+    <ui-button [loading]="true" variant="primary">Primary</ui-button>
+    <ui-button icon="settings" variant="secondary">Secondary</ui-button>
+    <ui-button [loading]="true" variant="accent">Accent</ui-button>
+    <ui-button icon="settings" variant="accent">Accent</ui-button>
+    <ui-button icon="settings" variant="warn">Warn</ui-button>
+    <ui-button [loading]="true" [disabled]="true">Disabled</ui-button>
+  </div>
 
-  <ui-button [loading]="true" [style]="'primary'">Primary</ui-button>
-  <ui-button [icon]="'settings'" [style]="'secondary'">Secondary</ui-button>
-  <ui-button [loading]="true" [style]="'accent'">Accent</ui-button>
-  <ui-button [icon]="'settings'" [style]="'accent'">Accent</ui-button>
-  <ui-button [icon]="'settings'" [style]="'warn'">Warn</ui-button>
-  <ui-button [loading]="true" [disabled]="true">Disabled</ui-button>
+  <div class="row">
+    <ui-button size="s" [loading]="true" variant="primary">Primary</ui-button>
+    <ui-button size="m" icon="settings" variant="secondary">Secondary</ui-button>
+    <ui-button size="l" [loading]="true" variant="accent">Accent</ui-button>
+    <ui-button size="m" icon="settings" variant="accent">Accent</ui-button>
+    <ui-button size="s" icon="settings" variant="warn">Warn</ui-button>
+    <ui-button size="l" [loading]="true" [disabled]="true">Disabled</ui-button>
+  </div>
 
-  <br/>
-  <br/>
-
-  <ui-button [size]="'s'" [loading]="true" [style]="'primary'">Primary</ui-button>
-  <ui-button [size]="'m'" [icon]="'settings'" [style]="'secondary'">Secondary</ui-button>
-  <ui-button [size]="'l'" [loading]="true" [style]="'accent'">Accent</ui-button>
-  <ui-button [size]="'m'" [icon]="'settings'" [style]="'accent'">Accent</ui-button>
-  <ui-button [size]="'s'" [icon]="'settings'" [style]="'warn'">Warn</ui-button>
-  <ui-button [size]="'l'" [loading]="true" [disabled]="true">Disabled</ui-button>
 
 
   <br />
   <br />
   <h1>Button menu</h1>
-  <ui-button-menu [style]="'primary'" [title]="'Hello world!'">
-    <ui-button [style]="'accent'">Hello world!</ui-button>
-    <ui-button [style]="'accent'">Hello world!</ui-button>
-    <ui-button [style]="'accent'">Hello world!</ui-button>
-    <ui-button [style]="'accent'">Hello world!</ui-button>
-  </ui-button-menu>
+  <div class="row">
+    <ui-button-menu variant="primary" title="Hello world!">
+      <ui-button variant="primary">Hello world!</ui-button>
+      <ui-button variant="primary">Hello world!</ui-button>
+      <ui-button variant="primary">Hello world!</ui-button>
+      <ui-button variant="primary">Hello world!</ui-button>
+    </ui-button-menu>
+
+    <ui-button-menu variant="secondary" title="Hello world!">
+      <ui-button variant="secondary">Hello world!</ui-button>
+      <ui-button variant="secondary">Hello world!</ui-button>
+      <ui-button variant="secondary">Hello world!</ui-button>
+      <ui-button variant="secondary">Hello world!</ui-button>
+    </ui-button-menu>
+  </div>
 
   <br />
   <br />

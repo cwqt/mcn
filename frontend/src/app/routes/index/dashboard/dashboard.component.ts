@@ -1,14 +1,18 @@
 import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
 import { OrganisationService } from "src/app/services/organisation.service";
-import { IDashboard, IOrg } from "@cxss/interfaces";
+import { IDashboard, IOrg, IDashboardItem } from "@cxss/interfaces";
 import { MatDialog } from "@angular/material/dialog";
 import { CreateDashItemDialogComponent } from "./create-dash-item-dialog/create-dash-item-dialog.component";
+import { DashboardService } from "src/app/services/dashboard.service";
+import { Rectangle } from "ngx-widget-grid";
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.scss"],
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
+  @ViewChild("myPopover", { static: false }) myPopover;
+
   cache = {
     dashboard: {
       data: null,
@@ -18,6 +22,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     },
   };
 
+  openedDashMenuItem: IDashboardItem;
+
   org: IOrg;
 
   get dashboard() {
@@ -26,7 +32,8 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   constructor(
     private dialog: MatDialog,
-    private orgService: OrganisationService
+    private orgService: OrganisationService,
+    private dashService: DashboardService
   ) {}
 
   ngOnInit(): void {
@@ -35,7 +42,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.openAddDashItemDialog();
+    // this.openAddDashItemDialog();
   }
 
   openAddDashItemDialog() {
@@ -45,6 +52,37 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       console.log(`Dialog result: ${result}`);
       this.getDashboard();
     });
+  }
+
+  deleteDashItem(item: IDashboardItem = this.openedDashMenuItem) {
+    this.dashboard.items.splice(
+      this.dashboard.items.findIndex((i) => i._id == item._id),
+      1
+    );
+    this.dashService.deleteItem(item._id).then(() => {
+      this.getDashboard();
+    });
+  }
+
+  editDashItem(item: IDashboardItem = this.openedDashMenuItem) {}
+
+  updateDashItem(item: IDashboardItem, body: { [index: string]: any }) {
+    this.dashService.updateItem(item._id, body);
+  }
+
+  handleDashPositionChanged(item: IDashboardItem, position: Rectangle) {
+    const oldPosition = this.dashboard.items.find((x) => x._id == item._id)
+      .position;
+
+    console.log("-->", oldPosition);
+
+    if (position.top != oldPosition.top || position.left != oldPosition.left) {
+      this.updateDashItem(item, { position: position });
+    }
+  }
+
+  openDashItemEditMenu(item) {
+    this.openedDashMenuItem = item;
   }
 
   getDashboard() {
@@ -59,7 +97,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   onWidgetChange(event) {
-    console.log(event);
+    // console.log(event);
   }
 
   toggleEditState() {

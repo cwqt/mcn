@@ -8,3 +8,12 @@
     background: white;
   }
 }
+
+.row {
+  display: flex;
+  margin-bottom: 20px;
+  align-items: center;
+  * {
+    margin-right: 10px;
+  }
+}

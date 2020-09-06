@@ -25,6 +25,7 @@ import { PropAssignmentsComponent } from "./routes/index/devices/device/prop-ass
 import { DeviceControlComponent } from "./routes/index/devices/device/device-control/device-control.component";
 import { ScheduledTasksComponent } from "./routes/index/devices/device/scheduled-tasks/scheduled-tasks.component";
 import { DeviceInfoComponent } from "./routes/index/devices/device/device-info/device-info.component";
+import { TestbedComponent } from "./ui-lib/testbed/testbed.component";
 
 const routes: Routes = [
   {
@@ -94,14 +95,12 @@ const routes: Routes = [
     ],
   },
 
+  { path: "ui", component: TestbedComponent },
   { path: "verified", component: VerifiedComponent, canActivate: [AuthGuard] },
   {
     path: "orgs",
     component: OrganisationsComponent,
-    children: [
-      { path: "create", component: CreateOrgComponent },
-      { path: ":org_id", component: OrganisationComponent },
-    ],
+    children: [{ path: "create", component: CreateOrgComponent }],
   },
   {
     path: "catalog",

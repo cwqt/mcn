@@ -243,10 +243,13 @@ export const addItemToDashboard = async (req: Request): Promise<IDashboardItem> 
 };
 
 export const updateDashboardItem = async (req: Request): Promise<IDashboardItem> => {
-  return {} as IDashboardItem;
+  await DashboardItem.update(req.params.iid, req.body);
+  return await DashboardItem.read(req.params.iid);
 };
 
-export const deleteDashboardItem = async (req: Request) => {};
+export const deleteDashboardItem = async (req: Request) => {
+  await DashboardItem.remove(req.params.iid);
+};
 
 export const readRecordablesGraph = async (req: Request): Promise<IFlorableGraph> => {
   const res = await cypher(

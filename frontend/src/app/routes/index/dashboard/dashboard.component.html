@@ -23,7 +23,6 @@
   </div>
 </div>
 
-
 <div class="dashboard-edit-buttons">
   <ui-button variant="primary" (click)="openAddDashItemDialog()" *ngIf="cache.dashboard.editing"><ui-icon>add</ui-icon>Add item</ui-button>
   <ui-button variant="primary" (click)="toggleEditState()">
@@ -34,6 +33,7 @@
 </div>
 
 <div class="dashboard-body" *ngIf="dashboard" [class.isEditing]="cache.dashboard.editing">
+  <ui-overlay-spinner *ngIf="cache.dashboard.loading"></ui-overlay-spinner>
   <ngx-widget-grid
     [rows]="dashboard.rows"
     [columns]="dashboard.columns"
@@ -42,11 +42,23 @@
     (widgetPositionChange)="onWidgetChange($event)">
 
     <ngx-widget *ngFor="let item of dashboard.items"
-      [(position)]="item.position"
+      [position]="item.position"
+      (positionChange)="handleDashPositionChanged(item, $event)"
       [movable]="cache.dashboard.editing"
       [resizable]="cache.dashboard.editing">
-      <app-dashboard-item [item]="item"></app-dashboard-item>
+      <ui-icon-button
+        [popoverTriggerFor]="myPopover"
+        id="edit"
+        *ngIf="cache.dashboard.editing"
+        (click)="openDashItemEditMenu(item)">delete</ui-icon-button>
+      <app-dashboard-item [item]="item">
+      </app-dashboard-item>
     </ngx-widget>
   </ngx-widget-grid>
 </div>
 
+
+<popover #myPopover>
+  <ui-button (click)="editDashItem()">Edit item</ui-button>
+  <ui-button (click)="deleteDashItem()" variant="warn">Delete</ui-button>
+</popover>

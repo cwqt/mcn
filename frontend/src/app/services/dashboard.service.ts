@@ -30,4 +30,22 @@ export class DashboardService {
       )
       .toPromise();
   }
+
+  deleteItem(_id: string): Promise<void> {
+    return this.http
+      .delete<void>(`/api/orgs/${this.orgService.orgId}/dashboard/items/${_id}`)
+      .toPromise();
+  }
+
+  updateItem(
+    _id: string,
+    body: { [index: string]: string }
+  ): Promise<IDashboardItem> {
+    return this.http
+      .put<IDashboardItem>(
+        `/api/orgs/${this.orgService.orgId}/dashboard/items/${_id}`,
+        body
+      )
+      .toPromise();
+  }
 }

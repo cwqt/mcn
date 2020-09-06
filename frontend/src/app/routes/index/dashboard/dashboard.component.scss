@@ -79,11 +79,39 @@ ngx-widget-grid {
   width: calc(100% - 20px);
 }
 
+ngx-widget ::ng-deep .wg-widget-content {
+  ui-icon-button {
+    position: absolute;
+    z-index: 99;
+    &#edit {
+      top: 10px;
+      right: 10px;
+    }
+  }
+}
+
 .dashboard-edit-buttons {
   margin: 0 10px;
   display: flex;
   justify-content: flex-end;
   ui-button {
     margin-left: 10px;
+  }
+}
+
+popover {
+  background-color: white;
+  display: flex;
+  flex-flow: column;
+  transition: opacity 0.2s, height 0s;
+
+  ::ng-deep button.mat-button {
+    width: 100%;
+
+    .mat-button-wrapper {
+      width: 100%;
+      justify-content: flex-start;
+      text-align: left;
+    }
   }
 }

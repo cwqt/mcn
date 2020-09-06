@@ -43,7 +43,8 @@ export class CreateOrgComponent implements OnInit {
     this.orgService
       .createOrganisation(this.createOrgForm.value)
       .then((org: IOrgStub) => {
-        this.router.navigate([`/orgs/${org._id}`]);
+        this.orgService.setActiveOrg(org);
+        this.router.navigate([`/`]);
       })
       .catch((err) => {
         this.success = false;
