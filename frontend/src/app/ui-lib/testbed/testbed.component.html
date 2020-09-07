@@ -27,10 +27,8 @@
     <ui-button size="l" [loading]="true" [disabled]="true">Disabled</ui-button>
   </div>
 
+  <hr>
 
-
-  <br />
-  <br />
   <h1>Button menu</h1>
   <div class="row">
     <ui-button-menu variant="primary" title="Hello world!">
@@ -47,6 +45,18 @@
       <ui-button variant="secondary">Hello world!</ui-button>
     </ui-button-menu>
   </div>
+
+  <hr>
+
+  <h1>Inputs</h1>
+
+  <ui-input [(ngModel)]="textString" type="text" label="Name please"></ui-input>
+  <ui-input [(ngModel)]="numberString" type="number" label="Age please"></ui-input>
+
+  <ui-input [(ngModel)]="textString" type="text"></ui-input>
+  <ui-input [(ngModel)]="numberString" type="number"></ui-input>
+
+  {{textString}}, {{numberString}}
 
   <br />
   <br />

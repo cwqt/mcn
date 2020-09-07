@@ -12,11 +12,12 @@ import { IconButtonComponent } from "./icon-button/icon-button.component";
 import { OverflowMenuComponent } from "./overflow-menu/overflow-menu.component";
 import { SectionHeaderComponent } from "./section-header/section-header.component";
 import { AdmonitionComponent } from "./admonition/admonition.component";
-import { ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 import { RadioButtonComponent } from "./radio-button/radio-button.component";
 import { ChipComponent } from "./chip/chip.component";
 import { DialogButtonsComponent } from "./dialog-buttons/dialog-buttons.component";
 import { OverlaySpinnerComponent } from "./overlay-spinner/overlay-spinner.component";
+import { InputComponent } from "./input/input.component";
 
 export enum ButtonVariants {
   Primary = "primary",
@@ -41,6 +42,7 @@ const allComponents = [
   ChipComponent,
   DialogButtonsComponent,
   OverlaySpinnerComponent,
+  InputComponent,
 ];
 
 @NgModule({
@@ -50,6 +52,7 @@ const allComponents = [
     AngularMaterialModule,
     ClickOutsideModule,
     ReactiveFormsModule,
+    FormsModule,
   ],
   exports: [allComponents],
   providers: [],

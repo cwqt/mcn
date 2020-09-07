@@ -24,12 +24,25 @@
 </div>
 
 <div class="dashboard-edit-buttons">
+
   <ui-button variant="primary" (click)="openAddDashItemDialog()" *ngIf="cache.dashboard.editing"><ui-icon>add</ui-icon>Add item</ui-button>
-  <ui-button variant="primary" (click)="toggleEditState()">
+
+  <label>Rows</label>
+  <mat-form-field appearance="fill">
+    <input matInput type="number">
+  </mat-form-field>
+
+  <label>Columns</label>
+  <mat-form-field appearance="fill">
+    <input matInput type="number">
+  </mat-form-field>
+
+
+  <ui-button [variant]="cache.dashboard.editing ? 'warn' : 'primary'" (click)="toggleEditState()">
     <ui-icon *ngIf="!cache.dashboard.editing">edit</ui-icon>
-    <ui-icon *ngIf="cache.dashboard.editing">save</ui-icon>
-    {{cache.dashboard.editing ? "Save" : "Edit"}}</ui-button>
-  <ui-button variant="warn" (click)="cancelEdit()" *ngIf="cache.dashboard.editing"><ui-icon>close</ui-icon>Cancel</ui-button>
+    <ui-icon *ngIf="cache.dashboard.editing">close</ui-icon>
+    {{cache.dashboard.editing ? "Stop editing" : "Edit"}}</ui-button>
+  <!-- <ui-button variant="warn" (click)="cancelEdit()" *ngIf="cache.dashboard.editing"><ui-icon>close</ui-icon>Cancel</ui-button> -->
 </div>
 
 <div class="dashboard-body" *ngIf="dashboard" [class.isEditing]="cache.dashboard.editing">

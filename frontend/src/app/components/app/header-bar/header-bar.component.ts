@@ -1,6 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from "@angular/core";
-import { Popover, PopoverProperties } from "../../../../assets/popover";
-import { HeaderBarUserMenuComponent } from "./header-bar-user-menu/header-bar-user-menu.component";
+import { Component, OnInit, Input } from "@angular/core";
 import { OrganisationService } from "src/app/services/organisation.service";
 import { UserService } from "src/app/services/user.service";
 

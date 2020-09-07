@@ -1,0 +1,8 @@
+<mat-form-field class="ui-input" appearance="fill" [class.small]="!label">
+  <mat-label *ngIf="label">{{label}}</mat-label>
+  <input [disabled]="disabled" matInput [(ngModel)]="value" [type]="type">
+  <div class="ui-input-number-buttons" *ngIf="type == 'number'">
+    <ui-icon-button (click)="increment()">caret--up</ui-icon-button>
+    <ui-icon-button (click)="decrement()">caret--down</ui-icon-button>
+  </div>
+</mat-form-field>
