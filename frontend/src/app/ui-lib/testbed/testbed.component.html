@@ -56,7 +56,11 @@
   <ui-input [(ngModel)]="textString" type="text"></ui-input>
   <ui-input [(ngModel)]="numberString" type="number"></ui-input>
 
-  {{textString}}, {{numberString}}
+  <ui-input [(ngModel)]="textString" type="textarea" label="Text please"></ui-input>
+
+  <ui-input [(ngModel)]="boolString" type="checkbox" label="Text please"></ui-input>
+
+  {{textString}}, {{numberString}},  {{boolString}}
 
   <br />
   <br />

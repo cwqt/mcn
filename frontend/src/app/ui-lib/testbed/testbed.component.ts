@@ -8,6 +8,7 @@ import { Component, OnInit } from "@angular/core";
 export class TestbedComponent implements OnInit {
   textString: string = "cass";
   numberString: number = 1;
+  boolString: boolean = true;
 
   constructor() {}
 

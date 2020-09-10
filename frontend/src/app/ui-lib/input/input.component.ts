@@ -14,12 +14,18 @@ import { NG_VALUE_ACCESSOR, ControlValueAccessor } from "@angular/forms";
   ],
 })
 export class InputComponent implements ControlValueAccessor {
-  @Input() type: "number" | "text" | "password";
+  @Input() type: "number" | "text" | "password" | "textarea" | "checkbox";
   @Input() formControlName?: string;
   @Input() label?: string;
   @Input() disabled: boolean = false;
 
   constructor() {}
+
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    console.log(this.type);
+  }
 
   private _value: string | number;
 
@@ -49,10 +55,12 @@ export class InputComponent implements ControlValueAccessor {
     throw new Error("Method not implemented.");
   }
 
-  increment() {
+  increment(event) {
+    event.preventDefault();
     this.value = <number>this.value + 1;
   }
-  decrement() {
+  decrement(event) {
+    event.preventDefault();
     this.value = <number>this.value - 1;
   }
 }
