@@ -24,6 +24,7 @@ export * from "./IoT/Device.model";
 export * from "./IoT/DeviceProperty.model";
 export * from "./IoT/Hardware.model";
 export * from "./IoT/Measurement.model";
+export * from "./IoT/Aggregation.model";
 
 export * from "./Runner/Tasks.model";
 

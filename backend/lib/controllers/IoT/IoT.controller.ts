@@ -14,13 +14,10 @@ import {
   IoTState,
   IMeasurementResult,
   IMeasurement,
-  IAggregateData,
   Unit,
-  IAggregateRequest,
-  IAggregatePoint,
-  IAggregatePointResult,
   NonConvertableUnits,
   Type,
+  IRecordable,
 } from "@cxss/interfaces";
 
 import { Types } from "mongoose";
@@ -28,6 +25,14 @@ import { Record } from "neo4j-driver";
 import Device from "../../classes/IoT/Device.model";
 import { uploadImageToS3 } from "../../common/storage";
 import Influx from "influx";
+import {
+  IAggregateResponseGroup,
+  IAggregateRequestGroup,
+  IAggregateResponse,
+  Sources,
+  Properties,
+} from "@cxss/interfaces/dist/IoT/Aggregation.model";
+import RecordableModel from "lib/classes/Hydroponics/Recordable.model";
 
 let devicePropMap: { [index in SupportedHardware]?: string[] } = {};
 Object.entries(HardwareInformation).forEach(([model, value]) => {
@@ -111,58 +116,64 @@ export const validators = {
 
 // ===============================================================================================================================
 
-export const getAggregateData = async (req: Request): Promise<IAggregateData> => {
-  let body: IAggregateRequest = req.body;
-  let data: IAggregateData = {
+export const getAggregateData = async (req: Request): Promise<IAggregateResponseGroup> => {
+  const body: IAggregateRequestGroup = req.body;
+  let data: IAggregateResponseGroup = {
     sources: {},
-    data: {},
+    data: [],
   };
 
-  for await (let [recordable, aggregation_points] of Object.entries(body.aggregation_points)) {
-    if (!Object.keys(data.sources).includes(recordable)) {
-      //get recordable stub
+  let sources: string[] = [];
+
+  for await (let agg_req of body.aggregation_points) {
+    sources.push(agg_req.recordable);
+
+    let ref: IAggregateResponse = {
+      sources: {},
+      recordable: agg_req.recordable,
+      color: agg_req.color,
+      data_format: agg_req.data_format,
+      measurement: agg_req.measurement,
+    };
+
+    //just get all data on ourself from every creator if non passed in
+    if (!agg_req.sources?.length) {
+      agg_req.sources = await getMeasurementIntentionCreators(
+        agg_req.recordable,
+        agg_req.measurement
+      )(req);
     }
 
-    data.data[recordable] = {};
+    //get data from creators & props
+    for await (const source of agg_req.sources) {
+      const [stype, sid] = source.split("-");
 
-    for await (let aggregation_point of aggregation_points) {
-      for (let m of aggregation_point.measurements) {
-        let ref: IAggregatePointResult = (data.data[recordable][m.measurement] = {
-          color: m.color,
-          data_format: m.data_format,
-          sources: {},
-        });
+      ref.sources[source] = (
+        await getMeasurement(
+          Sources.includes(stype as NodeType) ? source : null,
+          Properties.includes(stype as NodeType) ? source : null,
+          agg_req.recordable,
+          agg_req.measurement,
+          null,
+          null,
+          agg_req.data_format
+        )
+      )[agg_req.measurement];
 
-        //just get all data on ourself from every creator if non passed in
-        if (!aggregation_point.creators?.length && !aggregation_point.properties?.length) {
-          aggregation_point.creators = await getMeasurementIntentionCreators(
-            recordable,
-            m.measurement
-          )(req);
-        }
-
-        //get data from creators & props
-        for await (const [idx, sourceType] of [
-          aggregation_point.creators || [],
-          aggregation_point.properties || [],
-        ].entries()) {
-          for (const source of sourceType) {
-            ref.sources[source] = (
-              await getMeasurement(
-                idx == 0 ? source : null,
-                idx == 0 ? null : source,
-                recordable,
-                m.measurement,
-                null,
-                null,
-                m.data_format
-              )
-            )[m.measurement];
-          }
-        }
-      }
+      // all sources have units converted, so remove extraneous data
+      delete (<any>ref).sources[source].unit;
     }
+
+    data.data.push(ref);
   }
+
+  data.sources = [...new Set(sources)].reduce((acc: { [index: string]: IRecordable }, curr) => {
+    // collect recordable data
+    const [stype, sid] = curr.split("-");
+    acc[curr] = RecordableModel.read(sid);
+
+    return acc;
+  }, {});
 
   return data;
 };
@@ -215,9 +226,9 @@ export const getMeasurement = async (
             !Object.values(Type).includes(c.data_format) &&
             !NonConvertableUnits.includes(c.data_format)
           ) {
-            c.value = convert(c.value)
-              .from(c.data_format)
-              .to(<any>data_format);
+            // c.value = convert(c.value)
+            //   .from(c.data_format)
+            //   .to(<any>data_format);
           }
 
           a.values.push(c.value);

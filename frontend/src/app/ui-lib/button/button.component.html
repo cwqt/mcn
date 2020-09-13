@@ -9,7 +9,7 @@
   [class.isTransparent]="transparent"
   mat-button
   (click)="onClick($event)">
-    <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
+    <mat-spinner *ngIf="loading" [diameter]="size == 's' ? 15 : 20"></mat-spinner>
     <ui-icon *ngIf="icon && !loading">{{icon}}</ui-icon>
     <ng-content></ng-content>
 </button>
