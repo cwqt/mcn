@@ -20,8 +20,6 @@ export class PropAssignDialogComponent implements OnInit {
   loading: boolean = false;
   error: string = "";
   florableGraph: any;
-
-  initialRecordableId: string;
   selectedRecordable: any;
 
   constructor(
@@ -33,14 +31,6 @@ export class PropAssignDialogComponent implements OnInit {
 
   async ngOnInit() {
     await this.getFlorableGraph();
-    console.log(this.data);
-    this.initialRecordableId = this.data.recordable.split("-")[1];
-    this.selectedRecordable = {
-      ...this.data.sources[this.data.recordable],
-      //repack _id and type into node from key
-      _id: this.data.recordable.split("-")[1],
-      type: this.data.recordable.split("-")[0],
-    };
   }
 
   async getFlorableGraph() {
@@ -68,11 +58,16 @@ export class PropAssignDialogComponent implements OnInit {
   assign() {
     this.loading = true;
     this.deviceService
-      .assignManyProperties(this.data.device._id, {
-        [this.data.property]: this.selectedRecordable
-          ? `${this.selectedRecordable.type}-${this.selectedRecordable._id}`
-          : null,
-      })
+      .assignManyProperties(
+        this.data.device._id,
+        this.data.properties.reduce((acc, curr) => {
+          acc[curr] = this.selectedRecordable
+            ? `${this.selectedRecordable.type}-${this.selectedRecordable._id}`
+            : null;
+
+          return acc;
+        }, {})
+      )
       .then(() => {
         setTimeout(() => {
           this.dialogRef.close(this.selectedRecordable);

@@ -1,4 +1,3 @@
-{{type}}
 <mat-form-field class="ui-input" appearance="fill" [class.small]="!label" [class.checkbox]="type == 'checkbox'">
   <mat-label *ngIf="label && type !== 'checkbox'">{{label}}</mat-label>
   <input *ngIf="type == 'number' || type == 'text' || type == 'password'" [disabled]="disabled" matInput [(ngModel)]="value" [type]="type" />

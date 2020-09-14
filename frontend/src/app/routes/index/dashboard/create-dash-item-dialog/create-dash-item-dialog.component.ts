@@ -12,7 +12,7 @@ import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 export class CreateDashItemDialogComponent implements OnInit {
   loading: boolean = false;
 
-  dashItem = {
+  dashItem: Omit<IDashboardItem, "_id"> = {
     title: "",
     position: {
       top: 0,
@@ -20,10 +20,12 @@ export class CreateDashItemDialogComponent implements OnInit {
       width: 2,
       height: 1,
     },
+    type: NodeType.DashboardItem,
+    created_at: Date.now(),
     chart_type: ChartType["line-graph"],
     aggregation_request: {
       period: "24hr",
-      aggregation_points: {},
+      aggregation_points: [],
     },
   };
 

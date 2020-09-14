@@ -12,12 +12,12 @@ import {
   Measurement,
   IoTMeasurement,
   IoTState,
-  IMeasurementResult,
   IMeasurement,
   Unit,
   NonConvertableUnits,
   Type,
   IRecordable,
+  DataModel,
 } from "@cxss/interfaces";
 
 import { Types } from "mongoose";
@@ -32,7 +32,9 @@ import {
   Sources,
   Properties,
 } from "@cxss/interfaces/dist/IoT/Aggregation.model";
-import RecordableModel from "lib/classes/Hydroponics/Recordable.model";
+import RecordableModel from "../../classes/Hydroponics/Recordable.model";
+import { ErrorHandler } from "../../common/errorHandler";
+import { HTTP } from "../../common/http";
 
 let devicePropMap: { [index in SupportedHardware]?: string[] } = {};
 Object.entries(HardwareInformation).forEach(([model, value]) => {
@@ -148,17 +150,15 @@ export const getAggregateData = async (req: Request): Promise<IAggregateResponse
     for await (const source of agg_req.sources) {
       const [stype, sid] = source.split("-");
 
-      ref.sources[source] = (
-        await getMeasurement(
-          Sources.includes(stype as NodeType) ? source : null,
-          Properties.includes(stype as NodeType) ? source : null,
-          agg_req.recordable,
-          agg_req.measurement,
-          null,
-          null,
-          agg_req.data_format
-        )
-      )[agg_req.measurement];
+      ref.sources[source] = await getMeasurement(
+        Sources.includes(stype as NodeType) ? source : null,
+        Properties.includes(stype as NodeType) ? source : null,
+        agg_req.recordable,
+        agg_req.measurement,
+        null,
+        null,
+        agg_req.data_format
+      );
 
       // all sources have units converted, so remove extraneous data
       delete (<any>ref).sources[source].unit;
@@ -167,11 +167,18 @@ export const getAggregateData = async (req: Request): Promise<IAggregateResponse
     data.data.push(ref);
   }
 
-  data.sources = [...new Set(sources)].reduce((acc: { [index: string]: IRecordable }, curr) => {
-    // collect recordable data
-    const [stype, sid] = curr.split("-");
-    acc[curr] = RecordableModel.read(sid);
-
+  data.sources = (
+    await Promise.all(
+      // distinct, get all sources
+      [...new Set(sources)].map((r) => {
+        const [rtype, rid] = r.split("-");
+        console.log(rtype, rid);
+        return RecordableModel.read(rid, DataModel.Stub, rtype as NodeType);
+      })
+    )
+  ).reduce((acc: { [index: string]: IRecordable }, curr) => {
+    // map into object
+    acc[`${curr.type}-${curr._id}`];
     return acc;
   }, {});
 
@@ -183,11 +190,26 @@ export const getMeasurementIntentionCreators = (intention?: string, measurement?
     intention = intention || (req.query.intention as string);
     measurement = measurement || (req.query.measurement as string);
 
+    if (!intention || !measurement)
+      throw new ErrorHandler(HTTP.BadRequest, "Must pass intention & measurement");
+
     const q = `SHOW TAG VALUES FROM ${measurement} WITH KEY=creator WHERE intention='${intention}'`;
     const res = (await dbs.influx.query(q)).groups();
 
     return res.find((x) => x.name == measurement)?.rows?.map((x: any) => x.value) || [];
   };
+};
+
+export const readMeasurement = async (req: Request): Promise<IMeasurement> => {
+  return await getMeasurement(
+    req.query.creator as string,
+    req.query.property as string,
+    req.query.intention as string,
+    req.query.measurement as Measurement | IoTState | IoTMeasurement,
+    req.query.start_date as string,
+    req.query.end_date as string,
+    req.query.data_format as Unit | Type
+  );
 };
 
 export const getMeasurement = async (
@@ -198,7 +220,9 @@ export const getMeasurement = async (
   start_date?: string,
   end_date?: string,
   data_format?: Unit | Type
-) => {
+): Promise<IMeasurement> => {
+  console.log(creator, property, intention, measurement, start_date, end_date, data_format);
+
   let whereables: string[] = [];
   if (intention) whereables.push(`intention='${intention}'`);
   if (start_date) whereables.push(`time > '${start_date}'`);
@@ -209,6 +233,8 @@ export const getMeasurement = async (
   const q = `SELECT * from ${measurement}${
     whereables.length ? "\nWHERE " + whereables.join(" and ") : ";"
   }`;
+
+  console.log((await dbs.influx.query(q)).groups());
 
   // execute query & format into IMeasurement
   // {air_temperature:{times:[Date, Date, Date], values:[Value, Value, Value], unit:Unit}}
@@ -222,13 +248,14 @@ export const getMeasurement = async (
 
           // unit conversion
           if (
+            data_format &&
             c.data_format !== data_format &&
             !Object.values(Type).includes(c.data_format) &&
             !NonConvertableUnits.includes(c.data_format)
           ) {
-            // c.value = convert(c.value)
-            //   .from(c.data_format)
-            //   .to(<any>data_format);
+            c.value = convert(c.value)
+              .from(c.data_format)
+              .to(<any>data_format);
           }
 
           a.values.push(c.value);
@@ -238,7 +265,7 @@ export const getMeasurement = async (
         { times: [], values: [], unit: data_format }
       );
       return acc;
-    }, {});
+    }, {})[measurement];
 };
 
 export const createMeasurementAsDevice = async (req: Request) => {

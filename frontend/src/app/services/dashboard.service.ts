@@ -1,5 +1,10 @@
 import { Injectable } from "@angular/core";
-import { ChartType, IAggregateRequest, IDashboardItem } from "@cxss/interfaces";
+import {
+  ChartType,
+  IAggregateRequest,
+  IDashboardItem,
+  IAggregateRequestGroup,
+} from "@cxss/interfaces";
 import { HttpClient } from "@angular/common/http";
 import { OrganisationService } from "./organisation.service";
 
@@ -16,7 +21,7 @@ export class DashboardService {
     title: string,
     position: { [index: string]: number },
     chartType: ChartType,
-    aggregation_req: IAggregateRequest
+    aggregation_req: IAggregateRequestGroup
   ): Promise<IDashboardItem> {
     return this.http
       .post<IDashboardItem>(

@@ -28,6 +28,11 @@
     margin: 0;
   }
 
+  .properties {
+    display: flex;
+    flex-flow: column;
+  }
+
   .end {
     display: flex;
     align-items: center;

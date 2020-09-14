@@ -90,12 +90,28 @@ ngx-widget ::ng-deep .wg-widget-content {
   }
 }
 
-.dashboard-edit-buttons {
+.dashboard-edit-bar {
   margin: 0 10px;
   display: flex;
   justify-content: flex-end;
   ui-button {
     margin-left: 10px;
+  }
+  .dashboard-edit-buttons {
+    display: flex;
+    align-items: center;
+    label {
+      margin: 0 10px 0 10px;
+      font-weight: bold;
+    }
+    ui-input {
+      width: 50px;
+    }
+    ui-input ::ng-deep {
+      .mat-form-field {
+        margin: 0;
+      }
+    }
   }
 }
 

@@ -24,7 +24,8 @@ import {
     IDashboardItem,
     IFlatNodeGraph,
     IFlorableGraph,
-    IAggregateResponseGroup as IAResponseGroup
+    IAggregateResponseGroup as IAResponseGroup,
+    IMeasurement
 } from "@cxss/interfaces";
 import { Access } from "./mcnr";
 
@@ -157,9 +158,9 @@ mcnr.get                        ("/species/:sid/task_series",          Species.r
 // IoT -------------------------------------------------------------------------------------------
 mcnr.get                        ("/iot/time",                          IoT.getUnixEpoch,                          [Access.None]);
 mcnr.post                       ('/iot/devices/:did',                  IoT.createMeasurementAsDevice,             [Access.OrgMember],       IoT.validators.createMeasurementAsDevice)
-mcnr.get<IAResponseGroup>       ("/iot/data",                          IoT.getAggregateData,                      [Access.OrgMember]);
+mcnr.get<IAResponseGroup>       ("/iot/aggregate",                     IoT.getAggregateData,                      [Access.OrgMember]);
 mcnr.get<string[]>              ("/iot/data/creators",                 IoT.getMeasurementIntentionCreators(),     [Access.OrgMember]);
-// mcnr.get<IMeasurementResult>    ("/iot/data",                          IoT.getMeasurements(),                     [Access.Authenticated],   IoT.validators.getMeasurements);
+mcnr.get<IMeasurement>          ("/iot/data",                          IoT.readMeasurement,                       [Access.Authenticated]);
 // mcnr.get                        ("/iot/types",                         IoT.getMeasurementTypes,                   [Access.None]);
 
 // TEST -------------------------------------------------------------------------------------------

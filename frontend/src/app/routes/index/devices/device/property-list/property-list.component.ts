@@ -21,6 +21,7 @@ import {
   NodeType,
   IMeasurementResult,
   IDevice,
+  IMeasurement,
 } from "@cxss/interfaces";
 
 import { DeviceService } from "src/app/services/device.service";
@@ -57,7 +58,7 @@ export class PropertyListComponent implements OnInit, AfterViewInit {
   @Input() authorUser: IUser;
 
   device: IDevice;
-  columnsToDisplay = ["_id", "name", "ref", "value"];
+  columnsToDisplay = ["name", "_id", "ref", "value"];
 
   cache: {
     [NodeType.Sensor]: Cacheable<Cacheable<IDeviceProperty<any>>[]>;
@@ -132,9 +133,9 @@ export class PropertyListComponent implements OnInit, AfterViewInit {
     setTimeout(() => {
       this.iotService
         .query(
-          `measurements[]=${property.data.measures}&property=${property.data.type}-${property.data._id}`
+          `measurement=${property.data.measures}&property=${property.data.type}-${property.data._id}`
         )
-        .then((d: IMeasurementResult) => {
+        .then((d: IMeasurement) => {
           if (property.data.data_format == "image") {
             property.imageData = d[property.data.measures];
             property.imageData.values = property.imageData.values.map((url) => {
@@ -149,14 +150,12 @@ export class PropertyListComponent implements OnInit, AfterViewInit {
               xAxis: {
                 title: { text: "Date" },
                 type: "datetime",
-                categories: d[property.data.measures as string].times.map((x) =>
-                  x.toString()
-                ),
+                categories: d.times.map((x) => x.toString()),
               },
               series: [
                 {
                   name: "Relative Humidity (%)",
-                  data: d[property.data.measures as string].values as any[],
+                  data: d.values as any[],
                   type: "line",
                 },
               ],

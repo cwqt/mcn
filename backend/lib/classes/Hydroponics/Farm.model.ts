@@ -45,10 +45,12 @@ const read = async <T extends IFarmStub | IFarm>(
     case DataModel.Full: {
       let res = await cypher(
         ` MATCH (f:Farm {_id:$fid})
-          MATCH (f)-[:HAS_RACK]->(r:Rack)
+          OPTIONAL MATCH (f)-[:HAS_RACK]->(r:Rack)
           RETURN f, collect(r{._id}) as r`,
         { fid: _id }
       );
+
+      console.log(_id);
 
       data = <IFarm>res.records[0].get("f").properties;
       data.racks = await Promise.all(

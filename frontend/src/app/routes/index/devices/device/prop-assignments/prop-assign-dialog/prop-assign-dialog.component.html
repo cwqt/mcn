@@ -17,7 +17,12 @@
     <mat-divider></mat-divider>
 
     <div class="prop-assignment">
-      <p>{{this.data.sources[this.data.property]?.name}}</p>
+      <div class="properties">
+        <p *ngFor="let prop of data.properties">
+          {{this.data.sources[prop]?.name}}
+        </p>
+      </div>
+
       <ui-icon>arrow--right</ui-icon>
       <div class="end">
         <p>{{selectedRecordable?.name || "Not assigned"}}</p>
@@ -31,7 +36,7 @@
     leftString="Cancel"
     rightString="Save"
     [leftDisabled]="false"
-    [rightDisabled]="loading && !florableGraph || initialRecordableId == selectedRecordable?._id"
+    [rightDisabled]="loading && !florableGraph"
     (leftClick)="cancel()"
     (rightClick)="assign()">
   </ui-dialog-buttons>

@@ -23,20 +23,16 @@
   </div>
 </div>
 
-<div class="dashboard-edit-buttons">
+<div class="dashboard-edit-bar">
+  <div class="dashboard-edit-buttons" *ngIf="cache.dashboard.editing">
+    <label>Rows</label>
+    <ui-input type="number" [(ngModel)]="dashboard.rows"></ui-input>
 
-  <ui-button variant="primary" (click)="openAddDashItemDialog()" *ngIf="cache.dashboard.editing"><ui-icon>add</ui-icon>Add item</ui-button>
+    <label>Columns</label>
+    <ui-input type="number" [(ngModel)]="dashboard.columns"></ui-input>
 
-  <label>Rows</label>
-  <mat-form-field appearance="fill">
-    <input matInput type="number">
-  </mat-form-field>
-
-  <label>Columns</label>
-  <mat-form-field appearance="fill">
-    <input matInput type="number">
-  </mat-form-field>
-
+    <ui-button variant="primary" (click)="openAddDashItemDialog()"><ui-icon>add</ui-icon>Add item</ui-button>
+  </div>
 
   <ui-button [variant]="cache.dashboard.editing ? 'warn' : 'primary'" (click)="toggleEditState()">
     <ui-icon *ngIf="!cache.dashboard.editing">edit</ui-icon>

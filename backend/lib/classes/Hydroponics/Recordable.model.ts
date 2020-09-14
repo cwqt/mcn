@@ -1,26 +1,18 @@
-import {
-  Measurement,
-  RecordableType,
-  DataModel,
-  IFarmStub,
-  IFarm,
-  IRecordableStub,
-  IRecordable,
-} from "@cxss/interfaces";
+import { DataModel, IRecordableStub, IRecordable, NodeType } from "@cxss/interfaces";
 import Node from "../Node.model";
 
 type TRecordable = IRecordableStub | IRecordable;
 
 const read = async <T extends TRecordable>(
   _id: string,
-  dataModel: DataModel = DataModel.Stub
+  dataModel: DataModel = DataModel.Stub,
+  nodeType?: NodeType
 ): Promise<T> => {
   let data;
   switch (dataModel) {
+    case DataModel.Full:
     case DataModel.Stub: {
-    }
-
-    case DataModel.Full: {
+      data = (await Node.read(_id, nodeType || NodeType.Recordable)) as TRecordable;
     }
   }
 

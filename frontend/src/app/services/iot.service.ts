@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import {
   IMeasurementResult,
+  IAggregateRequestGroup,
+  IAggregateResponseGroup,
   IMeasurement,
-  IAggregateData,
-  IAggregateRequest,
 } from "@cxss/interfaces";
 import { HttpClient } from "@angular/common/http";
 
@@ -13,15 +13,15 @@ import { HttpClient } from "@angular/common/http";
 export class IoTService {
   constructor(private http: HttpClient) {}
 
-  query(query: string): Promise<IMeasurementResult> {
-    return this.http
-      .get<IMeasurementResult>(`/api/iot/data?${query}`)
-      .toPromise();
+  query(query: string): Promise<IMeasurement> {
+    return this.http.get<IMeasurement>(`/api/iot/data?${query}`).toPromise();
   }
 
-  getAggregateData(body: IAggregateRequest): Promise<IAggregateData> {
+  getAggregateData(
+    body: IAggregateRequestGroup
+  ): Promise<IAggregateResponseGroup> {
     return this.http
-      .post<IAggregateData>(`/api/iot/data/aggregate`, body)
+      .post<IAggregateResponseGroup>(`/api/iot/data/aggregate`, body)
       .toPromise();
   }
 }

@@ -6,6 +6,7 @@ import {
   EventEmitter,
   OnChanges,
   SimpleChanges,
+  ComponentFactoryResolver,
 } from "@angular/core";
 import * as Highcharts from "highcharts";
 import {
@@ -95,8 +96,6 @@ export class PropAssignmentsComponent implements OnInit {
       }, [])
     );
 
-    console.log(this.dataSource);
-
     graph.nodes = graph.data.map((x) => {
       let type = x.to.split("-")[0];
       return {
@@ -160,14 +159,11 @@ export class PropAssignmentsComponent implements OnInit {
     };
   }
 
-  getPropAssignmentsGraph(isRefresh?: boolean, event?) {
+  getPropAssignmentsGraph() {
     this.loading = true;
     return this.deviceService
       .getPropertyAssignmentsGraph(this.device._id)
-      .then((res) => {
-        if (event) this.assignmentGraph[event[0]] = event[1];
-        this.graph = res;
-      })
+      .then((res) => (this.graph = res))
       .catch((e) => (this.error = e))
       .finally(() => (this.loading = false));
   }
@@ -175,8 +171,7 @@ export class PropAssignmentsComponent implements OnInit {
   openAssignmentDialog() {
     const dialogRef = this.dialog.open(PropAssignDialogComponent, {
       data: {
-        // property: property,
-        // recordable: recordable,
+        properties: this.selection.selected.map((x) => x.key),
         sources: this.graph.sources,
         device: this.device,
       },
@@ -184,13 +179,7 @@ export class PropAssignmentsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      // if (result && `${result.type}-${result?._id}` !== recordable) {
-      //   //assignment change
-      //   this.getPropAssignmentsGraph(true, [
-      //     property,
-      //     `${result.type}-${result?._id}`,
-      //   ]);
-      // }
+      this.getPropAssignmentsGraph();
     });
   }
 
