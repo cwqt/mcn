@@ -29,15 +29,13 @@ import { NotFoundComponent } from "./components/pages/not-found/not-found.compon
 
 import { WrapperComponent } from "./components/app/wrapper/wrapper.component";
 import { HeaderBarComponent } from "./components/app/header-bar/header-bar.component";
-import { SidebarComponent } from "./components/app/sidebar/sidebar.component";
 
 import { ProfileComponent } from "./routes/profile/profile.component";
 
 import { DocumentationComponent } from "./routes/documentation/documentation.component";
 import { HeaderBarUserMenuComponent } from "./components/app/header-bar/header-bar-user-menu/header-bar-user-menu.component";
 import { FooterComponent } from "./components/app/footer/footer.component";
-import { SidebarNavComponent } from "./components/app/sidebar/sidebar-nav/sidebar-nav.component";
-import { TreeNodeComponent } from "./components/app/sidebar/sidebar-nav/tree-node/tree-node.component";
+import { TreeNodeComponent } from "./components/graph-selector/tree-node/tree-node.component";
 import { IndexComponent } from "./routes/index/index.component";
 import { OrganisationsComponent } from "./routes/organisations/organisations.component";
 import { PageComponent } from "./components/app/page/page.component";
@@ -65,6 +63,10 @@ import { DeviceInfoComponent } from "./routes/index/devices/device/device-info/d
 import { DashboardComponent } from "./routes/index/dashboard/dashboard.component";
 import { DashboardItemComponent } from "./routes/index/dashboard/dashboard-item/dashboard-item.component";
 import { CreateDashItemDialogComponent } from "./routes/index/dashboard/create-dash-item-dialog/create-dash-item-dialog.component";
+import { EditDashItemDialogComponent } from "./routes/index/dashboard/dashboard-item/edit-dash-item-dialog/edit-dash-item-dialog.component";
+
+import { DataAggregatorComponent } from "./components/data-aggregator/data-aggregator.component";
+import { GraphSelectorComponent } from "./components/graph-selector/graph-selector.component";
 
 @NgModule({
   declarations: [
@@ -77,7 +79,6 @@ import { CreateDashItemDialogComponent } from "./routes/index/dashboard/create-d
     HeaderBarComponent,
     WrapperComponent,
     NotFoundComponent,
-    SidebarComponent,
     DeviceComponent,
     DocumentationComponent,
     HeaderBarUserMenuComponent,
@@ -88,7 +89,6 @@ import { CreateDashItemDialogComponent } from "./routes/index/dashboard/create-d
     FooterComponent,
     PropertyListComponent,
     PropAssignDialogComponent,
-    SidebarNavComponent,
     TreeNodeComponent,
     IndexComponent,
     OrganisationsComponent,
@@ -108,6 +108,9 @@ import { CreateDashItemDialogComponent } from "./routes/index/dashboard/create-d
     RackComponent,
     CropComponent,
     CreateDashItemDialogComponent,
+    EditDashItemDialogComponent,
+    DataAggregatorComponent,
+    GraphSelectorComponent,
   ],
   imports: [
     AngularMaterialModule,

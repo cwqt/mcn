@@ -1,5 +1,4 @@
-import { Request, Response, NextFunction } from "express";
-import { HTTP } from "../common/http";
+import { Request, NextFunction } from "express";
 import { cypher } from "../common/dbs";
 import { Bin, PackResult } from "bin-pack";
 const pack = require("bin-pack-plus");
@@ -15,11 +14,10 @@ import {
   IOrgEnv,
   IDashboard,
   IDashboardItem,
-  IFlorableGraph,
+  IGraphNode,
 } from "@cxss/interfaces";
 import { capitalize, paginate } from "./Node.controller";
-import { ErrorHandler } from "../common/errorHandler";
-const { body, param, query } = require("express-validator");
+const { body, query } = require("express-validator");
 import { validate } from "../common/validate";
 import { IResLocals, Access } from "../mcnr";
 import { Record } from "neo4j-driver";
@@ -29,7 +27,6 @@ import Dashboard from "../classes/Dashboard/Dashboard.model";
 import DashboardItem from "../classes/Dashboard/DashboardItem.model";
 
 import nodeMap from "../classes/nodeMap";
-import { formatWithOptions } from "util";
 
 export const validators = {
   createOrg: validate([body("name").not().isEmpty().trim()]),
@@ -251,22 +248,29 @@ export const deleteDashboardItem = async (req: Request) => {
   await DashboardItem.remove(req.params.iid);
 };
 
-export const readRecordablesGraph = async (req: Request): Promise<IFlorableGraph> => {
+export const readRecordablesGraph = async (req: Request): Promise<IGraphNode[]> => {
   const res = await cypher(
     ` MATCH (o:Organisation {_id:$oid})<-[:IN]-(f:Farm)
       OPTIONAL MATCH (f)-[:HAS_RACK]->(r:Rack)
       WITH f, r
       OPTIONAL MATCH (r)-[:HAS_CROP]->(c:Crop)
       WITH f,r, CASE WHEN c IS NULL THEN NULL ELSE {name: c.name, _id:c._id, type: c.type} END as crops
-      WITH f, CASE WHEN r IS NULL THEN NULL ELSE {name: r.name, _id:r._id, type: r.type, crops: collect(crops)} END as racks
-      WITH {name: f.name, _id:f._id, type: f.type, racks: collect(racks)} as farm
+      WITH f, CASE WHEN r IS NULL THEN NULL ELSE {name: r.name, _id:r._id, type: r.type, children: collect(crops)} END as racks
+      WITH {name: f.name, _id:f._id, type: f.type, children: collect(racks)} as farm
       RETURN farm`,
     { oid: req.params.oid }
   );
 
-  const graph: IFlorableGraph = {
-    farms: res.records.map((x) => x.get("farm")),
-  };
+  return res.records.map((x) => x.get("farm"));
+};
 
-  return graph;
+export const readSourcesGraph = async (req: Request): Promise<IGraphNode[]> => {
+  const res = await cypher(
+    ` MATCH (o:Organisation {_id:$oid})<-[:IN]-(d:Device)
+      OPTIONAL MATCH (d)-[:HAS_PROPERTY]->(p)
+      RETURN d{.name, .type, ._id, children: collect(p{._id, .type, .name})}`,
+    { oid: req.params.oid }
+  );
+
+  return res.records.map((x) => x.get("d"));
 };

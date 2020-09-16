@@ -1,7 +1,6 @@
 import { Component, OnInit, Inject } from "@angular/core";
 import { DeviceService } from "src/app/services/device.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { IFlorableGraph } from "@cxss/interfaces";
 import { OrganisationService } from "src/app/services/organisation.service";
 import { MatTreeNestedDataSource } from "@angular/material/tree";
 import { NestedTreeControl } from "@angular/cdk/tree";
@@ -36,15 +35,8 @@ export class PropAssignDialogComponent implements OnInit {
   async getFlorableGraph() {
     this.loading = true;
     return this.orgService
-      .getFlorableGraph()
+      .getRecordableGraph()
       .then((g: any) => {
-        //map into tree
-        g.farms.forEach((f) => {
-          f.children = f.racks;
-          f.children.forEach((r) => {
-            r.children = r.crops;
-          });
-        });
         this.florableGraph = g;
       })
       .catch((e) => (this.error = e.message))

@@ -17,15 +17,14 @@ import {
     NodeType as NT,
     IApiKeyPrivate,
     IOrgEnv,
-    IMeasurementResult,
     ISpecies,
     ISpeciesStub,
     IDashboard,
     IDashboardItem,
     IFlatNodeGraph,
-    IFlorableGraph,
     IAggregateResponseGroup as IAResponseGroup,
-    IMeasurement
+    IMeasurement,
+    IGraphNode
 } from "@cxss/interfaces";
 import { Access } from "./mcnr";
 
@@ -75,7 +74,8 @@ mcnr.get     <IDashboard>       ("/orgs/:oid/dashboard",               Orgs.getD
 mcnr.post    <IDashboardItem>   ("/orgs/:oid/dashboard/items",         Orgs.addItemToDashboard,                  [Access.OrgEditor]);
 mcnr.put     <IDashboardItem>   ("/orgs/:oid/dashboard/items/:iid",    Orgs.updateDashboardItem,                 [Access.OrgEditor]);
 mcnr.delete  <void>             ("/orgs/:oid/dashboard/items/:iid",    Orgs.deleteDashboardItem,                 [Access.OrgEditor]);
-mcnr.get     <IFlorableGraph>   ("/orgs/:oid/graph",                   Orgs.readRecordablesGraph,                [Access.OrgMember]);
+mcnr.get     <IGraphNode[]>     ("/orgs/:oid/graph/recordables",       Orgs.readRecordablesGraph,                [Access.OrgMember]);
+mcnr.get     <IGraphNode[]>     ("/orgs/:oid/graph/sources",           Orgs.readSourcesGraph,                    [Access.OrgMember]);
 
 // ORG ITEMS -------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.put     <void>             ("/orgs/:oid/users/:uid/role",         Orgs.editUserRole,                        [Access.OrgAdmin]);
@@ -167,6 +167,11 @@ mcnr.get<IMeasurement>          ("/iot/data",                          IoT.readM
 mcnr.post("/test/drop", async () => {
     await new Promise((res, rej) => dbs.redisClient.FLUSHDB(res));
     await cypher(`MATCH (n) DETACH DELETE n`, {});
+    await dbs.influx.dropDatabase('iot');
+    await dbs.influx.createDatabase('iot');
+}, [Access.SiteAdmin]);
+
+mcnr.post("/test/drop/influx", async () => {
     await dbs.influx.dropDatabase('iot');
     await dbs.influx.createDatabase('iot');
 }, [Access.SiteAdmin]);

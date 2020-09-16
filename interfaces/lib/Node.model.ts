@@ -21,6 +21,7 @@ export interface IGraphNode {
   name: string;
   _id: string;
   type: NodeType;
+  children?: IGraphNode[];
 }
 
 export interface IFlatNodeGraph {

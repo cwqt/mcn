@@ -13,8 +13,7 @@ import {
   IFlatNodeGraph,
   NodeType,
   IDevice,
-  IFlatNodeGraphItem,
-  IFlorableGraph,
+  IGraphNode,
 } from "@cxss/interfaces";
 import networkgraph from "highcharts/modules/networkgraph";
 import { MatDialog } from "@angular/material/dialog";
@@ -42,7 +41,7 @@ const colourMap = {
 export class PropAssignmentsComponent implements OnInit {
   Highcharts: typeof Highcharts = Highcharts; // required
   device: IDevice;
-  florableGraph: IFlorableGraph;
+  recordableGraph: IGraphNode[];
   graph: IFlatNodeGraph;
 
   loading: boolean;

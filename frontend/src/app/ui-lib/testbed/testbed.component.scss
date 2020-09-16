@@ -11,9 +11,19 @@
 
 .row {
   display: flex;
+  flex-wrap: wrap;
   margin-bottom: 20px;
   align-items: center;
   * {
     margin-right: 10px;
+  }
+}
+
+.measurements-icon-wrapper {
+  p {
+    width: 100px;
+    span {
+      word-wrap: break-word;
+    }
   }
 }

@@ -5,6 +5,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { CreateDashItemDialogComponent } from "./create-dash-item-dialog/create-dash-item-dialog.component";
 import { DashboardService } from "src/app/services/dashboard.service";
 import { Rectangle } from "ngx-widget-grid";
+import { EditDashItemDialogComponent } from "./dashboard-item/edit-dash-item-dialog/edit-dash-item-dialog.component";
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
@@ -36,9 +37,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     private dashService: DashboardService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.orgService.currentOrg.subscribe((o) => (this.org = o));
-    this.getDashboard();
+    await this.getDashboard();
+    console.log(this.dashboard);
+    this.editDashItem(this.dashboard.items[0]);
   }
 
   ngAfterViewInit() {
@@ -64,7 +67,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  editDashItem(item: IDashboardItem = this.openedDashMenuItem) {}
+  editDashItem(item: IDashboardItem = this.openedDashMenuItem) {
+    this.dialog.open(EditDashItemDialogComponent, { data: item });
+  }
 
   updateDashItem(item: IDashboardItem, body: { [index: string]: any }) {
     this.dashService.updateItem(item._id, body);
@@ -85,9 +90,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.openedDashMenuItem = item;
   }
 
-  getDashboard() {
+  getDashboard(): Promise<void> {
     this.cache.dashboard.loading = true;
-    this.orgService
+    return this.orgService
       .getDashboard()
       .then((d: IDashboard) => {
         this.cache.dashboard.data = d;

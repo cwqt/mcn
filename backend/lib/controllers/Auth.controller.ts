@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-const { body, param, query } = require("express-validator");
+import { Request } from "express";
+const { query } = require("express-validator");
 import { validate } from "../common/validate";
 import jwt from "jsonwebtoken";
 import { Types } from "mongoose";
@@ -11,7 +11,6 @@ import { HTTP } from "../common/http";
 import { IApiKeyPrivate, IApiKey } from "@cxss/interfaces";
 const { generateVerificationHash, verifyHash } = require("dbless-email-verification");
 import nodemailer from "nodemailer";
-import { env } from "process";
 
 export const validators = {
   verify: validate([

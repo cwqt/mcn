@@ -7,7 +7,7 @@ import {
   IFarmStub,
   IOrgEnv,
   IDashboard,
-  IFlorableGraph,
+  IGraphNode,
 } from "@cxss/interfaces";
 import { BehaviorSubject } from "rxjs";
 import { tap } from "rxjs/operators";
@@ -72,9 +72,15 @@ export class OrganisationService {
     return this.http.get<IOrgEnv>(`/api/orgs/${_id}/environment`).toPromise();
   }
 
-  getFlorableGraph(): Promise<IFlorableGraph> {
+  getRecordableGraph(): Promise<IGraphNode[]> {
     return this.http
-      .get<IFlorableGraph>(`/api/orgs/${this.orgId}/graph`)
+      .get<IGraphNode[]>(`/api/orgs/${this.orgId}/graph/recordables`)
+      .toPromise();
+  }
+
+  getSourcesGraph(): Promise<IGraphNode[]> {
+    return this.http
+      .get<IGraphNode[]>(`/api/orgs/${this.orgId}/graph/sources`)
       .toPromise();
   }
 }

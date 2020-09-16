@@ -1,0 +1,7 @@
+<div class="florable-tree-select" *ngIf="graph">
+  <div class="nav">
+    <div class="top-level-node" *ngFor="let n of graph">
+      <app-tree-node (unselectedNode)="unselectNode($event)" (selectedNode)="selectNode($event)" [node]="n" [depth]="0"></app-tree-node>
+    </div>
+  </div>
+</div>

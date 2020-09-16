@@ -1,1 +1,13 @@
-<p>data-aggregator works!</p>
+<app-graph-selector
+  [graph]="sourceGraph"
+  [selectMany]="true"
+  (selectionChange)="handleSourcesChange($event)">
+</app-graph-selector>
+
+<br>
+<h2>Recordables</h2>
+<app-graph-selector
+  [graph]="recordableGraph"
+  [selectMany]="false"
+  (selectionChange)="handleRecordableChange($event)">
+</app-graph-selector>

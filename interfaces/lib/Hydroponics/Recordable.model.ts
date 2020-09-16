@@ -2,6 +2,7 @@ import { Measurement } from "../Types/Measurements.types";
 import * as IpAddress from "ip-address";
 import { INode, IGraphNode } from "../Node.model";
 import { NodeType, RecordableType } from "../Types/Nodes.types";
+import { IDeviceProperty } from "../IoT/DeviceProperty.model";
 
 export interface IRecordableStub extends INode {
   name: string;
@@ -15,12 +16,4 @@ export interface IRecordable extends IRecordableStub {
   feed_url?: IpAddress.Address4 | IpAddress.Address6;
   parameters?: Map<Measurement, [number, number, number]>; //lower, avg, upper bounds
   description?: string;
-}
-
-export interface IFlorableGraph {
-  farms: ({
-    racks: ({
-      crops: IGraphNode[];
-    } & IGraphNode)[];
-  } & IGraphNode)[];
 }

@@ -1,11 +1,4 @@
 <div class="assignment-wrapper" *ngIf="graph">
-  <!-- <div class="assigner" *ngFor="let assignment of assignmentGraph | keyvalue">
-      {{graph.sources[assignment.key].name}}
-    </ui-button>
-    <ui-icon>arrow--right</ui-icon>
-    <p>{{graph.sources[assignment.value]?.name || "Not assigned"}}</p>
-  </div> -->
-
   <ui-button
     variant="primary"
     [disabled]="!selection.hasValue()"

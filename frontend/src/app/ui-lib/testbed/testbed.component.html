@@ -62,6 +62,18 @@
 
   {{textString}}, {{numberString}},  {{boolString}}
 
+  <br/>
+  <br/>
+  <h1>Measurements</h1>
+  <div class="measurements-icon-wrapper row">
+    <p *ngFor="let measurement of measurements | keyvalue">
+      <ui-icon>{{ measurement.value.icon }}</ui-icon>
+      {{ measurement.key }}
+      <span>{{ units[measurement.key] }}</span>
+    </p>
+  </div>
+
+
   <br />
   <br />
   <h1>Admonition</h1>

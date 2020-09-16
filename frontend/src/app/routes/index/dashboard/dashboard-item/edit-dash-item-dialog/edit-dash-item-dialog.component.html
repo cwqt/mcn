@@ -1,0 +1,14 @@
+<div class="wrapper">
+  <h1>Edit dashboard item ({{data.title}})</h1>
+
+  <app-data-aggregator [editing]="true" [aggregation_request]="data.aggregation_request"></app-data-aggregator>
+</div>
+
+
+<ui-dialog-buttons
+  leftString="Cancel"
+  rightString="Save"
+  [leftDisabled]="false"
+  (leftClick)="cancel()"
+  (rightClick)="save()">
+</ui-dialog-buttons>

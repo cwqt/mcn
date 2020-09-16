@@ -172,7 +172,6 @@ export const getAggregateData = async (req: Request): Promise<IAggregateResponse
       // distinct, get all sources
       [...new Set(sources)].map((r) => {
         const [rtype, rid] = r.split("-");
-        console.log(rtype, rid);
         return RecordableModel.read(rid, DataModel.Stub, rtype as NodeType);
       })
     )
@@ -221,8 +220,6 @@ export const getMeasurement = async (
   end_date?: string,
   data_format?: Unit | Type
 ): Promise<IMeasurement> => {
-  console.log(creator, property, intention, measurement, start_date, end_date, data_format);
-
   let whereables: string[] = [];
   if (intention) whereables.push(`intention='${intention}'`);
   if (start_date) whereables.push(`time > '${start_date}'`);
@@ -233,8 +230,6 @@ export const getMeasurement = async (
   const q = `SELECT * from ${measurement}${
     whereables.length ? "\nWHERE " + whereables.join(" and ") : ";"
   }`;
-
-  console.log((await dbs.influx.query(q)).groups());
 
   // execute query & format into IMeasurement
   // {air_temperature:{times:[Date, Date, Date], values:[Value, Value, Value], unit:Unit}}
