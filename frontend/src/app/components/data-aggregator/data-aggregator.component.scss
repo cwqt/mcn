@@ -1,0 +1,65 @@
+.point {
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 3px;
+  border: 1px solid transparent;
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+
+  &.editing {
+    border: 1px solid #eaeaea;
+    margin: 10px 0;
+  }
+
+  .point-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    ui-icon-button {
+      margin-left: auto;
+      height: 52px;
+      ::ng-deep button {
+        height: 52px;
+      }
+    }
+    .point-info {
+      display: flex;
+      align-items: center;
+      padding: 10px 0 10px 10px;
+
+      p {
+        margin: 0;
+        max-width: 400px;
+        span:not(:last-child)::after {
+          content: ", ";
+        }
+      }
+
+      .color-picker {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        margin-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .point-header-buttons {
+      display: flex;
+    }
+  }
+
+  .point-edit-section {
+    border-top: 1px solid #eaeaea;
+    display: flex;
+    ui-button ui-icon {
+      margin-right: 5px;
+    }
+    ui-icon-button {
+      height: 40px;
+      margin-left: auto;
+    }
+  }
+}

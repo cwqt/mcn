@@ -64,12 +64,7 @@ export class McnRouter {
 
   get = <T>(
     path: string,
-    controller: (
-      req: Request,
-      next: NextFunction,
-      locals: IResLocals,
-      permissions: Access[]
-    ) => Promise<T>,
+    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
     access: Access[],
     validators: any = skip,
     nodeData?: [NodeType, string]
@@ -108,12 +103,7 @@ export class McnRouter {
 
   post = <T>(
     path: string,
-    controller: (
-      req: Request,
-      next: NextFunction,
-      locals: IResLocals,
-      permissions: Access[]
-    ) => Promise<T>,
+    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
     access: Access[],
     validators: any = skip,
     nodeData?: [NodeType, string]
@@ -144,12 +134,7 @@ export class McnRouter {
 
   put = <T>(
     path: string,
-    controller: (
-      req: Request,
-      next: NextFunction,
-      locals: IResLocals,
-      permissions: Access[]
-    ) => Promise<T>,
+    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
     access: Access[],
     validators: any = skip,
     nodeData?: [NodeType, string]
@@ -169,22 +154,12 @@ export class McnRouter {
         handleError(req, res, next, err);
       }
     };
-    this.router.put(
-      path,
-      getCheckPermissions(access, nodeData),
-      validators ?? skip,
-      wrappedController
-    );
+    this.router.put(path, getCheckPermissions(access, nodeData), validators ?? skip, wrappedController);
   };
 
   delete = <T>(
     path: string,
-    controller: (
-      req: Request,
-      next: NextFunction,
-      locals: IResLocals,
-      permissions: Access[]
-    ) => Promise<T>,
+    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
     access: Access[],
     validators: any = skip,
     nodeData?: [NodeType, string]
@@ -204,22 +179,12 @@ export class McnRouter {
         handleError(req, res, next, err);
       }
     };
-    this.router.delete(
-      path,
-      getCheckPermissions(access, nodeData),
-      validators ?? skip,
-      wrappedController
-    );
+    this.router.delete(path, getCheckPermissions(access, nodeData), validators ?? skip, wrappedController);
   };
 
   redirect = <T>(
     path: string,
-    controller: (
-      req: Request,
-      next: NextFunction,
-      locals: IResLocals,
-      permissions: Access[]
-    ) => Promise<string>,
+    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<string>,
     access: Access[],
     validators: any = skip,
     nodeData?: [NodeType, string]
@@ -239,12 +204,7 @@ export class McnRouter {
         handleError(req, res, next, err);
       }
     };
-    this.router.get(
-      path,
-      getCheckPermissions(access, nodeData),
-      validators ?? skip,
-      wrappedController
-    );
+    this.router.get(path, getCheckPermissions(access, nodeData), validators ?? skip, wrappedController);
   };
 }
 
@@ -295,9 +255,7 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
           `
           MATCH (u:User {_id:$uid})-[orgRole:IN]->(o:Organisation {_id:$oid})
           RETURN u, o, orgRole${
-            nodeData
-              ? `, EXISTS ((u)-[:IN]->(o)<-[:IN]-(n:${nodeData[0]} {_id:$iid})) as nodeInOrg`
-              : ""
+            nodeData ? `, EXISTS ((u)-[:IN]->(o)<-[:IN]-(n:${nodeData[0]} {_id:$iid})) as nodeInOrg` : ""
           }
         `,
           {
@@ -314,8 +272,7 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
         if (!userRole) throw new Error("You are not in this organisation");
 
         const hasRole = (accessPolicy: Access) => {
-          if (access.some((a) => [accessPolicy].includes(a)) && userRole.role == access)
-            return true;
+          if (access.some((a) => [accessPolicy].includes(a)) && userRole.role == access) return true;
           return false;
         };
 
@@ -334,9 +291,7 @@ const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) =>
         }
 
         if (userRole.role > requiredAccess)
-          throw new Error(
-            `Insufficient priviledge, needed ${requiredAccess}, got ${userRole.role}`
-          );
+          throw new Error(`Insufficient priviledge, needed ${requiredAccess}, got ${userRole.role}`);
 
         return next();
       }

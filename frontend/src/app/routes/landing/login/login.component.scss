@@ -23,8 +23,6 @@ mat-error.form {
 .login-wrapper {
   display: flex;
   overflow: hidden;
-  max-height: 400px;
-  position: relative;
 
   .image {
     width: 78px;
@@ -59,7 +57,8 @@ mat-error.form {
 
   .content {
     padding: 20px;
-    width: 100%;
+    margin: 50px 0;
+    width: 30vw;
   }
 }
 
@@ -78,6 +77,7 @@ ui-button {
 }
 
 .alt-sign-in-buttons {
+  display: none;
   background-color: #f4f4f4;
   position: absolute;
   padding: 10px;

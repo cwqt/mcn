@@ -131,6 +131,7 @@ export const getAggregateData = async (req: Request): Promise<IAggregateResponse
     sources.push(agg_req.recordable);
 
     let ref: IAggregateResponse = {
+      _id: agg_req._id,
       sources: {},
       recordable: agg_req.recordable,
       color: agg_req.color,

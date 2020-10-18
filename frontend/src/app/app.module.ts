@@ -19,11 +19,10 @@ import { IvyCarouselModule } from "angular-responsive-carousel";
 import { NgxWidgetGridModule } from "ngx-widget-grid";
 
 import { AppComponent } from "./app.component";
-
-import { LoginComponent } from "./components/landing/login/login.component";
-import { RegisterComponent } from "./components/landing/register/register.component";
-import { FirstTimeSetupComponent } from "./components/landing/first-time-setup/first-time-setup.component";
-
+import { LandingComponent } from "./routes/landing/landing.component";
+import { LoginComponent } from "./routes/landing/login/login.component";
+import { RegisterComponent } from "./routes/landing/register/register.component";
+import { FirstTimeSetupComponent } from "./routes/landing/first-time-setup/first-time-setup.component";
 import { VerifiedComponent } from "./components/pages/verified/verified.component";
 import { NotFoundComponent } from "./components/pages/not-found/not-found.component";
 
@@ -68,9 +67,18 @@ import { EditDashItemDialogComponent } from "./routes/index/dashboard/dashboard-
 import { DataAggregatorComponent } from "./components/data-aggregator/data-aggregator.component";
 import { GraphSelectorComponent } from "./components/graph-selector/graph-selector.component";
 
+import { SelectRecordableDialogComponent } from "./components/data-aggregator/select-recordable-dialog/select-recordable-dialog.component";
+import { SelectSourcesDialogComponent } from "./components/data-aggregator/select-sources-dialog/select-sources-dialog.component";
+import { SelectMeasurementDialogComponent } from "./components/data-aggregator/select-measurement-dialog/select-measurement-dialog.component";
+
+import { PickColorComponent } from "./components/pick-color/pick-color.component";
+import { PickMeasurementComponent } from "./components/pick-measurement/pick-measurement.component";
+import { SideStripComponent } from "./components/app/side-strip/side-strip.component";
+
 @NgModule({
   declarations: [
     AppComponent,
+    LandingComponent,
     LoginComponent,
     RegisterComponent,
     ProfileComponent,
@@ -111,6 +119,12 @@ import { GraphSelectorComponent } from "./components/graph-selector/graph-select
     EditDashItemDialogComponent,
     DataAggregatorComponent,
     GraphSelectorComponent,
+    SelectRecordableDialogComponent,
+    SelectSourcesDialogComponent,
+    SelectMeasurementDialogComponent,
+    PickColorComponent,
+    PickMeasurementComponent,
+    SideStripComponent,
   ],
   imports: [
     AngularMaterialModule,

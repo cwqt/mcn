@@ -1,0 +1,9 @@
+<div class="pick-color-wrapper">
+  <div
+    (click)="selectColor(color.key)"
+    class="color"
+    *ngFor="let color of colorMap | keyvalue"
+    [style]="'background-color: ' + color.value['300']">
+
+  </div>
+</div>

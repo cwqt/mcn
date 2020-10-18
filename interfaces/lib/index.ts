@@ -29,3 +29,4 @@ export * from "./IoT/Aggregation.model";
 export * from "./Runner/Tasks.model";
 
 export * from "./mcnMongoSchema";
+export * from "./material-colors";

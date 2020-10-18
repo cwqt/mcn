@@ -20,6 +20,7 @@ export class AuthenticationService {
     return this.http.post<any>('/api/users/login', formData, { withCredentials:true })
       .pipe(map(user => {
           this.userService.setUser(user);
+          this.router.navigate(['/']);
           return user;
       }));
   }

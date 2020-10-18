@@ -40,6 +40,7 @@ export interface IAggregateResponseGroup {
 }
 
 export interface IAggregatePoint {
+  _id: string;
   recordable: string;
   color?: COLOR;
   data_format: Unit | Type;

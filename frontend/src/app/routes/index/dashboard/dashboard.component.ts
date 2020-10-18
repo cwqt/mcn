@@ -68,7 +68,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   editDashItem(item: IDashboardItem = this.openedDashMenuItem) {
-    this.dialog.open(EditDashItemDialogComponent, { data: item });
+    this.dialog.open(EditDashItemDialogComponent, {
+      data: item,
+      width: "600px",
+    });
   }
 
   updateDashItem(item: IDashboardItem, body: { [index: string]: any }) {

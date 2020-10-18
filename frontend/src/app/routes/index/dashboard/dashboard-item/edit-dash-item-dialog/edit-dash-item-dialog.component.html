@@ -1,7 +1,12 @@
 <div class="wrapper">
-  <h1>Edit dashboard item ({{data.title}})</h1>
+  <h1>Edit dashboard item</h1>
+  <ui-input type="text" [(ngModel)]="data.title" label="Title"></ui-input>
 
-  <app-data-aggregator [editing]="true" [aggregation_request]="data.aggregation_request"></app-data-aggregator>
+  <mat-divider></mat-divider>
+  <br />
+
+  <h2>Data aggregation</h2>
+  <app-data-aggregator [editing]="true" [aggregation_request_group]="data.aggregation_request"></app-data-aggregator>
 </div>
 
 

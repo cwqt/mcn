@@ -49,16 +49,9 @@ export const readAllOrgs = async (
     }
   );
 
-  let orgs = await Promise.all(
-    res.records.map((r: Record) => Org.read<IOrgStub>(r.get("")._id, DataModel.Stub))
-  );
+  let orgs = await Promise.all(res.records.map((r: Record) => Org.read<IOrgStub>(r.get("")._id, DataModel.Stub)));
 
-  return paginate(
-    NodeType.Organisation,
-    orgs,
-    res.records[0].get("total").toNumber(),
-    locals.pagination.per_page
-  );
+  return paginate(NodeType.Organisation, orgs, res.records[0].get("total").toNumber(), locals.pagination.per_page);
 };
 
 export const deleteOrg = async (req: Request) => {
@@ -132,8 +125,7 @@ export const addNodeToOrg = (node: NodeType) => {
       }
     );
 
-    if (!result.records[0]?.get("isIn"))
-      throw new Error(`Couldn't add ${capitalize(node)} to Organisation.`);
+    if (!result.records[0]?.get("isIn")) throw new Error(`Couldn't add ${capitalize(node)} to Organisation.`);
 
     return;
   };
@@ -232,9 +224,7 @@ export const addItemToDashboard = async (req: Request): Promise<IDashboardItem> 
     });
   }
 
-  await Promise.all(
-    newDash.items.map((i) => DashboardItem.update(i._id, { position: i.position }))
-  );
+  await Promise.all(newDash.items.map((i) => DashboardItem.update(i._id, { position: i.position })));
 
   return newDash.items.find((i) => i._id == item._id);
 };

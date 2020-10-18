@@ -1,0 +1,20 @@
+<div class="select-measurement-wrapper">
+  <h1>Select measurement</h1>
+
+  <div class="measurements-icon-wrapper row">
+    <p *ngFor="let measurement of data | keyvalue">
+      <mat-checkbox></mat-checkbox>
+      <ui-icon>{{ measurement.value.icon }}</ui-icon>
+      {{ measurement.value.title }}
+    </p>
+  </div>
+</div>
+
+
+<ui-dialog-buttons
+  leftString="Cancel"
+  rightString="Save"
+  [leftDisabled]="false"
+  (leftClick)="cancel()"
+  (rightClick)="save()">
+</ui-dialog-buttons>

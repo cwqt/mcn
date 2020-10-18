@@ -3,5 +3,5 @@
   "customizeUI.titleBar": "frameless",
   "spellright.language": ["en"],
   "spellright.documentTypes": ["markdown", "latex"],
-  "prettier.printWidth": 100
+  "prettier.printWidth": 120
 }

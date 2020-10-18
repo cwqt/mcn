@@ -1,11 +1,10 @@
-import { NgModule } from "@angular/core";
+import { Component, NgModule, Type } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
-import { AuthGuard } from "./_helpers";
+import { LoggedInGuard, NegateLoggedInGuard } from "./_helpers";
 
 import { IndexComponent } from "./routes/index/index.component";
 import { ProfileComponent } from "./routes/profile/profile.component";
-import { OrganisationComponent } from "./routes/organisations/organisation/organisation.component";
 import { CatalogComponent } from "./routes/catalog/catalog.component";
 import { OrganisationsComponent } from "./routes/organisations/organisations.component";
 import { CreateOrgComponent } from "./routes/organisations/create-org/create-org.component";
@@ -26,77 +25,77 @@ import { DeviceControlComponent } from "./routes/index/devices/device/device-con
 import { ScheduledTasksComponent } from "./routes/index/devices/device/scheduled-tasks/scheduled-tasks.component";
 import { DeviceInfoComponent } from "./routes/index/devices/device/device-info/device-info.component";
 import { TestbedComponent } from "./ui-lib/testbed/testbed.component";
+import { LandingComponent } from "./routes/landing/landing.component";
+import { RegisterComponent } from "./routes/landing/register/register.component";
+import { LoginComponent } from "./routes/landing/login/login.component";
 
-const routes: Routes = [
+const APP_ROUTES: Routes = [
   {
-    path: "",
-    component: IndexComponent,
+    path: "devices",
+    component: DevicesComponent,
     children: [
       {
-        path: "devices",
-        component: DevicesComponent,
+        path: ":did",
+        component: DeviceComponent,
         children: [
           {
-            path: ":did",
-            component: DeviceComponent,
-            children: [
-              {
-                path: "",
-                component: DeviceInfoComponent,
-              },
-              {
-                path: "properties",
-                component: PropAssignmentsComponent,
-              },
-              {
-                path: "measurements",
-                component: PropertyListComponent,
-              },
-              {
-                path: "control",
-                component: DeviceControlComponent,
-              },
-              {
-                path: "tasks",
-                component: ScheduledTasksComponent,
-              },
-            ],
+            path: "",
+            component: DeviceInfoComponent,
           },
-        ],
-      },
-      {
-        path: "farms",
-        component: FarmsComponent,
-        children: [
           {
-            path: ":fid",
-            component: FarmComponent,
-            children: [
-              {
-                path: "racks",
-                component: RacksComponent,
-              },
-              // {
-              //   path: "measurements",
-              //   component: RacksComponent,
-              // },
-              // {
-              //   path: "agenda",
-              //   component: AgendaComponent,
-              // },
-            ],
+            path: "properties",
+            component: PropAssignmentsComponent,
+          },
+          {
+            path: "measurements",
+            component: PropertyListComponent,
+          },
+          {
+            path: "control",
+            component: DeviceControlComponent,
+          },
+          {
+            path: "tasks",
+            component: ScheduledTasksComponent,
           },
         ],
-      },
-      {
-        path: "",
-        component: DashboardComponent,
       },
     ],
   },
-
+  {
+    path: "farms",
+    component: FarmsComponent,
+    children: [
+      {
+        path: ":fid",
+        component: FarmComponent,
+        children: [
+          {
+            path: "racks",
+            component: RacksComponent,
+          },
+          // {
+          //   path: "measurements",
+          //   component: RacksComponent,
+          // },
+          // {
+          //   path: "agenda",
+          //   component: AgendaComponent,
+          // },
+        ],
+      },
+    ],
+  },
+  {
+    path: "",
+    component: DashboardComponent,
+  },
   { path: "ui", component: TestbedComponent },
-  { path: "verified", component: VerifiedComponent, canActivate: [AuthGuard] },
+  {
+    path: "verified",
+    component: VerifiedComponent,
+    canActivate: [LoggedInGuard],
+  },
   {
     path: "orgs",
     component: OrganisationsComponent,
@@ -113,7 +112,17 @@ const routes: Routes = [
   {
     path: "user/:username",
     component: ProfileComponent,
-    canActivate: [AuthGuard],
+    canActivate: [LoggedInGuard],
+  }
+];
+
+const routes: Routes = [
+  { path: "login", component: LoginComponent },
+  { path: "register", component: RegisterComponent },
+  {
+    path: "",
+    component: LandingComponent,
+    children: APP_ROUTES,
   },
   { path: "**", component: NotFoundComponent },
 ];
@@ -121,7 +130,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-      onSameUrlNavigation: "ignore",
+      // onSameUrlNavigation: "ignore",
       paramsInheritanceStrategy: "always",
     }),
   ],

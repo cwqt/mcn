@@ -14,6 +14,7 @@ export enum ChartType {
 }
 
 export interface IDashboardItem extends INode {
+  _id: string;
   title: string;
   position: { top: number; left: number; height: number; width: number };
   chart_type: ChartType;

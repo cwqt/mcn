@@ -36,20 +36,12 @@ export const validators = {
       .isEmail()
       .normalizeEmail()
       .withMessage("Not a valid e-mail address"),
-    body("password")
-      .not()
-      .isEmpty()
-      .isLength({ min: 6 })
-      .withMessage("Password length must be > 6 characters"),
+    body("password").not().isEmpty().isLength({ min: 6 }).withMessage("Password length must be > 6 characters"),
   ]),
   createUser: validate([
     body("username").not().isEmpty().trim().withMessage("Username cannot be empty"),
     body("email").isEmail().normalizeEmail().withMessage("Not a valid email address"),
-    body("password")
-      .not()
-      .isEmpty()
-      .isLength({ min: 6 })
-      .withMessage("Password length must be > 6 characters"),
+    body("password").not().isEmpty().isLength({ min: 6 }).withMessage("Password length must be > 6 characters"),
   ]),
   readUserByUsername: validate([param("username").not().isEmpty().trim()]),
 };
@@ -70,16 +62,9 @@ export const readAllUsers = async (
     }
   );
 
-  let users = await Promise.all(
-    res.records.map((r: Record) => User.read<IUserStub>(r.get("u")._id, DataModel.Stub))
-  );
+  let users = await Promise.all(res.records.map((r: Record) => User.read<IUserStub>(r.get("u")._id, DataModel.Stub)));
 
-  return paginate(
-    NodeType.User,
-    users,
-    res.records[0].get("total").toNumber(),
-    locals.pagination.per_page
-  );
+  return paginate(NodeType.User, users, res.records[0].get("total").toNumber(), locals.pagination.per_page);
 };
 
 export const createUser = async (req: Request, next: NextFunction): Promise<IUser> => {
@@ -97,8 +82,7 @@ export const createUser = async (req: Request, next: NextFunction): Promise<IUse
   if (result.records.length) {
     let errors = new FormErrorResponse();
     let user = result.records[0].get("u").properties;
-    if (user.username == req.body.username)
-      errors.push("username", "Username is already taken", req.body.username);
+    if (user.username == req.body.username) errors.push("username", "Username is already taken", req.body.username);
     if (user.email == req.body.email) errors.push("email", "E-mail already in use", req.body.email);
     throw new ErrorHandler(HTTP.Conflict, errors.value);
   }
@@ -169,15 +153,14 @@ export const loginUser = async (req: Request, next: NextFunction): Promise<IUser
   let password = req.body.password;
 
   //find user by email
-  let result = await cypher(
-    `
-        MATCH (u:User {email: $email})
-        RETURN u
-    `,
+  const result = await cypher(
+    ` MATCH (u:User {email: $email})
+      RETURN u`,
     {
       email: email,
     }
   );
+
   if (!result.records.length)
     throw new ErrorHandler(HTTP.NotFound, [
       { param: "email", msg: "No such user for this email", value: req.body.email },
@@ -185,13 +168,10 @@ export const loginUser = async (req: Request, next: NextFunction): Promise<IUser
 
   let user: IUserPrivate = result.records[0].get("u").properties;
   if (!user.verified)
-    throw new ErrorHandler(HTTP.Unauthorised, [
-      { param: "form", msg: "Your account has not been verified" },
-    ]);
+    throw new ErrorHandler(HTTP.Unauthorised, [{ param: "form", msg: "Your account has not been verified" }]);
 
   let match = await bcrypt.compare(password, user.pw_hash);
-  if (!match)
-    throw new ErrorHandler(HTTP.Unauthorised, [{ param: "password", msg: "Incorrect password" }]);
+  if (!match) throw new ErrorHandler(HTTP.Unauthorised, [{ param: "password", msg: "Incorrect password" }]);
 
   req.session.user = {
     _id: user._id,
@@ -227,11 +207,7 @@ export const readUserOrgs = async (req: Request) => {
 
 // HELPER FUNCTIONS ===============================================================================
 
-const updateImage = async (
-  user_id: string,
-  file: Express.Multer.File,
-  field: string
-): Promise<IUser> => {
+const updateImage = async (user_id: string, file: Express.Multer.File, field: string): Promise<IUser> => {
   let image: S3Image;
   try {
     image = (await uploadImageToS3(user_id, file, field)) as S3Image;

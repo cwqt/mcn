@@ -1,6 +1,3 @@
-import { Request, Response } from "express";
-import { HTTP } from "../common/http";
-import { cypher } from "../common/dbs";
 import { NodeType, Paginated } from "@cxss/interfaces";
 import config from "../config";
 
@@ -16,9 +13,7 @@ export const paginate = (
 
   let pages: Paginated<any> = {
     results: results,
-    next: `${config.API_URL}/${
-      org_id && `orgs/${org_id}/`
-    }${nodeType}s?page=1&per_page=${per_page}`,
+    next: `${config.API_URL}/${org_id && `orgs/${org_id}/`}${nodeType}s?page=1&per_page=${per_page}`,
     prev: `${config.API_URL}/${org_id && `orgs/${org_id}/`}${nodeType}s?page=${Math.ceil(
       count / per_page
     )}&per_page=${per_page}`,
@@ -29,5 +24,4 @@ export const paginate = (
   return pages;
 };
 
-export const capitalize = (str: NodeType | string): string =>
-  str.charAt(0).toUpperCase() + str.slice(1);
+export const capitalize = (str: NodeType | string): string => str.charAt(0).toUpperCase() + str.slice(1);

@@ -1,15 +1,14 @@
 import { Component, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { environment } from "../environments/environment";
 import { IUser } from "@cxss/interfaces";
 
 import { UserService } from "./services/user.service";
 import { OrganisationService } from "./services/organisation.service";
-import { LoginComponent } from "./components/landing/login/login.component";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { Title } from "@angular/platform-browser";
 import { AuthenticationService } from "./services/authentication.service";
-import { BehaviorSubject } from "rxjs";
+import { LoggedInGuard, NegateLoggedInGuard } from './_helpers';
 
 @Component({
   selector: "app-root",
@@ -17,11 +16,7 @@ import { BehaviorSubject } from "rxjs";
   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
-  currentUser: IUser;
-  ui: string = "login";
   loading: boolean = true;
-
-  entered = false;
 
   constructor(
     public dialog: MatDialog,
@@ -29,73 +24,44 @@ export class AppComponent implements OnInit {
     private orgService: OrganisationService,
     private titleService: Title,
     private router: Router,
+    private route: ActivatedRoute,
     private authService: AuthenticationService
   ) {
     console.log(
       `Running in: ${environment.production ? "production" : "development"}`
     );
-
-    // this.entered.next(
-    //   localStorage.getItem("entered") === "true" ? true : false
-    // );
   }
 
   async ngOnInit() {
-    //upon start up, immediately get the new user & set last active org
-    if (this.userService.currentUserValue) {
-      await this.userService.updateCurrentUser();
-      // this.setEntered(true);
-      let orgs = await this.userService.getUserOrgs();
-      let lastActiveOrgId = localStorage.getItem("lastActiveOrg");
-      if (lastActiveOrgId && orgs?.length) {
-        this.orgService.setActiveOrg(
-          orgs.find((o) => o._id == lastActiveOrgId)
-        );
-      }
-    }
-
-    this.userService.currentUser.subscribe((x) => {
-      this.currentUser = x;
-      this.loading = false;
-      if (this.currentUser) {
-        console.log("already logged in");
-        if (this.currentUser.new_user) {
-          console.log("needs to do first time stuff");
-        } else {
-          // this.router.navigate(["/"]);
-        }
-      }
-    });
-
+    this.loading = true;
     this.titleService.setTitle("mcn — Index");
+
+    //Upon start up, immediately get the new user & set last active org
+    const isLoggedIn = new LoggedInGuard(this.router, this.userService)
+      .canActivate(this.route.snapshot, this.router.routerState.snapshot);
+
+    if (isLoggedIn) await this.updateCurrentLoggedInUser();
+    this.loading = false;
   }
 
-  toggleUiStateRegister() {
-    if (this.ui == "login") {
-      this.ui = "register";
-    } else if (this.ui == "register") {
-      this.ui = "login";
+  async updateCurrentLoggedInUser() {
+    await this.userService.updateCurrentUser();
+
+    try {
+      const orgs = await this.userService.getUserOrgs();
+      const lastActiveOrgId = localStorage.getItem("lastActiveOrg");
+
+      // Set current org to last set, or the 1st if none set
+      if (orgs.length) {
+        this.orgService.setActiveOrg(lastActiveOrgId ?
+          orgs.find((o) => o._id == lastActiveOrgId) :
+          orgs[0]
+        )
+      }
+    } catch (error) {
+      if (error.status == 401) {
+        this.authService.logout();
+      }
     }
-  }
-
-  openDialog(component: "login" | "register") {
-    let dialogRef: MatDialogRef<any>;
-
-    switch (component) {
-      case "login":
-        dialogRef = this.dialog.open(LoginComponent, {
-          width: "700px",
-          height: "400px",
-        });
-    }
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
-    });
-  }
-
-  setEntered(state: boolean) {
-    // this.entered.next(state);
-    // localStorage.setItem("entered", state.toString());
   }
 }

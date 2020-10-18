@@ -1,0 +1,15 @@
+<div class="wrapper">
+  <h1>Select recordable</h1>
+  <app-graph-selector #selector *ngIf="data"
+    [graph]="data.graph"
+    [selectMany]="false">
+  </app-graph-selector>
+</div>
+
+<ui-dialog-buttons
+  leftString="Cancel"
+  rightString="Save"
+  [leftDisabled]="false"
+  (leftClick)="cancel()"
+  (rightClick)="save()">
+</ui-dialog-buttons>
