@@ -41,7 +41,6 @@ export class IndexComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    console.log('mounted index')
     this.userService.userOrgs.subscribe((orgs) => (this.userOrgs = orgs));
     this.orgService.currentOrg.subscribe((org) => {
       this.currentOrg = org;

@@ -6,6 +6,7 @@ import { CreateDashItemDialogComponent } from "./create-dash-item-dialog/create-
 import { DashboardService } from "src/app/services/dashboard.service";
 import { Rectangle } from "ngx-widget-grid";
 import { EditDashItemDialogComponent } from "./dashboard-item/edit-dash-item-dialog/edit-dash-item-dialog.component";
+import { HelperService } from "src/app/services/helper.service";
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
@@ -32,6 +33,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
+    private helper: HelperService,
     private dialog: MatDialog,
     private orgService: OrganisationService,
     private dashService: DashboardService
@@ -40,7 +42,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   async ngOnInit(): Promise<void> {
     this.orgService.currentOrg.subscribe((o) => (this.org = o));
     await this.getDashboard();
-    console.log(this.dashboard);
     this.editDashItem(this.dashboard.items[0]);
   }
 
@@ -52,7 +53,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(CreateDashItemDialogComponent);
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
       this.getDashboard();
     });
   }
@@ -68,10 +68,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   editDashItem(item: IDashboardItem = this.openedDashMenuItem) {
-    this.dialog.open(EditDashItemDialogComponent, {
-      data: item,
-      width: "600px",
-    });
+    this.helper.showDialog<IDashboardItem>(
+      this.dialog.open(EditDashItemDialogComponent, {
+        data: item,
+        width: "600px",
+      }),
+      (newItem) => {
+        this.dashService.updateItem(item._id, newItem as any)
+      }
+    );
   }
 
   updateDashItem(item: IDashboardItem, body: { [index: string]: any }) {
@@ -81,8 +86,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   handleDashPositionChanged(item: IDashboardItem, position: Rectangle) {
     const oldPosition = this.dashboard.items.find((x) => x._id == item._id)
       .position;
-
-    console.log("-->", oldPosition);
 
     if (position.top != oldPosition.top || position.left != oldPosition.left) {
       this.updateDashItem(item, { position: position });

@@ -45,7 +45,6 @@ export class OrganisationService {
   }
 
   setActiveOrg(org: IOrgStub) {
-    console.log("setting active org");
     localStorage.setItem("lastActiveOrg", org._id);
     this.currentOrg.next(org);
   }
