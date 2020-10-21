@@ -45,16 +45,15 @@ const reduce = (data: IDashboardItem) => {
 };
 
 const update = async (_id: string, newFieldValues: { [index: string]: any }) => {
-  const updatableFields = ["position"];
+  const updatableFields = ["position", "aggregation_request"];
 
   const filtered: { [index: string]: any } = updatableFields.reduce(
     (obj, key) => ({ ...obj, [key]: newFieldValues[key] }),
     {}
   );
 
-  if (Object.keys(filtered).includes("position")) {
-    filtered.position = JSON.stringify(filtered.position);
-  }
+  if (Object.keys(filtered).includes("position")) filtered.position = JSON.stringify(filtered.position);
+  if (Object.keys(filtered).includes("aggregation_request")) filtered.aggregation_request = JSON.stringify(filtered.aggregation_request);
 
   await Node.update(_id, filtered, NodeType.DashboardItem);
 };

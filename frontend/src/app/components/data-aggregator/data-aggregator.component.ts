@@ -69,27 +69,6 @@ export class DataAggregatorComponent implements OnInit {
       };
     }
 
-    this.aggregation_request_group.aggregation_points.push({
-      _id: "1",
-      recordable: "farm-5f5f9e57ef76ee380a0f8c64",
-      data_format: Unit.Lux,
-      measurement: Measurement.Light,
-      color: COLOR.amber,
-      sources: [
-        "device-5f5f9e7aef76ee380a0f8c65",
-        "sensor-5f5f9e7aef76ee380a0f8c68",
-      ],
-    });
-
-    this.aggregation_request_group.aggregation_points.push({
-      _id: "2",
-      recordable: "farm-5f5f9e57ef76ee380a0f8c64",
-      data_format: Unit.RelativeHumidity,
-      measurement: Measurement.Humidity,
-      color: COLOR.deeppurple,
-      sources: ["sensor-5f5f9e7aef76ee380a0f8c67"],
-    });
-
     // deep clone aggregation requests
     // map into something that can be manipulated for editing purposes
     this.fe_aggregation_requests = JSON.parse(

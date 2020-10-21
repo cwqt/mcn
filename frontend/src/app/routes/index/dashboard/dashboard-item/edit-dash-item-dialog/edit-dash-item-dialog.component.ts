@@ -8,5 +8,5 @@ import { Dialog } from 'src/app/_helpers/dialog.class';
   styleUrls: ["./edit-dash-item-dialog.component.scss"],
 })
 export class EditDashItemDialogComponent extends Dialog<IDashboardItem, IDashboardItem> {
-  onSubmit() { super.onSubmit(this.data) }
+  onSubmit() { console.log(this.data) ;super.onSubmit(this.data) }
 }

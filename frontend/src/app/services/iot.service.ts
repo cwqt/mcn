@@ -21,7 +21,7 @@ export class IoTService {
     body: IAggregateRequestGroup
   ): Promise<IAggregateResponseGroup> {
     return this.http
-      .post<IAggregateResponseGroup>(`/api/iot/data/aggregate`, body)
+      .post<IAggregateResponseGroup>(`/api/iot/aggregate`, body)
       .toPromise();
   }
 }

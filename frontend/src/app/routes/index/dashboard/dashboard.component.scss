@@ -1,3 +1,12 @@
+.dashboard-wrapper {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  .dashboard-body {
+    flex: 1;
+  }
+}
+
 .dashboard-header {
   display: flex;
   align-items: center;
@@ -76,7 +85,7 @@
 
 ngx-widget-grid {
   margin: 10px;
-  width: calc(100% - 20px);
+  // width: calc(100% - 20px);
 }
 
 ngx-widget ::ng-deep .wg-widget-content {

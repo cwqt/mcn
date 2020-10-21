@@ -1,3 +1,9 @@
 <div class="dashboard-item-wrapper">
-  <div class="dashboard-item-header"><h2>{{ item.title }}</h2></div>
+  <div class="chart-wrapper">
+    <app-data-chart *ngIf="cache.aggregateData.data && !cache.aggregateData.loading"
+      [title]="item.title"
+      [aggregationData]="cache.aggregateData.data"
+      [aggregationRequest]="item.aggregation_request">
+    </app-data-chart>
+  </div>
 </div>

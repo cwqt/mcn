@@ -18,6 +18,7 @@ import {
   Type,
   IRecordable,
   DataModel,
+  IRecordableStub,
 } from "@cxss/interfaces";
 
 import { Types } from "mongoose";
@@ -35,6 +36,7 @@ import {
 import RecordableModel from "../../classes/Hydroponics/Recordable.model";
 import { ErrorHandler } from "../../common/errorHandler";
 import { HTTP } from "../../common/http";
+import { readRack } from "../Hydroponics/Rack.controller";
 
 let devicePropMap: { [index in SupportedHardware]?: string[] } = {};
 Object.entries(HardwareInformation).forEach(([model, value]) => {
@@ -125,14 +127,14 @@ export const getAggregateData = async (req: Request): Promise<IAggregateResponse
     data: [],
   };
 
-  let sources: string[] = [];
+  let sources: string[] = [];// all sources by id
 
   for await (let agg_req of body.aggregation_points) {
     sources.push(agg_req.recordable);
 
     let ref: IAggregateResponse = {
       _id: agg_req._id,
-      sources: {},
+      sources: {}, // stype-sid: IMeasurement
       recordable: agg_req.recordable,
       color: agg_req.color,
       data_format: agg_req.data_format,
@@ -149,6 +151,7 @@ export const getAggregateData = async (req: Request): Promise<IAggregateResponse
 
     //get data from creators & props
     for await (const source of agg_req.sources) {
+      sources.push(source);
       const [stype, sid] = source.split("-");
 
       ref.sources[source] = await getMeasurement(
@@ -162,23 +165,27 @@ export const getAggregateData = async (req: Request): Promise<IAggregateResponse
       );
 
       // all sources have units converted, so remove extraneous data
-      delete (<any>ref).sources[source].unit;
+      if(ref.sources[source]) {
+        delete (<any>ref).sources[source].unit
+      } else {
+        ref.sources[source] = { times: [], values: [] }
+      };
     }
 
     data.data.push(ref);
   }
 
   data.sources = (
-    await Promise.all(
+    (await Promise.all(
       // distinct, get all sources
       [...new Set(sources)].map((r) => {
         const [rtype, rid] = r.split("-");
-        return RecordableModel.read(rid, DataModel.Stub, rtype as NodeType);
+        return RecordableModel.read<IRecordable>(rid, DataModel.Stub, rtype as NodeType);
       })
     )
-  ).reduce((acc: { [index: string]: IRecordable }, curr) => {
+  )).reduce((acc: { [index: string]: IRecordable }, curr) => {
     // map into object
-    acc[`${curr.type}-${curr._id}`];
+    acc[`${curr.type}-${curr._id}`] = curr;
     return acc;
   }, {});
 

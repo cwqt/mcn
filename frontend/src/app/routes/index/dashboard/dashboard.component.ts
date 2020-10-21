@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef } from "@angular/core";
 import { OrganisationService } from "src/app/services/organisation.service";
 import { IDashboard, IOrg, IDashboardItem } from "@cxss/interfaces";
 import { MatDialog } from "@angular/material/dialog";
@@ -14,6 +14,9 @@ import { HelperService } from "src/app/services/helper.service";
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
   @ViewChild("myPopover", { static: false }) myPopover;
+  @ViewChild("grid") grid:ElementRef;
+
+  gridHeight = 100;
 
   cache = {
     dashboard: {
@@ -25,7 +28,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   };
 
   openedDashMenuItem: IDashboardItem;
-
   org: IOrg;
 
   get dashboard() {
@@ -42,11 +44,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   async ngOnInit(): Promise<void> {
     this.orgService.currentOrg.subscribe((o) => (this.org = o));
     await this.getDashboard();
-    this.editDashItem(this.dashboard.items[0]);
+    // this.editDashItem(this.dashboard.items[0]);
   }
 
   ngAfterViewInit() {
     // this.openAddDashItemDialog();
+    setTimeout(() => console.log('-->', this.grid), 1000)
+    
   }
 
   openAddDashItemDialog() {

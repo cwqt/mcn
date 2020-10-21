@@ -1,1 +1,7 @@
-<p>data-chart works!</p>
+<div style="max-height: 100px; width: 100%;">
+    <highcharts-chart #chart *ngIf="chartData"
+    (load)="reflow($event)"
+    [Highcharts]="Highcharts"
+    [options]="chartData">
+    </highcharts-chart>
+</div>

@@ -1,12 +1,6 @@
 import {
   Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  OnChanges,
-  SimpleChanges,
-  ComponentFactoryResolver,
+  OnInit
 } from "@angular/core";
 import * as Highcharts from "highcharts";
 import {

@@ -9,9 +9,7 @@ import { IUser } from "@cxss/interfaces";
   providedIn: "root",
 })
 export class ProfileService {
-  private currentProfileSubject: BehaviorSubject<IUser> = new BehaviorSubject(
-    undefined
-  );
+  private currentProfileSubject: BehaviorSubject<IUser> = new BehaviorSubject(null);
   public currentProfile: Observable<any>;
 
   public get currentProfileValue() {

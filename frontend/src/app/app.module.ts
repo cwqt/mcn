@@ -74,6 +74,8 @@ import { SelectMeasurementDialogComponent } from "./components/data-aggregator/s
 import { PickColorComponent } from "./components/pick-color/pick-color.component";
 import { PickMeasurementComponent } from "./components/pick-measurement/pick-measurement.component";
 import { SideStripComponent } from "./components/app/side-strip/side-strip.component";
+import { DataChartComponent } from './components/data-chart/data-chart.component';
+
 
 @NgModule({
   declarations: [
@@ -125,6 +127,7 @@ import { SideStripComponent } from "./components/app/side-strip/side-strip.compo
     PickColorComponent,
     PickMeasurementComponent,
     SideStripComponent,
+    DataChartComponent
   ],
   imports: [
     AngularMaterialModule,

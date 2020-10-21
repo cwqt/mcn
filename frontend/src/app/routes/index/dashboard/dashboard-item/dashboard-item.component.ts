@@ -1,3 +1,5 @@
+import { TOUCH_BUFFER_MS } from '@angular/cdk/a11y';
+import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit, Input } from "@angular/core";
 import { IDashboardItem } from "@cxss/interfaces";
 import { IoTService } from "src/app/services/iot.service";
@@ -13,17 +15,24 @@ export class DashboardItemComponent implements OnInit {
   cache = {
     aggregateData: {
       data: null,
-      loading: false,
+      loading: true,
       error: false,
     },
   };
 
   constructor(private iotService: IoTService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getAggregateData();
+  }
 
-  getAggregateData() {
+  async getAggregateData() {
     this.cache.aggregateData.loading = true;
-    this.iotService.getAggregateData(this.item.aggregation_request);
+    try {
+      this.cache.aggregateData.data  = await this.iotService.getAggregateData(this.item.aggregation_request);      
+    } catch (error) {
+      this.cache.aggregateData.error = error;      
+    }
+    this.cache.aggregateData.loading = false;
   }
 }
