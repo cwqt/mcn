@@ -36,6 +36,13 @@ export class DataChartComponent implements OnInit, AfterViewInit {
     }, 2000);
   }
 
+  chartCallback(chart) {
+    console.log(chart, 'reflow');
+    setTimeout(() => {
+        chart.reflow();
+    },0)
+  }
+
   ngOnInit(): void {
     console.log(this.aggregationData)
     
@@ -48,8 +55,14 @@ export class DataChartComponent implements OnInit, AfterViewInit {
       series: (this.aggregationData.data.map((r:IAggregateResponse) => {
         return Object.entries(r.sources).reduce((acc, curr) => {
           // curr [stype-sid: {times, values}]
+
           let x = {
-            data: curr[1].times.map((v, idx) => [new Date(v).getTime(), curr[1].values[idx]]),
+            data: curr[1].times.map((v, idx) => {
+              let value = curr[1].values[idx];
+              if(typeof(value) == 'boolean') value = value ? 1 : 0;
+
+              return [new Date(v).getTime(), value];
+            }),
             title: curr[0]
           }
 
@@ -60,18 +73,12 @@ export class DataChartComponent implements OnInit, AfterViewInit {
       xAxis: {
         type: "datetime"
       },
-
       chart: {
         type: 'line',
-        width: 720,
-        height: 240
-    },
-    title: {
+      },
+      title: {
         text: this.title
-    },
-
-
-
+      }
     }
 
     console.log(this.chartData)
