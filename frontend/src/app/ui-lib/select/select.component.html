@@ -1,6 +1,6 @@
 <mat-form-field appearance="fill">
     <mat-label>{{ label || "Select option"}}</mat-label>
-    <mat-select [value]="!checklistSelection.isEmpty() ? 'always_exist' : null">
+    <mat-select #selector [required]="required" [value]="!checklistSelection.isEmpty() ? 'always_exist' : null">
         <!-- show selection text - name (+n others) -->
         <mat-select-trigger>
             <ng-container *ngIf="!checklistSelection.isEmpty()">
@@ -18,13 +18,14 @@
 
         <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
             <mat-tree-node (click)="leafNodeItemSelectionToggle(node)" matRipple *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
-                <button mat-icon-button disabled></button>
-                <mat-checkbox class="checklist-leaf-node"
+                <button *ngIf="!noNestedNodes" mat-icon-button disabled></button>
+                <ui-icon *ngIf="node.icon">{{ node.icon }}</ui-icon>
+                <mat-checkbox class="checklist-leaf-node" *ngIf="!noNestedNodes"
                     (click)="$event.preventDefault()"
                     [checked]="checklistSelection.isSelected(node)"
                     (change)="leafNodeItemSelectionToggle(node)">
                 </mat-checkbox>
-                <p>{{node.name}} <span>{{node._id.substr(-6)}}</span></p>
+                <p>{{node.name}}<span *ngIf="showId"> {{node._id.substr(-6)}}</span></p>
             </mat-tree-node>
 
             <mat-tree-node (click)="rootNodeSelectionToggle(node)" matRipple class="root-node" *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
@@ -35,13 +36,13 @@
                         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
                     </mat-icon>
                 </button>
-                <mat-checkbox
+                <mat-checkbox *ngIf="!noNestedNodes"
                     (click)="$event.preventDefault()"
                     [checked]="checklistSelection.isSelected(node) || descendantsAllSelected(node)"
                     [indeterminate]="descendantsPartiallySelected(node)"
                     (change)="rootNodeSelectionToggle(node)">
                 </mat-checkbox>
-                <p>{{node.name}} <span>{{node._id.substr(-6)}}</span></p>
+                <p>{{node.name}}<span *ngIf="showId"> {{node._id.substr(-6)}}</span></p>
             </mat-tree-node>
         </mat-tree>
     </mat-select>

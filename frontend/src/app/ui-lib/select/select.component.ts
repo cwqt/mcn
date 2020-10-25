@@ -1,7 +1,8 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
+import { MatSelect } from '@angular/material/select';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { IGraphNode } from '@cxss/interfaces';
 import { BehaviorSubject } from 'rxjs';
@@ -11,6 +12,7 @@ class IFlatGraphNode {
   name: string;
   level: number;
   expandable: boolean;
+  icon?:string;
 }
 
 @Component({
@@ -19,17 +21,17 @@ class IFlatGraphNode {
   styleUrls: ['./select.component.scss']
 })
 export class SelectComponent implements OnInit {
+  @ViewChild('selector') selector:MatSelect;
+
   @Input() label:string;
+  @Input() required:boolean = false;
+  @Input() showId:boolean = true;
+
   @Input() graph: IGraphNode[];
   @Input() selectMany = false;
   @Output() selectionChange: EventEmitter<IGraphNode[]> = new EventEmitter();
 
-  activeSelection: IGraphNode[];
-
-  dataChange = new BehaviorSubject<IGraphNode[]>([]);
-  get data(): IGraphNode[] {
-    return this.dataChange.value;
-  }
+  noNestedNodes:boolean = false;
 
   flatNodeMap = new Map<IFlatGraphNode, IGraphNode>();
   nestedNodeMap = new Map<IGraphNode, IFlatGraphNode>();
@@ -37,27 +39,6 @@ export class SelectComponent implements OnInit {
   treeFlattener: MatTreeFlattener<IGraphNode, IFlatGraphNode>;
   dataSource: MatTreeFlatDataSource<IGraphNode, IFlatGraphNode>;
   checklistSelection: SelectionModel<IFlatGraphNode>;
-
-  getLevel = (node: IFlatGraphNode) => node.level;
-  isExpandable = (node: IFlatGraphNode) => node.expandable;
-  getChildren = (node: IGraphNode): IGraphNode[] => node.children;
-  hasChild = (_: number, _nodeData: IFlatGraphNode) => _nodeData.expandable;
-
-  transformer = (node: IGraphNode, level: number) => {
-    const existingNode = this.nestedNodeMap.get(node);
-    const flatNode =
-      existingNode && existingNode._id === node._id
-        ? existingNode
-        : ({} as IFlatGraphNode);
-    flatNode._id = node._id;
-    flatNode.name = node.name;
-    flatNode.level = level;
-    flatNode.expandable = !!node.children?.length;
-
-    this.flatNodeMap.set(flatNode, node);
-    this.nestedNodeMap.set(node, flatNode);
-    return flatNode;
-  }
 
   /** Whether all the descendants of the node are selected. */
   descendantsAllSelected(node: IFlatGraphNode): boolean {
@@ -98,8 +79,6 @@ export class SelectComponent implements OnInit {
     this.checklistSelection.toggle(node);
     const descendants = this.treeControl.getDescendants(node);
 
-    console.log(this.checklistSelection)
-
     // for multi select only
     if (this.checklistSelection.isMultipleSelection()) {
       this.checklistSelection.isSelected(node)
@@ -110,12 +89,16 @@ export class SelectComponent implements OnInit {
     // Force update for the parent
     descendants.every((child) => this.checklistSelection.isSelected(child));
     this.checkAllParentsSelection(node);
+    this.selectionChange.emit(this.checklistSelection.selected.map(n => this.flatNodeMap.get(n)));
   }
 
   /** Toggle a leaf node selection. Check all the parents to see if they changed */
   leafNodeItemSelectionToggle(node: IFlatGraphNode): void {
     this.checklistSelection.toggle(node);
     this.checkAllParentsSelection(node);
+    // this.selectionChange.emit(this.checklistSelection.selected.map(x => this.dataSource.));
+    if(this.noNestedNodes) this.selector.close();
+    this.selectionChange.emit(this.checklistSelection.selected.map(n => this.flatNodeMap.get(n)));
   }
 
   /* Checks all the parents when a leaf node is selected/unselected */
@@ -148,21 +131,39 @@ export class SelectComponent implements OnInit {
   /* Get the parent node of a node */
   getParentNode(node: IFlatGraphNode): IFlatGraphNode | null {
     const currentLevel = this.getLevel(node);
+    if (currentLevel < 1) return null;
 
-    if (currentLevel < 1) {
-      return null;
-    }
-
-    const startIndex = this.treeControl.dataNodes.indexOf(node) - 1;
-
-    for (let i = startIndex; i >= 0; i--) {
+    for (let i = (this.treeControl.dataNodes.indexOf(node) - 1); i >= 0; i--) {
       const currentNode = this.treeControl.dataNodes[i];
-
       if (this.getLevel(currentNode) < currentLevel) {
         return currentNode;
       }
     }
+
     return null;
+  }
+
+
+  getLevel = (node: IFlatGraphNode) => node.level;
+  isExpandable = (node: IFlatGraphNode) => node.expandable;
+  getChildren = (node: IGraphNode): IGraphNode[] => node.children;
+  hasChild = (_: number, _nodeData: IFlatGraphNode) => _nodeData.expandable;
+
+  transformer = (node: IGraphNode, level: number) => {
+    const existingNode = this.nestedNodeMap.get(node);
+    const flatNode =
+      existingNode && existingNode._id === node._id
+        ? existingNode
+        : ({} as IFlatGraphNode);
+    flatNode._id = node._id;
+    flatNode.name = node.name;
+    flatNode.level = level;
+    flatNode.expandable = !!node.children?.length;
+    flatNode.icon = (<any>node).icon;
+
+    this.flatNodeMap.set(flatNode, node);
+    this.nestedNodeMap.set(node, flatNode);
+    return flatNode;
   }
 
   constructor() {
@@ -183,8 +184,9 @@ export class SelectComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.checklistSelection = new SelectionModel<IFlatGraphNode>(true || this.selectMany);
+    this.checklistSelection = new SelectionModel<IFlatGraphNode>(this.selectMany);
     this.dataSource.data = this.graph;
+    this.noNestedNodes = this.graph.every(x => x.children == null || x.children?.length == 0);
   }
 
   getSelection(): IFlatGraphNode[] {

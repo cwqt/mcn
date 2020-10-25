@@ -103,6 +103,7 @@ export class DataAggregatorComponent implements OnInit {
     this.orgService
       .getRecordableGraph()
       .then((g) => (this.recordableGraph = g));
+      
     this.orgService.getSourcesGraph().then((g) => (this.sourceGraph = g));
   }
 

@@ -1,1 +1,25 @@
-<p>data-counter works!</p>
+<div class="data-counter-container">
+    <ui-select
+        (selectionChange)="handleSelectionChange($event, 'measurement')"
+        [graph]="measurements"
+        [showId]="false"
+        label="Measurement" required>
+    </ui-select>
+    <span>on</span>
+    <ui-select
+        (selectionChange)="handleSelectionChange($event, 'recordable')"
+        [graph]="recordables"
+        label="Recordable"
+        required>
+    </ui-select>
+    <span>from</span>
+    <ui-select
+        (selectionChange)="handleSelectionChange($event, 'sources')"
+        [graph]="sources"
+        [selectMany]="true"
+        label="Sources"
+        required>
+    </ui-select>
+    
+    <mat-spinner diameter="10"></mat-spinner>
+</div>
