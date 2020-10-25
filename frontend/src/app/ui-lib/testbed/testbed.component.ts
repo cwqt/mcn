@@ -25,6 +25,44 @@ export class TestbedComponent implements OnInit {
           name: "child",
           _id: "2",
           type: NodeType.Rack,
+          children: [
+            {
+              name: "child",
+              _id: "11",
+              type: NodeType.Rack,
+            },
+            {
+              name: "child 7",
+              _id: "12",
+              type: NodeType.Rack,
+              children: [
+                {
+                  name: "child",
+                  _id: "14",
+                  type: NodeType.Rack,
+                },
+                {
+                  name: "child 7",
+                  _id: "15",
+                  type: NodeType.Rack,
+                  children: [
+                    {
+                      name: "child",
+                      _id: "16",
+                      type: NodeType.Rack,
+                    },
+                    {
+                      name: "child 7",
+                      _id: "17",
+                      type: NodeType.Rack,
+                    }
+                  ]    
+        
+                }
+              ]    
+    
+            }
+          ]    
         },
         {
           name: "child 7",

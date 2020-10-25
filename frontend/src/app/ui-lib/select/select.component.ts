@@ -19,6 +19,7 @@ class IFlatGraphNode {
   styleUrls: ['./select.component.scss']
 })
 export class SelectComponent implements OnInit {
+  @Input() label:string;
   @Input() graph: IGraphNode[];
   @Input() selectMany = false;
   @Output() selectionChange: EventEmitter<IGraphNode[]> = new EventEmitter();
@@ -77,8 +78,16 @@ export class SelectComponent implements OnInit {
   }
 
   untoggleAll(node) {
+    let parents = [];
+    let parent = this.getParentNode(node);  
+    if(parent) parents.push(parent._id)
+    while(parent) {
+      parent = this.getParentNode(parent);
+      if(parent) parents.push(parent._id)
+    }
+
     this.treeControl.dataNodes.forEach((n) => {
-      if (n._id !== node._id) {
+      if (!parents.includes(n._id) && n._id !== node._id) {
         this.treeControl.collapse(n);
       }
     });
@@ -88,6 +97,8 @@ export class SelectComponent implements OnInit {
   rootNodeSelectionToggle(node: IFlatGraphNode): void {
     this.checklistSelection.toggle(node);
     const descendants = this.treeControl.getDescendants(node);
+
+    console.log(this.checklistSelection)
 
     // for multi select only
     if (this.checklistSelection.isMultipleSelection()) {
@@ -172,7 +183,7 @@ export class SelectComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.checklistSelection = new SelectionModel<IFlatGraphNode>(this.selectMany);
+    this.checklistSelection = new SelectionModel<IFlatGraphNode>(true || this.selectMany);
     this.dataSource.data = this.graph;
   }
 
