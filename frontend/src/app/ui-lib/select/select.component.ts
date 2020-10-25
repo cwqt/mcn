@@ -1,14 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
-import { IGraphNode, IFlatNodeGraph } from "@cxss/interfaces";
-import { SelectionModel } from "@angular/cdk/collections";
-import {
-  MatTreeFlatDataSource,
-  MatTreeFlattener,
-} from "@angular/material/tree";
-import { FlatTreeControl } from "@angular/cdk/tree";
-import { BehaviorSubject } from "rxjs";
+import { SelectionModel } from '@angular/cdk/collections';
+import { FlatTreeControl } from '@angular/cdk/tree';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { IGraphNode } from '@cxss/interfaces';
+import { BehaviorSubject } from 'rxjs';
 
-export class IFlatGraphNode {
+class IFlatGraphNode {
   _id: string;
   name: string;
   level: number;
@@ -16,11 +14,11 @@ export class IFlatGraphNode {
 }
 
 @Component({
-  selector: "app-graph-selector",
-  templateUrl: "./graph-selector.component.html",
-  styleUrls: ["./graph-selector.component.scss"],
+  selector: 'ui-select',
+  templateUrl: './select.component.html',
+  styleUrls: ['./select.component.scss']
 })
-export class GraphSelectorComponent implements OnInit {
+export class SelectComponent implements OnInit {
   @Input() graph: IGraphNode[];
   @Input() selectMany = false;
   @Output() selectionChange: EventEmitter<IGraphNode[]> = new EventEmitter();
@@ -63,10 +61,10 @@ export class GraphSelectorComponent implements OnInit {
   /** Whether all the descendants of the node are selected. */
   descendantsAllSelected(node: IFlatGraphNode): boolean {
     const descendants = this.treeControl.getDescendants(node);
-    const descAllSelected = descendants.every((child) =>
-      this.checklistSelection.isSelected(child)
-    );
-    return descAllSelected;
+    if(descendants.length === 0)
+      return this.checklistSelection.isSelected(node)
+
+    return descendants.every(child => this.checklistSelection.isSelected(child));
   }
 
   /** Whether part of the descendants are selected */
@@ -87,7 +85,7 @@ export class GraphSelectorComponent implements OnInit {
   }
 
   /** Toggle the to-do item selection. Select/deselect all the descendants node */
-  graphNodeSelectionToggle(node: IFlatGraphNode): void {
+  rootNodeSelectionToggle(node: IFlatGraphNode): void {
     this.checklistSelection.toggle(node);
     const descendants = this.treeControl.getDescendants(node);
 
@@ -103,8 +101,8 @@ export class GraphSelectorComponent implements OnInit {
     this.checkAllParentsSelection(node);
   }
 
-  /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
-  todoLeafItemSelectionToggle(node: IFlatGraphNode): void {
+  /** Toggle a leaf node selection. Check all the parents to see if they changed */
+  leafNodeItemSelectionToggle(node: IFlatGraphNode): void {
     this.checklistSelection.toggle(node);
     this.checkAllParentsSelection(node);
   }
@@ -113,6 +111,7 @@ export class GraphSelectorComponent implements OnInit {
   checkAllParentsSelection(node: IFlatGraphNode): void {
     let parent: IFlatGraphNode | null = this.getParentNode(node);
     while (parent) {
+      // recurse to top of tree
       this.checkRootNodeSelection(parent);
       parent = this.getParentNode(parent);
     }
@@ -125,11 +124,13 @@ export class GraphSelectorComponent implements OnInit {
     const descAllSelected = descendants.every((child) =>
       this.checklistSelection.isSelected(child)
     );
+
     if (nodeSelected && !descAllSelected) {
       this.checklistSelection.deselect(node);
-
     } else if (!nodeSelected && descAllSelected) {
-      this.checklistSelection.select(node);
+      if(this.checklistSelection.isMultipleSelection() && descendants.length != 1) {      
+        this.checklistSelection.select(node);
+      }
     }
   }
 
@@ -141,7 +142,6 @@ export class GraphSelectorComponent implements OnInit {
       return null;
     }
 
-    console.log(this.treeControl, this.treeControl.dataNodes);
     const startIndex = this.treeControl.dataNodes.indexOf(node) - 1;
 
     for (let i = startIndex; i >= 0; i--) {
@@ -172,12 +172,8 @@ export class GraphSelectorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('-->', this.selectMany)
-    this.checklistSelection = new SelectionModel<IFlatGraphNode>(
-      this.selectMany
-    );
+    this.checklistSelection = new SelectionModel<IFlatGraphNode>(this.selectMany);
     this.dataSource.data = this.graph;
-    console.log(this.treeControl);
   }
 
   getSelection(): IFlatGraphNode[] {

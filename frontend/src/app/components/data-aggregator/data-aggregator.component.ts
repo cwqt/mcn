@@ -109,6 +109,8 @@ export class DataAggregatorComponent implements OnInit {
   handleSourcesChange(event) {}
   handleRecordableChange(event) {}
 
+  onCounterChange(){}
+
   editRequest(point: IFeAggregationRequest) {
     this.fe_aggregation_requests.forEach((p) => (p.editing = false));
     point.editing = true;

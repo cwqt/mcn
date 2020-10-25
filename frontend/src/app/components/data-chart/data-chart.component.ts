@@ -1,8 +1,5 @@
-import { I } from '@angular/cdk/keycodes';
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { categories } from '@ctrl/ngx-emoji-mart/ngx-emoji';
-import { ChartType, IAggregateRequestGroup, IAggregateResponse, IAggregateResponseGroup } from '@cxss/interfaces';
-import { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } from 'constants';
+import { ChartType, DataFormatInfo, IAggregateRequestGroup, IAggregateResponse, IAggregateResponseGroup, MeasurementInfo, MeasurementUnits } from '@cxss/interfaces';
 import * as Highcharts from "highcharts";
 
 @Component({
@@ -10,8 +7,7 @@ import * as Highcharts from "highcharts";
   templateUrl: './data-chart.component.html',
   styleUrls: ['./data-chart.component.scss']
 })
-export class DataChartComponent implements OnInit, AfterViewInit {
-  @Input() title?:string;
+export class DataChartComponent implements OnInit {
   @Input() aggregationData:IAggregateResponseGroup;
   @Input() aggregationRequest: IAggregateRequestGroup;
 
@@ -20,53 +16,29 @@ export class DataChartComponent implements OnInit, AfterViewInit {
   Highcharts: typeof Highcharts = Highcharts; // required
   chartData:Highcharts.Options;
 
-  constructor() { }
-
-
-  ngAfterViewInit() {
-    console.log(this.chart)
-  }
-  
-
-  reflow(event) {
-    console.log('chart loaded')
-    setTimeout(() => {
-      console.log('reflowing')
-      this.chart.chart.reflow()
-    }, 2000);
-  }
-
-  chartCallback(chart) {
-    console.log(chart, 'reflow');
-    setTimeout(() => {
-        chart.reflow();
-    },0)
-  }
+  constructor() { }  
 
   ngOnInit(): void {
-    console.log(this.aggregationData)
+    // console.log('--->', this.aggregationData)
     
     // https://www.highcharts.com/docs/chart-concepts/series
     // A list of arrays with two or more values. In this case, the first value is the x value and the second is the y value. If the first value is a string, it is applied as the name of the point, and the x value is incremented following the above rules. Some series, like arearange, accept more than two values. See API documentation for each series type.
-
-    console.log(this.chart)
 
     this.chartData = {  // a recordable instance
       series: (this.aggregationData.data.map((r:IAggregateResponse) => {
         return Object.entries(r.sources).reduce((acc, curr) => {
           // curr [stype-sid: {times, values}]
-
-          let x = {
+          let line = {
             data: curr[1].times.map((v, idx) => {
               let value = curr[1].values[idx];
               if(typeof(value) == 'boolean') value = value ? 1 : 0;
 
-              return [new Date(v).getTime(), value];
+              return [new Date(v).getTime(), value, 10];
             }),
-            title: curr[0]
+            name: `${MeasurementInfo[r.measurement].title} (${DataFormatInfo[r.data_format]?.symbol || '~'})`//curr[0]
           }
 
-          return [...acc, x];
+          return [...acc, line];
         }, [])
       })).flat(),
 
@@ -77,10 +49,16 @@ export class DataChartComponent implements OnInit, AfterViewInit {
         type: 'line',
       },
       title: {
-        text: this.title
+        text: ''//no title
       }
     }
+  }
 
-    console.log(this.chartData)
+  reflow() {
+    this.chartCallback(this.chart);
+  }
+
+  chartCallback(chart) {
+    setTimeout(() => chart.reflow, 0)
   }
 }

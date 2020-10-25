@@ -120,6 +120,13 @@ export const validators = {
 
 // ===============================================================================================================================
 
+export const getAggregateDataCount = async (req:Request):Promise<number> => {
+  return (await getAggregateData(req)).data.reduce((acc, curr) => {
+    Object.values(curr.sources).forEach(s => acc += s.values.length);
+    return acc;
+  }, 0)
+}
+
 export const getAggregateData = async (req: Request): Promise<IAggregateResponseGroup> => {
   const body: IAggregateRequestGroup = req.body;
   let data: IAggregateResponseGroup = {

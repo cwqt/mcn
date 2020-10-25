@@ -1,0 +1,8 @@
+::ng-deep .highcharts-credits {
+    display: none !important;
+  }
+
+::ng-deep highcharts-chart {
+      margin-bottom: -5px;
+      width: 100%;
+  }

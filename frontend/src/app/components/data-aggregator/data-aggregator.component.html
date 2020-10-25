@@ -1,4 +1,10 @@
 <div *ngIf="sourceGraph && recordableGraph && flatGraphList">
+  <app-data-counter
+    (dataChange)="onCounterChange()"
+    [sources]="sourceGraph"
+    [recordables]="recordableGraph">
+  </app-data-counter>
+
   <div *ngFor="let req of fe_aggregation_requests" class="point" [class.editing]="req.editing">
 
     <div class="point-header">
@@ -9,7 +15,6 @@
 
         <p>
           <b>{{ measurementInfo[req.measurement].title }}</b>&nbsp;on&nbsp;<b>{{ flatGraphList[req.recordable.split('-')[1]].name }}</b>&nbsp;from&nbsp;<span *ngFor="let s of req.sources"><b>{{ flatGraphList[s.split('-')[1]].name }}</b></span>&nbsp;in&nbsp;{{ dataFormatInfo[req.data_format].title }} ({{ dataFormatInfo[req.data_format].symbol }})
-
         </p>
       </div>
 

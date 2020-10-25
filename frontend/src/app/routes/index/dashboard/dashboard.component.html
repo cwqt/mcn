@@ -56,10 +56,10 @@
       [movable]="cache.dashboard.editing"
       [resizable]="cache.dashboard.editing">
       <ui-icon-button
+        size="m"
         [popoverTriggerFor]="myPopover"
         id="edit"
-        *ngIf="cache.dashboard.editing"
-        (click)="openDashItemEditMenu(item)">delete</ui-icon-button>
+        (click)="openDashItemEditMenu(item)">overflow-menu--horizontal</ui-icon-button>
       <app-dashboard-item [item]="item">
       </app-dashboard-item>
     </ngx-widget>

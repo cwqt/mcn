@@ -44,13 +44,12 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   async ngOnInit(): Promise<void> {
     this.orgService.currentOrg.subscribe((o) => (this.org = o));
     await this.getDashboard();
-    // this.editDashItem(this.dashboard.items[0]);
+    this.editDashItem(this.dashboard.items[0]);
   }
 
   ngAfterViewInit() {
     // this.openAddDashItemDialog();
-    setTimeout(() => console.log('-->', this.grid), 1000)
-    
+    // setTimeout(() => console.log('-->', this.grid), 1000)
   }
 
   openAddDashItemDialog() {
@@ -75,7 +74,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.helper.showDialog<IDashboardItem>(
       this.dialog.open(EditDashItemDialogComponent, {
         data: item,
-        width: "600px",
+        width: "1200px",
       }),
       (newItem) => {
         this.dashService.updateItem(item._id, newItem as any)

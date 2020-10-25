@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 
-import { MeasurementInfo, MeasurementUnits } from "@cxss/interfaces";
+import { IGraphNode, MeasurementInfo, MeasurementUnits, NodeType } from "@cxss/interfaces";
 
 @Component({
   selector: "ui-testbed",
@@ -14,6 +14,39 @@ export class TestbedComponent implements OnInit {
 
   measurements = MeasurementInfo;
   units = MeasurementUnits;
+
+  graph:IGraphNode[] = [
+    {
+      name: "parent",
+      _id: "1",
+      type: NodeType.Farm,
+      children: [
+        {
+          name: "child",
+          _id: "2",
+          type: NodeType.Rack,
+        },
+        {
+          name: "child 7",
+          _id: "7",
+          type: NodeType.Rack,
+        }
+      ]
+    },
+    {
+      name: "parent 2",
+      _id: "3",
+      type: NodeType.Farm,
+      children: [
+        {
+          name: "child 2",
+          _id: "4",
+          type: NodeType.Rack,
+        }
+      ]
+    }
+
+  ]
 
   constructor() {}
 
