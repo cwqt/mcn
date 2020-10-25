@@ -67,10 +67,6 @@ import { EditDashItemDialogComponent } from "./routes/index/dashboard/dashboard-
 import { DataAggregatorComponent } from "./components/data-aggregator/data-aggregator.component";
 import { GraphSelectorComponent } from "./components/graph-selector/graph-selector.component";
 
-import { SelectRecordableDialogComponent } from "./components/data-aggregator/select-recordable-dialog/select-recordable-dialog.component";
-import { SelectSourcesDialogComponent } from "./components/data-aggregator/select-sources-dialog/select-sources-dialog.component";
-import { SelectMeasurementDialogComponent } from "./components/data-aggregator/select-measurement-dialog/select-measurement-dialog.component";
-
 import { PickColorComponent } from "./components/pick-color/pick-color.component";
 import { PickMeasurementComponent } from "./components/pick-measurement/pick-measurement.component";
 import { SideStripComponent } from "./components/app/side-strip/side-strip.component";
@@ -121,9 +117,6 @@ import { DataCounterComponent } from "./components/data-counter/data-counter.com
     EditDashItemDialogComponent,
     DataAggregatorComponent,
     GraphSelectorComponent,
-    SelectRecordableDialogComponent,
-    SelectSourcesDialogComponent,
-    SelectMeasurementDialogComponent,
     PickColorComponent,
     PickMeasurementComponent,
     SideStripComponent,

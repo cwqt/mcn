@@ -29,7 +29,6 @@
 
       p {
         margin: 0;
-        max-width: 400px;
         span:not(:last-child)::after {
           content: ", ";
         }
@@ -60,6 +59,19 @@
     ui-icon-button {
       height: 40px;
       margin-left: auto;
+    }
+  }
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  .request-adder {
+    margin-left: 10px;
+    height: 55.3px;
+    margin-top: -1.34375em;
+    ::ng-deep button {
+      height: 55.3px;
     }
   }
 }

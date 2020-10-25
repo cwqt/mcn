@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, ViewChild } from "@angular/core";
 import {
   IAggregateRequestGroup,
   IRecordable,
@@ -17,13 +17,7 @@ import {
 } from "@cxss/interfaces";
 import { OrganisationService } from "src/app/services/organisation.service";
 import { MatDialog } from "@angular/material/dialog";
-import { SelectRecordableDialogComponent } from "./select-recordable-dialog/select-recordable-dialog.component";
-import { SelectSourcesDialogComponent } from "./select-sources-dialog/select-sources-dialog.component";
-import { SelectMeasurementDialogComponent } from "./select-measurement-dialog/select-measurement-dialog.component";
-
-interface IFeAggregationRequest extends IAggregateRequest {
-  editing: boolean;
-}
+import { DataCounterComponent } from '../data-counter/data-counter.component';
 
 @Component({
   selector: "app-data-aggregator",
@@ -31,10 +25,12 @@ interface IFeAggregationRequest extends IAggregateRequest {
   styleUrls: ["./data-aggregator.component.scss"],
 })
 export class DataAggregatorComponent implements OnInit {
+  @ViewChild('counter') counter:DataCounterComponent;
+
   @Input() aggregation_request_group?: IAggregateRequestGroup;
   @Input() editing: boolean = false;
 
-  fe_aggregation_requests: IFeAggregationRequest[] = [];
+  aggregationRequests: IAggregateRequest[] = [];
 
   measurementInfo = MeasurementInfo;
   meaurementUnits = MeasurementUnits;
@@ -69,15 +65,6 @@ export class DataAggregatorComponent implements OnInit {
       };
     }
 
-    // deep clone aggregation requests
-    // map into something that can be manipulated for editing purposes
-    this.fe_aggregation_requests = JSON.parse(
-      JSON.stringify(this.aggregation_request_group.aggregation_points)
-    ).map((x: IAggregateRequest) => {
-      let y = x as IFeAggregationRequest;
-      y.editing = false;
-      return y;
-    });
 
     Promise.all([
       this.orgService.getRecordableGraph(),
@@ -104,54 +91,16 @@ export class DataAggregatorComponent implements OnInit {
   handleSourcesChange(event) {}
   handleRecordableChange(event) {}
 
-  onCounterChange(){}
-
-  editRequest(point: IFeAggregationRequest) {
-    this.fe_aggregation_requests.forEach((p) => (p.editing = false));
-    point.editing = true;
+  addRequest() {
+    this.aggregationRequests.push(this.counter.lastRequest);
   }
 
-  editMeasurement(point: IFeAggregationRequest) {
-    const dialogRef = this.dialog.open(SelectMeasurementDialogComponent, {
-      data: this.measurementInfo,
-    });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      point.sources = result;
-    });
-  }
+  pickColor(point: IAggregateRequest) {}
 
-  editSources(point: IFeAggregationRequest) {
-    const dialogRef = this.dialog.open(SelectSourcesDialogComponent, {
-      data: {
-        graph: this.sourceGraph,
-        flatGraph: this.flatGraphList,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      point.sources = result;
-    });
-  }
-
-  editRecordable(point: IFeAggregationRequest) {
-    const dialogRef = this.dialog.open(SelectRecordableDialogComponent, {
-      data: {
-        graph: this.recordableGraph,
-        flatGraph: this.flatGraphList,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      point.recordable = result[0];
-    });
-  }
-
-  pickColor(point: IFeAggregationRequest) {}
-
-  deleteRequest(point: IFeAggregationRequest) {
-    this.fe_aggregation_requests.splice(
-      this.fe_aggregation_requests.findIndex((p) => p._id == point._id),
+  deleteRequest(point: IAggregateRequest) {
+    this.aggregationRequests.splice(
+      this.aggregationRequests.findIndex((p) => p._id == point._id),
       1
     );
   }

@@ -1,37 +1,41 @@
 <div *ngIf="sourceGraph && recordableGraph && flatGraphList">
-  <app-data-counter
-    (dataChange)="onCounterChange()"
-    [sources]="sourceGraph"
-    [recordables]="recordableGraph">
-  </app-data-counter>
+  <div class="counter">
+    <app-data-counter #counter [sources]="sourceGraph" [recordables]="recordableGraph">
+    </app-data-counter>
+    <ui-button class="request-adder" variant="primary" [disabled]="!counter.hasValidData && !counter.loading" (click)="addRequest()">
+      <ui-icon>add</ui-icon>
+    </ui-button>
+  </div>
 
-  <div *ngFor="let req of fe_aggregation_requests" class="point" [class.editing]="req.editing">
+  <div *ngFor="let req of aggregationRequests" class="point" [class.editing]="req.editing">
 
     <div class="point-header">
       <div class="point-info">
-        <div class="color-picker" [style]="'background-color: ' + colorMap[req.color]['200']">
+        <div class="color-picker" [style]="'background-color: ' + (colorMap[req.color]['200'] || colorMap[0]['200'] )">
           <ui-icon>{{ measurementInfo[req.measurement].icon}}</ui-icon>
         </div>
 
         <p>
-          <b>{{ measurementInfo[req.measurement].title }}</b>&nbsp;on&nbsp;<b>{{ flatGraphList[req.recordable.split('-')[1]].name }}</b>&nbsp;from&nbsp;<span *ngFor="let s of req.sources"><b>{{ flatGraphList[s.split('-')[1]].name }}</b></span>&nbsp;in&nbsp;{{ dataFormatInfo[req.data_format].title }} ({{ dataFormatInfo[req.data_format].symbol }})
+          <b>{{ measurementInfo[req.measurement].title }}</b>&nbsp;on&nbsp;<b>{{ flatGraphList[req.recordable.split('-')[1]].name }}</b>&nbsp;from&nbsp;<span
+            *ngFor="let s of req.sources"><b>{{ flatGraphList[s.split('-')[1]].name }}</b></span>&nbsp;in&nbsp;{{ dataFormatInfo[req.data_format].title }}
+          ({{ dataFormatInfo[req.data_format].symbol }})
         </p>
       </div>
 
       <div class="point-header-buttons">
-        <ui-icon-button *ngIf="!req.editing" (click)="editRequest(req)">edit</ui-icon-button>
+        <!-- <ui-icon-button *ngIf="!req.editing" (click)="editRequest(req)">edit</ui-icon-button>
         <ui-icon-button *ngIf="req.editing" (click)="req.editing = false">close</ui-icon-button>
-        <ui-icon-button variant="warn" *ngIf="req.editing" (click)="deleteRequest(req)">delete</ui-icon-button>
+        <ui-icon-button variant="warn" *ngIf="req.editing" (click)="deleteRequest(req)">delete</ui-icon-button> -->
       </div>
     </div>
 
-    <div class="point-edit-section" *ngIf="req.editing">
-      <ui-button (click)="editMeasurement(req)"><ui-icon size="s">sprout</ui-icon>Measurement</ui-button>
+    <!-- <div class="point-edit-section" *ngIf="req.editing"> -->
+    <!-- <ui-button (click)="editMeasurement(req)"><ui-icon size="s">sprout</ui-icon>Measurement</ui-button>
       <ui-button (click)="editRecordable(req)"><ui-icon size="s">sprout</ui-icon>Recordable</ui-button>
       <ui-button (click)="editSources(req)"><ui-icon size="s">iot--platform</ui-icon>Sources</ui-button>
       <ui-button (click)="editRecordable(req)"><ui-icon size="s">hashtag</ui-icon>Unit</ui-button>
-      <ui-icon-button (click)="pickColor(req)">color-palette</ui-icon-button>
-    </div>
+      <ui-icon-button (click)="pickColor(req)">color-palette</ui-icon-button> -->
+    <!-- </div> -->
   </div>
 </div>
 
