@@ -3,5 +3,20 @@
     align-items: center;
     span {
         margin: -15px 10px 0px 10px;
+        &:first-child {
+            margin-left: 0;
+        }
     }
+}
+
+mat-spinner {
+    margin-top: -15px;
+    margin-left: 15px;
+    ::ng-deep svg circle {
+        stroke: #0f62fe !important;
+    }  
+}
+
+.result {
+    margin-left: 10px;
 }

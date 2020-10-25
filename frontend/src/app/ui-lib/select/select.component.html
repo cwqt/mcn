@@ -1,6 +1,9 @@
 <mat-form-field appearance="fill">
     <mat-label>{{ label || "Select option"}}</mat-label>
-    <mat-select #selector [required]="required" [value]="!checklistSelection.isEmpty() ? 'always_exist' : null">
+    <mat-select #selector
+        [disabled]="disabled"
+        [required]="required"
+        [value]="!checklistSelection.isEmpty() ? 'always_exist' : null">
         <!-- show selection text - name (+n others) -->
         <mat-select-trigger>
             <ng-container *ngIf="!checklistSelection.isEmpty()">

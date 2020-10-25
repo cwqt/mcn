@@ -313,7 +313,7 @@ export const readPropGraph = async (req: Request): Promise<IFlatNodeGraph> => {
       OPTIONAL MATCH (d)-[:HAS_PROPERTY]->(p)
       OPTIONAL MATCH (p)-[:INTENDED_FOR]->(r)
       WITH d,p, {name: r.name, _id:r._id, type: r.type} as recordables
-      WITH d,{name: p.name, _id:p._id, type: p.type, recordables: collect(recordables)} as properties
+      WITH d,{name: p.name, _id:p._id, type: p.type, data_format: p.data_format, recordables: collect(recordables)} as properties
       WITH {name: d.name, _id:d._id, properties: collect(properties)} as device
       RETURN device`,
     { did: req.params.did }
@@ -327,7 +327,7 @@ export const readPropGraph = async (req: Request): Promise<IFlatNodeGraph> => {
   // add all props / recordables into flat node array
   res.records[0].get("device").properties.forEach((p: any) => {
     if (!Object.keys(graph.sources).includes(`${p.type}-${p._id}`)) {
-      graph.sources[`${p.type}-${p._id}`] = { name: p.name };
+      graph.sources[`${p.type}-${p._id}`] = { name: p.name, data_format: p.data_format };
     }
 
     graph.data.push({

@@ -26,6 +26,7 @@ export class SelectComponent implements OnInit {
   @Input() label:string;
   @Input() required:boolean = false;
   @Input() showId:boolean = true;
+  @Input() disabled:boolean = false;
 
   @Input() graph: IGraphNode[];
   @Input() selectMany = false;

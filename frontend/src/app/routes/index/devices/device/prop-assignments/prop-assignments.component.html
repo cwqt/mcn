@@ -41,7 +41,7 @@
     <!-- Weight Column -->
     <ng-container matColumnDef="unit">
       <mat-header-cell *matHeaderCellDef>Unit</mat-header-cell>
-      <mat-cell *matCellDef="let element"></mat-cell>
+      <mat-cell *matCellDef="let element">{{ dataFormatInfo[graph.sources[element.key].data_format]?.title }} ({{ dataFormatInfo[graph.sources[element.key].data_format]?.symbol }})</mat-cell>
     </ng-container>
 
     <!-- Symbol Column -->

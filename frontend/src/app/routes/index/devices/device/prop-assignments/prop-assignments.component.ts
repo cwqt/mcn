@@ -8,6 +8,8 @@ import {
   NodeType,
   IDevice,
   IGraphNode,
+  MeasurementInfo,
+  DataFormatInfo,
 } from "@cxss/interfaces";
 import networkgraph from "highcharts/modules/networkgraph";
 import { MatDialog } from "@angular/material/dialog";
@@ -37,6 +39,8 @@ export class PropAssignmentsComponent implements OnInit {
   device: IDevice;
   recordableGraph: IGraphNode[];
   graph: IFlatNodeGraph;
+
+  dataFormatInfo = DataFormatInfo;
 
   loading: boolean;
   error: string;
@@ -102,6 +106,8 @@ export class PropAssignmentsComponent implements OnInit {
       color: colourMap[NodeType.Device],
       marker: { radius: 35 },
     });
+
+    console.log(this.graph)
 
     this.chartData = {
       chart: {

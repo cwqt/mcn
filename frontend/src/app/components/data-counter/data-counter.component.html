@@ -1,5 +1,7 @@
 <div class="data-counter-container">
+    <span>Search for</span>
     <ui-select
+        [disabled]="loading"
         (selectionChange)="handleSelectionChange($event, 'measurement')"
         [graph]="measurements"
         [showId]="false"
@@ -7,6 +9,7 @@
     </ui-select>
     <span>on</span>
     <ui-select
+        [disabled]="loading"
         (selectionChange)="handleSelectionChange($event, 'recordable')"
         [graph]="recordables"
         label="Recordable"
@@ -14,6 +17,7 @@
     </ui-select>
     <span>from</span>
     <ui-select
+        [disabled]="loading"
         (selectionChange)="handleSelectionChange($event, 'sources')"
         [graph]="sources"
         [selectMany]="true"
@@ -21,5 +25,6 @@
         required>
     </ui-select>
     
-    <mat-spinner diameter="10"></mat-spinner>
+    <mat-spinner *ngIf="loading" diameter="30"></mat-spinner>
+    <p class="result" *ngIf="!loading && aggregationCount !== null"><b>{{ aggregationCount }}</b> results</p>
 </div>

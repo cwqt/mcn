@@ -24,4 +24,12 @@ export class IoTService {
       .post<IAggregateResponseGroup>(`/api/iot/aggregate`, body)
       .toPromise();
   }
+
+  getAggregateDataCount(
+    body: IAggregateRequestGroup
+  ): Promise<number> {
+    return this.http
+      .post<number>(`/api/iot/aggregate/count`, body)
+      .toPromise();
+  }
 }

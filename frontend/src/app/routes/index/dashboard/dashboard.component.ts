@@ -74,7 +74,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.helper.showDialog<IDashboardItem>(
       this.dialog.open(EditDashItemDialogComponent, {
         data: item,
-        width: "1200px",
       }),
       (newItem) => {
         this.dashService.updateItem(item._id, newItem as any)

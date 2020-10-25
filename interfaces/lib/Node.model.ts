@@ -26,7 +26,7 @@ export interface IGraphNode {
 
 export interface IFlatNodeGraph {
   //farm-as47wic...etc
-  sources: { [source: string]: { name: string } };
+  sources: { [source: string]: { name: string, [key:string]:any } };
   data: IFlatNodeGraphItem[];
 }
 
