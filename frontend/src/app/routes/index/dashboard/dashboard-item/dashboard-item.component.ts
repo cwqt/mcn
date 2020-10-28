@@ -12,27 +12,7 @@ import { IoTService } from "src/app/services/iot.service";
 export class DashboardItemComponent implements OnInit {
   @Input() item: IDashboardItem;
 
-  cache = {
-    aggregateData: {
-      data: null,
-      loading: true,
-      error: false,
-    },
-  };
-
   constructor(private iotService: IoTService) {}
 
-  ngOnInit(): void {
-    this.getAggregateData();
-  }
-
-  async getAggregateData() {
-    this.cache.aggregateData.loading = true;
-    try {
-      this.cache.aggregateData.data  = await this.iotService.getAggregateData(this.item.aggregation_request);      
-    } catch (error) {
-      this.cache.aggregateData.error = error;      
-    }
-    this.cache.aggregateData.loading = false;
-  }
+  ngOnInit(): void {}
 }

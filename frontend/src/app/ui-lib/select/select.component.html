@@ -20,7 +20,10 @@
         <mat-option style="display: none;" value="always_exist"></mat-option>
 
         <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-            <mat-tree-node (click)="leafNodeItemSelectionToggle(node)" matRipple *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+            <mat-tree-node matRipple
+                (click)="leafNodeItemSelectionToggle(node)"
+                *matTreeNodeDef="let node"
+                matTreeNodeToggle matTreeNodePadding matTreeNodePaddingIndent="27">
                 <button *ngIf="!noNestedNodes" mat-icon-button disabled></button>
                 <ui-icon *ngIf="node.icon">{{ node.icon }}</ui-icon>
                 <mat-checkbox class="checklist-leaf-node" *ngIf="!noNestedNodes"
@@ -31,7 +34,11 @@
                 <p>{{node.name}}<span *ngIf="showId"> {{node._id.substr(-6)}}</span></p>
             </mat-tree-node>
 
-            <mat-tree-node (click)="rootNodeSelectionToggle(node)" matRipple class="root-node" *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+            <mat-tree-node matRipple
+                (click)="rootNodeSelectionToggle(node)"
+                class="root-node"
+                *matTreeNodeDef="let node; when: hasChild"
+                matTreeNodePadding matTreeNodePaddingIndent="27">
                 <button mat-icon-button matTreeNodeToggle
                     (click)="untoggleAll(node)"
                     [disabled]="!treeControl.isExpandable(node)">

@@ -8,6 +8,8 @@ import {
   Measurement,
   COLOR_MAP,
   COLOR,
+  IAggregateResponseGroup,
+  ChartType,
 } from "@cxss/interfaces";
 
 import {
@@ -18,6 +20,8 @@ import {
 import { OrganisationService } from "src/app/services/organisation.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DataCounterComponent } from '../data-counter/data-counter.component';
+import { DataChartComponent } from '../data-chart/data-chart.component';
+import { Chart } from 'highcharts';
 
 @Component({
   selector: "app-data-aggregator",
@@ -26,10 +30,12 @@ import { DataCounterComponent } from '../data-counter/data-counter.component';
 })
 export class DataAggregatorComponent implements OnInit {
   @ViewChild('counter') counter:DataCounterComponent;
+  @ViewChild('chart') chart:DataChartComponent;
 
-  @Input() aggregation_request_group?: IAggregateRequestGroup;
+  @Input() aggregationRequest:IAggregateRequestGroup;
   @Input() editing: boolean = false;
 
+  aggregationResponse:IAggregateResponseGroup;
   aggregationRequests: IAggregateRequest[] = [];
 
   measurementInfo = MeasurementInfo;
@@ -44,6 +50,14 @@ export class DataAggregatorComponent implements OnInit {
   flatGraphList: { [index: string]: IGraphNode };
 
   editingPoints: string[] = [];
+  chartType:{[index in ChartType]:string} = {
+    [ChartType.Line]: 'chart--line',
+    [ChartType.Bar]: 'chart--bar',
+    [ChartType.HeatMap]: 'heat-map--03',
+    [ChartType.Pie]: "chart--pie",
+    [ChartType.Scatter]: "chart--scatter",
+    [ChartType.Xrange]: "roadmap",
+  }
 
   // select recordable
   // select sources
@@ -58,13 +72,12 @@ export class DataAggregatorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this.aggregation_request_group) {
-      this.aggregation_request_group = {
+    if (!this.aggregationRequest) {
+      this.aggregationRequest = {
         period: "24h",
         aggregation_points: [],
       };
     }
-
 
     Promise.all([
       this.orgService.getRecordableGraph(),
@@ -85,6 +98,8 @@ export class DataAggregatorComponent implements OnInit {
         f(curr);
         return acc;
       }, {});
+
+      this.aggregationRequests = this.aggregationRequest.aggregation_points;
     });
   }
 
@@ -93,8 +108,13 @@ export class DataAggregatorComponent implements OnInit {
 
   addRequest() {
     this.aggregationRequests.push(this.counter.lastRequest);
-  }
+    this.aggregationRequest = {
+      period:"24hr",
+      aggregation_points: this.aggregationRequests
+    }
 
+    this.chart.initialise(this.aggregationRequest);
+  }
 
   pickColor(point: IAggregateRequest) {}
 

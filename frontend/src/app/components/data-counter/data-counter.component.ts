@@ -43,23 +43,35 @@ export class DataCounterComponent implements OnInit {
   selectedVariables = {
     ["measurement"]: null,
     ["recordable"]: null,
-    ["sources"]: null,
+    ["sources"]: null, // array
   }
 
   async handleSelectionChange(selection:IGraphNode[], field:"measurement" | "recordable" | "sources") {
-    this.selectedVariables[field] = field == "sources" ? selection : selection[0];
-
-    //if selected a device, don't include all child properties since creator is sufficent
-    //to capture all
+    //if selected a device, don't include all child properties since creator is sufficent to capture all
     if(field == "sources") {
-      console.log(selection)
+      selection
+        .filter(d => d.type == NodeType.Device)   // get only devices
+        .forEach(d => {          
+          if(d.children
+            .every(x => selection
+              .some(y => y._id == x._id))) {      // if all device children are in current selection
+                selection = selection             // then filter out all the devices children
+                  .filter(x => !d.children        // since the device covers all children
+                    .find(y => x._id == y._id))
+              }
+        })
     }
 
+    this.selectedVariables[field] = field == "sources" ? selection : selection[0];
+    
     // get count of data if all fields full
     this.aggregationCount = null;
-    if(Object.values(this.selectedVariables).every(x => x !== null)) {
+    if(Object.values(this.selectedVariables).every(x => Array.isArray(x) ? x.length > 0 : x != null)) {
       this.loading = true;
       this.hasValidData = true;
+
+      // https://stackoverflow.com/questions/56044872/typescript-enum-object-values-return-value
+      const colorKeys = Object.values(COLOR).filter(x => typeof x === "number") as number[];
 
       this.lastRequest = {
         _id: Types.ObjectId().toHexString(),
@@ -67,16 +79,14 @@ export class DataCounterComponent implements OnInit {
         data_format: MeasurementUnits[this.selectedVariables.measurement._id][0],
         measurement: this.selectedVariables.measurement._id,
         sources: this.selectedVariables.sources.map(x => `${x.type}-${x._id}`),
-        color: <COLOR>(Object.values(COLOR)[Math.floor(Math.random() * Object.values(COLOR).length)]),
+        color: <COLOR>(colorKeys[Math.floor(Math.random() * colorKeys.length - 1)]),
       }
-
-      console.log(this.lastRequest)
 
       this.iotService.getAggregateDataCount({
         period:  "24hr",
         aggregation_points: [ this.lastRequest ]
-      }).then(x => {
-        this.aggregationCount = x;
+      }).then(response => {
+        this.aggregationCount = response;
         this.requestChange.emit(this.lastRequest);
       }).finally(() => this.loading = false)
     } else {

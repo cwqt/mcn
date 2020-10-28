@@ -7,10 +7,14 @@ export interface IDashboard extends INode {
   items: IDashboardItem[];
 }
 
+// https://www.highcharts.com/docs/chart-and-series-types/chart-typess
 export enum ChartType {
-  "line-graph",
-  "heat-map",
-  "state",
+  Line = "line",
+  Bar = "bar",
+  Pie = "pie",
+  HeatMap = "heatmap",
+  Scatter = "scatter",
+  Xrange = "xrange",  //state
 }
 
 export interface IDashboardItem extends INode {

@@ -49,29 +49,51 @@
       display: flex;
     }
   }
-
-  .point-edit-section {
-    border-top: 1px solid #eaeaea;
-    display: flex;
-    ui-button ui-icon {
-      margin-right: 5px;
-    }
-    ui-icon-button {
-      height: 40px;
-      margin-left: auto;
-    }
-  }
 }
 
 .counter {
   display: flex;
   align-items: center;
+  span {
+    margin: -5px 5px 0 0;
+  }
   .request-adder {
     margin-left: 10px;
     height: 55.3px;
     margin-top: -1.34375em;
     ::ng-deep button {
       height: 55.3px;
+    }
+  }
+}
+
+.aggregate-wrapper {
+  height: 20vh;
+  display: flex;
+  
+  .aggregate-chart-preview {
+    height: 100%;
+  }
+  .aggregate-requests {
+    overflow: scroll;
+  }
+}
+
+.aggregate-chart-settings {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+mat-button-toggle {
+  padding-top: 6px;
+  padding-bottom: 3px;
+  ::ng-deep .mat-button-toggle-label-content {
+    display: flex;
+    align-items: center;
+    span {
+      margin-left: 5px;
+      line-height: 0;
     }
   }
 }
