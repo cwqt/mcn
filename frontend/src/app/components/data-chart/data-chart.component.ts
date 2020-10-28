@@ -6,13 +6,14 @@ import xrange from "highcharts/modules/xrange";
 import heatmap from "highcharts/modules/heatmap";
 
 import lineTransform from './transform-strategies/line-transform';
+import barTransform from './transform-strategies/bar-transform';
 
 xrange(Highcharts);
 heatmap(Highcharts);
 
 const transformStrategies:{[index in ChartType]: (req:IAggregateRequestGroup, res:IAggregateResponseGroup) => Highcharts.Options} = {
   [ChartType.Line]: lineTransform,
-  [ChartType.Bar]: lineTransform,
+  [ChartType.Bar]: barTransform,
   [ChartType.HeatMap]: lineTransform,
   [ChartType.Scatter]: lineTransform,
   [ChartType.Xrange]: lineTransform,
@@ -56,8 +57,13 @@ export class DataChartComponent implements OnInit {
   }
 
   render() {
+    console.log(this.aggregationRequest)
+    this.chartData = {};
     this.chartData = transformStrategies[this.aggregationRequest.chart_type](this.aggregationRequest, this.aggregationData);
-    if(this.chart) this.chart.chart.update();
+    console.log('==>',this.chartData)
+    setTimeout(() => {
+      if(this.chart) this.chart.chart.update(this.chartData);
+    }, 100)
   }
 
   async initialise(aggregationRequest?:IAggregateRequestGroup) {
@@ -65,8 +71,6 @@ export class DataChartComponent implements OnInit {
     this.noData = !!!this.aggregationRequest;
     if(!this.noData) this.aggregationData = await this.fetchData();
 
-    // https://www.highcharts.com/docs/chart-concepts/series
-    // A list of arrays with two or more values. In this case, the first value is the x value and the second is the y value. If the first value is a string, it is applied as the name of the point, and the x value is incremented following the above rules. Some series, like arearange, accept more than two values. See API documentation for each series type.
     this.render();
   }
 

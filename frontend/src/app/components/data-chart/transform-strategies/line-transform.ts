@@ -40,6 +40,8 @@ export default (
     ),
   };
 
+  console.log(options)
+
   return options;
 };
 
@@ -77,7 +79,7 @@ export const createAxes = (
   aggregationRequest: IAggregateRequestGroup,
   aggregationData: IAggregateResponseGroup
 ): Highcharts.YAxisOptions[] => {
-  return aggregationRequest
+  return aggregationData
     ? aggregationData.axes.map<Highcharts.YAxisOptions>(
         (axis: IAggregateAxis<IAggregateResponse>, idx) => {
           return {

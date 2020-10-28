@@ -14,7 +14,7 @@
   </div>
 
   <div class="aggregate-chart-settings">
-    <mat-button-toggle-group value="line">
+    <mat-button-toggle-group [value]="aggregationRequest.chart_type">
       <mat-button-toggle (click)="setChartType(chart.key)"
         *ngFor="let chart of chartType | keyvalue"
         [value]="chart.key">

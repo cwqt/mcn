@@ -2,7 +2,7 @@
     <mat-spinner *ngIf="loading"></mat-spinner>
 
     <ng-container *ngIf="!loading">
-        <highcharts-chart #chart *ngIf="chartData"
+        <highcharts-chart #chart
             [callbackFunction]="chartCallback" 
             [Highcharts]="Highcharts"
             [oneToOne]=true
