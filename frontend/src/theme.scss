@@ -167,6 +167,44 @@ mat-checkbox {
   }
 }
 
+mat-accordion {
+  mat-expansion-panel, .mat-accordion {
+    height: 40px;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid #e5e5e5;
+    mat-expansion-panel-header {
+      max-height: 40px;
+      border: 2px solid transparent;
+
+      .mat-content {
+        justify-content: space-between;
+      }
+    
+      .mat-content > mat-panel-title, .mat-content > mat-panel-description {
+        flex: 0 0 auto;
+      }
+    }
+    &.mat-expansion-panel-spacing {
+      margin: 0 !important;
+    }
+    &.mat-expanded {
+      margin-bottom: 0;
+      height: auto !important;
+      mat-expansion-panel-header {
+        margin-bottom: 10px;
+        border: 2px solid #0f62fe !important;
+      }
+      .mat-expansion-panel-bottom {
+        padding-bottom: 0 !important;
+      }
+    }
+    &:first-child {
+      border-top: 1px solid #e5e5e5 !important;
+    }
+  }
+}
+
 mat-stepper,
 mat-vertical-stepper {
   .mat-step-icon {

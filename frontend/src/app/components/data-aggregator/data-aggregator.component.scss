@@ -1,5 +1,5 @@
 .point {
-  background-color: rgba(0, 0, 0, 0.04);
+  // background-color: rgba(0, 0, 0, 0.04);
   border-radius: 3px;
   border: 1px solid transparent;
   &:not(:last-child) {
@@ -17,15 +17,15 @@
     justify-content: space-between;
     ui-icon-button {
       margin-left: auto;
-      height: 52px;
+      // height: 52px;
       ::ng-deep button {
-        height: 52px;
+        // height: 52px;
       }
     }
     .point-info {
       display: flex;
       align-items: center;
-      padding: 10px 0 10px 10px;
+      padding: 5px 0 5px 5px;
 
       p {
         margin: 0;
@@ -54,11 +54,11 @@
 .counter {
   display: flex;
   align-items: center;
-  span {
-    margin: -5px 5px 0 0;
+  .counter-span {
+    margin: -15px 10px 0 0;
   }
   .request-adder {
-    margin-left: 10px;
+    margin-left: auto;
     height: 55.3px;
     margin-top: -1.34375em;
     ::ng-deep button {
@@ -68,14 +68,17 @@
 }
 
 .aggregate-wrapper {
-  height: 20vh;
+  height: 30vh;
+  min-width: 70vw;
+  width: 100%;
   display: flex;
   
   .aggregate-chart-preview {
     height: 100%;
   }
-  .aggregate-requests {
+  .aggregate-axes {
     overflow: scroll;
+    flex: 1;
   }
 }
 

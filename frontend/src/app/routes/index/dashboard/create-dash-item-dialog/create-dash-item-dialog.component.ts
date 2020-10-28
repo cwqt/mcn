@@ -25,7 +25,8 @@ export class CreateDashItemDialogComponent implements OnInit {
     chart_type: ChartType["line-graph"],
     aggregation_request: {
       period: "24hr",
-      aggregation_points: [],
+      chart_type: ChartType.Line,
+      axes: [],
     },
   };
 

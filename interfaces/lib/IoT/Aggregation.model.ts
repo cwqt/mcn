@@ -6,7 +6,7 @@ import { COLOR } from "../material-colors";
 import { Type } from "./Hardware.model";
 import { ChartType } from "../Dashboard.model";
 
-/** overlapping data from multiple sources
+/** overlapping data from multiple sources, multi-axis
  *
  *  |         +-----------------------
  *  |         |    etc.
@@ -46,7 +46,6 @@ export interface IAggregateResponseGroup {
   axes: IAggregateAxis<IAggregateResponse>[];
 }
 export interface IAggregatePoint {
-  _id: string;
   interval?: number; // get every nth point
   recordable: string;
   color?: COLOR;

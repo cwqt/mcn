@@ -32,6 +32,7 @@ import {
   IAggregateResponse,
   Sources,
   Properties,
+  IAggregateAxis,
 } from "@cxss/interfaces/dist/IoT/Aggregation.model";
 import RecordableModel from "../../classes/Hydroponics/Recordable.model";
 import { ErrorHandler } from "../../common/errorHandler";
@@ -121,65 +122,77 @@ export const validators = {
 // ===============================================================================================================================
 
 export const getAggregateDataCount = async (req:Request):Promise<number> => {
-  return (await getAggregateData(req)).data.reduce((acc, curr) => {
-    Object.values(curr.sources).forEach(s => acc += s.values.length);
+  const data = await getAggregateData(req);
+  return data.axes.reduce((acc, curr) => {
+    curr.aggregation_points.forEach(p => {
+      Object.values(p.sources).forEach(s => acc += s.values.length);
+    })
     return acc;
-  }, 0)
+  }, 0);
 }
 
 export const getAggregateData = async (req: Request): Promise<IAggregateResponseGroup> => {
   const body: IAggregateRequestGroup = req.body;
   let data: IAggregateResponseGroup = {
     sources: {},
-    data: [],
+    axes: [],
   };
 
   let sources: string[] = [];// all sources by id
 
-  for await (let agg_req of body.aggregation_points) {
-    sources.push(agg_req.recordable);
-
-    let ref: IAggregateResponse = {
-      _id: agg_req._id,
-      sources: {}, // stype-sid: IMeasurement
-      recordable: agg_req.recordable,
-      color: agg_req.color,
-      data_format: agg_req.data_format,
-      measurement: agg_req.measurement,
-    };
-
-    //just get all data on ourself from every creator if non passed in
-    if (!agg_req.sources?.length) {
-      agg_req.sources = await getMeasurementIntentionCreators(
-        agg_req.recordable,
-        agg_req.measurement
-      )(req);
+  for(let reqAxis of body.axes) {
+    let resAxis:IAggregateAxis<IAggregateResponse> = {
+      title: reqAxis.title ?? "Values",
+      label_format: reqAxis.label_format ?? Unit.Unknown,
+      aggregation_points: []
     }
 
-    //get data from creators & props
-    for await (const source of agg_req.sources) {
-      sources.push(source);
-      const [stype, sid] = source.split("-");
-
-      ref.sources[source] = await getMeasurement(
-        Sources.includes(stype as NodeType) ? source : null,
-        Properties.includes(stype as NodeType) ? source : null,
-        agg_req.recordable,
-        agg_req.measurement,
-        null,
-        null,
-        agg_req.data_format
-      );
-
-      // all sources have units converted, so remove extraneous data
-      if(ref.sources[source]) {
-        delete (<any>ref).sources[source].unit
-      } else {
-        ref.sources[source] = { times: [], values: [] }
+    for await (let agg_req of reqAxis.aggregation_points) {
+      sources.push(agg_req.recordable);
+  
+      let ref: IAggregateResponse = {
+        sources: {}, // stype-sid: IMeasurement
+        recordable: agg_req.recordable,
+        color: agg_req.color,
+        data_format: agg_req.data_format,
+        measurement: agg_req.measurement,
       };
+  
+      //just get all data on ourself from every creator if non passed in
+      if (!agg_req.sources?.length) {
+        agg_req.sources = await getMeasurementIntentionCreators(
+          agg_req.recordable,
+          agg_req.measurement
+        )(req);
+      }
+  
+      //get data from creators & props
+      for await (const source of agg_req.sources) {
+        sources.push(source);
+        const [stype, sid] = source.split("-");
+  
+        ref.sources[source] = await getMeasurement(
+          Sources.includes(stype as NodeType) ? source : null,
+          Properties.includes(stype as NodeType) ? source : null,
+          agg_req.recordable,
+          agg_req.measurement,
+          null,
+          null,
+          agg_req.data_format
+        );
+  
+        // all sources have units converted, so remove extraneous data
+        if(ref.sources[source]) {
+          delete (<any>ref).sources[source].unit
+        } else {
+          ref.sources[source] = { times: [], values: [] }
+        };
+      }
+  
+      resAxis.aggregation_points.push(ref);
     }
 
-    data.data.push(ref);
+    data.axes.push(resAxis);
   }
 
   data.sources = (

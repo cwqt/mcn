@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { COLOR, COLOR_MAP, IAggregateRequest, IAggregateRequestGroup, IAggregateResponseGroup, IGraphNode, MeasurementInfo, MeasurementUnits, NodeType } from '@cxss/interfaces';
+import { ChartType, COLOR, COLOR_MAP, IAggregateRequest, IAggregateRequestGroup, IAggregateResponseGroup, IGraphNode, MeasurementInfo, MeasurementUnits, NodeType } from '@cxss/interfaces';
+import { Chart } from 'highcharts';
 import { Types } from 'mongoose';
 import { IoTService } from 'src/app/services/iot.service';
 import { IFlatGraphNode } from '../graph-selector/graph-selector.component';
@@ -74,7 +75,6 @@ export class DataCounterComponent implements OnInit {
       const colorKeys = Object.values(COLOR).filter(x => typeof x === "number") as number[];
 
       this.lastRequest = {
-        _id: Types.ObjectId().toHexString(),
         recordable: `${this.selectedVariables.recordable.type}-${this.selectedVariables.recordable._id}`,
         data_format: MeasurementUnits[this.selectedVariables.measurement._id][0],
         measurement: this.selectedVariables.measurement._id,
@@ -84,7 +84,8 @@ export class DataCounterComponent implements OnInit {
 
       this.iotService.getAggregateDataCount({
         period:  "24hr",
-        aggregation_points: [ this.lastRequest ]
+        chart_type: ChartType.Line,
+        axes: [{ aggregation_points: [ this.lastRequest ] }]
       }).then(response => {
         this.aggregationCount = response;
         this.requestChange.emit(this.lastRequest);

@@ -1,16 +1,21 @@
 <div *ngIf="sourceGraph && recordableGraph && flatGraphList">
   <div class="counter">
-    <span>Search for</span>
+    <span class="counter-span">Search for</span>
     <app-data-counter #counter [sources]="sourceGraph" [recordables]="recordableGraph">
     </app-data-counter>
-    <ui-button class="request-adder" variant="primary" [disabled]="!counter.hasValidData && !counter.loading" (click)="addRequest()">
-      <ui-icon>add</ui-icon>
+    <ui-button class="request-adder"
+      variant="primary"
+      [disabled]="!counter.hasValidData || counter.loading || !selectedAxis"
+      (click)="addRequest()">
+        <span *ngIf="counter.hasValidData && !selectedAxis">Select an Axis</span>
+        <span *ngIf="counter.hasValidData && selectedAxis">Add to <b>{{ selectedAxis.title }}</b></span>
+        <ui-icon>add</ui-icon>
     </ui-button>
   </div>
 
   <div class="aggregate-chart-settings">
-    <mat-button-toggle-group value="bar">
-      <mat-button-toggle
+    <mat-button-toggle-group value="line">
+      <mat-button-toggle (click)="setChartType(chart.key)"
         *ngFor="let chart of chartType | keyvalue"
         [value]="chart.key">
         <ui-icon>{{ chart.value }}</ui-icon>
@@ -21,30 +26,53 @@
 
   <div class="aggregate-wrapper">
     <div class="aggregate-chart-preview">
-      <app-data-chart #chart [aggregationRequest]="aggregationRequest">
-      </app-data-chart>
+      <app-data-chart #chart [aggregationRequest]="aggregationRequest"></app-data-chart>
     </div>
+    
+    <mat-accordion class="aggregate-axes">
+      <mat-expansion-panel
+        *ngFor="let axis of aggregationRequest.axes; let axisIdx = index"
+        (opened)="selectAxis(axis)"
+        (closed)="deselectAxis(axis)"
+        class="axis">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            {{ axis.title }}
+          </mat-panel-title>
+          <mat-panel-description>{{ axis.aggregation_points.length }} points</mat-panel-description>
+        </mat-expansion-panel-header>
 
-    <div class="aggregate-requests">
-      <div *ngFor="let req of aggregationRequests" class="point" [class.editing]="req.editing">
-        <div class="point-header">
-          <div class="point-info">
-            <div class="color-picker" [style]="'background-color: ' + (colorMap[req.color]['200'] || colorMap[0]['200'] )">
-              <ui-icon>{{ measurementInfo[req.measurement].icon}}</ui-icon>
+        <span *ngIf="axis.aggregation_points.length == 0">No points</span>
+        <div *ngFor="let req of axis.aggregation_points; let reqIdx = index"
+          class="point" [class.editing]="req.editing">
+          <div class="point-header">
+            <div class="point-info">
+              <div (click)="setRequestColor(axisIdx, reqIdx)"
+                class="color-picker"
+                [style]="'background-color: ' + (req.color ? colorMap[req.color]['200'] : colorMap[0]['200'] )">
+                  <ui-icon>{{ measurementInfo[req.measurement].icon}}</ui-icon>
+              </div>
+      
+              <p>
+                <b>{{ measurementInfo[req.measurement].title }}</b>&nbsp;on&nbsp;<b>{{ flatGraphList[req.recordable.split('-')[1]].name }}</b>&nbsp;from&nbsp;<span
+                  *ngFor="let s of req.sources"><b>{{ flatGraphList[s.split('-')[1]].name }}</b></span>&nbsp;in&nbsp;{{ dataFormatInfo[req.data_format].title }}
+                ({{ dataFormatInfo[req.data_format].symbol }})
+              </p>
             </div>
-    
-            <p>
-              <b>{{ measurementInfo[req.measurement].title }}</b>&nbsp;on&nbsp;<b>{{ flatGraphList[req.recordable.split('-')[1]].name }}</b>&nbsp;from&nbsp;<span
-                *ngFor="let s of req.sources"><b>{{ flatGraphList[s.split('-')[1]].name }}</b></span>&nbsp;in&nbsp;{{ dataFormatInfo[req.data_format].title }}
-              ({{ dataFormatInfo[req.data_format].symbol }})
-            </p>
+      
+            <div class="point-header-buttons">
+              <ui-icon-button variant="warn" (click)="deleteRequest(axisIdx, reqIdx)">delete</ui-icon-button>
+            </div>
           </div>
+        </div>      
+
+
+      </mat-expansion-panel>
+
+
     
-          <div class="point-header-buttons">
-            <ui-icon-button variant="warn" (click)="deleteRequest(req)">delete</ui-icon-button>
-          </div>
-        </div>
-      </div>    
-    </div>
+    
+    </mat-accordion>
+
   </div>
 </div>

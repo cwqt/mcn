@@ -10,6 +10,7 @@ import {
   COLOR,
   IAggregateResponseGroup,
   ChartType,
+  IAggregateAxis,
 } from "@cxss/interfaces";
 
 import {
@@ -18,10 +19,9 @@ import {
   DataFormatInfo,
 } from "@cxss/interfaces";
 import { OrganisationService } from "src/app/services/organisation.service";
-import { MatDialog } from "@angular/material/dialog";
+import { MatDialog, throwMatDialogContentAlreadyAttachedError } from "@angular/material/dialog";
 import { DataCounterComponent } from '../data-counter/data-counter.component';
 import { DataChartComponent } from '../data-chart/data-chart.component';
-import { Chart } from 'highcharts';
 
 @Component({
   selector: "app-data-aggregator",
@@ -36,7 +36,7 @@ export class DataAggregatorComponent implements OnInit {
   @Input() editing: boolean = false;
 
   aggregationResponse:IAggregateResponseGroup;
-  aggregationRequests: IAggregateRequest[] = [];
+  selectedAxis:IAggregateAxis<IAggregateRequest> | null;
 
   measurementInfo = MeasurementInfo;
   meaurementUnits = MeasurementUnits;
@@ -59,23 +59,16 @@ export class DataAggregatorComponent implements OnInit {
     [ChartType.Xrange]: "roadmap",
   }
 
-  // select recordable
-  // select sources
-  // select measurement
-  // select unit
-  // select colour
-  // DONE!
-
   constructor(
     private orgService: OrganisationService,
-    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     if (!this.aggregationRequest) {
       this.aggregationRequest = {
         period: "24h",
-        aggregation_points: [],
+        axes: [],
+        chart_type: ChartType.Line
       };
     }
 
@@ -98,30 +91,42 @@ export class DataAggregatorComponent implements OnInit {
         f(curr);
         return acc;
       }, {});
-
-      this.aggregationRequests = this.aggregationRequest.aggregation_points;
     });
   }
 
   handleSourcesChange(event) {}
   handleRecordableChange(event) {}
 
+  selectAxis(axis:IAggregateAxis<IAggregateRequest>) {
+    this.selectedAxis = axis;
+  }
+
+  deselectAxis(axis:IAggregateAxis<IAggregateRequest>) {
+    if(this.selectedAxis == axis) this.selectedAxis = null;
+  }
+
   addRequest() {
-    this.aggregationRequests.push(this.counter.lastRequest);
-    this.aggregationRequest = {
-      period:"24hr",
-      aggregation_points: this.aggregationRequests
-    }
+    const axisIdx = this.aggregationRequest.axes.findIndex(a => a == this.selectedAxis);
+    this.aggregationRequest.axes[axisIdx].aggregation_points = [
+      ...this.aggregationRequest.axes[axisIdx].aggregation_points,
+      this.counter.lastRequest
+    ];
 
     this.chart.initialise(this.aggregationRequest);
   }
 
-  pickColor(point: IAggregateRequest) {}
+  setChartType(type:ChartType) {
+    this.aggregationRequest.chart_type = type;
+    this.chart.render();
+  }
 
-  deleteRequest(point: IAggregateRequest) {
-    this.aggregationRequests.splice(
-      this.aggregationRequests.findIndex((p) => p._id == point._id),
-      1
+  setRequestColor(axisIdx:number, reqIdx:number) {}
+
+  deleteRequest(axisIdx:number, reqIdx:number) {
+    this.aggregationRequest.axes[axisIdx].aggregation_points.splice(
+      reqIdx, 1
     );
+
+    this.chart.initialise(this.aggregationRequest);
   }
 }

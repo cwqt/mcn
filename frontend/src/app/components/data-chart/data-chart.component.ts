@@ -1,7 +1,23 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ChartType, COLOR_MAP, DataFormatInfo, IAggregateRequestGroup, IAggregateResponse, IAggregateResponseGroup, MeasurementInfo, MeasurementUnits } from '@cxss/interfaces';
+import { ChartType, COLOR_MAP, DataFormatInfo, IAggregateAxis, IAggregateRequestGroup, IAggregateResponse, IAggregateResponseGroup, IoTMeasurement, Measurement, MeasurementInfo, MeasurementUnits } from '@cxss/interfaces';
 import * as Highcharts from "highcharts";
 import { IoTService } from 'src/app/services/iot.service';
+import xrange from "highcharts/modules/xrange";
+import heatmap from "highcharts/modules/heatmap";
+
+import lineTransform from './transform-strategies/line-transform';
+
+xrange(Highcharts);
+heatmap(Highcharts);
+
+const transformStrategies:{[index in ChartType]: (req:IAggregateRequestGroup, res:IAggregateResponseGroup) => Highcharts.Options} = {
+  [ChartType.Line]: lineTransform,
+  [ChartType.Bar]: lineTransform,
+  [ChartType.HeatMap]: lineTransform,
+  [ChartType.Scatter]: lineTransform,
+  [ChartType.Xrange]: lineTransform,
+  [ChartType.Pie]: lineTransform,
+}
 
 @Component({
   selector: 'app-data-chart',
@@ -39,7 +55,9 @@ export class DataChartComponent implements OnInit {
     }
   }
 
-  setChartType(type:ChartType) {
+  render() {
+    this.chartData = transformStrategies[this.aggregationRequest.chart_type](this.aggregationRequest, this.aggregationData);
+    if(this.chart) this.chart.chart.update();
   }
 
   async initialise(aggregationRequest?:IAggregateRequestGroup) {
@@ -47,42 +65,9 @@ export class DataChartComponent implements OnInit {
     this.noData = !!!this.aggregationRequest;
     if(!this.noData) this.aggregationData = await this.fetchData();
 
-    console.log('==>', this.aggregationRequest)
-    console.log('--->', this.aggregationData)
-
     // https://www.highcharts.com/docs/chart-concepts/series
     // A list of arrays with two or more values. In this case, the first value is the x value and the second is the y value. If the first value is a string, it is applied as the name of the point, and the x value is incremented following the above rules. Some series, like arearange, accept more than two values. See API documentation for each series type.
-    this.chartData = null;
-    this.chartData = {  // a recordable instance
-      series: this.aggregationData ? (this.aggregationData.data.map((r:IAggregateResponse) => {
-        return Object.entries(r.sources).reduce((acc, curr) => {
-          // curr [stype-sid: {times, values}]
-          let line = {
-            data: curr[1].times.map((v, idx) => {
-              let value = curr[1].values[idx];
-              if(typeof(value) == 'boolean') value = value ? 1 : 0;
-
-              return [new Date(v).getTime(), value, 10];
-            }),
-            color: COLOR_MAP[r.color]['200'],
-            name: `${MeasurementInfo[r.measurement].title} (${DataFormatInfo[r.data_format]?.symbol || '~'})`//curr[0]
-          }
-
-          return [...acc, line];
-        }, [])
-      })).flat() : [{data:[], name:"No data"}],
-      xAxis: {
-        type: "datetime"
-      },
-      chart: {
-        type: this.chartType,
-      },
-      title: {
-        text: ''//no title
-      }
-    }
-
-    console.log(this.chartData)
+    this.render();
   }
 
   reflow() {
