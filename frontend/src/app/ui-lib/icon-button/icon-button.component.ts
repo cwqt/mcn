@@ -9,6 +9,7 @@ export class IconButtonComponent implements OnInit {
   @Input() variant: string;
   @Input() size: string;
   @Input() tooltip?: string;
+  @Input() disabled:boolean = false;
 
   constructor() {}
 

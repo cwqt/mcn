@@ -14,17 +14,25 @@ import {
 } from "@cxss/interfaces";
 import * as Highcharts from "highcharts";
 
-type IAggregateData = {times:Date[], values:Primitive[]};
+export type IAggregateData = {times:Date[], values:Primitive[]};
 
 export default (
   req: IAggregateRequestGroup,
   res: IAggregateResponseGroup
 ): Highcharts.Options => {
   const options: Highcharts.Options = {
-    chart: { type:  ChartType.Line },
+    chart: { type: 'area' },
+    plotOptions: {
+      area: { fillOpacity: 0.2 },
+      series: {
+        marker: {
+          enabled: false
+        }
+      }
+    },
     title: { text: "" },
     xAxis: { type: "datetime" },
-    yAxis: createAxes(req, res),
+    yAxis: createAxes(req, res).map(x => ({...x, gridLineColor: 'transparent'})),
     series: createSeries<Highcharts.SeriesLineOptions>(req, res,
       (r:IAggregateResponse, data:IAggregateData, axisIdx:number) => ({
         yAxis: axisIdx, // multi-axis support
@@ -39,8 +47,6 @@ export default (
       })
     ),
   };
-
-  console.log(options)
 
   return options;
 };
@@ -77,7 +83,8 @@ export const createSeries = <T>(
 
 export const createAxes = (
   aggregationRequest: IAggregateRequestGroup,
-  aggregationData: IAggregateResponseGroup
+  aggregationData: IAggregateResponseGroup,
+  categories: string[] = []
 ): Highcharts.YAxisOptions[] => {
   return aggregationData
     ? aggregationData.axes.map<Highcharts.YAxisOptions>(
@@ -89,6 +96,7 @@ export const createAxes = (
             title: {
               text: axis.title,
             },
+            categories: categories
           };
         }
       )

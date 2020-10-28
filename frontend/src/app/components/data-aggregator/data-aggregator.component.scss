@@ -85,7 +85,13 @@
 .aggregate-chart-settings {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
+
+  .add-axis {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 mat-button-toggle {

@@ -97,12 +97,26 @@ export class DataAggregatorComponent implements OnInit {
   handleSourcesChange(event) {}
   handleRecordableChange(event) {}
 
+  createAxis(title:string) {
+    this.aggregationRequest.axes = [...this.aggregationRequest.axes, {
+      aggregation_points: [],
+      title: title,
+      label_format: Unit.Unknown
+    }]
+
+    this.selectAxis(this.aggregationRequest.axes[this.aggregationRequest.axes.length - 1]);
+  }
+
   selectAxis(axis:IAggregateAxis<IAggregateRequest>) {
     this.selectedAxis = axis;
   }
 
   deselectAxis(axis:IAggregateAxis<IAggregateRequest>) {
     if(this.selectedAxis == axis) this.selectedAxis = null;
+  }
+
+  deleteAxis(axisIdx:number) {
+    this.aggregationRequest.axes.splice(axisIdx, 1);
   }
 
   addRequest() {

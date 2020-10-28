@@ -18,13 +18,11 @@ export class InputComponent implements ControlValueAccessor {
   @Input() formControlName?: string;
   @Input() label?: string;
   @Input() disabled: boolean = false;
+  @Input() placeholder?:string;
 
   constructor() {}
 
   ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
-    console.log(this.type);
   }
 
   private _value: string | number;

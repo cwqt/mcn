@@ -14,14 +14,24 @@
   </div>
 
   <div class="aggregate-chart-settings">
-    <mat-button-toggle-group [value]="aggregationRequest.chart_type">
-      <mat-button-toggle (click)="setChartType(chart.key)"
-        *ngFor="let chart of chartType | keyvalue"
-        [value]="chart.key">
-        <ui-icon>{{ chart.value }}</ui-icon>
-        <span>{{ chart.key | titlecase }}</span>
-      </mat-button-toggle>
-    </mat-button-toggle-group>  
+    <div>
+      <mat-button-toggle-group [value]="aggregationRequest.chart_type">
+        <mat-button-toggle (click)="setChartType(chart.key)"
+          *ngFor="let chart of chartType | keyvalue"
+          [value]="chart.key">
+          <ui-icon>{{ chart.value }}</ui-icon>
+          <span>{{ chart.key | titlecase }}</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>    
+    </div>
+
+    <div class="add-axis">
+      <ui-input #axisName type="text" placeholder="Axis name"></ui-input>
+      <ui-icon-button
+        (click)="createAxis(axisName.value)"
+        variant="secondary"
+        [disabled]="!axisName.value">add</ui-icon-button>
+    </div>
   </div>
 
   <div class="aggregate-wrapper">
@@ -39,7 +49,10 @@
           <mat-panel-title>
             {{ axis.title }}
           </mat-panel-title>
-          <mat-panel-description>{{ axis.aggregation_points.length }} points</mat-panel-description>
+          <mat-panel-description>
+            <ui-icon-button (click)="deleteAxis(axisIdx)">delete</ui-icon-button>
+            {{ axis.aggregation_points.length }} points
+          </mat-panel-description>
         </mat-expansion-panel-header>
 
         <span *ngIf="axis.aggregation_points.length == 0">No points</span>
@@ -47,7 +60,7 @@
           class="point" [class.editing]="req.editing">
           <div class="point-header">
             <div class="point-info">
-              <div (click)="setRequestColor(axisIdx, reqIdx)"
+              <div (click)="setRequestColor(axisIdx, reqIdx)"  [popoverTriggerFor]="myPopover"
                 class="color-picker"
                 [style]="'background-color: ' + (req.color ? colorMap[req.color]['200'] : colorMap[0]['200'] )">
                   <ui-icon>{{ measurementInfo[req.measurement].icon}}</ui-icon>
@@ -76,3 +89,7 @@
 
   </div>
 </div>
+
+<popover #myPopover>
+  <app-pick-color></app-pick-color>
+</popover>

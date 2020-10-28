@@ -7,6 +7,7 @@ import heatmap from "highcharts/modules/heatmap";
 
 import lineTransform from './transform-strategies/line-transform';
 import barTransform from './transform-strategies/bar-transform';
+import xrangeTransform from './transform-strategies/xrange-transform';
 
 xrange(Highcharts);
 heatmap(Highcharts);
@@ -16,7 +17,7 @@ const transformStrategies:{[index in ChartType]: (req:IAggregateRequestGroup, re
   [ChartType.Bar]: barTransform,
   [ChartType.HeatMap]: lineTransform,
   [ChartType.Scatter]: lineTransform,
-  [ChartType.Xrange]: lineTransform,
+  [ChartType.Xrange]: xrangeTransform,
   [ChartType.Pie]: lineTransform,
 }
 
