@@ -22,6 +22,8 @@ import { OrganisationService } from "src/app/services/organisation.service";
 import { MatDialog, throwMatDialogContentAlreadyAttachedError } from "@angular/material/dialog";
 import { DataCounterComponent } from '../data-counter/data-counter.component';
 import { DataChartComponent } from '../data-chart/data-chart.component';
+import { NumberInput } from '@angular/cdk/coercion';
+import { Chart } from 'highcharts';
 
 @Component({
   selector: "app-data-aggregator",
@@ -57,6 +59,9 @@ export class DataAggregatorComponent implements OnInit {
     [ChartType.Pie]: "chart--pie",
     [ChartType.Scatter]: "chart--scatter",
     [ChartType.Xrange]: "roadmap",
+
+    [ChartType.Gauge]:"meter--alt",
+    [ChartType.Value]:"string-integer"
   }
 
   constructor(
@@ -97,10 +102,10 @@ export class DataAggregatorComponent implements OnInit {
   handleSourcesChange(event) {}
   handleRecordableChange(event) {}
 
-  createAxis(title:string) {
+  createAxis(title:NumberInput) {
     this.aggregationRequest.axes = [...this.aggregationRequest.axes, {
       aggregation_points: [],
-      title: title,
+      title: title.toString(),
       label_format: Unit.Unknown
     }]
 
@@ -115,8 +120,8 @@ export class DataAggregatorComponent implements OnInit {
     if(this.selectedAxis == axis) this.selectedAxis = null;
   }
 
-  deleteAxis(axisIdx:number) {
-    this.aggregationRequest.axes.splice(axisIdx, 1);
+  deleteAxis(axisIdx:any) {
+    this.aggregationRequest.axes.splice(axisIdx as number, 1);
   }
 
   addRequest() {

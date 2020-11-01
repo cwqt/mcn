@@ -5,8 +5,10 @@ import { IRecordable } from "../Hydroponics/Recordable.model";
 import { COLOR } from "../material-colors";
 import { Type } from "./Hardware.model";
 import { ChartType } from "../Dashboard.model";
+import { Primitive } from "../Node.model";
 
-/** overlapping data from multiple sources, multi-axis
+// decouple ui from requesting data
+/** overlapping data from multiple sources, multi-chart, multi-axis
  *
  *  |         +-----------------------
  *  |         |    etc.
@@ -15,8 +17,12 @@ import { ChartType } from "../Dashboard.model";
  *  |/        |   \,------'
  *  |---------+
  *  +-------------------------------------
- *    light (lux), humidity (RH%), temp (C)
- */
+ *    light (lux), humidity (RH%)
+ *  |
+ *  |     ____....,,,___
+ *  |..'''              `'''...,,,,-----'
+ *  +-------------------------------------
+ *   temp (C) */
 
 export const Properties = [
   NodeType.DeviceProperty,
@@ -28,29 +34,23 @@ export const Properties = [
 export const Sources = [NodeType.User, NodeType.Device];
 export const Recordables = [NodeType.Crop, NodeType.Rack, NodeType.Farm, NodeType.Recordable];
 
-export interface IAggregateAxis<T> {
-  title?: string;
-  aggregation_points: T[];
-  label_format?: Unit | Type;
-}
-
 // send an IAggregateRequestGroup and recieve an IAggregateResponseGroup
 export interface IAggregateRequestGroup {
-  period: string; // tba
-  axes: IAggregateAxis<IAggregateRequest>[];
-  chart_type: ChartType;
+  period: { start: Date, end: Date };
+  requests: IAggregateRequest[];
+  ui?: IAggregateUiData;
 }
 
 export interface IAggregateResponseGroup {
   sources: { [recordable: string]: IRecordable }; //reflected in HAS_SOURCE relationship
-  axes: IAggregateAxis<IAggregateResponse>[];
+  responses: IAggregateResponse[];
 }
 export interface IAggregatePoint {
-  interval?: number; // get every nth point
   recordable: string;
-  color?: COLOR;
   data_format: Unit | Type;
   measurement: Measurement | IoTState | IoTMeasurement;
+  function?: "mean" | "max" | "min" | "first" | "last"; // single point (ChartType.Value)
+  interval?: number; // get every nth point
 }
 
 export interface IAggregateRequest extends IAggregatePoint {
@@ -59,4 +59,30 @@ export interface IAggregateRequest extends IAggregatePoint {
 
 export interface IAggregateResponse extends IAggregatePoint {
   sources: { [source: string]: Omit<IMeasurement, "unit"> };
+}
+
+// Chart data ui ------------------------------------
+export interface IAggregateChart {
+  title?:string;
+  chart_type: ChartType;
+  chart_data: {
+    [ChartType.Gauge]?: { lower_bound:number, upper_bound:number }
+  }
+}
+
+export interface IAggregateAxis {
+  title?: string;
+  label_format?: Unit | Type;
+}
+
+export interface IAggregatePointUi {
+  axis: number;
+  chart: number;
+  color: COLOR;
+}
+
+export interface IAggregateUiData {
+  charts: IAggregateChart[];
+  axes: IAggregateAxis[];
+  requests:IAggregatePointUi[]; // maps to request 
 }

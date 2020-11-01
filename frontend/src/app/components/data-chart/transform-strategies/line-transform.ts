@@ -30,6 +30,9 @@ export default (
         }
       }
     },
+    tooltip: {
+      shared: true,
+    },
     title: { text: "" },
     xAxis: { type: "datetime" },
     yAxis: createAxes(req, res).map(x => ({...x, gridLineColor: 'transparent'})),

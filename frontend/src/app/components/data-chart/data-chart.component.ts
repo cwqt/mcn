@@ -4,11 +4,15 @@ import * as Highcharts from "highcharts";
 import { IoTService } from 'src/app/services/iot.service';
 import xrange from "highcharts/modules/xrange";
 import heatmap from "highcharts/modules/heatmap";
+import noData from "highcharts/modules/no-data-to-display";
 
 import lineTransform from './transform-strategies/line-transform';
 import barTransform from './transform-strategies/bar-transform';
 import xrangeTransform from './transform-strategies/xrange-transform';
+import valueTransform from './transform-strategies/value-transform';
+import gaugeTransform from './transform-strategies/gauge-transform';
 
+noData(Highcharts);
 xrange(Highcharts);
 heatmap(Highcharts);
 
@@ -19,7 +23,19 @@ const transformStrategies:{[index in ChartType]: (req:IAggregateRequestGroup, re
   [ChartType.Scatter]: lineTransform,
   [ChartType.Xrange]: xrangeTransform,
   [ChartType.Pie]: lineTransform,
+  [ChartType.Value]: valueTransform,
+  [ChartType.Gauge]: gaugeTransform,
 }
+
+const highChartTypes:ChartType[] = [
+  ChartType.Line,
+  ChartType.Bar,
+  ChartType.HeatMap,
+  ChartType.Scatter,
+  ChartType.Pie,
+  ChartType.Xrange,
+  ChartType.Gauge
+]
 
 @Component({
   selector: 'app-data-chart',
@@ -58,10 +74,8 @@ export class DataChartComponent implements OnInit {
   }
 
   render() {
-    console.log(this.aggregationRequest)
     this.chartData = {};
     this.chartData = transformStrategies[this.aggregationRequest.chart_type](this.aggregationRequest, this.aggregationData);
-    console.log('==>',this.chartData)
     setTimeout(() => {
       if(this.chart) this.chart.chart.update(this.chartData);
     }, 100)
