@@ -1,24 +1,22 @@
 import { NodeType, IDashboardItem } from "@cxss/interfaces";
 import { sessionable, cypher } from "../../common/dbs";
 import { Transaction } from "neo4j-driver";
-import { capitalize } from "../../controllers/Node.controller";
+import { capitalize as cap } from "../../controllers/Node.controller";
 import Node from "../Node.model";
 
-const create = async (data: IDashboardItem, org_id: string): Promise<IDashboardItem> => {
+const create = async (data: IDashboardItem, section_id: string): Promise<IDashboardItem> => {
   let body = <any>Object.assign({}, data);
   //parse into json for object storage
   body.position = JSON.stringify(body.position);
   body.aggregation_request = JSON.stringify(body.aggregation_request);
 
   const res = await cypher(
-    ` MATCH (:${capitalize(NodeType.Organisation)} {_id:$oid})-[:HAS_DASHBOARD]->(d:${capitalize(
-      NodeType.Dashboard
-    )})
-      WHERE d IS NOT NULL
-      CREATE (di:${capitalize(NodeType.DashboardItem)} $body)<-[:HAS_ITEM]-(d)
+    ` MATCH (ds:${cap(NodeType.DashboardSection)} {_id:$sid})
+      WHERE ds IS NOT NULL
+      CREATE (di:${cap(NodeType.DashboardItem)} $body)<-[:HAS_ITEM]-(ds)
       RETURN di`,
     {
-      oid: org_id,
+      sid: section_id,
       body: body,
     }
   );
@@ -28,7 +26,7 @@ const create = async (data: IDashboardItem, org_id: string): Promise<IDashboardI
 
 const read = async (_id: string): Promise<IDashboardItem> => {
   const res = await cypher(
-    ` MATCH (d:${capitalize(NodeType.DashboardItem)} {_id:$diid})
+    ` MATCH (d:${cap(NodeType.DashboardItem)} {_id:$diid})
       RETURN d`,
     { diid: _id }
   );
@@ -61,7 +59,7 @@ const update = async (_id: string, newFieldValues: { [index: string]: any }) => 
 const remove = async (_id: string, txc?: Transaction) => {
   await sessionable(async (t: Transaction) => {
     await t.run(
-      ` MATCH (p:${capitalize(NodeType.DashboardItem)} {_id:$pid})
+      ` MATCH (p:${cap(NodeType.DashboardItem)} {_id:$pid})
         DETACH DELETE p`,
       { pid: _id }
     );

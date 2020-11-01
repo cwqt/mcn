@@ -7,7 +7,7 @@ export enum NodeType {
   Crop = "crop",
   Device = "device",
   Post = "post",
-  DeviceProperty = "deviceProp",
+  DeviceProperty = "device_property",
   Metric = "metric",
   Sensor = "sensor",
   State = "state",
@@ -19,6 +19,7 @@ export enum NodeType {
   Species = "species",
   Dashboard = "dashboard",
   DashboardItem = "dashboard_item",
+  DashboardSection = "dashboard_section"
 }
 
 //adding measurements / getting of / constructing graphs

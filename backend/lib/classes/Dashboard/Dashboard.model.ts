@@ -5,15 +5,16 @@ import { Transaction } from "neo4j-driver";
 import { capitalize } from "../../controllers/Node.controller";
 import DashboardItem from "./DashboardItem.model";
 import { Types } from "mongoose";
+import DashboardSection from "./DashboardSection.model";
 
-export const create = async (org_id: string): Promise<IDashboard> => {
+export const create = async (body:{[index:string]:string}, org_id: string): Promise<IDashboard> => {
   const dash: IDashboard = {
     _id: new Types.ObjectId().toHexString(),
+    title: body.title,
+    icon: body.icon,
     created_at: Date.now(),
     type: NodeType.Dashboard,
-    rows: 3,
-    columns: 5,
-    items: [],
+    sections: [],
   };
 
   const res = await cypher(
@@ -30,18 +31,17 @@ export const create = async (org_id: string): Promise<IDashboard> => {
   return reduce(data);
 };
 
-const read = async (org_id: string): Promise<IDashboard> => {
-  let data;
+const read = async (dash_id: string): Promise<IDashboard> => {
   const res = await cypher(
-    ` MATCH (o:${capitalize(NodeType.Organisation)} {_id:$oid})-->(d:Dashboard)
-      OPTIONAL MATCH (d)-[:HAS_ITEM]->(di:${capitalize(NodeType.DashboardItem)})
-      RETURN d, collect(di{._id}) as di`,
-    { oid: org_id }
+    ` MATCH (d:Dashboard {_id:$did})
+      OPTIONAL MATCH (d)-[:HAS_SECTION]->(ds:${capitalize(NodeType.DashboardSection)})
+      RETURN d, collect(ds{._id}) as ds`,
+    { did: dash_id }
   );
 
-  data = <IDashboard>res.records[0]?.get("d").properties;
-  data.items = await Promise.all(
-    res.records[0]?.get("di")?.map((di: INode) => DashboardItem.read(di._id))
+  let data = <IDashboard>res.records[0]?.get("d").properties;
+  data.sections = await Promise.all(
+    res.records[0]?.get("ds")?.map((ds: INode) => DashboardSection.read(ds._id))
   );
 
   return reduce(data);
@@ -52,14 +52,11 @@ const reduce = (data: IDashboard) => {
 };
 
 const update = async (_id: string, newFieldValues: any): Promise<void> => {
-  const updatableFields = ["rows", "columns"];
+  const updatableFields = ["title", "icon"];
 
-  const filtered = updatableFields.reduce(
-    (obj, key) => ({ ...obj, [key]: newFieldValues[key] }),
-    {}
-  );
-
-  await Node.update(_id, filtered, NodeType.Dashboard);
+  await Node.update(_id,
+    updatableFields.reduce((obj, key) => ({ ...obj, [key]: newFieldValues[key] }), {}),
+    NodeType.Dashboard);
 };
 
 const remove = async (_id: string, txc?: Transaction) => {

@@ -5,7 +5,6 @@ import { IRecordable } from "../Hydroponics/Recordable.model";
 import { COLOR } from "../material-colors";
 import { Type } from "./Hardware.model";
 import { ChartType } from "../Dashboard.model";
-import { Primitive } from "../Node.model";
 
 // decouple ui from requesting data
 /** overlapping data from multiple sources, multi-chart, multi-axis
@@ -73,6 +72,7 @@ export interface IAggregateChart {
 export interface IAggregateAxis {
   title?: string;
   label_format?: Unit | Type;
+  invert?:boolean; //flip y-axis
 }
 
 export interface IAggregatePointUi {

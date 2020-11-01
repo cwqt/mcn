@@ -1,3 +1,4 @@
+import { IDashboard } from "./Dashboard.model";
 import { INode } from "./Node.model";
 import { NodeType } from "./Types/Nodes.types";
 
@@ -15,5 +16,6 @@ export interface IOrgEnv {
   racks: number;
   crops: number;
   users: number;
-  dashboard: any;
+  
+  dashboards: Pick<IDashboard, "_id" | "title" | "icon">[];
 }
