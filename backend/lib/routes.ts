@@ -48,6 +48,15 @@ import dbs from './common/dbs';
 
 const mcnr = new McnRouter();
 
+export interface IModule {
+    root: string;
+    endpoints: Array<McnRouter["get"] 
+        | McnRouter["post"]
+        | McnRouter["put"]
+        | McnRouter["delete"]
+        | McnRouter["redirect"]>
+}
+
 type nodeDef = [NodeType, string];
 // USERS -----------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.get      <P<IUserStub>>    ("/users",                               Users.readAllUsers,                       [Access.SiteAdmin]);
@@ -91,7 +100,7 @@ mcnr.post    <IDashboardSection>("/dashboards/:did/sections",            Dashboa
 // SECTIONS ------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.put     <IDashboardSection>("/sections/:sid",                       Dashboards.updateSection,                  [Access.OrgMember]);
 mcnr.delete  <void>             ("/sections/:sid",                       Dashboards.deleteSection,                  [Access.OrgMember]);
-mcnr.post    <void>             ("/sections/:sid/items",                 Dashboards.addItem,                        [Access.OrgMember]);
+mcnr.post    <IDashboardItem>   ("/sections/:sid/items",                 Dashboards.addItem,                        [Access.OrgMember]);
 // ITEMS ------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.put     <IDashboardItem>   ("/items/:iid",                          Dashboards.updateItem,                     [Access.OrgEditor]);
 mcnr.delete  <void>             ("/items/:iid",                          Dashboards.deleteItem,                     [Access.OrgEditor]);
@@ -127,11 +136,11 @@ mcnr.get     <IFarm>            ("/farms/:fid",                          Farm.re
 // mcnr.put                     ("/farms/:fid",                          Farm.updateFarm,                           [Access.OrgEditor]);
 // mcnr.delete                  ("/farms/:fid",                          Farm.deleteFarm,                           [Access.OrgEditor]);
 mcnr.get     <IRackStub[]>      ("/farms/:fid/racks",                    Farm.readFarmRacks,                        [Access.OrgMember]);
+mcnr.post    <IRack>            ("/farms/:fid/racks",                    Rack.createRack,                           [Access.Authenticated],   Rack.validators.createRack);
 
 // RACKS ------------------------------------------------------------------------------------------
 const rackDef:nodeDef = [NodeType.Rack, "rid"];
 // mcnr.get                     ("/racks",                               Rack.readAllRacks,                         [Access.SiteAdmin]);
-mcnr.post    <IRack>            ("/farms/:fid/racks",                    Rack.createRack,                           [Access.Authenticated],   Rack.validators.createRack);
 mcnr.get     <IRack>            ("/racks/:rid",                          Rack.readRack,                             [Access.OrgMember]);
 // mcnr.put                     ("/racks/:rid",                          Rack.updateRack,                           [Access.OrgEditor]);
 // mcnr.delete                  ("/racks/:rid",                          Rack.deleteRack,                           [Access.OrgEditor]);

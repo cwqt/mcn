@@ -21,7 +21,10 @@ const create = async (org: IOrgStub, creator_id: string): Promise<IOrg> => {
   );
 
   let data = <IOrg>res.records[0].get("o").properties;
-  await Dashboard.create(data._id);
+  await Dashboard.create({
+    title: "Dashboard",
+    icon:"workspace" },
+    data._id);
 
   return reduce<IOrg>(data, DataModel.Full);
 };

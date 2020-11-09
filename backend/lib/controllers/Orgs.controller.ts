@@ -174,31 +174,31 @@ export const getDashboard = async (req: Request): Promise<IDashboard> => {
   return await Dashboard.read(req.params.oid);
 };
 
-export const binpack = (dash: IDashboard): IDashboard => {
-  dash = Object.assign({}, dash); //copy
-  let bins = dash.items.map((i) => {
-    return {
-      _id: i._id,
-      width: i.position.width,
-      height: i.position.height,
-      // ngx-widgets indexing starts from 1, but binpack from 0
-      x: i.position.top - 1 < 0 ? 0 : i.position.top - 1,
-      y: i.position.left - 1 < 0 ? 0 : i.position.left - 1,
-    };
-  });
+// export const binpack = (dash: IDashboard): IDashboard => {
+//   dash = Object.assign({}, dash); //copy
+//   let bins = dash.items.map((i) => {
+//     return {
+//       _id: i._id,
+//       width: i.position.width,
+//       height: i.position.height,
+//       // ngx-widgets indexing starts from 1, but binpack from 0
+//       x: i.position.top - 1 < 0 ? 0 : i.position.top - 1,
+//       y: i.position.left - 1 < 0 ? 0 : i.position.left - 1,
+//     };
+//   });
 
-  let packed: PackResult<Bin> = pack(bins, { maxWidth: dash.columns });
-  dash.columns = packed.width;
-  dash.rows = packed.height;
+//   let packed: PackResult<Bin> = pack(bins, { maxWidth: dash.columns });
+//   dash.columns = packed.width;
+//   dash.rows = packed.height;
 
-  packed.items.forEach((i) => {
-    let item = dash.items.find((di) => di._id == (<any>i).item._id);
-    item.position.left = i.x + 1;
-    item.position.top = i.y + 1;
-  });
+//   packed.items.forEach((i) => {
+//     let item = dash.items.find((di) => di._id == (<any>i).item._id);
+//     item.position.left = i.x + 1;
+//     item.position.top = i.y + 1;
+//   });
 
-  return dash;
-};
+//   return dash;
+// };
 
 export const addItemToDashboard = async (req: Request): Promise<IDashboardItem> => {
   const item: IDashboardItem = {
@@ -207,26 +207,27 @@ export const addItemToDashboard = async (req: Request): Promise<IDashboardItem> 
     type: NodeType.DashboardItem,
     title: req.body.title,
     position: req.body.position,
-    chart_type: req.body.chart_type,
+    // chart_type: req.body.chart_type,
     aggregation_request: req.body.aggregation_request,
   };
 
   await DashboardItem.create(item, req.params.oid);
 
   //find new optimal placement of dash items & update accordingly
-  const oldDash = await Dashboard.read(req.params.oid);
-  const newDash = binpack(oldDash);
+  // const oldDash = await Dashboard.read(req.params.oid);
+  // const newDash = binpack(oldDash);
 
-  if (newDash.columns > oldDash.columns || newDash.rows > oldDash.rows) {
-    await Dashboard.update(newDash._id, {
-      columns: newDash.columns,
-      rows: newDash.rows,
-    });
-  }
+  // if (newDash.columns > oldDash.columns || newDash.rows > oldDash.rows) {
+  //   await Dashboard.update(newDash._id, {
+  //     columns: newDash.columns,
+  //     rows: newDash.rows,
+  //   });
+  // }
 
-  await Promise.all(newDash.items.map((i) => DashboardItem.update(i._id, { position: i.position })));
+  // await Promise.all(newDash.items.map((i) => DashboardItem.update(i._id, { position: i.position })));
 
-  return newDash.items.find((i) => i._id == item._id);
+  // return newDash.items.find((i) => i._id == item._id);
+  return {} as IDashboardItem
 };
 
 export const updateDashboardItem = async (req: Request): Promise<IDashboardItem> => {

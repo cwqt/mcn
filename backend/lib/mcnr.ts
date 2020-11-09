@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, IRouterMatcher } from "express";
 import { NodeType } from "@cxss/interfaces";
 import { HTTP } from "./common/http";
 import { ErrorHandler, handleError } from "./common/errorHandler";
@@ -6,6 +6,8 @@ import { cypher } from "./common/dbs";
 import logger from "./common/logger";
 import Multer from "multer";
 import FileType from "file-type";
+import { Http } from "winston/lib/winston/transports";
+import { AsyncRouterInstance } from "express-async-router";
 const AsyncRouter = require("express-async-router").AsyncRouter;
 
 export enum Access {
@@ -35,6 +37,50 @@ const skip = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
+const endpointFunc = <T>(method:IRouterMatcher<T>) => {
+  return  (
+    path: string,
+    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
+    access: Access[],
+    validators: any = skip,
+    nodeData?: [NodeType, string]
+  ) => {
+    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const item = await controller(
+          req,
+          next,
+          {
+            file: req.file,
+            session: req.session,
+            pagination: {
+              per_page: res.locals.per_page,
+              page: res.locals.page,
+            },
+          } as IResLocals,
+          access
+        );
+        res.status(HTTP.OK).json(item);
+      } catch (err) {
+        handleError(req, res, next, err);
+      }
+    };
+    method(
+      path,
+      getCheckPermissions(access, nodeData),
+      validators ?? skip,
+      (req: Request, res: Response, next: NextFunction) => {
+        res.locals.page = parseInt(req.query.page as string) || 0;
+        res.locals.per_page = parseInt(req.query.per_page as string) || 10;
+        next();
+      },
+      wrappedController
+    );
+  };
+}
+
+
+
 const MAX_FILE_COUNT = 5;
 export class McnRouter {
   router: any;
@@ -63,124 +109,36 @@ export class McnRouter {
   }
 
   get = <T>(
-    path: string,
-    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
-    access: Access[],
+    path:string,
+    controller:any,
+    access:Access[],
     validators: any = skip,
-    nodeData?: [NodeType, string]
-  ) => {
-    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const item = await controller(
-          req,
-          next,
-          {
-            session: req.session,
-            pagination: {
-              per_page: res.locals.per_page,
-              page: res.locals.page,
-            },
-          } as IResLocals,
-          access
-        );
-        res.status(HTTP.OK).json(item);
-      } catch (err) {
-        handleError(req, res, next, err);
-      }
-    };
-    this.router.get(
-      path,
-      getCheckPermissions(access, nodeData),
-      validators ?? skip,
-      (req: Request, res: Response, next: NextFunction) => {
-        res.locals.page = parseInt(req.query.page as string) || 0;
-        res.locals.per_page = parseInt(req.query.per_page as string) || 10;
-        next();
-      },
-      wrappedController
-    );
-  };
-
-  post = <T>(
-    path: string,
-    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
-    access: Access[],
-    validators: any = skip,
-    nodeData?: [NodeType, string]
-  ) => {
-    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const item = await controller(
-          req,
-          next,
-          {
-            session: req.session,
-          } as IResLocals,
-          access
-        );
-        res.status(HTTP.Created).json(item);
-      } catch (err) {
-        handleError(req, res, next, err);
-      }
-    };
-    this.router.post(
-      path,
-      getCheckPermissions(access, nodeData),
-      validators ?? skip,
-      this.fileParser.any(),
-      wrappedController
-    );
-  };
+    nodeData?:any) =>
+      endpointFunc<T>(this.router.get)(path, controller, access, validators, nodeData);
 
   put = <T>(
-    path: string,
-    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
-    access: Access[],
+    path:string,
+    controller:any,
+    access:Access[],
     validators: any = skip,
-    nodeData?: [NodeType, string]
-  ) => {
-    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const item = await controller(
-          req,
-          next,
-          {
-            session: req.session,
-          } as IResLocals,
-          access
-        );
-        res.status(HTTP.OK).json(item);
-      } catch (err) {
-        handleError(req, res, next, err);
-      }
-    };
-    this.router.put(path, getCheckPermissions(access, nodeData), validators ?? skip, wrappedController);
-  };
+    nodeData?:any) =>
+      endpointFunc<T>(this.router.put)(path, controller, access, validators, nodeData);
 
-  delete = <T>(
-    path: string,
-    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
-    access: Access[],
+  post = <T>(
+    path:string,
+    controller:any,
+    access:Access[],
     validators: any = skip,
-    nodeData?: [NodeType, string]
-  ) => {
-    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const item = await controller(
-          req,
-          next,
-          {
-            session: req.session,
-          } as IResLocals,
-          access
-        );
-        res.status(HTTP.Created).json(item);
-      } catch (err) {
-        handleError(req, res, next, err);
-      }
-    };
-    this.router.delete(path, getCheckPermissions(access, nodeData), validators ?? skip, wrappedController);
-  };
+    nodeData?:any) =>
+      endpointFunc<T>(this.router.post)(path, controller, access, validators, nodeData);
+    
+  delete = <T>(
+    path:string,
+    controller:any,
+    access:Access[],
+    validators: any = skip,
+    nodeData?:any) =>
+      endpointFunc<T>(this.router.delete)(path, controller, access, validators, nodeData);        
 
   redirect = <T>(
     path: string,
