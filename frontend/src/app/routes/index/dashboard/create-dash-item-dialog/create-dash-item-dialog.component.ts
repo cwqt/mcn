@@ -22,11 +22,9 @@ export class CreateDashItemDialogComponent implements OnInit {
     },
     type: NodeType.DashboardItem,
     created_at: Date.now(),
-    chart_type: ChartType["line-graph"],
     aggregation_request: {
-      period: "24hr",
-      chart_type: ChartType.Line,
-      axes: [],
+      period: { start: new Date(), end: new Date() },
+      requests: [],
     },
   };
 
@@ -45,22 +43,21 @@ export class CreateDashItemDialogComponent implements OnInit {
 
   addItem() {
     this.loading = true;
-    this.dashService
-      .addItem(
-        this.dashItem.title,
-        this.dashItem.position,
-        this.dashItem.chart_type,
-        this.dashItem.aggregation_request
-      )
-      .then((item: IDashboardItem) => {
-        this.dialogRef.close(item);
-      })
-      .catch((e) => {
-        this.dialogRef.close(e);
-      })
-      .finally(() => {
-        this.loading = false;
-      });
+    // this.dashService
+    //   .addItem(
+    //     this.dashItem.title,
+    //     this.dashItem.position,
+    //     this.dashItem.aggregation_request
+    //   )
+    //   .then((item: IDashboardItem) => {
+    //     this.dialogRef.close(item);
+    //   })
+    //   .catch((e) => {
+    //     this.dialogRef.close(e);
+    //   })
+    //   .finally(() => {
+    //     this.loading = false;
+    //   });
   }
 
   cancel() {}

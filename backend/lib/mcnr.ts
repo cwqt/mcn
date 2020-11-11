@@ -37,7 +37,7 @@ const skip = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-const endpointFunc = <T>(method:IRouterMatcher<T>) => {
+const endpointFunc = <T>(method:IRouterMatcher<T>, resCode?:HTTP, lamda?:(res:Response, data:T) => void) => {
   return  (
     path: string,
     controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
@@ -45,26 +45,6 @@ const endpointFunc = <T>(method:IRouterMatcher<T>) => {
     validators: any = skip,
     nodeData?: [NodeType, string]
   ) => {
-    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const item = await controller(
-          req,
-          next,
-          {
-            file: req.file,
-            session: req.session,
-            pagination: {
-              per_page: res.locals.per_page,
-              page: res.locals.page,
-            },
-          } as IResLocals,
-          access
-        );
-        res.status(HTTP.OK).json(item);
-      } catch (err) {
-        handleError(req, res, next, err);
-      }
-    };
     method(
       path,
       getCheckPermissions(access, nodeData),
@@ -74,7 +54,26 @@ const endpointFunc = <T>(method:IRouterMatcher<T>) => {
         res.locals.per_page = parseInt(req.query.per_page as string) || 10;
         next();
       },
-      wrappedController
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          const returnValue = await controller(
+            req,
+            next,
+            {
+              file: req.file,
+              session: req.session,
+              pagination: {
+                per_page: res.locals.per_page,
+                page: res.locals.page,
+              },
+            } as IResLocals,
+            access
+          );
+          lamda ? lamda(res, returnValue) : res.status(resCode || HTTP.OK).json(returnValue);
+        } catch (err) {
+          handleError(req, res, next, err);
+        }
+      }
     );
   };
 }
@@ -114,7 +113,8 @@ export class McnRouter {
     access:Access[],
     validators: any = skip,
     nodeData?:any) =>
-      endpointFunc<T>(this.router.get)(path, controller, access, validators, nodeData);
+      endpointFunc<T>(this.router.get)
+        (path, controller, access, validators, nodeData);
 
   put = <T>(
     path:string,
@@ -122,7 +122,8 @@ export class McnRouter {
     access:Access[],
     validators: any = skip,
     nodeData?:any) =>
-      endpointFunc<T>(this.router.put)(path, controller, access, validators, nodeData);
+      endpointFunc<T>(this.router.put)
+        (path, controller, access, validators, nodeData);
 
   post = <T>(
     path:string,
@@ -130,7 +131,8 @@ export class McnRouter {
     access:Access[],
     validators: any = skip,
     nodeData?:any) =>
-      endpointFunc<T>(this.router.post)(path, controller, access, validators, nodeData);
+      endpointFunc<T>(this.router.post, HTTP.Created)
+        (path, controller, access, validators, nodeData);
     
   delete = <T>(
     path:string,
@@ -138,33 +140,19 @@ export class McnRouter {
     access:Access[],
     validators: any = skip,
     nodeData?:any) =>
-      endpointFunc<T>(this.router.delete)(path, controller, access, validators, nodeData);        
+      endpointFunc<T>(this.router.delete)
+        (path, controller, access, validators, nodeData);        
 
-  redirect = <T>(
-    path: string,
-    controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<string>,
-    access: Access[],
+  redirect = (
+    path:string,
+    controller:any,
+    access:Access[],
     validators: any = skip,
-    nodeData?: [NodeType, string]
-  ) => {
-    const wrappedController = async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const redirectUrl = await controller(
-          req,
-          next,
-          {
-            session: req.session,
-          } as IResLocals,
-          access
-        );
-        res.status(HTTP.Moved).redirect(redirectUrl);
-      } catch (err) {
-        handleError(req, res, next, err);
+    nodeData?:any) =>
+      endpointFunc<string>(this.router.get, HTTP.Moved,
+        (res:Response, data:string) => res.status(HTTP.Moved).redirect(data))
+        (path, controller, access, validators, nodeData);        
       }
-    };
-    this.router.get(path, getCheckPermissions(access, nodeData), validators ?? skip, wrappedController);
-  };
-}
 
 const getCheckPermissions = (access: Access[], nodeData?: [NodeType, string]) => {
   return async (req: Request, res: Response, next: NextFunction) => {

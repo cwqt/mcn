@@ -48,15 +48,6 @@ import dbs from './common/dbs';
 
 const mcnr = new McnRouter();
 
-export interface IModule {
-    root: string;
-    endpoints: Array<McnRouter["get"] 
-        | McnRouter["post"]
-        | McnRouter["put"]
-        | McnRouter["delete"]
-        | McnRouter["redirect"]>
-}
-
 type nodeDef = [NodeType, string];
 // USERS -----------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.get      <P<IUserStub>>    ("/users",                               Users.readAllUsers,                       [Access.SiteAdmin]);
@@ -73,7 +64,7 @@ mcnr.delete   <void>            ("/users/:uid",                          Users.d
 // AUTH ------------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.post     <IApiKey>         ("/auth/keys",                           Auth.createApiKey,                        [Access.Authenticated]);
 mcnr.delete   <void>            ("/auth/keys/:kid",                      Auth.deleteApiKey,                        []);
-mcnr.redirect <string>          ("/auth/verify",                         Auth.verifyUserEmail,                     [Access.None],              Auth.validators.verify);
+mcnr.redirect                   ("/auth/verify",                         Auth.verifyUserEmail,                     [Access.None],              Auth.validators.verify);
 
 // ORGS ------------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.get     <P<IOrgStub>>      ("/orgs",                                Orgs.readAllOrgs,                         [Access.SiteAdmin]);
@@ -91,6 +82,7 @@ mcnr.get     <P<IFarmStub>>     ("/orgs/:oid/farms",                     Orgs.re
 mcnr.post    <void>             ("/orgs/:oid/users/:iid",                Orgs.addNodeToOrg(NodeType.User),         [Access.OrgEditor]);
 mcnr.post    <void>             ("/orgs/:oid/devices/:iid",              Orgs.addNodeToOrg(NodeType.Device),       [Access.OrgEditor]);
 mcnr.post    <void>             ("/orgs/:oid/farms/:iid",                Orgs.addNodeToOrg(NodeType.Farm),         [Access.OrgEditor]);
+mcnr.post    <IDashboard>       ("/orgs/:oid/dashboards",                Orgs.createDashboard,                     [Access.OrgEditor]);
 
 // DASHBOARDS ------------------------------------------------------------------------------------------------------------------------------------------------------
 mcnr.get     <IDashboard>       ("/dashboards/:did",                     Dashboards.getDashboard,                  [Access.OrgMember]);

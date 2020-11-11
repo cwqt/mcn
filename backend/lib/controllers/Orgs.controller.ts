@@ -143,11 +143,11 @@ export const getEnvironment = async (req: Request): Promise<IOrgEnv> => {
       SIZE((:${capitalize(NodeType.Device)})-[:IN]->(o)) as deviceCount
 
     OPTIONAL MATCH (f:${capitalize(NodeType.Farm)})-[:IN]->(o)
-    WITH farmCount, userCount, deviceCount, f,
+    WITH farmCount, userCount, deviceCount, f, o,
       SIZE((:${capitalize(NodeType.Rack)})<-[:HAS_RACK]-(f)) as rackCount
 
     OPTIONAL MATCH (r:${capitalize(NodeType.Rack)})<-[:HAS_RACK]-(f)
-    WITH farmCount, userCount, deviceCount, rackCount, r, 
+    WITH farmCount, userCount, deviceCount, rackCount, r, o,
       SIZE((:${capitalize(NodeType.Crop)})<-[:HAS_CROP]-(r)) as cropCount
 
     RETURN farmCount, userCount, deviceCount, rackCount, cropCount
@@ -157,6 +157,14 @@ export const getEnvironment = async (req: Request): Promise<IOrgEnv> => {
     }
   );
 
+  let dashes = await cypher(`
+    MATCH (o:${capitalize(NodeType.Organisation)} {_id:$oid})-[:HAS_DASHBOARD]->(d:${capitalize(NodeType.Dashboard)})
+    RETURN d{._id, .title, .icon} as dashboard
+    `, {
+    oid: req.params.oid
+  })
+
+
   let env: IOrgEnv = {
     devices: res.records[0].get("deviceCount")?.toNumber() || 0,
     alerts: 0,
@@ -164,15 +172,15 @@ export const getEnvironment = async (req: Request): Promise<IOrgEnv> => {
     racks: res.records[0].get("rackCount")?.toNumber() || 0,
     crops: res.records[0].get("cropCount")?.toNumber() || 0,
     users: res.records[0].get("userCount")?.toNumber() || 0,
-    dashboard: {},
+    dashboards: dashes.records.map(r => r.get('dashboard')) || [],
   };
 
   return env;
 };
 
-export const getDashboard = async (req: Request): Promise<IDashboard> => {
-  return await Dashboard.read(req.params.oid);
-};
+export const createDashboard = (req:Request):Promise<IDashboard> => {
+  return await Dashboard.create(body, req.params.oid);
+}
 
 // export const binpack = (dash: IDashboard): IDashboard => {
 //   dash = Object.assign({}, dash); //copy

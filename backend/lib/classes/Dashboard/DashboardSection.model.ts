@@ -9,12 +9,12 @@ import DashboardItemModel from "./DashboardItem.model";
 const create = async (data: IDashboardSection, dash_id: string): Promise<IDashboardSection> => {
   const body = Object.assign({}, data);
   await cypher(
-    ` MATCH (:${cap(NodeType.Dashboard)} {_id:$oid})-[:HAS_DASHBOARD]->(d:${cap(NodeType.Dashboard)})
-      WHERE d IS NOT NULL
-      CREATE (di:${cap(NodeType.DashboardItem)} $body)<-[:HAS_ITEM]-(d)
-      RETURN di`,
+    ` MATCH (d:${cap(NodeType.Dashboard)} {_id:$did})
+      WHERE ds IS NOT NULL
+      CREATE (ds:${cap(NodeType.DashboardSection)} $body)<-[:HAS_ITEM]-(d)
+      RETURN ds`,
     {
-      dash: dash_id,
+      did: dash_id,
       body: body,
     }
   );

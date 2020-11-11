@@ -19,6 +19,7 @@ export class InputComponent implements ControlValueAccessor {
   @Input() label?: string;
   @Input() disabled: boolean = false;
   @Input() placeholder?:string;
+  @Input() variant?: "primary" | "secondary";
 
   constructor() {}
 

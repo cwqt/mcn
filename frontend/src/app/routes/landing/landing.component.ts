@@ -14,6 +14,10 @@ export class LandingComponent implements OnInit {
 
   constructor(private userService: UserService) {}
 
+  scroll(el:HTMLElement) {
+    el.scrollIntoView();
+  }
+
   ngOnInit(): void {
     this.userService.currentUser.subscribe((x) => {
       this.currentUser = x;
