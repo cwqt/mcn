@@ -15,14 +15,14 @@
 
   <div class="aggregate-chart-settings">
     <div>
-      <mat-button-toggle-group [value]="aggregationRequest.chart_type">
+      <!-- <mat-button-toggle-group [value]="aggregationRequest.chart_type">
         <mat-button-toggle (click)="setChartType(chart.key)"
           *ngFor="let chart of chartType | keyvalue"
           [value]="chart.key">
           <ui-icon>{{ chart.value }}</ui-icon>
           <span>{{ chart.key | titlecase }}</span>
         </mat-button-toggle>
-      </mat-button-toggle-group>    
+      </mat-button-toggle-group>     -->
     </div>
 
     <div class="add-axis">
@@ -40,7 +40,7 @@
     </div>
     
     <mat-accordion class="aggregate-axes">
-      <mat-expansion-panel
+      <!-- <mat-expansion-panel
         *ngFor="let axis of aggregationRequest.axes; let axisIdx = index"
         (opened)="selectAxis(axis)"
         (closed)="deselectAxis(axis)"
@@ -50,7 +50,7 @@
             {{ axis.title }}
           </mat-panel-title>
           <mat-panel-description>
-            <!-- <ui-icon-button (click)="deleteAxis(axisIdx)">delete</ui-icon-button> -->
+            <ui-icon-button (click)="deleteAxis(axisIdx)">delete</ui-icon-button>
             {{ axis.aggregation_points.length }} points
           </mat-panel-description>
         </mat-expansion-panel-header>
@@ -81,7 +81,7 @@
 
 
       </mat-expansion-panel>
-
+ -->
 
     
     

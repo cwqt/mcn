@@ -40,7 +40,9 @@ export default (
       (r:IAggregateResponse, data:IAggregateData, axisIdx:number) => ({
         yAxis: axisIdx, // multi-axis support
         name: `${MeasurementInfo[r.measurement].title} (${DataFormatInfo[r.data_format]?.symbol || '~'})`,
-        color: COLOR_MAP[r.color]['200'],
+        ui: {
+          // color: COLOR_MAP[r.color]['200'],
+        },
         data: data.times.map((v, idx) => {
           let t = new Date(v).getTime();
           let value = data.values[idx];
@@ -75,13 +77,14 @@ export const createSeries = <T>(
   aggregationData: IAggregateResponseGroup,
   dataTransformer:(r:IAggregateResponse, data:IAggregateData, axisIdx:number) => any,
 ):T[] => {
-  return aggregationData ? (aggregationData.axes.map((axis:IAggregateAxis<IAggregateResponse>, idx) => {
-    return axis.aggregation_points.map((r:IAggregateResponse) => {
-      return Object.values(r.sources).reduce((acc, curr) => {
-        return [...acc, dataTransformer(r, curr, idx)];
-      }, [])  
-    }).flat()
-  })).flat() : [{ data:[], name: "No data" }];
+  return [];
+  // return aggregationData ? (aggregationData.axes.map((axis:IAggregateAxis<IAggregateResponse>, idx) => {
+  //   return axis.aggregation_points.map((r:IAggregateResponse) => {
+  //     return Object.values(r.sources).reduce((acc, curr) => {
+  //       return [...acc, dataTransformer(r, curr, idx)];
+  //     }, [])  
+  //   }).flat()
+  // })).flat() : [{ data:[], name: "No data" }];
 }
 
 export const createAxes = (
@@ -89,19 +92,20 @@ export const createAxes = (
   aggregationData: IAggregateResponseGroup,
   categories: string[] = []
 ): Highcharts.YAxisOptions[] => {
-  return aggregationData
-    ? aggregationData.axes.map<Highcharts.YAxisOptions>(
-        (axis: IAggregateAxis<IAggregateResponse>, idx) => {
-          return {
-            labels: {
-              format: `{value}${axis.label_format}`,
-            },
-            title: {
-              text: axis.title,
-            },
-            categories: categories
-          };
-        }
-      )
-    : [];
+  return []
+  // return aggregationData
+    // ? aggregationData.axes.map<Highcharts.YAxisOptions>(
+    //     (axis: IAggregateAxis<IAggregateResponse>, idx) => {
+    //       return {
+    //         labels: {
+    //           format: `{value}${axis.label_format}`,
+    //         },
+    //         title: {
+    //           text: axis.title,
+    //         },
+    //         categories: categories
+    //       };
+    //     }
+    //   )
+    // : [];
 };

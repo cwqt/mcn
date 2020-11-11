@@ -75,7 +75,7 @@ export class DataChartComponent implements OnInit {
 
   render() {
     this.chartData = {};
-    this.chartData = transformStrategies[this.aggregationRequest.chart_type](this.aggregationRequest, this.aggregationData);
+    // this.chartData = transformStrategies[this.aggregationRequest.chart_type](this.aggregationRequest, this.aggregationData);
     setTimeout(() => {
       if(this.chart) this.chart.chart.update(this.chartData);
     }, 100)

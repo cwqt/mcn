@@ -46,14 +46,15 @@ export default (
 };
 
 const getCategories = (res: IAggregateResponseGroup): string[] => {
-  const categories = res.axes.reduce((acc, curr) => {
-    curr.aggregation_points.forEach((p) => {
-      acc = acc.concat(Object.keys(p.sources));
-    });
-    return acc;
-  }, []);
+  // const categories = res.axes.reduce((acc, curr) => {
+  //   curr.aggregation_points.forEach((p) => {
+  //     acc = acc.concat(Object.keys(p.sources));
+  //   });
+  //   return acc;
+  // }, []);
 
-  return [...new Set(categories)];
+  // return [...new Set(categories)];
+  return [];
 };
 
 const transformResponse = (r: IAggregateResponse, categories: string[]) => {
@@ -88,7 +89,7 @@ const transformResponse = (r: IAggregateResponse, categories: string[]) => {
       )
       .points// map into highcharts format
       .map((x) => ({
-        color:  COLOR_MAP[r.color]["200"],
+        // color:  COLOR_MAP[r.color]["200"],
         x: new Date(x[0]).getTime(),
         x2: new Date(x[1]).getTime(),
         y: categories.findIndex((c) => x[2] == c),

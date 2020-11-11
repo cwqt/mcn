@@ -38,7 +38,7 @@ export class DataAggregatorComponent implements OnInit {
   @Input() editing: boolean = false;
 
   aggregationResponse:IAggregateResponseGroup;
-  selectedAxis:IAggregateAxis<IAggregateRequest> | null;
+  selectedAxis:IAggregateAxis | null;
 
   measurementInfo = MeasurementInfo;
   meaurementUnits = MeasurementUnits;
@@ -71,9 +71,8 @@ export class DataAggregatorComponent implements OnInit {
   ngOnInit(): void {
     if (!this.aggregationRequest) {
       this.aggregationRequest = {
-        period: "24h",
-        axes: [],
-        chart_type: ChartType.Line
+        period: {  start: new Date(), end: new Date()},
+        requests: []
       };
     }
 
@@ -103,49 +102,49 @@ export class DataAggregatorComponent implements OnInit {
   handleRecordableChange(event) {}
 
   createAxis(title:NumberInput) {
-    this.aggregationRequest.axes = [...this.aggregationRequest.axes, {
-      aggregation_points: [],
-      title: title.toString(),
-      label_format: Unit.Unknown
-    }]
+    // this.aggregationRequest.axes = [...this.aggregationRequest.axes, {
+    //   aggregation_points: [],
+    //   title: title.toString(),
+    //   label_format: Unit.Unknown
+    // }]
 
-    this.selectAxis(this.aggregationRequest.axes[this.aggregationRequest.axes.length - 1]);
+    // this.selectAxis(this.aggregationRequest.axes[this.aggregationRequest.axes.length - 1]);
   }
 
-  selectAxis(axis:IAggregateAxis<IAggregateRequest>) {
-    this.selectedAxis = axis;
+  selectAxis(axis:IAggregateAxis) {
+    // this.selectedAxis = axis;
   }
 
-  deselectAxis(axis:IAggregateAxis<IAggregateRequest>) {
-    if(this.selectedAxis == axis) this.selectedAxis = null;
+  deselectAxis(axis:IAggregateAxis) {
+    // if(this.selectedAxis == axis) this.selectedAxis = null;
   }
 
   deleteAxis(axisIdx:any) {
-    this.aggregationRequest.axes.splice(axisIdx as number, 1);
+    // this.aggregationRequest.axes.splice(axisIdx as number, 1);
   }
 
   addRequest() {
-    const axisIdx = this.aggregationRequest.axes.findIndex(a => a == this.selectedAxis);
-    this.aggregationRequest.axes[axisIdx].aggregation_points = [
-      ...this.aggregationRequest.axes[axisIdx].aggregation_points,
-      this.counter.lastRequest
-    ];
+    // const axisIdx = this.aggregationRequest.axes.findIndex(a => a == this.selectedAxis);
+    // this.aggregationRequest.axes[axisIdx].aggregation_points = [
+    //   ...this.aggregationRequest.axes[axisIdx].aggregation_points,
+    //   this.counter.lastRequest
+    // ];
 
-    this.chart.initialise(this.aggregationRequest);
+    // this.chart.initialise(this.aggregationRequest);
   }
 
   setChartType(type:ChartType) {
-    this.aggregationRequest.chart_type = type;
-    this.chart.render();
+    // this.aggregationRequest.chart_type = type;
+    // this.chart.render();
   }
 
   setRequestColor(axisIdx:number, reqIdx:number) {}
 
   deleteRequest(axisIdx:number, reqIdx:number) {
-    this.aggregationRequest.axes[axisIdx].aggregation_points.splice(
-      reqIdx, 1
-    );
+    // this.aggregationRequest.axes[axisIdx].aggregation_points.splice(
+    //   reqIdx, 1
+    // );
 
-    this.chart.initialise(this.aggregationRequest);
+    // this.chart.initialise(this.aggregationRequest);
   }
 }

@@ -79,13 +79,13 @@ export class DataCounterComponent implements OnInit {
         data_format: MeasurementUnits[this.selectedVariables.measurement._id][0],
         measurement: this.selectedVariables.measurement._id,
         sources: this.selectedVariables.sources.map(x => `${x.type}-${x._id}`),
-        color: <COLOR>(colorKeys[Math.floor(Math.random() * colorKeys.length - 1)]),
+        // color: <COLOR>(colorKeys[Math.floor(Math.random() * colorKeys.length - 1)]),
       }
 
       this.iotService.getAggregateDataCount({
-        period:  "24hr",
-        chart_type: ChartType.Line,
-        axes: [{ aggregation_points: [ this.lastRequest ] }]
+        period:  { start: new Date(), end: new Date() },
+        requests: []
+        // axes: [{ aggregation_points: [ this.lastRequest ] }]
       }).then(response => {
         this.aggregationCount = response;
         this.requestChange.emit(this.lastRequest);

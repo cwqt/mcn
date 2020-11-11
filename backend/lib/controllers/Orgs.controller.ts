@@ -178,8 +178,9 @@ export const getEnvironment = async (req: Request): Promise<IOrgEnv> => {
   return env;
 };
 
-export const createDashboard = (req:Request):Promise<IDashboard> => {
-  return await Dashboard.create(body, req.params.oid);
+export const createDashboard = async (req:Request):Promise<IDashboard> => {
+  // return await Dashboard.create(body, req.params.oid);
+  return (<IDashboard>{});
 }
 
 // export const binpack = (dash: IDashboard): IDashboard => {
