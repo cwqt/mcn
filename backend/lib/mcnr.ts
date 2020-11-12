@@ -38,7 +38,7 @@ const skip = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const endpointFunc = <T>(method:IRouterMatcher<T>, resCode?:HTTP, lamda?:(res:Response, data:T) => void) => {
-  return  (
+  return (
     path: string,
     controller: (req: Request, next: NextFunction, locals: IResLocals, permissions: Access[]) => Promise<T>,
     access: Access[],
@@ -78,9 +78,6 @@ const endpointFunc = <T>(method:IRouterMatcher<T>, resCode?:HTTP, lamda?:(res:Re
   };
 }
 
-
-
-const MAX_FILE_COUNT = 5;
 export class McnRouter {
   router: any;
   fileParser = Multer({

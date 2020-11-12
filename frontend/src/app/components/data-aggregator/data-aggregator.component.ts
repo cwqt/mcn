@@ -25,6 +25,17 @@ import { DataChartComponent } from '../data-chart/data-chart.component';
 import { NumberInput } from '@angular/cdk/coercion';
 import { Chart } from 'highcharts';
 
+type M<A extends any[], R> = (f: M<A, R>) => (...a: A) => R
+const Y = <A extends any[], R>(
+  f: (g: (...a: A) => R) => (...a: A) => R
+): ((...a: A) => R) =>
+  ((m: M<A, R>) =>
+    f((...x) => m(m)(...x))
+  )((m: M<A, R>) =>
+    f((...x) => m(m)(...x))
+  )
+
+
 @Component({
   selector: "app-data-aggregator",
   templateUrl: "./data-aggregator.component.html",
@@ -74,7 +85,7 @@ export class DataAggregatorComponent implements OnInit {
         period: {  start: new Date(), end: new Date()},
         requests: []
       };
-    }
+    }    
 
     Promise.all([
       this.orgService.getRecordableGraph(),
@@ -87,12 +98,12 @@ export class DataAggregatorComponent implements OnInit {
         ...this.recordableGraph,
         ...this.sourceGraph,
       ].reduce((acc, curr) => {
-        let f = (n: IGraphNode) => {
+        //behold the Y combinator
+        Y(r => (n:IGraphNode) => {
           acc[n._id] = n;
-          n.children?.forEach((c) => f(c));
-        };
+          n.children?.forEach((c) => r(c));  
+        })(curr);
 
-        f(curr);
         return acc;
       }, {});
     });
