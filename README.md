@@ -1,6 +1,6 @@
-# my.corrhizal.net
+# mcn
 
-An IoT management system for vertical farming.
+An IoT platform for vertical farming.
 
 - Manage IoT devices to monitor your racks & add your own custom hardware
 - Monitor entire racks of crops composed of frames of plants
